@@ -4,3 +4,9 @@ members = [
     "modeling-cmds",
     "unit-conversion-derive",
 ]
+
+[lints.rust]
+missing_docs = "forbid"
+
+[lints.clippy]
+dbg_macro = "forbid"

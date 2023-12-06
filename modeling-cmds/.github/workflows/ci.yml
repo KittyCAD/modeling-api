@@ -1,0 +1,73 @@
+on:
+    workflow_dispatch:
+    pull_request:
+      paths:
+        - '**.rs'
+        - .github/workflows/ci.yml
+        - Cargo.lock
+        - Cargo.toml
+        - rust-toolchain.toml
+permissions: read-all
+name: Rust CI
+jobs:
+    cargo-test:
+      name: cargo test
+      runs-on: ubuntu-latest-8-cores
+      steps:
+        - uses: actions/checkout@v4
+        - name: Install Rust
+          uses: dtolnay/rust-toolchain@stable
+        - uses: taiki-e/install-action@cargo-llvm-cov
+        - uses: taiki-e/install-action@nextest
+        - uses: Swatinem/rust-cache@v2.7.0
+
+        - name: cargo test
+          shell: bash
+          run: |
+            cargo llvm-cov nextest --all-features --lcov --output-path lcov.info
+          env:
+            RUST_BACKTRACE: 1
+  
+        - name: Upload to codecov.io
+          uses: codecov/codecov-action@v3
+          with:
+            token: ${{secrets.CODECOV_TOKEN}}
+            fail_ci_if_error: true
+            flags: unittests
+            verbose: true
+            files: lcov.info
+  
+    cargo-clippy:
+      name: cargo clippy
+      runs-on: ubuntu-latest-8-cores
+      steps:
+        - uses: actions/checkout@v4
+        - name: Install Rust
+          uses: dtolnay/rust-toolchain@stable
+          with:
+            components: clippy
+        - uses: Swatinem/rust-cache@v2.7.0
+
+        - name: cargo clippy
+          shell: bash
+          run: |
+            cargo clippy --tests --benches --workspace --examples -- -D warnings
+          env:
+            RUST_BACKTRACE: 1
+ 
+    cargo-fmt:
+        name: cargo fmt
+        runs-on: ubuntu-latest-8-cores
+        steps:
+          - uses: actions/checkout@v4
+          - name: Install Rust
+            uses: dtolnay/rust-toolchain@stable
+            with:
+                components: rustfmt
+  
+          - name: cargo fmt
+            shell: bash
+            run: |
+              cargo +nightly fmt
+            env:
+              RUST_BACKTRACE: 1
