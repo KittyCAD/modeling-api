@@ -9,3 +9,10 @@ edition = "2018"
 proc-macro = true
 
 [dependencies]
+syn = { version = "1.0.103", features = ["derive", "fold"] }
+quote = "1.0.28"
+proc-macro2 = "1.0.60"
+inflections = "1"
+
+[dev-dependencies]
+pretty_assertions = "1"

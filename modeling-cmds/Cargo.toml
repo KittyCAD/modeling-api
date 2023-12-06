@@ -7,3 +7,18 @@ description = "Modeling commands that can be sent via the KittyCAD Modeling API"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chrono = "0.4.31"
+data-encoding = "2.5.0"
+diesel = { version = "2.1.1", features = ["serde_json", "mysql", "chrono", "r2d2", "uuid", "numeric"] }
+diesel_derives = "2.1.2"
+enum-iterator = "1.4.1"
+enum-iterator-derive = "1.2.1"
+euler = "0.4.1"
+measurements = "0.11.0"
+parse-display = "0.8.2"
+parse-display-derive = "0.8.2"
+schemars = { version = "0.8.16", features = ["bigdecimal04", "chrono", "url", "uuid1"] }
+serde = { version = "1.0.193", features = ["derive"] }
+serde_bytes = "0.11.12"
+unit-conversion-derive = { path = "../unit-conversion-derive" }
+uuid = { version = "1.6.1", features = ["serde"] }
