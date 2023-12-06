@@ -4,6 +4,8 @@ description = "Derive funtions for unit conversions."
 version = "0.1.0"
 authors = ["Jess Frazelle <jess@kittycad.io>"]
 edition = "2018"
+repository = "https://github.com/KittyCAD/modeling-api"
+keywords = ["kittycad"]
 
 [lib]
 proc-macro = true
