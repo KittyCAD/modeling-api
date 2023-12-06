@@ -53,6 +53,7 @@ impl AsRef<[u8]> for Base64Data {
     }
 }
 
+/// Error returned when invalid Base64 data was sent.
 #[derive(Default, Debug)]
 pub struct CouldNotDecodeBase64Data;
 

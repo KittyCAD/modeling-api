@@ -2,11 +2,20 @@ use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+/// Autodesk Filmbox (FBX) format.
 pub mod fbx;
+/// glTF 2.0.
+/// We refer to this as glTF since that is how our customers refer to it, although by default
+/// it will be in binary format and thus technically (glb).
+/// If you prefer ASCII output, you can set that option for the export.
 pub mod gltf;
+/// Wavefront OBJ format.
 pub mod obj;
+/// The PLY Polygon File Format.
 pub mod ply;
+/// ISO 10303-21 (STEP) format.
 pub mod step;
+/// **ST**ereo**L**ithography format.
 pub mod stl;
 
 /// Output format specifier.
@@ -21,7 +30,7 @@ pub enum OutputFormat {
     /// glTF 2.0.
     /// We refer to this as glTF since that is how our customers refer to it, although by default
     /// it will be in binary format and thus technically (glb).
-    /// If you prefer ascii output, you can set that option for the export.
+    /// If you prefer ASCII output, you can set that option for the export.
     #[display("{}: {0}")]
     Gltf(gltf::export::Options),
     /// Wavefront OBJ format.

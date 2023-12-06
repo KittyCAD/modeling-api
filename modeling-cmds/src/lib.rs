@@ -1,3 +1,5 @@
+//! KittyCAD's Modeling API lets you design 3D models.
+
 pub mod base64;
 /// Various coordinate systems.
 pub mod coord;
@@ -11,6 +13,7 @@ pub mod format;
 /// Also used to construct commands which refer to previous commands.
 pub mod id;
 mod impl_traits;
+/// When a modeling command is successful, these responses could be returned.
 pub mod ok_response;
 /// Output of each modeling command.
 pub mod output;

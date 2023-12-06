@@ -5,8 +5,8 @@ members = [
     "unit-conversion-derive",
 ]
 
-[lints.rust]
-missing_docs = "forbid"
+[workspace.lints.rust]
+missing_docs = "deny"
 
-[lints.clippy]
-dbg_macro = "forbid"
+[workspace.lints.clippy]
+dbg_macro = "deny"

@@ -1,10 +1,10 @@
-use crate::coord;
-use crate::shared::Selection;
-use crate::units::UnitLength;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+use crate::{coord, shared::Selection, units::UnitLength};
+
+/// Import models in PLY format.
 pub mod import {
     use super::*;
 
@@ -36,6 +36,7 @@ pub mod import {
     }
 }
 
+/// Export models in PLY format.
 pub mod export {
 
     use super::*;

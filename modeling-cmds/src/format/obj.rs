@@ -1,8 +1,10 @@
-use crate::{coord, units::UnitLength};
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+use crate::{coord, units::UnitLength};
+
+/// Import models in OBJ format.
 pub mod import {
     use super::*;
 
@@ -35,6 +37,7 @@ pub mod import {
     }
 }
 
+/// Export models in OBJ format.
 pub mod export {
     use super::*;
 

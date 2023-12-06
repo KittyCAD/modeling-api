@@ -2,6 +2,7 @@ use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+/// Import models in KittyCAD's GLTF format.
 pub mod import {
     use super::*;
 
@@ -12,6 +13,7 @@ pub mod import {
     pub struct Options {}
 }
 
+/// Export models in KittyCAD's GLTF format.
 pub mod export {
     use super::*;
     /// Options for exporting glTF 2.0.

@@ -2,6 +2,7 @@ use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+/// Import models in FBX format.
 pub mod import {
     use super::*;
     /// Options for importing FBX.
@@ -11,6 +12,7 @@ pub mod import {
     pub struct Options {}
 }
 
+/// Export models in FBX format.
 pub mod export {
     use super::*;
 
