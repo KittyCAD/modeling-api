@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "modeling-cmds",
+    "unit-conversion-derive",
+]

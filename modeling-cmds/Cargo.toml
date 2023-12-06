@@ -1,0 +1,9 @@
+[package]
+name = "modeling-cmds"
+version = "0.1.0"
+edition = "2021"
+description = "Modeling commands that can be sent via the KittyCAD Modeling API"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
