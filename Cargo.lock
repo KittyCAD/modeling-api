@@ -283,6 +283,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "kittycad-modeling-cmds"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "data-encoding",
+ "diesel",
+ "diesel_derives",
+ "enum-iterator",
+ "enum-iterator-derive",
+ "euler",
+ "kittycad-unit-conversion-derive",
+ "measurements",
+ "parse-display",
+ "parse-display-derive",
+ "schemars",
+ "serde",
+ "serde_bytes",
+ "uuid",
+]
+
+[[package]]
+name = "kittycad-unit-conversion-derive"
+version = "0.1.0"
+dependencies = [
+ "inflections",
+ "pretty_assertions",
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.150"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -330,27 +362,6 @@ name = "mint"
 version = "0.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e53debba6bda7a793e5f99b8dacf19e626084f525f7829104ba9898f367d85ff"
-
-[[package]]
-name = "modeling-cmds"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "data-encoding",
- "diesel",
- "diesel_derives",
- "enum-iterator",
- "enum-iterator-derive",
- "euler",
- "measurements",
- "parse-display",
- "parse-display-derive",
- "schemars",
- "serde",
- "serde_bytes",
- "unit-conversion-derive",
- "uuid",
-]
 
 [[package]]
 name = "mysqlclient-sys"
@@ -773,17 +784,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c5713f0fc4b5db668a2ac63cdb7bb4469d8c9fed047b1d0292cc7b0ce2ba921"
 dependencies = [
  "tinyvec",
-]
-
-[[package]]
-name = "unit-conversion-derive"
-version = "0.1.0"
-dependencies = [
- "inflections",
- "pretty_assertions",
- "proc-macro2",
- "quote",
- "syn 1.0.109",
 ]
 
 [[package]]

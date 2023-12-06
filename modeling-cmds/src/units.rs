@@ -2,10 +2,10 @@ use std::str::FromStr;
 
 use diesel::{mysql::Mysql, serialize::ToSql, sql_types::Text};
 use diesel_derives::{AsExpression, FromSqlRow};
+use kittycad_unit_conversion_derive::UnitConversion;
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use unit_conversion_derive::UnitConversion;
 
 // A helper macro for allowing enums of only strings to be saved to the database.
 macro_rules! impl_string_enum_sql {
