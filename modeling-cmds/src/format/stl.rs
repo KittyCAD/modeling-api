@@ -2,7 +2,7 @@ use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::{coord, shared::Selection, units::UnitLength};
+use crate::{coord, format::Selection, units::UnitLength};
 
 /// Import models in STL format.
 pub mod import {

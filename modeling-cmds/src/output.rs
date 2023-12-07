@@ -247,6 +247,15 @@ pub struct GetSketchModePlane {
     pub z_axis: Point3d<f64>,
 }
 
+/// The response from the `EntitiesGetDistance` command.
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct EntitiesGetDistance {
+    /// The minimum distance between the input entities.
+    pub min_distance: f32,
+    /// The maximum distance between the input entities.
+    pub max_distance: f32,
+}
+
 impl<'de> ModelingCmdOutput<'de> for Export {}
 impl<'de> ModelingCmdOutput<'de> for SelectWithPoint {}
 impl<'de> ModelingCmdOutput<'de> for HighlightSetEntity {}
@@ -254,6 +263,7 @@ impl<'de> ModelingCmdOutput<'de> for EntityGetChildUuid {}
 impl<'de> ModelingCmdOutput<'de> for EntityGetNumChildren {}
 impl<'de> ModelingCmdOutput<'de> for EntityGetParentId {}
 impl<'de> ModelingCmdOutput<'de> for EntityGetAllChildUuids {}
+impl<'de> ModelingCmdOutput<'de> for EntitiesGetDistance {}
 impl<'de> ModelingCmdOutput<'de> for SelectGet {}
 impl<'de> ModelingCmdOutput<'de> for GetEntityType {}
 impl<'de> ModelingCmdOutput<'de> for Solid3dGetAllEdgeFaces {}

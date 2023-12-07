@@ -31,6 +31,8 @@ pub enum OkModelingCmdResponse {
     SelectGet(output::SelectGet),
     /// The response from the `GetEntityType` command.
     GetEntityType(output::GetEntityType),
+    /// The response from the `EntitiesGetDistance` command.
+    EntitiesGetDistance(output::EntitiesGetDistance),
     /// The response from the `Solid3dGetAllEdgeFaces` command.
     Solid3dGetAllEdgeFaces(output::Solid3dGetAllEdgeFaces),
     /// The response from the `Solid3dGetAllOppositeEdges` command.

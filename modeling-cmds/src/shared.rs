@@ -506,44 +506,6 @@ pub enum PathComponentConstraintType {
 
 impl_string_enum_sql! {PathComponentConstraintType}
 
-/// Data item selection.
-#[derive(Clone, Debug, Default, Display, Eq, FromStr, Hash, PartialEq, JsonSchema, Deserialize, Serialize)]
-#[display(style = "snake_case")]
-#[serde(rename_all = "snake_case", tag = "type")]
-pub enum Selection {
-    /// Visit the default scene.
-    #[default]
-    DefaultScene,
-
-    /// Visit the indexed scene.
-    #[display("{}: {index}")]
-    SceneByIndex {
-        /// The index.
-        index: usize,
-    },
-
-    /// Visit the first scene with the given name.
-    #[display("{}: {name}")]
-    SceneByName {
-        /// The name.
-        name: String,
-    },
-
-    /// Visit the indexed mesh.
-    #[display("{}: {index}")]
-    MeshByIndex {
-        /// The index.
-        index: usize,
-    },
-
-    /// Visit the first mesh with the given name.
-    #[display("{}: {name}")]
-    MeshByName {
-        /// The name.
-        name: String,
-    },
-}
-
 /// The path component command type (within a Path)
 #[allow(missing_docs)]
 #[derive(
