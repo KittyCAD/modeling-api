@@ -18,12 +18,14 @@ pub mod step;
 /// **ST**ereo**L**ithography format.
 pub mod stl;
 
+/// SolidWorks part (SLDPRT) format.
+pub mod sldprt;
+
 /// Output format specifier.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum OutputFormat {
-    // TODO: Uncomment all these variants and support their options.
     /// Autodesk Filmbox (FBX) format.
     #[display("{}: {0}")]
     Fbx(fbx::export::Options),
@@ -52,7 +54,6 @@ pub enum OutputFormat {
 #[serde(tag = "type", rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum InputFormat {
-    // TODO: Uncomment all these variants and support their options.
     /// Autodesk Filmbox (FBX) format.
     #[display("{}: {0}")]
     Fbx(fbx::import::Options),
@@ -67,9 +68,9 @@ pub enum InputFormat {
     /// The PLY Polygon File Format.
     #[display("{}: {0}")]
     Ply(ply::import::Options),
-    // /// SolidWorks part (SLDPRT) format.
-    // #[display("{}: {0}")]
-    // Sldprt(sldprt::import::Options),
+    /// SolidWorks part (SLDPRT) format.
+    #[display("{}: {0}")]
+    Sldprt(sldprt::import::Options),
     /// ISO 10303-21 (STEP) format.
     #[display("{}: {0}")]
     Step(step::ImportOptions),
