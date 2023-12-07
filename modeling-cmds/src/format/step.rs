@@ -1,7 +1,8 @@
-use crate::coord;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+
+use crate::coord;
 
 /// Options for exporting STEP format.
 #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize)]

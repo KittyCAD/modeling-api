@@ -603,3 +603,59 @@ pub struct ExportFile {
     /// The contents of the file, base64 encoded.
     pub contents: crate::base64::Base64Data,
 }
+
+/// The valid types of output file formats.
+#[derive(
+    Display,
+    FromStr,
+    Copy,
+    AsExpression,
+    FromSqlRow,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Clone,
+    Ord,
+    PartialOrd,
+    Sequence,
+)]
+#[diesel(sql_type = Text)]
+#[serde(rename_all = "lowercase")]
+#[display(style = "lowercase")]
+pub enum FileExportFormat {
+    /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
+    Fbx,
+    /// Binary glTF 2.0.
+    ///
+    /// This is a single binary with .glb extension.
+    ///
+    /// This is better if you want a compressed format as opposed to the human readable
+    /// glTF that lacks compression.
+    Glb,
+    /// glTF 2.0.
+    /// Embedded glTF 2.0 (pretty printed).
+    ///
+    /// Single JSON file with .gltf extension binary data encoded as
+    /// base64 data URIs.
+    ///
+    /// The JSON contents are pretty printed.
+    ///
+    /// It is human readable, single file, and you can view the
+    /// diff easily in a git commit.
+    Gltf,
+    /// The OBJ file format. <https://en.wikipedia.org/wiki/Wavefront_.obj_file>
+    /// It may or may not have an an attached material (mtl // mtllib) within the file,
+    /// but we interact with it as if it does not.
+    Obj,
+    /// The PLY file format. <https://en.wikipedia.org/wiki/PLY_(file_format)>
+    Ply,
+    /// The STEP file format. <https://en.wikipedia.org/wiki/ISO_10303-21>
+    Step,
+    /// The STL file format. <https://en.wikipedia.org/wiki/STL_(file_format)>
+    Stl,
+}
+
+impl_string_enum_sql! {FileExportFormat}
