@@ -18,12 +18,14 @@ pub mod step;
 /// **ST**ereo**L**ithography format.
 pub mod stl;
 
+/// SolidWorks part (SLDPRT) format.
+pub mod sldprt;
+
 /// Output format specifier.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum OutputFormat {
-    // TODO: Uncomment all these variants and support their options.
     /// Autodesk Filmbox (FBX) format.
     #[display("{}: {0}")]
     Fbx(fbx::export::Options),
@@ -52,7 +54,6 @@ pub enum OutputFormat {
 #[serde(tag = "type", rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum InputFormat {
-    // TODO: Uncomment all these variants and support their options.
     /// Autodesk Filmbox (FBX) format.
     #[display("{}: {0}")]
     Fbx(fbx::import::Options),
@@ -67,9 +68,9 @@ pub enum InputFormat {
     /// The PLY Polygon File Format.
     #[display("{}: {0}")]
     Ply(ply::import::Options),
-    // /// SolidWorks part (SLDPRT) format.
-    // #[display("{}: {0}")]
-    // Sldprt(sldprt::import::Options),
+    /// SolidWorks part (SLDPRT) format.
+    #[display("{}: {0}")]
+    Sldprt(sldprt::import::Options),
     /// ISO 10303-21 (STEP) format.
     #[display("{}: {0}")]
     Step(step::ImportOptions),
@@ -114,4 +115,37 @@ pub enum Selection {
         /// The name.
         name: String,
     },
+}
+
+/// Represents an in-memory file with an associated potentially foreign file path.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct VirtualFile {
+    /// Original file path.
+    pub path: std::path::PathBuf,
+    /// File payload.
+    pub data: Vec<u8>,
+}
+
+impl VirtualFile {
+    /// Returns true if the file name has the given extension.
+    pub fn has_extension(&self, required_extension: &str) -> bool {
+        self.path
+            .extension()
+            .and_then(std::ffi::OsStr::to_str)
+            .map(|extension| extension.eq_ignore_ascii_case(required_extension))
+            .unwrap_or(false)
+    }
+
+    fn read_fs_impl(path: std::path::PathBuf) -> std::io::Result<Self> {
+        let data = std::fs::read(&path)?;
+        Ok(Self { path, data })
+    }
+
+    /// Read from file system.
+    pub fn read_fs<P>(path: P) -> std::io::Result<Self>
+    where
+        P: Into<std::path::PathBuf>,
+    {
+        Self::read_fs_impl(path.into())
+    }
 }
