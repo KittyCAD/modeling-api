@@ -1,11 +1,20 @@
 [package]
-name = "unit-conversion-derive"
+name = "kittycad-unit-conversion-derive"
 description = "Derive funtions for unit conversions."
 version = "0.1.0"
 authors = ["Jess Frazelle <jess@kittycad.io>"]
 edition = "2018"
+repository = "https://github.com/KittyCAD/modeling-api"
+keywords = ["kittycad"]
 
 [lib]
 proc-macro = true
 
 [dependencies]
+syn = { version = "1.0.103", features = ["derive", "fold"] }
+quote = "1.0.28"
+proc-macro2 = "1.0.60"
+inflections = "1"
+
+[dev-dependencies]
+pretty_assertions = "1"

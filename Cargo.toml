@@ -1,5 +1,12 @@
 [workspace]
+resolver = "2"
 members = [
     "modeling-cmds",
     "unit-conversion-derive",
 ]
+
+[workspace.lints.rust]
+missing_docs = "deny"
+
+[workspace.lints.clippy]
+dbg_macro = "deny"
