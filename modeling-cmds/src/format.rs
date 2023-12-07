@@ -115,3 +115,36 @@ pub enum Selection {
         name: String,
     },
 }
+
+/// Represents an in-memory file with an associated potentially foreign file path.
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct VirtualFile {
+    /// Original file path.
+    pub path: std::path::PathBuf,
+    /// File payload.
+    pub data: Vec<u8>,
+}
+
+impl VirtualFile {
+    /// Returns true if the file name has the given extension.
+    pub fn has_extension(&self, required_extension: &str) -> bool {
+        self.path
+            .extension()
+            .and_then(std::ffi::OsStr::to_str)
+            .map(|extension| extension.eq_ignore_ascii_case(required_extension))
+            .unwrap_or(false)
+    }
+
+    fn read_fs_impl(path: std::path::PathBuf) -> std::io::Result<Self> {
+        let data = std::fs::read(&path)?;
+        Ok(Self { path, data })
+    }
+
+    /// Read from file system.
+    pub fn read_fs<P>(path: P) -> std::io::Result<Self>
+    where
+        P: Into<std::path::PathBuf>,
+    {
+        Self::read_fs_impl(path.into())
+    }
+}
