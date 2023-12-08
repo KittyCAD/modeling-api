@@ -251,9 +251,9 @@ pub struct GetSketchModePlane {
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct EntitiesGetDistance {
     /// The minimum distance between the input entities.
-    pub min_distance: f32,
+    pub min_distance: f64,
     /// The maximum distance between the input entities.
-    pub max_distance: f32,
+    pub max_distance: f64,
 }
 
 impl<'de> ModelingCmdOutput<'de> for Export {}
