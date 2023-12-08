@@ -7,7 +7,9 @@ use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::{impl_extern_type, units::UnitAngle};
+#[cfg(feature = "cxx")]
+use crate::impl_extern_type;
+use crate::units::UnitAngle;
 
 // A helper macro for allowing enums of only strings to be saved to the database.
 macro_rules! impl_string_enum_sql {
@@ -726,6 +728,7 @@ impl_string_enum_sql! {FileImportFormat}
 
 // Enum: Connect Rust Enums to Cpp
 // add our native c++ names for our cxx::ExternType implementation
+#[cfg(feature = "cxx")]
 impl_extern_type! {
     [Trivial]
     // File
