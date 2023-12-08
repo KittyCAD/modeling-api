@@ -49,10 +49,14 @@ jobs:
             components: clippy
         - uses: Swatinem/rust-cache@v2.7.0
 
-        - name: cargo clippy
+        - name: Run clippy
           shell: bash
-          run: |
-            cargo clippy --tests --benches --workspace --examples -- -D warnings
+          run: cargo clippy --tests --benches --workspace --examples -- -D warnings
+          env:
+            RUST_BACKTRACE: 1
+        - name: Run clippy (all features)
+          shell: bash
+          run: cargo clippy --tests --benches --workspace --examples --all-features -- -D warnings
           env:
             RUST_BACKTRACE: 1
  
@@ -81,8 +85,7 @@ jobs:
         - name: Set up Python
           uses: actions/setup-python@v4
         - name: Install codespell
-          run: |
-              python -m pip install codespell
+          run: python -m pip install codespell
         - name: Run codespell
           # Edit this file to tweak the typo list and other configuration.
           run: codespell --config .codespellrc
