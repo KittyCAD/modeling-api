@@ -659,3 +659,45 @@ pub enum FileExportFormat {
 }
 
 impl_string_enum_sql! {FileExportFormat}
+
+/// The valid types of source file formats.
+#[derive(
+    Display,
+    FromStr,
+    Copy,
+    AsExpression,
+    FromSqlRow,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Clone,
+    Ord,
+    PartialOrd,
+    Sequence,
+)]
+#[diesel(sql_type = Text)]
+#[serde(rename_all = "lowercase")]
+#[display(style = "lowercase")]
+pub enum FileImportFormat {
+    /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
+    Fbx,
+    /// glTF 2.0.
+    Gltf,
+    /// The OBJ file format. <https://en.wikipedia.org/wiki/Wavefront_.obj_file>
+    /// It may or may not have an an attached material (mtl // mtllib) within the file,
+    /// but we interact with it as if it does not.
+    Obj,
+    /// The PLY file format. <https://en.wikipedia.org/wiki/PLY_(file_format)>
+    Ply,
+    /// SolidWorks part (SLDPRT) format.
+    Sldprt,
+    /// The STEP file format. <https://en.wikipedia.org/wiki/ISO_10303-21>
+    Step,
+    /// The STL file format. <https://en.wikipedia.org/wiki/STL_(file_format)>
+    Stl,
+}
+
+impl_string_enum_sql! {FileImportFormat}

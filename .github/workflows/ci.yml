@@ -69,6 +69,6 @@ jobs:
           - name: cargo fmt
             shell: bash
             run: |
-              cargo +nightly fmt
+              cargo fmt
             env:
               RUST_BACKTRACE: 1
