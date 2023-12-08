@@ -2,6 +2,8 @@ use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+use crate::shared::{FileExportFormat, FileImportFormat};
+
 /// Autodesk Filmbox (FBX) format.
 pub mod fbx;
 /// glTF 2.0.
@@ -147,5 +149,69 @@ impl VirtualFile {
         P: Into<std::path::PathBuf>,
     {
         Self::read_fs_impl(path.into())
+    }
+}
+
+impl From<OutputFormat> for FileExportFormat {
+    fn from(output_format: OutputFormat) -> Self {
+        match output_format {
+            OutputFormat::Fbx(_) => Self::Fbx,
+            OutputFormat::Gltf(_) => Self::Gltf,
+            OutputFormat::Obj(_) => Self::Obj,
+            OutputFormat::Ply(_) => Self::Ply,
+            OutputFormat::Step(_) => Self::Step,
+            OutputFormat::Stl(_) => Self::Stl,
+        }
+    }
+}
+
+impl From<FileExportFormat> for OutputFormat {
+    fn from(export_format: FileExportFormat) -> Self {
+        match export_format {
+            FileExportFormat::Fbx => OutputFormat::Fbx(Default::default()),
+            FileExportFormat::Glb => OutputFormat::Gltf(gltf::export::Options {
+                storage: gltf::export::Storage::Binary,
+                ..Default::default()
+            }),
+            FileExportFormat::Gltf => OutputFormat::Gltf(gltf::export::Options {
+                storage: gltf::export::Storage::Embedded,
+                presentation: gltf::export::Presentation::Pretty,
+            }),
+            FileExportFormat::Obj => OutputFormat::Obj(Default::default()),
+            FileExportFormat::Ply => OutputFormat::Ply(Default::default()),
+            FileExportFormat::Step => OutputFormat::Step(Default::default()),
+            FileExportFormat::Stl => OutputFormat::Stl(stl::export::Options {
+                storage: stl::export::Storage::Ascii,
+                ..Default::default()
+            }),
+        }
+    }
+}
+
+impl From<InputFormat> for FileImportFormat {
+    fn from(input_format: InputFormat) -> Self {
+        match input_format {
+            InputFormat::Fbx(_) => Self::Fbx,
+            InputFormat::Gltf(_) => Self::Gltf,
+            InputFormat::Obj(_) => Self::Obj,
+            InputFormat::Ply(_) => Self::Ply,
+            InputFormat::Sldprt(_) => Self::Sldprt,
+            InputFormat::Step(_) => Self::Step,
+            InputFormat::Stl(_) => Self::Stl,
+        }
+    }
+}
+
+impl From<FileImportFormat> for InputFormat {
+    fn from(import_format: FileImportFormat) -> Self {
+        match import_format {
+            FileImportFormat::Fbx => InputFormat::Fbx(Default::default()),
+            FileImportFormat::Gltf => InputFormat::Gltf(Default::default()),
+            FileImportFormat::Obj => InputFormat::Obj(Default::default()),
+            FileImportFormat::Ply => InputFormat::Ply(Default::default()),
+            FileImportFormat::Sldprt => InputFormat::Sldprt(Default::default()),
+            FileImportFormat::Step => InputFormat::Step(Default::default()),
+            FileImportFormat::Stl => InputFormat::Stl(Default::default()),
+        }
     }
 }
