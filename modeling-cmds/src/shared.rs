@@ -7,7 +7,7 @@ use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::units::UnitAngle;
+use crate::{impl_extern_type, units::UnitAngle};
 
 // A helper macro for allowing enums of only strings to be saved to the database.
 macro_rules! impl_string_enum_sql {
@@ -700,4 +700,53 @@ pub enum FileImportFormat {
     Stl,
 }
 
+/// The type of error sent by the KittyCAD graphics engine.
+/// A subset of [`ErrorCode`].
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
+#[serde(rename_all = "snake_case")]
+pub enum EngineErrorCode {
+    /// User requested something geometrically or graphically impossible.
+    /// Don't retry this request, as it's inherently impossible. Instead, read the error message
+    /// and change your request.
+    BadRequest = 1,
+    /// Graphics engine failed to complete request, consider retrying
+    InternalEngine,
+}
+
+impl From<EngineErrorCode> for http::StatusCode {
+    fn from(e: EngineErrorCode) -> Self {
+        match e {
+            EngineErrorCode::BadRequest => Self::BAD_REQUEST,
+            EngineErrorCode::InternalEngine => Self::INTERNAL_SERVER_ERROR,
+        }
+    }
+}
+
 impl_string_enum_sql! {FileImportFormat}
+
+// Enum: Connect Rust Enums to Cpp
+// add our native c++ names for our cxx::ExternType implementation
+impl_extern_type! {
+    [Trivial]
+    // File
+    FileImportFormat = "Enums::_FileImportFormat"
+    FileExportFormat = "Enums::_FileExportFormat"
+    // Camera
+    CameraDragInteractionType = "Enums::_CameraDragInteractionType"
+    // Scene
+    SceneSelectionType = "Enums::_SceneSelectionType"
+    SceneToolType = "Enums::_SceneToolType"
+    EntityType = "Enums::_EntityType"
+    AnnotationType = "Enums::_AnnotationType"
+    AnnotationTextAlignmentX = "Enums::_AnnotationTextAlignmentX"
+    AnnotationTextAlignmentY = "Enums::_AnnotationTextAlignmentY"
+    AnnotationLineEnd = "Enums::_AnnotationLineEnd"
+
+    CurveType = "Enums::_CurveType"
+    PathCommand = "Enums::_PathCommand"
+    PathComponentConstraintBound = "Enums::_PathComponentConstraintBound"
+    PathComponentConstraintType = "Enums::_PathComponentConstraintType"
+
+    // Utils
+    EngineErrorCode = "Enums::_ErrorCode"
+}

@@ -12,6 +12,7 @@ pub mod format;
 /// Modeling command IDs, used to associated requests and responses.
 /// Also used to construct commands which refer to previous commands.
 pub mod id;
+pub mod impl_extern_type;
 mod impl_traits;
 /// When a modeling command is successful, these responses could be returned.
 pub mod ok_response;
