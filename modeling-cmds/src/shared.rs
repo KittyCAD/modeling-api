@@ -72,6 +72,21 @@ pub struct AnnotationTextOptions {
     pub point_size: u32,
 }
 
+/// The type of distance
+/// Distances can vary depending on
+/// the objects used as input.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case", tag = "type")]
+pub enum DistanceType {
+    /// Euclidean Distance.
+    Euclidean {},
+    /// The distance between objects along the specified axis
+    OnAxis {
+        /// Global axis, 0 = x-axis, 1 = y-axis, 2 = z-axis
+        axis: GlobalAxis,
+    },
+}
+
 /// An RGBA color
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
 pub struct Color {
@@ -726,6 +741,36 @@ impl From<EngineErrorCode> for http::StatusCode {
 
 impl_string_enum_sql! {FileImportFormat}
 
+/// An enum that contains the three global axes.
+#[derive(
+    Display,
+    FromStr,
+    Copy,
+    AsExpression,
+    FromSqlRow,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    )]
+    #[diesel(sql_type = Text)]
+    #[serde(rename_all = "lowercase")]
+    pub enum GlobalAxis {
+        /// The X axis
+        X,
+        /// The Y axis
+        Y,
+        /// The Z axis
+        Z,
+    }
+    impl_string_enum_sql! {GlobalAxis}
+
 // Enum: Connect Rust Enums to Cpp
 // add our native c++ names for our cxx::ExternType implementation
 #[cfg(feature = "cxx")]
@@ -752,4 +797,5 @@ impl_extern_type! {
 
     // Utils
     EngineErrorCode = "Enums::_ErrorCode"
+    GlobalAxis = "Enums::_GlobalAxis"
 }
