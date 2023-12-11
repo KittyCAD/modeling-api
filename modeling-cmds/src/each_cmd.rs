@@ -184,6 +184,19 @@ pub struct EntityGetDistance {
     pub distance_type: DistanceType,
 }
 
+/// Create a linear patter using this entity
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct EntityLinearPattern {
+    /// ID of the entity being copied.
+    pub entity_id: Uuid,
+    /// Axis along which to make the copites
+    pub axis: Point3d<f64>,
+    /// Number of repetitions to make.
+    pub num_repetitions: u32,
+    /// Spacing between repetitions.
+    pub spacing: f64,
+}
+
 /// Enter edit mode
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct EditModeEnter {

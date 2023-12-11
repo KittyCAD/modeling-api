@@ -256,6 +256,13 @@ pub struct EntityGetDistance {
     pub max_distance: f64,
 }
 
+/// The response from the `EntityLinearPattern` command.
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct EntityLinearPattern {
+    /// The UUIDs of the entities that were created.
+    pub entity_ids: Vec<Uuid>,
+}
+
 impl<'de> ModelingCmdOutput<'de> for Export {}
 impl<'de> ModelingCmdOutput<'de> for SelectWithPoint {}
 impl<'de> ModelingCmdOutput<'de> for HighlightSetEntity {}
@@ -264,6 +271,7 @@ impl<'de> ModelingCmdOutput<'de> for EntityGetNumChildren {}
 impl<'de> ModelingCmdOutput<'de> for EntityGetParentId {}
 impl<'de> ModelingCmdOutput<'de> for EntityGetAllChildUuids {}
 impl<'de> ModelingCmdOutput<'de> for EntityGetDistance {}
+impl<'de> ModelingCmdOutput<'de> for EntityLinearPattern {}
 impl<'de> ModelingCmdOutput<'de> for SelectGet {}
 impl<'de> ModelingCmdOutput<'de> for GetEntityType {}
 impl<'de> ModelingCmdOutput<'de> for Solid3dGetAllEdgeFaces {}
