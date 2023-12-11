@@ -21,8 +21,6 @@ use crate::{
 pub struct MovePathPen {
     /// The ID of the command which created the path.
     pub path: ModelingCmdId,
-    /// Where the path's pen should be.
-    pub to: Point3d<f64>,
 }
 
 /// Extend a path by adding a new segment which starts at the path's "pen".
