@@ -9,8 +9,9 @@ use crate::{
     format::OutputFormat,
     id::ModelingCmdId,
     shared::{
-        AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, PathComponentConstraintBound,
-        PathComponentConstraintType, PathSegment, Point2d, Point3d, SceneSelectionType, SceneToolType,
+        AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType,
+        PathComponentConstraintBound, PathComponentConstraintType, PathSegment, Point2d, Point3d, SceneSelectionType,
+        SceneToolType,
     },
     units,
 };
@@ -170,6 +171,17 @@ pub struct EntityGetChildUuid {
 pub struct EntityGetAllChildUuids {
     /// ID of the entity being queried.
     pub entity_id: Uuid,
+}
+
+/// What is the distance between these two entities?
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct EntityGetDistance {
+    /// ID of the first entity being queried.
+    pub entity_id1: Uuid,
+    /// ID of the second entity being queried.
+    pub entity_id2: Uuid,
+    /// Type of distance to be measured.
+    pub distance_type: DistanceType,
 }
 
 /// Enter edit mode

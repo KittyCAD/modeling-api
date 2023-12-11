@@ -35,13 +35,12 @@ fn derive(item: syn::DeriveInput) -> proc_macro2::TokenStream {
         for to_variant in variants.clone() {
             if variant == to_variant {
                 // If these two are equal our enum part is easier.
-                items =
-                    quote! {
-                        #items
-                        (#struct_name::#variant, #struct_name::#to_variant) => {
-                            input
-                        }
-                    };
+                items = quote! {
+                    #items
+                    (#struct_name::#variant, #struct_name::#to_variant) => {
+                        input
+                    }
+                };
             } else {
                 let from_fn = format_ident!("from_{}", clean_fn_name(&variant.to_string()));
                 let to_fn = format_ident!("as_{}", clean_fn_name(&to_variant.to_string()));
