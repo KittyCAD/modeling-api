@@ -347,7 +347,7 @@ dependencies = [
  "enum-iterator-derive",
  "euler",
  "http",
- "kittycad-unit-conversion-derive",
+ "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "measurements",
  "parse-display",
  "parse-display-derive",
@@ -363,6 +363,18 @@ version = "0.1.0"
 dependencies = [
  "inflections",
  "pretty_assertions",
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "kittycad-unit-conversion-derive"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7001c46a92c1edce6722a3900539b198230980799035f02d92b4e7df3fc08738"
+dependencies = [
+ "inflections",
  "proc-macro2",
  "quote",
  "syn 1.0.109",
