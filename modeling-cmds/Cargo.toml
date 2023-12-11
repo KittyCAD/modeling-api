@@ -20,7 +20,7 @@ enum-iterator = "1.4.1"
 enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
 http = "0.2.9"
-kittycad-unit-conversion-derive = { path = "../unit-conversion-derive" }
+kittycad-unit-conversion-derive = "0.1.0"
 measurements = "0.11.0"
 parse-display = "0.8.2"
 parse-display-derive = "0.8.2"
