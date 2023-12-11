@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-unit-conversion-derive"
-description = "Derive funtions for unit conversions."
+description = "Derive functions for unit conversions."
 version = "0.1.0"
 authors = ["Jess Frazelle <jess@kittycad.io>"]
 edition = "2018"
