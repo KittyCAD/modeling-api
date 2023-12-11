@@ -89,3 +89,11 @@ jobs:
         - name: Run codespell
           # Edit this file to tweak the typo list and other configuration.
           run: codespell --config .codespellrc
+
+    semver-checks:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Check semver
+          uses: obi1kenobi/cargo-semver-checks-action@v2
