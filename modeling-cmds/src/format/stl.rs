@@ -9,9 +9,7 @@ pub mod import {
     use super::*;
 
     /// Options for importing STL.
-    #[derive(
-        Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
-    )]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "StlImportOptions")]
     pub struct Options {

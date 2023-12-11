@@ -72,6 +72,10 @@ impl<'de> ModelingCmdVariant<'de> for EntityGetAllChildUuids {
     type Output = out::EntityGetAllChildUuids;
 }
 
+impl<'de> ModelingCmdVariant<'de> for EntityGetDistance {
+    type Output = out::EntityGetDistance;
+}
+
 impl<'de> ModelingCmdVariant<'de> for EditModeEnter {
     type Output = ();
 }

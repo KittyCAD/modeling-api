@@ -82,7 +82,7 @@ pub enum DistanceType {
     Euclidean {},
     /// The distance between objects along the specified axis
     OnAxis {
-        /// Global axis, 0 = x-axis, 1 = y-axis, 2 = z-axis
+        /// Global axis
         axis: GlobalAxis,
     },
 }
@@ -758,18 +758,18 @@ impl_string_enum_sql! {FileImportFormat}
     Clone,
     Ord,
     PartialOrd,
-    )]
-    #[diesel(sql_type = Text)]
-    #[serde(rename_all = "lowercase")]
-    pub enum GlobalAxis {
-        /// The X axis
-        X,
-        /// The Y axis
-        Y,
-        /// The Z axis
-        Z,
-    }
-    impl_string_enum_sql! {GlobalAxis}
+)]
+#[diesel(sql_type = Text)]
+#[serde(rename_all = "lowercase")]
+pub enum GlobalAxis {
+    /// The X axis
+    X,
+    /// The Y axis
+    Y,
+    /// The Z axis
+    Z,
+}
+impl_string_enum_sql! {GlobalAxis}
 
 // Enum: Connect Rust Enums to Cpp
 // add our native c++ names for our cxx::ExternType implementation
