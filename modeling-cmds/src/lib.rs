@@ -25,6 +25,9 @@ pub mod shared;
 mod traits;
 /// Units of measurement.
 pub mod units;
+/// Types for the WebSocket API.
+#[cfg(feature = "websocket")]
+pub mod websocket;
 
 pub use def_enum::*;
 pub use traits::*;
