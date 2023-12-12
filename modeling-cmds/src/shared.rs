@@ -1,6 +1,9 @@
+#[cfg(feature = "diesel")]
 use std::str::FromStr;
 
+#[cfg(feature = "diesel")]
 use diesel::{mysql::Mysql, serialize::ToSql, sql_types::Text};
+#[cfg(feature = "diesel")]
 use diesel_derives::{AsExpression, FromSqlRow};
 use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
@@ -14,12 +17,14 @@ use crate::units::UnitAngle;
 // A helper macro for allowing enums of only strings to be saved to the database.
 macro_rules! impl_string_enum_sql {
     {$name:ident} => {
+        #[cfg(feature = "diesel")]
         impl diesel::serialize::ToSql<Text, Mysql> for $name {
             fn to_sql<'a>(&'a self, out: &mut diesel::serialize::Output<'a, '_, Mysql>) -> diesel::serialize::Result {
                 <String as ToSql<Text, Mysql>>::to_sql(&self.to_string(), &mut out.reborrow())
             }
         }
 
+        #[cfg(feature = "diesel")]
         impl<DB> diesel::deserialize::FromSql<Text, DB> for $name
         where
             DB: diesel::backend::Backend,
@@ -103,23 +108,10 @@ pub struct Color {
 /// Horizontal Text alignment
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
 pub enum AnnotationTextAlignmentX {
     Left,
@@ -132,23 +124,10 @@ impl_string_enum_sql! {AnnotationTextAlignmentX}
 /// Vertical Text alignment
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
 pub enum AnnotationTextAlignmentY {
     Bottom,
@@ -174,23 +153,10 @@ pub struct Point3d<T = f32> {
 /// Annotation line end type
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
 pub enum AnnotationLineEnd {
     None,
@@ -201,23 +167,10 @@ impl_string_enum_sql! {AnnotationLineEnd}
 
 /// The type of annotation
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
 pub enum AnnotationType {
     /// 2D annotation type (screen or planar space)
@@ -230,23 +183,10 @@ impl_string_enum_sql! {AnnotationType}
 
 /// The type of camera drag interaction.
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
 pub enum CameraDragInteractionType {
     /// Camera pan
@@ -396,23 +336,10 @@ impl Angle {
 
 /// The type of scene selection change
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
 pub enum SceneSelectionType {
     /// Replaces the selection
@@ -428,23 +355,10 @@ impl_string_enum_sql! {SceneSelectionType}
 /// The type of scene's active tool
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "snake_case")]
 pub enum SceneToolType {
     CameraRevolve,
@@ -464,8 +378,6 @@ impl_string_enum_sql! {SceneToolType}
     Display,
     FromStr,
     Copy,
-    AsExpression,
-    FromSqlRow,
     Eq,
     PartialEq,
     Debug,
@@ -478,7 +390,8 @@ impl_string_enum_sql! {SceneToolType}
     PartialOrd,
     Default,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "snake_case")]
 pub enum PathComponentConstraintBound {
     #[default]
@@ -495,8 +408,6 @@ impl_string_enum_sql! {PathComponentConstraintBound}
     Display,
     FromStr,
     Copy,
-    AsExpression,
-    FromSqlRow,
     Eq,
     PartialEq,
     Debug,
@@ -509,7 +420,8 @@ impl_string_enum_sql! {PathComponentConstraintBound}
     PartialOrd,
     Default,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "snake_case")]
 pub enum PathComponentConstraintType {
     #[default]
@@ -526,23 +438,10 @@ impl_string_enum_sql! {PathComponentConstraintType}
 /// The path component command type (within a Path)
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "snake_case")]
 pub enum PathCommand {
     MoveTo,
@@ -555,23 +454,10 @@ pub enum PathCommand {
 /// The type of entity
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
 pub enum EntityType {
     Entity,
@@ -588,23 +474,10 @@ pub enum EntityType {
 /// The type of Curve (embedded within path)
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "snake_case")]
 pub enum CurveType {
     Line,
@@ -623,23 +496,10 @@ pub struct ExportFile {
 
 /// The valid types of output file formats.
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Clone,
-    Ord,
-    PartialOrd,
-    Sequence,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
 #[display(style = "lowercase")]
 pub enum FileExportFormat {
@@ -679,23 +539,10 @@ impl_string_enum_sql! {FileExportFormat}
 
 /// The valid types of source file formats.
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Clone,
-    Ord,
-    PartialOrd,
-    Sequence,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
 #[display(style = "lowercase")]
 pub enum FileImportFormat {
@@ -743,23 +590,10 @@ impl_string_enum_sql! {FileImportFormat}
 
 /// An enum that contains the three global axes.
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    AsExpression,
-    FromSqlRow,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
 pub enum GlobalAxis {
     /// The X axis
