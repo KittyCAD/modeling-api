@@ -1,6 +1,9 @@
+#[cfg(feature = "diesel")]
 use std::str::FromStr;
 
+#[cfg(feature = "diesel")]
 use diesel::{mysql::Mysql, serialize::ToSql, sql_types::Text};
+#[cfg(feature = "diesel")]
 use diesel_derives::{AsExpression, FromSqlRow};
 use kittycad_unit_conversion_derive::UnitConversion;
 use parse_display_derive::{Display, FromStr};
@@ -10,12 +13,14 @@ use serde::{Deserialize, Serialize};
 // A helper macro for allowing enums of only strings to be saved to the database.
 macro_rules! impl_string_enum_sql {
     {$name:ident} => {
+        #[cfg(feature = "diesel")]
         impl diesel::serialize::ToSql<Text, Mysql> for $name {
             fn to_sql<'a>(&'a self, out: &mut diesel::serialize::Output<'a, '_, Mysql>) -> diesel::serialize::Result {
                 <String as ToSql<Text, Mysql>>::to_sql(&self.to_string(), &mut out.reborrow())
             }
         }
 
+        #[cfg(feature = "diesel")]
         impl<DB> diesel::deserialize::FromSql<Text, DB> for $name
         where
             DB: diesel::backend::Backend,
@@ -94,8 +99,6 @@ impl UnitLength {
     Display,
     FromStr,
     Copy,
-    AsExpression,
-    FromSqlRow,
     Eq,
     PartialEq,
     Debug,
@@ -107,7 +110,8 @@ impl UnitLength {
     PartialOrd,
     UnitConversion,
 )]
-#[diesel(sql_type = Text)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum UnitAngle {
