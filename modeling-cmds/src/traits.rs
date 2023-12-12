@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::ModelingCmd;
 
 /// Some modeling command executed on the KittyCAD engine.
-pub trait ModelingCmdVariant<'de> {
+pub trait ModelingCmdVariant<'de>: Serialize {
     /// What the command responds with
     type Output: ModelingCmdOutput<'de>;
     /// Take this specific enum variant, and create the general enum.
