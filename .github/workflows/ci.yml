@@ -49,7 +49,12 @@ jobs:
             components: clippy
         - uses: Swatinem/rust-cache@v2.7.0
 
-        - name: Run clippy
+        - name: Run clippy (no default features)
+          shell: bash
+          run: cargo clippy --tests --benches --workspace --examples --no-default-features -- -D warnings
+          env:
+            RUST_BACKTRACE: 1
+        - name: Run clippy (only default features)
           shell: bash
           run: cargo clippy --tests --benches --workspace --examples -- -D warnings
           env:
