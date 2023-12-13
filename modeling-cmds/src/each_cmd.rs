@@ -16,6 +16,10 @@ use crate::{
     units,
 };
 
+/// Start a new path.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct StartPath;
+
 /// Move the path's "pen".
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct MovePathPen {

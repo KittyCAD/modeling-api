@@ -1,8 +1,9 @@
 [workspace]
 resolver = "2"
 members = [
-    "modeling-cmds",
     "execution-plan",
+    "modeling-cmds",
+    "modeling-session",
     "unit-conversion-derive",
 ]
 

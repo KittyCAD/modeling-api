@@ -1,5 +1,11 @@
 use crate::{each_cmd::*, output as out, ModelingCmd, ModelingCmdVariant};
 
+impl<'de> ModelingCmdVariant<'de> for StartPath {
+    type Output = ();
+    fn into_enum(self) -> ModelingCmd {
+        ModelingCmd::StartPath(self)
+    }
+}
 impl<'de> ModelingCmdVariant<'de> for MovePathPen {
     type Output = ();
     fn into_enum(self) -> ModelingCmd {

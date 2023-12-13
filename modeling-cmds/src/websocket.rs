@@ -218,6 +218,14 @@ impl WebSocketResponse {
     pub fn is_failure(&self) -> bool {
         matches!(self, Self::Failure(_))
     }
+
+    /// Get the ID of whichever request this response is for.
+    pub fn request_id(&self) -> Option<Uuid> {
+        match self {
+            WebSocketResponse::Success(x) => x.request_id,
+            WebSocketResponse::Failure(x) => x.request_id,
+        }
+    }
 }
 
 /// A raw file with unencoded contents to be passed over binary websockets.
