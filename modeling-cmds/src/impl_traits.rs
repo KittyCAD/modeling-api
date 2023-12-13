@@ -228,10 +228,10 @@ impl<'de> ModelingCmdVariant<'de> for SendObject {
         ModelingCmd::SendObject(self)
     }
 }
-impl<'de> ModelingCmdVariant<'de> for ObjectSetMaterialParamsPBR {
+impl<'de> ModelingCmdVariant<'de> for ObjectSetMaterialParamsPbr {
     type Output = ();
     fn into_enum(self) -> ModelingCmd {
-        ModelingCmd::ObjectSetMaterialParamsPBR(self)
+        ModelingCmd::ObjectSetMaterialParamsPbr(self)
     }
 }
 impl<'de> ModelingCmdVariant<'de> for EntitySetOpacity {
