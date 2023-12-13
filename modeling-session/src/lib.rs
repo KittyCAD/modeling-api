@@ -1,20 +1,16 @@
 //! Establish a modeling session with the KittyCAD API.
 
-use futures::{
-    stream::{SplitSink, SplitStream},
-    SinkExt, StreamExt,
-};
+use std::time::Duration;
+
+use futures::StreamExt;
 use kittycad::{types::error::Error as ApiError, Client};
 use kittycad_modeling_cmds::{
-    ok_response::OkModelingCmdResponse,
-    websocket::{
-        FailureWebSocketResponse, ModelingCmdReq, OkWebSocketResponseData, WebSocketRequest, WebSocketResponse,
-    },
-    ModelingCmd,
+    id::ModelingCmdId, ok_response::OkModelingCmdResponse, websocket::ModelingCmdReq, ModelingCmd,
 };
-use reqwest::Upgraded;
-use tokio_tungstenite::{tungstenite::Message as WsMsg, WebSocketStream};
+use tokio::sync::{mpsc, oneshot};
 use uuid::Uuid;
+
+mod actor;
 
 /// Parameters for starting a session with the KittyCAD Modeling API.
 pub struct SessionBuilder {
@@ -28,13 +24,17 @@ pub struct SessionBuilder {
     pub video_res_height: Option<u32>,
     /// Width of the video feed. Must be a multiple of 4.
     pub video_res_width: Option<u32>,
+    /// How many requests for sending/receiving to/from the API can be in-flight at once.
+    pub buffer_reqs: Option<usize>,
+    /// How long to wait for the response to a modeling command.
+    /// Defaults to 10 seconds.
+    pub await_response_timeout: Option<Duration>,
 }
 
 /// An active session with the KittyCAD Modeling API.
 /// TODO: This needs some sort of buffering. It should allow users to send many requests in a row and then wait for the responses.
 pub struct Session {
-    write_to_ws: SplitSink<WebSocketStream<Upgraded>, WsMsg>,
-    read_from_ws: SplitStream<WebSocketStream<Upgraded>>,
+    actor_tx: mpsc::Sender<actor::Request>,
 }
 
 impl Session {
@@ -46,6 +46,8 @@ impl Session {
             unlocked_framerate,
             video_res_height,
             video_res_width,
+            buffer_reqs,
+            await_response_timeout,
         }: SessionBuilder,
     ) -> Result<Self, ApiError> {
         // TODO: establish WebRTC connections for the user.
@@ -63,86 +65,42 @@ impl Session {
         )
         .await
         .split();
-        Ok(Self {
+        let (actor_tx, actor_rx) = mpsc::channel(buffer_reqs.unwrap_or(10));
+        tokio::task::spawn(actor::start(
+            actor_rx,
             write_to_ws,
             read_from_ws,
-        })
+            await_response_timeout.unwrap_or(Duration::from_secs(10)),
+        ));
+        Ok(Self { actor_tx })
     }
 
     /// Send a modeling command and wait for its response.
-    pub async fn run_command<'de, Cmd>(&mut self, cmd: Cmd) -> Result<OkModelingCmdResponse, RunCommandError>
+    pub async fn run_command<'de, Cmd>(
+        &mut self,
+        cmd_id: ModelingCmdId,
+        cmd: Cmd,
+    ) -> Result<OkModelingCmdResponse, RunCommandError>
     where
         Cmd: kittycad_modeling_cmds::ModelingCmdVariant<'de>,
     {
         // All messages to the KittyCAD Modeling API will be sent over the WebSocket as Text.
         // The text will contain JSON representing a `ModelingCmdReq`.
         // This takes in a command and its ID, and makes a WebSocket message containing that command.
-        let cmd_id = kittycad_modeling_cmds::id::ModelingCmdId(Uuid::new_v4());
         let cmd = ModelingCmd::from(cmd);
-        let ws_msg = WsMsg::Text(
-            serde_json::to_string(&WebSocketRequest::ModelingCmdReq(ModelingCmdReq { cmd, cmd_id })).unwrap(),
-        );
-        self.write_to_ws
-            .send(ws_msg)
+        let (tx, rx) = oneshot::channel();
+        self.actor_tx
+            .send(actor::Request::SendModelingCmd(ModelingCmdReq { cmd, cmd_id }, tx))
             .await
-            .map_err(RunCommandError::WebSocketSend)?;
-        while let Some(msg) = self.read_from_ws.next().await {
-            // We're looking for a WebSocket response with text.
-            // Ignore any other type of WebSocket messages.
-            let Some(resp) = text_from_ws(msg.map_err(RunCommandError::WebSocketRecv)?) else {
-                continue;
-            };
-            // What did the WebSocket response contain?
-            // It should either match the KittyCAD successful response schema, or the failed response schema.
-            match decode_websocket_text(&resp, cmd_id.into())? {
-                // Success!
-                Ok(OkWebSocketResponseData::Modeling { modeling_response }) => {
-                    return Ok(modeling_response);
-                }
-                // Success, but not a modeling response
-                Ok(_) => {}
-                // Failure
-                Err(e) => {
-                    return Err(RunCommandError::ModelingApiFailure {
-                        request_id: e.request_id,
-                        errors: e.errors,
-                    })
-                }
-            }
-        }
-        Err(RunCommandError::WebSocketClosed)
-    }
-}
-
-/// Given the text from a WebSocket, deserialize its JSON.
-/// Returns OK if the WebSocket's JSON represents a successful response.
-/// Returns an error if the WebSocket's JSON represented a failure response.
-fn decode_websocket_text(
-    text: &str,
-    request_id: Uuid,
-) -> Result<std::result::Result<OkWebSocketResponseData, FailureWebSocketResponse>, RunCommandError> {
-    let resp: WebSocketResponse = serde_json::from_str(text)?;
-    match resp {
-        WebSocketResponse::Success(s) => {
-            if s.request_id == Some(request_id) {
-                assert!(s.success);
-                Ok(Ok(s.resp))
-            } else {
-                Err(RunCommandError::WrongId)
-            }
-        }
-        WebSocketResponse::Failure(f) => {
-            assert!(!f.success);
-            Ok(Err(f))
-        }
-    }
-}
-
-/// Find the text in a WebSocket message, if there's any.
-fn text_from_ws(msg: WsMsg) -> Option<String> {
-    match msg {
-        WsMsg::Text(text) => Some(text),
-        _ => None,
+            .expect("Actor should never terminate");
+        rx.await.expect("Actor should never terminate")?;
+        let (tx, rx) = oneshot::channel();
+        self.actor_tx
+            .send(actor::Request::GetResponse(cmd_id, tx))
+            .await
+            .expect("Actor should never terminate");
+        let resp = rx.await.expect("Actor should never terminate")?;
+        Ok(resp)
     }
 }
 
@@ -175,4 +133,10 @@ pub enum RunCommandError {
     /// Received a response for an unexpected request ID.
     #[error("Received a response for an unexpected request ID")]
     WrongId,
+    /// Timed out waiting for a response.
+    #[error("Timed out waiting for a response")]
+    TimeOutWaitingForResponse,
+    /// Server returned the wrong type.
+    #[error("Server returned the wrong type")]
+    ServerSentWrongType,
 }
