@@ -281,7 +281,7 @@ pub struct ObjectBringToFront {
 
 /// Set the material properties of an object
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct ObjectSetMaterialParamsPBR {
+pub struct ObjectSetMaterialParamsPbr {
     /// Which object to change
     pub object_id: Uuid,
     /// Color of the new material
