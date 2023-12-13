@@ -421,7 +421,7 @@ impl<'de> ModelingCmdVariant<'de> for GetSketchModePlane {
     }
 }
 impl<'de> ModelingCmdVariant<'de> for EntityLinearPattern {
-    type Output = out::GetSketchModePlane;
+    type Output = out::EntityLinearPattern;
     fn into_enum(self) -> ModelingCmd {
         ModelingCmd::EntityLinearPattern(self)
     }
