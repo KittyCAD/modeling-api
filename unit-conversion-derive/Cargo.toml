@@ -12,10 +12,10 @@ license = "MIT"
 proc-macro = true
 
 [dependencies]
-syn = { version = "1.0.103", features = ["derive", "fold"] }
-quote = "1.0.28"
-proc-macro2 = "1.0.60"
 inflections = "1"
+proc-macro2 = "1.0.60"
+quote = "1.0.28"
+syn = { version = "1.0.103", features = ["derive", "fold"] }
 
 [dev-dependencies]
 pretty_assertions = "1"

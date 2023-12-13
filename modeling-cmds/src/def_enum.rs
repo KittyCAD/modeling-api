@@ -8,7 +8,7 @@ pub use crate::each_cmd::*;
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum ModelingCmd {
     /// Start a path.
-    StartPath,
+    StartPath(StartPath),
     /// Move the path's "pen".
     MovePathPen(MovePathPen),
     /// Extend a path by adding a new segment which starts at the path's "pen".

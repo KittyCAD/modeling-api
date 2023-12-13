@@ -1,23 +1,20 @@
 //! Use the KittyCAD modeling API to draw a cube and save it to a PNG.
-use std::{env, io::Cursor, time::Duration};
+use std::{env, io::Cursor};
 
 use color_eyre::{
-    eyre::{bail, Context, Error},
+    eyre::{bail, Context},
     Result,
 };
-use futures::{
-    stream::{SplitSink, SplitStream},
-    SinkExt, StreamExt,
-};
-use kittycad::types::{
-    FailureWebSocketResponse, ModelingCmd, OkModelingCmdResponse, OkWebSocketResponseData, PathSegment, Point3D,
-    SuccessWebSocketResponse, WebSocketRequest,
+use kittycad_modeling_cmds::{
+    id::ModelingCmdId,
+    ok_response::OkModelingCmdResponse,
+    shared::{PathSegment, Point3d},
+    ClosePath, ExtendPath, Extrude, MovePathPen, StartPath, TakeSnapshot,
 };
 use kittycad_modeling_session::{Session, SessionBuilder};
-use reqwest::Upgraded;
-use tokio::time::timeout;
-use tokio_tungstenite::{tungstenite::Message as WsMsg, WebSocketStream};
 use uuid::Uuid;
+
+const CUBE_WIDTH: f64 = 10.0;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -34,119 +31,108 @@ async fn main() -> Result<()> {
         unlocked_framerate: Some(false),
         video_res_height: Some(720),
         video_res_width: Some(1280),
+        buffer_reqs: None,
+        await_response_timeout: None,
     };
-    let session = Session::start(session_builder).await?;
-
-    // First, send all commands to the API, to draw a cube.
-    // Then, read all responses from the API, to download the cube as a PNG.
-    // draw_cube(write, 10.0).await?;
-    // export_png(read, img_output_path).await
-    Ok(())
-}
-
-/// Send modeling commands to the KittyCAD API.
-/// We're going to draw a cube and export it as a PNG.
-async fn draw_cube(mut write_to_ws: SplitSink<WebSocketStream<Upgraded>, WsMsg>, width: f64) -> Result<()> {
-    // All messages to the KittyCAD Modeling API will be sent over the WebSocket as Text.
-    // The text will contain JSON representing a `ModelingCmdReq`.
-    // This takes in a command and its ID, and makes a WebSocket message containing that command.
-    fn to_msg(cmd: ModelingCmd, cmd_id: Uuid) -> WsMsg {
-        WsMsg::Text(serde_json::to_string(&WebSocketRequest::ModelingCmdReq { cmd, cmd_id }).unwrap())
-    }
-
-    // Now the WebSocket is set up and ready to use!
-    // We can start sending commands.
+    let mut session = Session::start(session_builder)
+        .await
+        .context("could not establish session")?;
 
     // Create a new empty path.
     let path_id = Uuid::new_v4();
-    write_to_ws.send(to_msg(ModelingCmd::StartPath {}, path_id)).await?;
+    let path = path_id.into();
+    session
+        .run_command(path, StartPath {})
+        .await
+        .context("could not create path")?;
 
     // Add four lines to the path,
     // in the shape of a square.
     // First, start the path at the first corner.
-    let start = Point3D {
-        x: -width,
-        y: -width,
-        z: -width,
+    let start = Point3d {
+        x: -CUBE_WIDTH,
+        y: -CUBE_WIDTH,
+        z: -CUBE_WIDTH,
     };
-    write_to_ws
-        .send(to_msg(
-            ModelingCmd::MovePathPen {
-                path: path_id,
-                to: start.clone(),
-            },
-            Uuid::new_v4(),
-        ))
-        .await?;
+    session
+        .run_command(random_id(), MovePathPen { path, to: start })
+        .await
+        .context("could not move path pen to start")?;
 
     // Now extend the path to each corner, and back to the start.
     let points = [
-        Point3D {
-            x: width,
-            y: -width,
-            z: -width,
+        Point3d {
+            x: CUBE_WIDTH,
+            y: -CUBE_WIDTH,
+            z: -CUBE_WIDTH,
         },
-        Point3D {
-            x: width,
-            y: width,
-            z: -width,
+        Point3d {
+            x: CUBE_WIDTH,
+            y: CUBE_WIDTH,
+            z: -CUBE_WIDTH,
         },
-        Point3D {
-            x: -width,
-            y: width,
-            z: -width,
+        Point3d {
+            x: -CUBE_WIDTH,
+            y: CUBE_WIDTH,
+            z: -CUBE_WIDTH,
         },
         start,
     ];
     for point in points {
-        write_to_ws
-            .send(to_msg(
-                ModelingCmd::ExtendPath {
-                    path: path_id,
+        session
+            .run_command(
+                random_id(),
+                ExtendPath {
+                    path,
                     segment: PathSegment::Line {
                         end: point,
                         relative: false,
                     },
                 },
-                Uuid::new_v4(),
-            ))
-            .await?;
+            )
+            .await
+            .context("could not draw square")?;
     }
-
     // Extrude the square into a cube.
-    write_to_ws
-        .send(to_msg(ModelingCmd::ClosePath { path_id }, Uuid::new_v4()))
-        .await?;
-    write_to_ws
-        .send(to_msg(
-            ModelingCmd::Extrude {
+    session
+        .run_command(random_id(), ClosePath { path_id })
+        .await
+        .context("could not close square path")?;
+    session
+        .run_command(
+            random_id(),
+            Extrude {
                 cap: true,
-                distance: width * 2.0,
-                target: path_id,
+                distance: CUBE_WIDTH * 2.0,
+                target: path,
             },
-            Uuid::new_v4(),
-        ))
-        .await?;
-
-    // Export the model as a PNG.
-    write_to_ws
-        .send(to_msg(
-            ModelingCmd::TakeSnapshot {
-                format: kittycad::types::ImageFormat::Png,
+        )
+        .await
+        .context("could not extrude square into cube")?;
+    // Export model as a PNG.
+    let snapshot_resp = session
+        .run_command(
+            random_id(),
+            TakeSnapshot {
+                format: kittycad_modeling_cmds::ImageFormat::Png,
             },
-            Uuid::new_v4(),
-        ))
-        .await?;
+        )
+        .await
+        .context("could not get PNG snapshot")?;
 
-    // Finish sending
-    drop(write_to_ws);
+    // Save the PNG to disk.
+    match snapshot_resp {
+        OkModelingCmdResponse::TakeSnapshot(snap) => {
+            let mut img = image::io::Reader::new(Cursor::new(snap.contents));
+            img.set_format(image::ImageFormat::Png);
+            let img = img.decode().context("could not decode PNG bytes")?;
+            img.save(img_output_path).context("could not save PNG to disk")?;
+        }
+        other => bail!("Unexpected response: {other:?}"),
+    };
     Ok(())
 }
 
-fn save_image(contents: Vec<u8>, output_path: &str) -> Result<()> {
-    let mut img = image::io::Reader::new(Cursor::new(contents));
-    img.set_format(image::ImageFormat::Png);
-    let img = img.decode()?;
-    img.save(output_path)?;
-    Ok(())
+fn random_id() -> ModelingCmdId {
+    Uuid::new_v4().into()
 }
