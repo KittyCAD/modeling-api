@@ -159,6 +159,10 @@ pub enum ModelingCmd {
     CurveSetConstraint(CurveSetConstraint),
     /// Sketch on some entity (e.g. a plane, a face)
     EnableSketchMode(EnableSketchMode),
+    /// Set the material properties of an object
+    ObjectSetMaterialParamsPbr(ObjectSetMaterialParamsPbr),
+    /// What is the distance between these two entities?
+    EntityGetDistance(EntityGetDistance),
 }
 
 impl ModelingCmd {
