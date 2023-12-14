@@ -35,8 +35,13 @@ pub async fn start(
     'next_request: while let Some(req) = incoming.recv().await {
         match req {
             Request::SendModelingCmd(cmd, responder) => {
-                let ws_msg = WsMsg::Text(serde_json::to_string(&WebSocketRequest::ModelingCmdReq(cmd)).unwrap());
+                let ws_msg = WsMsg::Text(
+                    serde_json::to_string(&WebSocketRequest::ModelingCmdReq(cmd))
+                        .expect("ModelingCmdReq can always be serialized"),
+                );
                 let resp = write_to_ws.send(ws_msg).await.map_err(RunCommandError::WebSocketSend);
+                // If the send fails, it's because the caller dropped its end, so ignore the
+                // error because we're done with this request anyway.
                 let _ = responder.send(resp);
             }
             Request::GetResponse(cmd_id, responder) => {
@@ -61,6 +66,8 @@ pub async fn start(
                                 errors: e.errors,
                             }),
                         };
+                        // If the send fails, it's because the caller dropped its end, so ignore the
+                        // error because we're done with this request anyway.
                         let _ = responder.send(send_this_to_user);
                         // Finished this request! Actor is ready for the next request.
                         continue 'next_request;
@@ -68,8 +75,11 @@ pub async fn start(
                     // If not, get a response from the WebSocket.
                     // If we can't get any response, the WebSocket must have been closed.
                     let Some(msg) = read_from_ws.next().await else {
+                        // If the send fails, it's because the caller dropped its end, so ignore
+                        // the error because we're done with this request anyway.
                         let _ = responder.send(Err(RunCommandError::WebSocketClosed));
-                        // Probably no point getting another request, but may as well try.
+                        // Probably no point getting another request, but the user may try to,
+                        // so we should respect them.
                         continue 'next_request;
                     };
                     // Couldn't read from WebSocket? Try again.
@@ -90,7 +100,11 @@ pub async fn start(
                         continue;
                     }
                 }
-                let _ = responder.send(Err(RunCommandError::TimeOutWaitingForResponse));
+                // If the send fails, it's because the caller dropped its end, so cancel this request
+                // and wait for the next request.
+                if responder.send(Err(RunCommandError::TimeOutWaitingForResponse)).is_err() {
+                    continue 'next_request;
+                }
             }
         }
     }

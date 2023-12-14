@@ -92,14 +92,14 @@ impl Session {
         self.actor_tx
             .send(actor::Request::SendModelingCmd(ModelingCmdReq { cmd, cmd_id }, tx))
             .await
-            .expect("Actor should never terminate");
-        rx.await.expect("Actor should never terminate")?;
+            .map_err(|_| RunCommandError::ActorFailed)?;
+        rx.await.map_err(|_| RunCommandError::ActorFailed)??;
         let (tx, rx) = oneshot::channel();
         self.actor_tx
             .send(actor::Request::GetResponse(cmd_id, tx))
             .await
-            .expect("Actor should never terminate");
-        let resp = rx.await.expect("Actor should never terminate")?;
+            .map_err(|_| RunCommandError::ActorFailed)?;
+        let resp = rx.await.map_err(|_| RunCommandError::ActorFailed)??;
         Ok(resp)
     }
 }
@@ -139,4 +139,26 @@ pub enum RunCommandError {
     /// Server returned the wrong type.
     #[error("Server returned the wrong type")]
     ServerSentWrongType,
+    /// Actor has failed
+    #[error("Websocket actor has failed, restart the session")]
+    ActorFailed,
+}
+
+impl RunCommandError {
+    /// Does this error indicate that the session has become unhealthy and should be restarted
+    /// (i.e. ended and started again)?
+    pub fn should_end_session(&self) -> bool {
+        match self {
+            RunCommandError::WebSocketClosed => true,
+            RunCommandError::ActorFailed => true,
+            RunCommandError::ApiError(_) => false,
+            RunCommandError::InvalidRequestBody(_) => false,
+            RunCommandError::WebSocketSend(_) => false,
+            RunCommandError::WebSocketRecv(_) => false,
+            RunCommandError::ModelingApiFailure { .. } => false,
+            RunCommandError::WrongId => false,
+            RunCommandError::TimeOutWaitingForResponse => false,
+            RunCommandError::ServerSentWrongType => false,
+        }
+    }
 }
