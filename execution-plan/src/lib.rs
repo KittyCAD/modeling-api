@@ -139,6 +139,18 @@ impl ApiRequest {
                 let cmd = each_cmd::ExtendPath::from_values(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
+            "ClosePath" => {
+                let cmd = each_cmd::ClosePath::from_values(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
+            "Extrude" => {
+                let cmd = each_cmd::Extrude::from_values(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
+            "TakeSnapshot" => {
+                let cmd = each_cmd::TakeSnapshot::from_values(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
             _ => todo!(),
         };
         // Write out to memory.

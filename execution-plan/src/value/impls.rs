@@ -78,7 +78,7 @@ impl Value for OkModelingCmdResponse {
                 parts.extend(snap.into_parts());
                 parts
             }
-            _ => todo!(),
+            _ => todo!("Implement Value for more OkModelingCmdResponse variants"),
         }
     }
 
@@ -95,7 +95,7 @@ impl Value for OkModelingCmdResponse {
                     contents: contents.into(),
                 }))
             }
-            _ => todo!(),
+            _ => todo!("Implement Value for more OkModelingCmdResponse variants"),
         }
     }
 }

@@ -1,7 +1,7 @@
 use kittycad_modeling_cmds::{
     each_cmd::{MovePathPen, StartPath},
     id::ModelingCmdId,
-    ExtendPath, ModelingCmdVariant,
+    ClosePath, ExtendPath, Extrude, ModelingCmdVariant, TakeSnapshot,
 };
 use uuid::Uuid;
 
@@ -44,6 +44,44 @@ impl ApiEndpoint for ExtendPath {
             .map(ModelingCmdId::from)?;
         let segment = read(values.next(), mem)?;
         Ok(Self { path, segment })
+    }
+}
+
+impl ApiEndpoint for Extrude {
+    fn from_values<I>(values: &mut I, mem: &Memory) -> Result<Self>
+    where
+        I: Iterator<Item = Address>,
+    {
+        let target = read::<Primitive>(values.next(), mem)
+            .and_then(Uuid::try_from)
+            .map(ModelingCmdId)?;
+        let distance = read::<Primitive>(values.next(), mem).and_then(f64::try_from)?;
+        let cap = read::<Primitive>(values.next(), mem).and_then(bool::try_from)?;
+        Ok(Self { target, distance, cap })
+    }
+}
+
+impl ApiEndpoint for TakeSnapshot {
+    fn from_values<I>(values: &mut I, mem: &Memory) -> Result<Self>
+    where
+        I: Iterator<Item = Address>,
+    {
+        let format_str = read::<Primitive>(values.next(), mem).and_then(String::try_from)?;
+        let format = format_str.parse().map_err(|_| ExecutionError::InvalidEnumVariant {
+            expected_type: "image format".to_owned(),
+            actual: format_str,
+        })?;
+        Ok(Self { format })
+    }
+}
+
+impl ApiEndpoint for ClosePath {
+    fn from_values<I>(values: &mut I, mem: &Memory) -> Result<Self>
+    where
+        I: Iterator<Item = Address>,
+    {
+        let path_id = read::<Primitive>(values.next(), mem).and_then(Uuid::try_from)?;
+        Ok(Self { path_id })
     }
 }
 
