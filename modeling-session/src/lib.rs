@@ -82,7 +82,7 @@ impl Session {
         cmd: Cmd,
     ) -> Result<OkModelingCmdResponse, RunCommandError>
     where
-        Cmd: kittycad_modeling_cmds::ModelingCmdVariant<'de>,
+        Cmd: kittycad_modeling_cmds::ModelingCmdVariant,
     {
         // All messages to the KittyCAD Modeling API will be sent over the WebSocket as Text.
         // The text will contain JSON representing a `ModelingCmdReq`.
