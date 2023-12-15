@@ -1,8 +1,10 @@
-use kittycad_modeling_cmds::{id::ModelingCmdId, shared::Point3d, MovePathPen};
-use uuid::Uuid;
+use kittycad_modeling_cmds::{ok_response::OkModelingCmdResponse, output};
 
 use super::Value;
 use crate::{Address, ExecutionError, Primitive};
+
+const EMPTY: &str = "EMPTY";
+const TAKE_SNAPSHOT: &str = "TAKE_SNAPSHOT";
 
 impl<T> Value for kittycad_modeling_cmds::shared::Point3d<T>
 where
@@ -33,36 +35,48 @@ where
     }
 }
 
-const START_PATH: &str = "StartPath";
-const MOVE_PATH_PEN: &str = "MovePathPen";
-
-impl Value for MovePathPen {
+/// Layout:
+/// - One memory address to store the variant name
+/// - Following memory addresses to store the variant's single field.
+impl Value for OkModelingCmdResponse {
     fn into_parts(self) -> Vec<Primitive> {
-        let MovePathPen { path, to } = self;
-        let to = to.into_parts();
-        let mut vals = Vec::with_capacity(1 + to.len());
-        vals.push(Primitive::Uuid(path.into()));
-        vals.extend(to);
-        vals
+        match self {
+            OkModelingCmdResponse::Empty => vec![Primitive::String(EMPTY.to_string())],
+            OkModelingCmdResponse::TakeSnapshot(snap) => {
+                let mut parts = vec![Primitive::String(TAKE_SNAPSHOT.to_owned())];
+                parts.extend(snap.into_parts());
+                parts
+            }
+            _ => todo!(),
+        }
     }
 
     fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
-        let path = get_some(values, 0)?;
-        let path = Uuid::try_from(path)?;
-        let path = ModelingCmdId::from(path);
-        let to = Point3d::from_parts(&values[1..])?;
-        let params = MovePathPen { path, to };
-        Ok(params)
+        let variant_name: String = get_some(values, 0)?.try_into()?;
+        match variant_name.as_str() {
+            EMPTY => Ok(OkModelingCmdResponse::Empty),
+            TAKE_SNAPSHOT => {
+                let contents: Vec<u8> = get_some(values, 1)?.try_into()?;
+                Ok(OkModelingCmdResponse::TakeSnapshot(output::TakeSnapshot {
+                    contents: contents.into(),
+                }))
+            }
+            _ => todo!(),
+        }
     }
 }
 
-impl Value for kittycad_modeling_cmds::ok_response::OkModelingCmdResponse {
+/// Layout: A single memory address, storing the snapshot's bytes as a primitive.
+impl Value for output::TakeSnapshot {
     fn into_parts(self) -> Vec<Primitive> {
-        todo!()
+        vec![Primitive::Bytes(self.contents.into())]
     }
 
     fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
-        todo!()
+        let contents: Vec<u8> = get_some(values, 0)?.try_into()?;
+        Ok(Self {
+            contents: contents.into(),
+        })
     }
 }
 

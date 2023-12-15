@@ -8,7 +8,7 @@
 
 use std::fmt;
 
-use api_param::ApiEndpoint;
+use api_endpoint::ApiEndpoint;
 use kittycad_modeling_cmds::id::ModelingCmdId;
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 use serde::{Deserialize, Serialize};
@@ -16,7 +16,7 @@ use value::Value;
 
 use self::{arithmetic::Arithmetic, primitive::Primitive};
 
-mod api_param;
+mod api_endpoint;
 mod arithmetic;
 mod primitive;
 #[cfg(test)]
@@ -103,13 +103,14 @@ pub enum Instruction {
     },
 }
 
+/// Request sent to the KittyCAD API.
 #[derive(Serialize, Deserialize)]
 pub struct ApiRequest {
     /// Which ModelingCmd to call.
-    endpoint: &'static str,
+    endpoint: String,
     /// Which address should the response be stored in?
     /// If none, the response will be ignored.
-    store_response: Option<usize>,
+    store_response: Option<Address>,
     /// Look up each parameter at this address.
     arguments: Vec<Address>,
     /// The ID of this command.
@@ -124,10 +125,14 @@ impl ApiRequest {
             arguments,
             cmd_id,
         } = self;
-        let ep = match endpoint {
+        match endpoint.as_str() {
             "MovePathPen" => {
                 let cmd = kittycad_modeling_cmds::each_cmd::MovePathPen::from_values(arguments, mem)?;
-                let out = session.run_command(cmd_id, cmd).await?;
+                let output = session.run_command(cmd_id, cmd).await?;
+                // Write out to memory.
+                if let Some(output_address) = store_response {
+                    mem.set_composite(output, output_address);
+                }
             }
             _ => todo!(),
         };
@@ -183,11 +188,11 @@ impl Operand {
 }
 
 /// Execute the plan.
-pub fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: ModelingSession) -> Result<()> {
+pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: ModelingSession) -> Result<()> {
     for step in plan {
         match step {
             Instruction::ApiRequest(req) => {
-                req.execute(&mut session, mem);
+                req.execute(&mut session, mem).await?;
             }
             Instruction::Set { address, value } => {
                 mem.set(address, value);

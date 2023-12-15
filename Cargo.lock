@@ -1464,10 +1464,12 @@ name = "kittycad-execution-plan"
 version = "0.1.0"
 dependencies = [
  "bytes",
+ "kittycad",
  "kittycad-modeling-cmds",
  "kittycad-modeling-session",
  "serde",
  "thiserror",
+ "tokio",
  "uuid",
 ]
 

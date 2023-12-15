@@ -9,6 +9,7 @@ pub enum Primitive {
     String(String),
     NumericValue(NumericPrimitive),
     Uuid(Uuid),
+    Bytes(Vec<u8>),
 }
 
 impl From<Uuid> for Primitive {
@@ -26,6 +27,12 @@ impl From<String> for Primitive {
 impl From<f64> for Primitive {
     fn from(value: f64) -> Self {
         Self::NumericValue(NumericPrimitive::Float(value))
+    }
+}
+
+impl From<Vec<u8>> for Primitive {
+    fn from(value: Vec<u8>) -> Self {
+        Self::Bytes(value)
     }
 }
 
@@ -68,6 +75,21 @@ impl TryFrom<Primitive> for f64 {
         } else {
             Err(ExecutionError::MemoryWrongType {
                 expected: "float",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
+impl TryFrom<Primitive> for Vec<u8> {
+    type Error = ExecutionError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::Bytes(x) = value {
+            Ok(x)
+        } else {
+            Err(ExecutionError::MemoryWrongType {
+                expected: "bytes",
                 actual: format!("{value:?}"),
             })
         }

@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 use crate::{primitive::Primitive, value::Value, Address, ExecutionError, Memory, Result};
 
-pub trait ApiEndpoint: ModelingCmdVariant<'static> + Sized {
+pub trait ApiEndpoint: ModelingCmdVariant + Sized {
     fn from_values(values: Vec<Address>, mem: &Memory) -> Result<Self>;
 }
 
@@ -20,9 +20,9 @@ impl ApiEndpoint for StartPath {
 impl ApiEndpoint for MovePathPen {
     fn from_values(values: Vec<Address>, mem: &Memory) -> Result<Self> {
         let mut values = values.into_iter();
-        let path: Uuid = read::<Primitive>(values.next(), 2, &mem)?.try_into()?;
+        let path: Uuid = read::<Primitive>(values.next(), 2, mem)?.try_into()?;
         let path = ModelingCmdId::from(path);
-        let to = read(values.next(), 2, &mem)?;
+        let to = read(values.next(), 2, mem)?;
         Ok(Self { path, to })
     }
 }

@@ -1,36 +1,58 @@
-use kittycad_modeling_cmds::{id::ModelingCmdId, shared::Point3d, ModelingCmd, MovePathPen};
-use uuid::Uuid;
+use std::env;
+
+use kittycad_modeling_cmds::shared::Point3d;
+use kittycad_modeling_session::{Session, SessionBuilder};
 
 use super::*;
 
-#[test]
-fn write_addr_to_memory() {
+async fn test_client() -> Session {
+    let kittycad_api_token = env::var("KITTYCAD_API_TOKEN").expect("You must set $KITTYCAD_API_TOKEN");
+    let kittycad_api_client = kittycad::Client::new(kittycad_api_token);
+    let session_builder = SessionBuilder {
+        client: kittycad_api_client,
+        fps: Some(10),
+        unlocked_framerate: Some(false),
+        video_res_height: Some(720),
+        video_res_width: Some(1280),
+        buffer_reqs: None,
+        await_response_timeout: None,
+    };
+    Session::start(session_builder)
+        .await
+        .expect("could not connect to KittyCAD engine")
+}
+
+#[tokio::test]
+async fn write_addr_to_memory() {
     let plan = vec![Instruction::Set {
         address: Address(0),
         value: 3.4.into(),
     }];
     let mut mem = Memory::default();
-    execute(&mut mem, plan).unwrap();
+    let client = test_client().await;
+    execute(&mut mem, plan, client).await.expect("failed to execute plan");
     assert_eq!(mem.get(&Address(0)), Some(&3.4.into()))
 }
 
-#[test]
-fn add_literals() {
-    let plan = vec![Instruction::Arithmetic {
-        arithmetic: Arithmetic {
-            operation: Operation::Add,
-            operand0: Operand::Literal(3.into()),
-            operand1: Operand::Literal(2.into()),
-        },
-        destination: Address(1),
-    }];
+#[tokio::test]
+async fn add_literals() {
+    let plan =
+        vec![Instruction::Arithmetic {
+            arithmetic: Arithmetic {
+                operation: Operation::Add,
+                operand0: Operand::Literal(3.into()),
+                operand1: Operand::Literal(2.into()),
+            },
+            destination: Address(1),
+        }];
     let mut mem = Memory::default();
-    execute(&mut mem, plan).unwrap();
+    let client = test_client().await;
+    execute(&mut mem, plan, client).await.expect("failed to execute plan");
     assert_eq!(mem.get(&Address(1)), Some(&5.into()))
 }
 
-#[test]
-fn add_literal_to_reference() {
+#[tokio::test]
+async fn add_literal_to_reference() {
     let plan = vec![
         // Memory addr 0 contains 450
         Instruction::Set {
@@ -49,12 +71,13 @@ fn add_literal_to_reference() {
     ];
     // 20 + 450 = 470
     let mut mem = Memory::default();
-    execute(&mut mem, plan).unwrap();
+    let client = test_client().await;
+    execute(&mut mem, plan, client).await.expect("failed to execute plan");
     assert_eq!(mem.get(&Address(1)), Some(&470.into()))
 }
 
-#[test]
-fn add_to_composite_value() {
+#[tokio::test]
+async fn add_to_composite_value() {
     let mut mem = Memory::default();
 
     // Write a point to memory.
@@ -69,6 +92,7 @@ fn add_to_composite_value() {
     assert_eq!(mem.0[1], Some(3.0.into()));
     assert_eq!(mem.0[2], Some(4.0.into()));
 
+    let client = test_client().await;
     // Update the point's x-value in memory.
     execute(
         &mut mem,
@@ -80,7 +104,9 @@ fn add_to_composite_value() {
             },
             destination: start_addr,
         }],
+        client,
     )
+    .await
     .unwrap();
 
     // Read the point out of memory, validate it.
@@ -93,26 +119,4 @@ fn add_to_composite_value() {
             z: 4.0
         }
     )
-}
-
-#[test]
-fn api_types() {
-    let mut mem = Memory::default();
-    let start_addr = Address(0);
-    let id = ModelingCmdId(Uuid::parse_str("6306afa2-3999-4b03-af30-1efad7cdc6fc").unwrap());
-    let p = Point3d {
-        x: 2.0f64,
-        y: 3.0,
-        z: 4.0,
-    };
-    let val_in = ModelingCmd::MovePathPen(MovePathPen { path: id, to: p });
-    mem.set_composite(val_in, start_addr);
-    let val_out: ModelingCmd = mem.get_composite(start_addr).unwrap();
-    match val_out {
-        ModelingCmd::MovePathPen(params) => {
-            assert_eq!(params.to, p);
-            assert_eq!(params.path, id);
-        }
-        _ => panic!("unexpected ModelingCmd variant"),
-    }
 }
