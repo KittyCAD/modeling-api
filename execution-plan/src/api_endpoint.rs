@@ -27,9 +27,9 @@ impl ApiEndpoint for MovePathPen {
     where
         I: Iterator<Item = Address>,
     {
-        let path: Uuid = read::<Primitive>(values.next(), 2, mem)?.try_into()?;
+        let path: Uuid = read::<Primitive>(values.next(), mem)?.try_into()?;
         let path = ModelingCmdId::from(path);
-        let to = read(values.next(), 2, mem)?;
+        let to = read(values.next(), mem)?;
         Ok(Self { path, to })
     }
 }
@@ -39,15 +39,15 @@ impl ApiEndpoint for ExtendPath {
     where
         I: Iterator<Item = Address>,
     {
-        let path = read::<Primitive>(values.next(), 2, mem)
+        let path = read::<Primitive>(values.next(), mem)
             .and_then(Uuid::try_from)
             .map(ModelingCmdId::from)?;
-        let segment = read(values.next(), 2, mem)?;
+        let segment = read(values.next(), mem)?;
         Ok(Self { path, segment })
     }
 }
 
-fn read<T: Value>(start_addr: Option<Address>, expected_num: usize, mem: &Memory) -> Result<T> {
-    let start_addr = start_addr.ok_or(ExecutionError::MemoryWrongSize { expected: expected_num })?;
+fn read<T: Value>(start_addr: Option<Address>, mem: &Memory) -> Result<T> {
+    let start_addr = start_addr.ok_or(ExecutionError::MemoryWrongSize)?;
     mem.get_composite(start_addr)
 }

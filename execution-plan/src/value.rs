@@ -9,5 +9,7 @@ pub trait Value: Sized {
     /// Store the value in memory.
     fn into_parts(self) -> Vec<Primitive>;
     /// Read the value from memory.
-    fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError>;
+    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+    where
+        I: Iterator<Item = Option<Primitive>>;
 }

@@ -161,9 +161,14 @@ impl crate::value::Value for Primitive {
         vec![self]
     }
 
-    fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
-        let v = values.get(0).ok_or(ExecutionError::MemoryWrongSize { expected: 1 })?;
-        v.to_owned().ok_or(ExecutionError::MemoryWrongSize { expected: 1 })
+    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+    where
+        I: Iterator<Item = Option<Primitive>>,
+    {
+        values
+            .next()
+            .and_then(|v| v.to_owned())
+            .ok_or(ExecutionError::MemoryWrongSize)
     }
 }
 

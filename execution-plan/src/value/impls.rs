@@ -7,11 +7,11 @@
 use kittycad_modeling_cmds::{
     ok_response::OkModelingCmdResponse,
     output,
-    shared::{PathSegment, Point2d, Point3d},
+    shared::{Angle, PathSegment, Point2d, Point3d},
 };
 
 use super::Value;
-use crate::{Address, ExecutionError, Primitive};
+use crate::{ExecutionError, Primitive};
 
 const EMPTY: &str = "EMPTY";
 const TAKE_SNAPSHOT: &str = "TAKE_SNAPSHOT";
@@ -20,6 +20,10 @@ const LINE: &str = "line";
 const TAN_ARC: &str = "tan_arc";
 const TAN_ARC_TO: &str = "tan_arc_to";
 const BEZIER: &str = "bezier";
+
+fn err() -> ExecutionError {
+    ExecutionError::MemoryWrongSize
+}
 
 impl<T> Value for Point2d<T>
 where
@@ -31,17 +35,12 @@ where
         points.into_iter().map(|component| component.into()).collect()
     }
 
-    fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
-        let err = || ExecutionError::MemoryWrongSize { expected: 2 };
-        let [x, y] = [0, 1].map(|n| values.get(n).ok_or(err()));
-        let x = x?
-            .to_owned()
-            .ok_or(ExecutionError::MemoryWrongSize { expected: 2 })?
-            .try_into()?;
-        let y = y?
-            .to_owned()
-            .ok_or(ExecutionError::MemoryWrongSize { expected: 2 })?
-            .try_into()?;
+    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+    where
+        I: Iterator<Item = Option<Primitive>>,
+    {
+        let x = values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()?;
+        let y = values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()?;
         Ok(Self { x, y })
     }
 }
@@ -56,21 +55,13 @@ where
         points.into_iter().map(|component| component.into()).collect()
     }
 
-    fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
-        let err = || ExecutionError::MemoryWrongSize { expected: 3 };
-        let [x, y, z] = [0, 1, 2].map(|n| values.get(n).ok_or(err()));
-        let x = x?
-            .to_owned()
-            .ok_or(ExecutionError::MemoryWrongSize { expected: 3 })?
-            .try_into()?;
-        let y = y?
-            .to_owned()
-            .ok_or(ExecutionError::MemoryWrongSize { expected: 3 })?
-            .try_into()?;
-        let z = z?
-            .to_owned()
-            .ok_or(ExecutionError::MemoryWrongSize { expected: 3 })?
-            .try_into()?;
+    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+    where
+        I: Iterator<Item = Option<Primitive>>,
+    {
+        let x = values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()?;
+        let y = values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()?;
+        let z = values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()?;
         Ok(Self { x, y, z })
     }
 }
@@ -91,12 +82,15 @@ impl Value for OkModelingCmdResponse {
         }
     }
 
-    fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
-        let variant_name: String = get_some(values, 0)?.try_into()?;
+    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+    where
+        I: Iterator<Item = Option<Primitive>>,
+    {
+        let variant_name: String = next(values)?;
         match variant_name.as_str() {
             EMPTY => Ok(OkModelingCmdResponse::Empty),
             TAKE_SNAPSHOT => {
-                let contents: Vec<u8> = get_some(values, 1)?.try_into()?;
+                let contents: Vec<u8> = next(values)?;
                 Ok(OkModelingCmdResponse::TakeSnapshot(output::TakeSnapshot {
                     contents: contents.into(),
                 }))
@@ -112,19 +106,27 @@ impl Value for output::TakeSnapshot {
         vec![Primitive::Bytes(self.contents.into())]
     }
 
-    fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
-        let contents: Vec<u8> = get_some(values, 0)?.try_into()?;
+    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+    where
+        I: Iterator<Item = Option<Primitive>>,
+    {
+        let contents: Vec<u8> = next(values)?;
         Ok(Self {
             contents: contents.into(),
         })
     }
 }
 
-fn get_some(values: &[Option<Primitive>], i: usize) -> Result<Primitive, ExecutionError> {
-    let addr = Address(0); // TODO: pass the `start` addr in
-    let v = values.get(i).ok_or(ExecutionError::MemoryEmpty { addr })?.to_owned();
-    let v = v.ok_or(ExecutionError::MemoryEmpty { addr })?.to_owned();
-    Ok(v)
+/// Read the next primitive.
+/// If it's
+fn next<I, T>(values: &mut I) -> Result<T, ExecutionError>
+where
+    I: Iterator<Item = Option<Primitive>>,
+    T: TryFrom<Primitive, Error = ExecutionError>,
+{
+    let v = values.next().ok_or_else(err)?;
+    let v = v.ok_or_else(err)?;
+    T::try_from(v)
 }
 
 /// Layout:
@@ -193,25 +195,59 @@ impl Value for PathSegment {
         parts
     }
 
-    fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
-        let variant_name: String = get_some(values, 0)?.try_into()?;
+    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+    where
+        I: Iterator<Item = Option<Primitive>>,
+    {
+        let variant_name: String = next(values)?;
         match variant_name.as_str() {
             LINE => {
                 let end = Point3d::from_parts(values)?;
-                let relative = get_some(values, 1)?.try_into()?;
+                let relative = next(values)?;
                 Ok(Self::Line { end, relative })
             }
             ARC => {
-                todo!()
+                let center = Point2d::from_parts(values)?;
+                let radius = Primitive::from_parts(values)?.try_into()?;
+                let start = Primitive::from_parts(values)?.try_into()?;
+                let end = Primitive::from_parts(values)?.try_into()?;
+                let relative = Primitive::from_parts(values)?.try_into()?;
+                Ok(Self::Arc {
+                    center,
+                    radius,
+                    start,
+                    end,
+                    relative,
+                })
             }
             BEZIER => {
-                todo!()
+                let control1 = Point3d::from_parts(values)?;
+                let control2 = Point3d::from_parts(values)?;
+                let end = Point3d::from_parts(values)?;
+                let relative = Primitive::from_parts(values)?.try_into()?;
+                Ok(Self::Bezier {
+                    control1,
+                    control2,
+                    end,
+                    relative,
+                })
             }
             TAN_ARC => {
-                todo!()
+                let radius = Primitive::from_parts(values).and_then(f64::try_from)?;
+                let offset = Primitive::from_parts(values).and_then(Angle::try_from)?;
+                Ok(Self::TangentialArc { radius, offset })
             }
             TAN_ARC_TO => {
-                todo!()
+                let to = Point3d::from_parts(values)?;
+                let angle_snap_increment = if let Some(Some(primitive)) = values.next() {
+                    Some(Angle::try_from(primitive)?)
+                } else {
+                    None
+                };
+                Ok(Self::TangentialArcTo {
+                    to,
+                    angle_snap_increment,
+                })
             }
             other => Err(ExecutionError::InvalidEnumVariant {
                 expected_type: "line segment".to_owned(),

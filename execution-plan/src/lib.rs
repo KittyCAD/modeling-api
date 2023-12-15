@@ -9,7 +9,7 @@
 use std::fmt;
 
 use api_endpoint::ApiEndpoint;
-use kittycad_modeling_cmds::id::ModelingCmdId;
+use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 use serde::{Deserialize, Serialize};
 use value::Value;
@@ -77,8 +77,8 @@ impl Memory {
     /// Get a value value (i.e. a value which takes up multiple addresses in memory).
     /// Its parts are stored in consecutive memory addresses starting at `start`.
     pub fn get_composite<T: Value>(&self, start: Address) -> Result<T> {
-        let values = &self.0[start.0..];
-        T::from_parts(values)
+        let mut values = self.0.iter().skip(start.0).cloned();
+        T::from_parts(&mut values)
     }
 }
 
@@ -127,8 +127,16 @@ impl ApiRequest {
         } = self;
         let mut arguments = arguments.into_iter();
         let output = match endpoint.as_str() {
+            "StartPath" => {
+                let cmd = each_cmd::StartPath::from_values(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
             "MovePathPen" => {
-                let cmd = kittycad_modeling_cmds::each_cmd::MovePathPen::from_values(&mut arguments, mem)?;
+                let cmd = each_cmd::MovePathPen::from_values(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
+            "ExtendPath" => {
+                let cmd = each_cmd::ExtendPath::from_values(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
             _ => todo!(),
@@ -238,11 +246,8 @@ pub enum ExecutionError {
         actual: String,
     },
     /// Memory address was not set.
-    #[error("Wanted {expected} values but did not get enough")]
-    MemoryWrongSize {
-        /// How many values were expected
-        expected: usize,
-    },
+    #[error("Tried to read from empty memory address")]
+    MemoryWrongSize,
     /// You tried to call a KittyCAD endpoint that doesn't exist or isn't implemented.
     #[error("No endpoint {name} recognized")]
     UnrecognizedEndpoint {
