@@ -1,3 +1,4 @@
+use kittycad_modeling_cmds::shared::Angle;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -10,6 +11,14 @@ pub enum Primitive {
     NumericValue(NumericPrimitive),
     Uuid(Uuid),
     Bytes(Vec<u8>),
+    Bool(bool),
+    Nil,
+}
+
+impl From<bool> for Primitive {
+    fn from(value: bool) -> Self {
+        Self::Bool(value)
+    }
 }
 
 impl From<Uuid> for Primitive {
@@ -27,6 +36,13 @@ impl From<String> for Primitive {
 impl From<f64> for Primitive {
     fn from(value: f64) -> Self {
         Self::NumericValue(NumericPrimitive::Float(value))
+    }
+}
+
+/// Angle is always stored as f64 degrees.
+impl From<Angle> for Primitive {
+    fn from(value: Angle) -> Self {
+        Self::NumericValue(NumericPrimitive::Float(value.to_degrees()))
     }
 }
 
@@ -66,6 +82,22 @@ impl TryFrom<Primitive> for Uuid {
     }
 }
 
+/// Angle is always stored as f64 degrees.
+impl TryFrom<Primitive> for Angle {
+    type Error = ExecutionError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::NumericValue(x) = value {
+            Ok(Angle::from_degrees(x.into()))
+        } else {
+            Err(ExecutionError::MemoryWrongType {
+                expected: "number",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
 impl TryFrom<Primitive> for f64 {
     type Error = ExecutionError;
 
@@ -96,6 +128,21 @@ impl TryFrom<Primitive> for Vec<u8> {
     }
 }
 
+impl TryFrom<Primitive> for bool {
+    type Error = ExecutionError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::Bool(x) = value {
+            Ok(x)
+        } else {
+            Err(ExecutionError::MemoryWrongType {
+                expected: "bool",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
 #[cfg(test)]
 impl From<usize> for Primitive {
     fn from(value: usize) -> Self {
@@ -117,5 +164,14 @@ impl crate::value::Value for Primitive {
     fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
         let v = values.get(0).ok_or(ExecutionError::MemoryWrongSize { expected: 1 })?;
         v.to_owned().ok_or(ExecutionError::MemoryWrongSize { expected: 1 })
+    }
+}
+
+impl From<NumericPrimitive> for f64 {
+    fn from(value: NumericPrimitive) -> Self {
+        match value {
+            NumericPrimitive::Integer(x) => x as f64,
+            NumericPrimitive::Float(x) => x,
+        }
     }
 }

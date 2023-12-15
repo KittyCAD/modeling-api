@@ -216,24 +216,10 @@ pub enum PathSegment {
         center: Point2d<f64>,
         /// Radius of the circle
         radius: f64,
-        /// Start of the arc along circle's perimeter, in degrees.
-        /// Deprecated: use `start` instead.
-        #[deprecated(note = "use `start` instead, because it allows either degrees or radians")]
-        #[serde(rename = "angle_start")]
-        degrees_start: f64,
-        /// End of the arc along circle's perimeter, in degrees.
-        /// Deprecated: use `end` instead.
-        #[deprecated(note = "use `end` instead, because it allows either degrees or radians")]
-        #[serde(rename = "angle_end")]
-        degrees_end: f64,
         /// Start of the arc along circle's perimeter.
-        /// If not given, this will use `degrees_start` instead.
-        #[serde(default)]
-        start: Option<Angle>,
+        start: Angle,
         /// End of the arc along circle's perimeter.
-        /// If not given, this will use `degrees_end` instead.
-        #[serde(default)]
-        end: Option<Angle>,
+        end: Angle,
         ///Whether or not this arc is a relative offset
         relative: bool,
     },

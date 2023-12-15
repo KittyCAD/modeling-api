@@ -125,17 +125,18 @@ impl ApiRequest {
             arguments,
             cmd_id,
         } = self;
-        match endpoint.as_str() {
+        let mut arguments = arguments.into_iter();
+        let output = match endpoint.as_str() {
             "MovePathPen" => {
-                let cmd = kittycad_modeling_cmds::each_cmd::MovePathPen::from_values(arguments, mem)?;
-                let output = session.run_command(cmd_id, cmd).await?;
-                // Write out to memory.
-                if let Some(output_address) = store_response {
-                    mem.set_composite(output, output_address);
-                }
+                let cmd = kittycad_modeling_cmds::each_cmd::MovePathPen::from_values(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
             }
             _ => todo!(),
         };
+        // Write out to memory.
+        if let Some(output_address) = store_response {
+            mem.set_composite(output, output_address);
+        }
         Ok(())
     }
 }
@@ -251,4 +252,12 @@ pub enum ExecutionError {
     /// Error running a modeling command.
     #[error("Error sending command to API: {0}")]
     ModelingApiError(#[from] RunCommandError),
+    /// When trying to read an enum from memory, found a variant tag which is not valid for this enum.
+    #[error("Found an unexpected tag '{actual}' when trying to read an enum of type {expected_type} from memory")]
+    InvalidEnumVariant {
+        /// What type of enum was being read from memory.
+        expected_type: String,
+        /// The actual enum tag found in memory.
+        actual: String,
+    },
 }
