@@ -2,7 +2,7 @@ use crate::{each_cmd::*, output as out, ModelingCmd, ModelingCmdVariant};
 
 macro_rules! impl_variant_output {
     ($struct:ident) => {
-        impl<'de> ModelingCmdVariant<'de> for $struct {
+        impl ModelingCmdVariant for $struct {
             type Output = out::$struct;
             fn into_enum(self) -> ModelingCmd {
                 ModelingCmd::$struct(self)
@@ -16,7 +16,7 @@ macro_rules! impl_variant_output {
 
 macro_rules! impl_variant_empty {
     ($struct:ident) => {
-        impl<'de> ModelingCmdVariant<'de> for $struct {
+        impl ModelingCmdVariant for $struct {
             type Output = ();
             fn into_enum(self) -> ModelingCmd {
                 ModelingCmd::$struct(self)
