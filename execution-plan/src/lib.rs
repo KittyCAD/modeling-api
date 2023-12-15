@@ -6,12 +6,17 @@
 //! You can think of it as a domain-specific language for making KittyCAD API calls and using
 //! the results to make other API calls.
 
-use self::arithmetic::Arithmetic;
-use self::primitive::Primitive;
-use serde::{Deserialize, Serialize};
 use std::fmt;
+
+use api_param::ApiEndpoint;
+use kittycad_modeling_cmds::id::ModelingCmdId;
+use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
+use serde::{Deserialize, Serialize};
 use value::Value;
 
+use self::{arithmetic::Arithmetic, primitive::Primitive};
+
+mod api_param;
 mod arithmetic;
 mod primitive;
 #[cfg(test)]
@@ -81,15 +86,7 @@ impl Memory {
 #[derive(Serialize, Deserialize)]
 pub enum Instruction {
     /// Call the KittyCAD API.
-    ApiRequest {
-        /// Which ModelingCmd to call.
-        /// It's a value value starting at the given address.
-        endpoint: Address,
-        /// Which address should the response be stored in?
-        store_response: Option<usize>,
-        /// Look up each API request in this register number.
-        arguments: Vec<Address>,
-    },
+    ApiRequest(ApiRequest),
     /// Set a value in memory.
     Set {
         /// Which memory address to set.
@@ -104,6 +101,38 @@ pub enum Instruction {
         /// Write the output to this memory address.
         destination: Address,
     },
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct ApiRequest {
+    /// Which ModelingCmd to call.
+    endpoint: &'static str,
+    /// Which address should the response be stored in?
+    /// If none, the response will be ignored.
+    store_response: Option<usize>,
+    /// Look up each parameter at this address.
+    arguments: Vec<Address>,
+    /// The ID of this command.
+    cmd_id: ModelingCmdId,
+}
+
+impl ApiRequest {
+    async fn execute(self, session: &mut ModelingSession, mem: &mut Memory) -> Result<()> {
+        let Self {
+            endpoint,
+            store_response,
+            arguments,
+            cmd_id,
+        } = self;
+        let ep = match endpoint {
+            "MovePathPen" => {
+                let cmd = kittycad_modeling_cmds::each_cmd::MovePathPen::from_values(arguments, mem)?;
+                let out = session.run_command(cmd_id, cmd).await?;
+            }
+            _ => todo!(),
+        };
+        Ok(())
+    }
 }
 
 /// Operations that can be applied to values in memory.
@@ -154,10 +183,12 @@ impl Operand {
 }
 
 /// Execute the plan.
-pub fn execute(mem: &mut Memory, plan: Vec<Instruction>) -> Result<()> {
+pub fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: ModelingSession) -> Result<()> {
     for step in plan {
         match step {
-            Instruction::ApiRequest { .. } => todo!("Execute API calls"),
+            Instruction::ApiRequest(req) => {
+                req.execute(&mut session, mem);
+            }
             Instruction::Set { address, value } => {
                 mem.set(address, value);
             }
@@ -176,7 +207,7 @@ pub fn execute(mem: &mut Memory, plan: Vec<Instruction>) -> Result<()> {
 type Result<T> = std::result::Result<T, ExecutionError>;
 
 /// Errors that could occur when executing a KittyCAD execution plan.
-#[derive(Debug, thiserror::Error, Clone)]
+#[derive(Debug, thiserror::Error)]
 pub enum ExecutionError {
     /// Memory address was not set.
     #[error("Memory address {addr} was not set")]
@@ -212,4 +243,7 @@ pub enum ExecutionError {
         /// Endpoint name being attempted.
         name: String,
     },
+    /// Error running a modeling command.
+    #[error("Error sending command to API: {0}")]
+    ModelingApiError(#[from] RunCommandError),
 }

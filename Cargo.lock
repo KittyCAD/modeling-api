@@ -1464,7 +1464,8 @@ name = "kittycad-execution-plan"
 version = "0.1.0"
 dependencies = [
  "bytes",
- "kittycad-modeling-cmds 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
+ "kittycad-modeling-cmds",
+ "kittycad-modeling-session",
  "serde",
  "thiserror",
  "uuid",
@@ -1498,30 +1499,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "kittycad-modeling-cmds"
-version = "0.1.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fb3b5710639ea3000da0c11844d16d1371f82f7a20340ea887ac06ecf8d3bc5"
-dependencies = [
- "anyhow",
- "chrono",
- "data-encoding",
- "diesel_derives",
- "enum-iterator",
- "enum-iterator-derive",
- "euler",
- "http 0.2.11",
- "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "measurements",
- "parse-display",
- "parse-display-derive",
- "schemars",
- "serde",
- "serde_bytes",
- "uuid",
-]
-
-[[package]]
 name = "kittycad-modeling-session"
 version = "0.1.0"
 dependencies = [
@@ -1529,7 +1506,7 @@ dependencies = [
  "futures",
  "image",
  "kittycad",
- "kittycad-modeling-cmds 0.1.7",
+ "kittycad-modeling-cmds",
  "reqwest",
  "serde_json",
  "thiserror",

@@ -1,9 +1,8 @@
 use kittycad_modeling_cmds::{id::ModelingCmdId, shared::Point3d, MovePathPen};
 use uuid::Uuid;
 
-use crate::{Address, ExecutionError, Primitive};
-
 use super::Value;
+use crate::{Address, ExecutionError, Primitive};
 
 impl<T> Value for kittycad_modeling_cmds::shared::Point3d<T>
 where
@@ -16,11 +15,20 @@ where
     }
 
     fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
-        let err = ExecutionError::MemoryWrongSize { expected: 3 };
-        let [x, y, z] = [0, 1, 2].map(|n| values.get(n).ok_or(err.clone()));
-        let x = x?.to_owned().ok_or(err.clone())?.try_into()?;
-        let y = y?.to_owned().ok_or(err.clone())?.try_into()?;
-        let z = z?.to_owned().ok_or(err.clone())?.try_into()?;
+        let err = || ExecutionError::MemoryWrongSize { expected: 3 };
+        let [x, y, z] = [0, 1, 2].map(|n| values.get(n).ok_or(err()));
+        let x = x?
+            .to_owned()
+            .ok_or(ExecutionError::MemoryWrongSize { expected: 3 })?
+            .try_into()?;
+        let y = y?
+            .to_owned()
+            .ok_or(ExecutionError::MemoryWrongSize { expected: 3 })?
+            .try_into()?;
+        let z = z?
+            .to_owned()
+            .ok_or(ExecutionError::MemoryWrongSize { expected: 3 })?
+            .try_into()?;
         Ok(Self { x, y, z })
     }
 }
@@ -48,45 +56,13 @@ impl Value for MovePathPen {
     }
 }
 
-/// Memory layout for modeling commands:
-/// Field 0 is the command's name.
-/// Fields 1 onwards are the command's fields.
-impl Value for kittycad_modeling_cmds::ModelingCmd {
+impl Value for kittycad_modeling_cmds::ok_response::OkModelingCmdResponse {
     fn into_parts(self) -> Vec<Primitive> {
-        let (endpoint_name, params) = match self {
-            kittycad_modeling_cmds::ModelingCmd::StartPath => (START_PATH, vec![]),
-            kittycad_modeling_cmds::ModelingCmd::MovePathPen(MovePathPen { path, to }) => {
-                let to = to.into_parts();
-                let mut vals = Vec::with_capacity(1 + to.len());
-                vals.push(Primitive::Uuid(path.into()));
-                vals.extend(to);
-                (MOVE_PATH_PEN, vals)
-            }
-            _ => todo!(),
-        };
-        let mut out = Vec::with_capacity(params.len() + 1);
-        out.push(endpoint_name.to_owned().into());
-        out.extend(params);
-        out
+        todo!()
     }
 
     fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
-        // Check the array has an element at index 0
-        let first_memory = values
-            .get(0)
-            .ok_or(ExecutionError::MemoryWrongSize { expected: 1 })?
-            .to_owned();
-        // The element should be Some
-        let first_memory = first_memory.ok_or(ExecutionError::MemoryWrongSize { expected: 1 })?;
-        let endpoint_name: String = first_memory.try_into()?;
-        match endpoint_name.as_str() {
-            START_PATH => Ok(Self::StartPath),
-            MOVE_PATH_PEN => {
-                let params = MovePathPen::from_parts(&values[1..])?;
-                Ok(Self::MovePathPen(params))
-            }
-            other => Err(ExecutionError::UnrecognizedEndpoint { name: other.to_owned() }),
-        }
+        todo!()
     }
 }
 

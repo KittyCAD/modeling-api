@@ -1,6 +1,7 @@
-use crate::ExecutionError;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+
+use crate::ExecutionError;
 
 /// A value stored in KCEP program memory.
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
@@ -92,10 +93,7 @@ impl crate::value::Value for Primitive {
     }
 
     fn from_parts(values: &[Option<Primitive>]) -> Result<Self, ExecutionError> {
-        let v = values
-            .get(0)
-            .ok_or(ExecutionError::MemoryWrongSize { expected: 1 })?;
-        v.to_owned()
-            .ok_or(ExecutionError::MemoryWrongSize { expected: 1 })
+        let v = values.get(0).ok_or(ExecutionError::MemoryWrongSize { expected: 1 })?;
+        v.to_owned().ok_or(ExecutionError::MemoryWrongSize { expected: 1 })
     }
 }
