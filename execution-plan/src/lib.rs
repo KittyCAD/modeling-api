@@ -149,27 +149,27 @@ impl ApiRequest {
         let mut arguments = arguments.into_iter();
         let output = match endpoint {
             Endpoint::StartPath => {
-                let cmd = each_cmd::StartPath::from_values(&mut arguments, mem)?;
+                let cmd = each_cmd::StartPath::from_memory(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::MovePathPen => {
-                let cmd = each_cmd::MovePathPen::from_values(&mut arguments, mem)?;
+                let cmd = each_cmd::MovePathPen::from_memory(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::ExtendPath => {
-                let cmd = each_cmd::ExtendPath::from_values(&mut arguments, mem)?;
+                let cmd = each_cmd::ExtendPath::from_memory(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::ClosePath => {
-                let cmd = each_cmd::ClosePath::from_values(&mut arguments, mem)?;
+                let cmd = each_cmd::ClosePath::from_memory(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::Extrude => {
-                let cmd = each_cmd::Extrude::from_values(&mut arguments, mem)?;
+                let cmd = each_cmd::Extrude::from_memory(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::TakeSnapshot => {
-                let cmd = each_cmd::TakeSnapshot::from_values(&mut arguments, mem)?;
+                let cmd = each_cmd::TakeSnapshot::from_memory(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
         };
