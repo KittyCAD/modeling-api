@@ -24,4 +24,4 @@ workspace = true
 [dev-dependencies]
 image = { version = "0.24.7", default-features = false, features = ["png"] }
 tabled = "0.14.0"
-twenty-twenty = "0.6.1"
+twenty-twenty = "0.7.0"
