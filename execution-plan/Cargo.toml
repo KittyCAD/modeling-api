@@ -9,10 +9,19 @@ description = "A DSL for composing KittyCAD API queries"
 
 [dependencies]
 bytes = "1.5"
-kittycad-modeling-cmds = "0.1.7"
+kittycad = { version = "0.2.44", features = ["requests"] }
+kittycad-modeling-cmds = { path = "../modeling-cmds" }
+kittycad-modeling-session = { path = "../modeling-session" }
+parse-display-derive = "0.8.2"
 serde = { version = "1", features = ["derive"] }
 thiserror = "1"
+tokio = { version = "1.35.0", features = ["rt", "macros"] }
 uuid = "1.6.1"
 
 [lints]
 workspace = true
+
+[dev-dependencies]
+image = { version = "0.24.7", default-features = false, features = ["png"] }
+tabled = "0.14.0"
+twenty-twenty = "0.7.0"
