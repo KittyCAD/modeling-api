@@ -13,13 +13,13 @@ use kittycad_modeling_cmds::{
 use super::Value;
 use crate::{ExecutionError, Primitive};
 
-const EMPTY: &str = "EMPTY";
-const TAKE_SNAPSHOT: &str = "TAKE_SNAPSHOT";
-const ARC: &str = "arc";
-const LINE: &str = "line";
-const TAN_ARC: &str = "tan_arc";
-const TAN_ARC_TO: &str = "tan_arc_to";
-const BEZIER: &str = "bezier";
+pub(crate) const EMPTY: &str = "EMPTY";
+pub(crate) const TAKE_SNAPSHOT: &str = "TAKE_SNAPSHOT";
+pub(crate) const ARC: &str = "arc";
+pub(crate) const LINE: &str = "line";
+pub(crate) const TAN_ARC: &str = "tan_arc";
+pub(crate) const TAN_ARC_TO: &str = "tan_arc_to";
+pub(crate) const BEZIER: &str = "bezier";
 
 fn err() -> ExecutionError {
     ExecutionError::MemoryWrongSize

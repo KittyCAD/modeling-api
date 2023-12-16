@@ -1,6 +1,6 @@
 use crate::{ExecutionError, Primitive};
 
-mod impls;
+pub mod impls;
 
 /// Types that can be written to or read from KCEP program memory.
 /// If they require multiple memory addresses, they will be laid out

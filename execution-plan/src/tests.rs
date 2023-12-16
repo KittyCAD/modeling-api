@@ -1,10 +1,12 @@
 use std::env;
 
-use kittycad_modeling_cmds::shared::Point3d;
+use kittycad_modeling_cmds::shared::{PathSegment, Point3d};
 use kittycad_modeling_session::{Session, SessionBuilder};
+use tabled::{settings::Style, Table};
 use uuid::Uuid;
 
 use super::*;
+use crate::primitive::NumericPrimitive;
 
 async fn test_client() -> Session {
     let kittycad_api_token = env::var("KITTYCAD_API_TOKEN").expect("You must set $KITTYCAD_API_TOKEN");
@@ -123,26 +125,75 @@ async fn add_to_composite_value() {
 }
 
 #[tokio::test]
-async fn api_call_no_output() {
+async fn api_call_draw_cube() {
     let mut mem = Memory::default();
     let client = test_client().await;
 
-    const CUBE_WIDTH: f64 = 10.0;
+    const CUBE_WIDTH: f64 = 20.0;
 
-    // Choose a path ID, map it to a memory address.
-    let path = new_id();
+    // Define primitives, load them into memory.
     let path_id_addr = Address(0);
+    let path = new_id();
+    let cube_height_addr = Address(2);
+    let cube_height = Primitive::from(CUBE_WIDTH * 2.0);
+    let cap_addr = Address(3);
+    let cap = Primitive::Bool(true);
+    let img_format_addr = Address(4);
+    let img_format = Primitive::from("png".to_owned());
+    let output_addr = Address(99);
+    mem.set(path_id_addr, Primitive::from(path.0));
+    mem.set(cube_height_addr, cube_height);
+    mem.set(cap_addr, cap);
+    mem.set(img_format_addr, img_format);
 
-    let start = Point3d {
+    // Define composite objects, load them into memory.
+    let starting_point_addr = Address(6);
+    let starting_point = Point3d {
         x: -CUBE_WIDTH,
         y: -CUBE_WIDTH,
         z: -CUBE_WIDTH,
     };
-    let start_addr = Address(1);
+    let point_size = mem.set_composite(starting_point_addr, starting_point);
+    let next_addr = Address(starting_point_addr.0 + point_size);
+    let segments =
+        [
+            PathSegment::Line {
+                end: Point3d {
+                    x: CUBE_WIDTH,
+                    y: -CUBE_WIDTH,
+                    z: -CUBE_WIDTH,
+                },
+                relative: false,
+            },
+            PathSegment::Line {
+                end: Point3d {
+                    x: CUBE_WIDTH,
+                    y: CUBE_WIDTH,
+                    z: -CUBE_WIDTH,
+                },
+                relative: false,
+            },
+            PathSegment::Line {
+                end: Point3d {
+                    x: -CUBE_WIDTH,
+                    y: CUBE_WIDTH,
+                    z: -CUBE_WIDTH,
+                },
+                relative: false,
+            },
+            PathSegment::Line {
+                end: starting_point,
+                relative: false,
+            },
+        ];
+    let mut segment_addrs = vec![next_addr];
+    for segment in segments {
+        let addr = segment_addrs.last().unwrap();
+        let size = mem.set_composite(*addr, segment);
+        segment_addrs.push(Address(addr.0 + size));
+    }
 
-    mem.set(path_id_addr, Primitive::from(path.0));
-    mem.set_composite(start_addr, start);
-
+    // Run the plan!
     execute(
         &mut mem,
         vec![
@@ -153,11 +204,53 @@ async fn api_call_no_output() {
                 arguments: vec![],
                 cmd_id: path,
             }),
-            // Extend the path.
+            // Draw a square.
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::MovePathPen,
                 store_response: None,
-                arguments: vec![path_id_addr, start_addr],
+                arguments: vec![path_id_addr, starting_point_addr],
+                cmd_id: new_id(),
+            }),
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ExtendPath,
+                store_response: None,
+                arguments: vec![path_id_addr, segment_addrs[0]],
+                cmd_id: new_id(),
+            }),
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ExtendPath,
+                store_response: None,
+                arguments: vec![path_id_addr, segment_addrs[1]],
+                cmd_id: new_id(),
+            }),
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ExtendPath,
+                store_response: None,
+                arguments: vec![path_id_addr, segment_addrs[2]],
+                cmd_id: new_id(),
+            }),
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ExtendPath,
+                store_response: None,
+                arguments: vec![path_id_addr, segment_addrs[3]],
+                cmd_id: new_id(),
+            }),
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ClosePath,
+                store_response: None,
+                arguments: vec![path_id_addr],
+                cmd_id: new_id(),
+            }),
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::Extrude,
+                store_response: None,
+                arguments: vec![path_id_addr, cube_height_addr, cap_addr],
+                cmd_id: new_id(),
+            }),
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::TakeSnapshot,
+                store_response: Some(output_addr),
+                arguments: vec![img_format_addr],
                 cmd_id: new_id(),
             }),
         ],
@@ -166,7 +259,64 @@ async fn api_call_no_output() {
     .await
     .unwrap();
 
-    dbg!(&mem.0[..10]);
+    // Program executed successfully!
+    debug_dump_memory(&mem);
+
+    // The image output was set to addr 99.
+    // Outputs are two addresses long, addr 99 will store the data format (TAKE_SNAPSHOT)
+    // and addr 100 will store its first field ('contents', the image bytes).
+    let Primitive::Bytes(b) = mem.0[100].as_ref().unwrap() else {
+        panic!("wrong format in memory addr 100");
+    };
+    // Visually check that the image is a cube.
+    use image::io::Reader as ImageReader;
+    let img =
+        ImageReader::new(std::io::Cursor::new(b))
+            .with_guessed_format()
+            .unwrap()
+            .decode()
+            .unwrap();
+    twenty_twenty::assert_image("tests/outputs/cube.png", &img, 0.9999);
+}
+
+fn debug_dump_memory(mem: &Memory) {
+    impl Primitive {
+        fn pretty_print(&self) -> (&'static str, String) {
+            match self {
+                Primitive::String(v) => ("String", v.to_owned()),
+                Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
+                Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Integer", v.to_string()),
+                Primitive::Uuid(v) => ("Uuid", v.to_string()),
+                Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
+                Primitive::Bool(v) => ("Bool", v.to_string()),
+                Primitive::Nil => ("Nil", String::new()),
+            }
+        }
+    }
+    #[derive(tabled::Tabled)]
+    struct MemoryAddr {
+        index: usize,
+        val_type: &'static str,
+        value: String,
+    }
+    let table_data: Vec<_> = mem
+        .0
+        .iter()
+        .enumerate()
+        .filter_map(|(i, val)| {
+            if let Some(val) = val {
+                let (val_type, value) = val.pretty_print();
+                Some(MemoryAddr {
+                    index: i,
+                    val_type,
+                    value,
+                })
+            } else {
+                None
+            }
+        })
+        .collect();
+    eprintln!("{}", Table::new(table_data).with(Style::sharp()));
 }
 
 fn new_id() -> ModelingCmdId {

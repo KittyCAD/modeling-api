@@ -67,11 +67,15 @@ impl Memory {
 
     /// Store a value value (i.e. a value which takes up multiple addresses in memory).
     /// Store its parts in consecutive memory addresses starting at `start`.
-    pub fn set_composite<T: Value>(&mut self, start: Address, composite_value: T) {
+    /// Returns how many memory addresses the data took up.
+    pub fn set_composite<T: Value>(&mut self, start: Address, composite_value: T) -> usize {
         let parts = composite_value.into_parts().into_iter();
+        let mut total_addrs = 0;
         for (value, addr) in parts.zip(start.0..) {
             self.0[addr] = Some(value);
+            total_addrs += 1;
         }
+        total_addrs
     }
 
     /// Get a value value (i.e. a value which takes up multiple addresses in memory).
@@ -118,7 +122,7 @@ pub struct ApiRequest {
 }
 
 /// A KittyCAD modeling command.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, parse_display_derive::Display)]
 pub enum Endpoint {
     #[allow(missing_docs)]
     StartPath,
@@ -226,7 +230,7 @@ impl Operand {
 
 /// Execute the plan.
 pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: ModelingSession) -> Result<()> {
-    for step in plan {
+    for (_step_number, step) in plan.into_iter().enumerate() {
         match step {
             Instruction::ApiRequest(req) => {
                 req.execute(&mut session, mem).await?;
