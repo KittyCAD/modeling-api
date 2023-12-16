@@ -67,7 +67,7 @@ impl Memory {
 
     /// Store a value value (i.e. a value which takes up multiple addresses in memory).
     /// Store its parts in consecutive memory addresses starting at `start`.
-    pub fn set_composite<T: Value>(&mut self, composite_value: T, start: Address) {
+    pub fn set_composite<T: Value>(&mut self, start: Address, composite_value: T) {
         let parts = composite_value.into_parts().into_iter();
         for (value, addr) in parts.zip(start.0..) {
             self.0[addr] = Some(value);
@@ -107,14 +107,31 @@ pub enum Instruction {
 #[derive(Serialize, Deserialize)]
 pub struct ApiRequest {
     /// Which ModelingCmd to call.
-    endpoint: String,
+    pub endpoint: Endpoint,
     /// Which address should the response be stored in?
     /// If none, the response will be ignored.
-    store_response: Option<Address>,
+    pub store_response: Option<Address>,
     /// Look up each parameter at this address.
-    arguments: Vec<Address>,
+    pub arguments: Vec<Address>,
     /// The ID of this command.
-    cmd_id: ModelingCmdId,
+    pub cmd_id: ModelingCmdId,
+}
+
+/// A KittyCAD modeling command.
+#[derive(Serialize, Deserialize)]
+pub enum Endpoint {
+    #[allow(missing_docs)]
+    StartPath,
+    #[allow(missing_docs)]
+    MovePathPen,
+    #[allow(missing_docs)]
+    ExtendPath,
+    #[allow(missing_docs)]
+    ClosePath,
+    #[allow(missing_docs)]
+    Extrude,
+    #[allow(missing_docs)]
+    TakeSnapshot,
 }
 
 impl ApiRequest {
@@ -126,36 +143,35 @@ impl ApiRequest {
             cmd_id,
         } = self;
         let mut arguments = arguments.into_iter();
-        let output = match endpoint.as_str() {
-            "StartPath" => {
+        let output = match endpoint {
+            Endpoint::StartPath => {
                 let cmd = each_cmd::StartPath::from_values(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
-            "MovePathPen" => {
+            Endpoint::MovePathPen => {
                 let cmd = each_cmd::MovePathPen::from_values(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
-            "ExtendPath" => {
+            Endpoint::ExtendPath => {
                 let cmd = each_cmd::ExtendPath::from_values(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
-            "ClosePath" => {
+            Endpoint::ClosePath => {
                 let cmd = each_cmd::ClosePath::from_values(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
-            "Extrude" => {
+            Endpoint::Extrude => {
                 let cmd = each_cmd::Extrude::from_values(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
-            "TakeSnapshot" => {
+            Endpoint::TakeSnapshot => {
                 let cmd = each_cmd::TakeSnapshot::from_values(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
-            _ => todo!(),
         };
         // Write out to memory.
         if let Some(output_address) = store_response {
-            mem.set_composite(output, output_address);
+            mem.set_composite(output_address, output);
         }
         Ok(())
     }

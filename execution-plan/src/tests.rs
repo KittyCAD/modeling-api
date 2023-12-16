@@ -2,6 +2,7 @@ use std::env;
 
 use kittycad_modeling_cmds::shared::Point3d;
 use kittycad_modeling_session::{Session, SessionBuilder};
+use uuid::Uuid;
 
 use super::*;
 
@@ -87,7 +88,7 @@ async fn add_to_composite_value() {
         z: 4.0,
     };
     let start_addr = Address(0);
-    mem.set_composite(point_before, start_addr);
+    mem.set_composite(start_addr, point_before);
     assert_eq!(mem.0[0], Some(2.0.into()));
     assert_eq!(mem.0[1], Some(3.0.into()));
     assert_eq!(mem.0[2], Some(4.0.into()));
@@ -119,4 +120,55 @@ async fn add_to_composite_value() {
             z: 4.0
         }
     )
+}
+
+#[tokio::test]
+async fn api_call_no_output() {
+    let mut mem = Memory::default();
+    let client = test_client().await;
+
+    const CUBE_WIDTH: f64 = 10.0;
+
+    // Choose a path ID, map it to a memory address.
+    let path = new_id();
+    let path_id_addr = Address(0);
+
+    let start = Point3d {
+        x: -CUBE_WIDTH,
+        y: -CUBE_WIDTH,
+        z: -CUBE_WIDTH,
+    };
+    let start_addr = Address(1);
+
+    mem.set(path_id_addr, Primitive::from(path.0));
+    mem.set_composite(start_addr, start);
+
+    execute(
+        &mut mem,
+        vec![
+            // Start the path.
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::StartPath,
+                store_response: None,
+                arguments: vec![],
+                cmd_id: path,
+            }),
+            // Extend the path.
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::MovePathPen,
+                store_response: None,
+                arguments: vec![path_id_addr, start_addr],
+                cmd_id: new_id(),
+            }),
+        ],
+        client,
+    )
+    .await
+    .unwrap();
+
+    dbg!(&mem.0[..10]);
+}
+
+fn new_id() -> ModelingCmdId {
+    ModelingCmdId(Uuid::new_v4())
 }
