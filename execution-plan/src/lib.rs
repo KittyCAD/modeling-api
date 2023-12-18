@@ -26,11 +26,15 @@ mod value;
 /// KCEP's program memory. A flat, linear list of values.
 #[derive(Debug)]
 #[cfg_attr(test, derive(PartialEq))]
-pub struct Memory(Vec<Option<Primitive>>);
+pub struct Memory {
+    addresses: Vec<Option<Primitive>>,
+}
 
 impl Default for Memory {
     fn default() -> Self {
-        Self(vec![None; 1024])
+        Self {
+            addresses: vec![None; 1024],
+        }
     }
 }
 
@@ -53,16 +57,16 @@ impl From<usize> for Address {
 impl Memory {
     /// Get a value from KCEP's program memory.
     pub fn get(&self, Address(addr): &Address) -> Option<&Primitive> {
-        self.0[*addr].as_ref()
+        self.addresses[*addr].as_ref()
     }
 
     /// Store a value in KCEP's program memory.
     pub fn set(&mut self, Address(addr): Address, value: Primitive) {
         // If isn't big enough for this value, double the size of memory until it is.
-        while addr > self.0.len() {
-            self.0.extend(vec![None; self.0.len()]);
+        while addr > self.addresses.len() {
+            self.addresses.extend(vec![None; self.addresses.len()]);
         }
-        self.0[addr] = Some(value);
+        self.addresses[addr] = Some(value);
     }
 
     /// Store a value value (i.e. a value which takes up multiple addresses in memory).
@@ -72,7 +76,7 @@ impl Memory {
         let parts = composite_value.into_parts().into_iter();
         let mut total_addrs = 0;
         for (value, addr) in parts.zip(start.0..) {
-            self.0[addr] = Some(value);
+            self.addresses[addr] = Some(value);
             total_addrs += 1;
         }
         total_addrs
@@ -81,7 +85,7 @@ impl Memory {
     /// Get a value value (i.e. a value which takes up multiple addresses in memory).
     /// Its parts are stored in consecutive memory addresses starting at `start`.
     pub fn get_composite<T: Value>(&self, start: Address) -> Result<T> {
-        let mut values = self.0.iter().skip(start.0).cloned();
+        let mut values = self.addresses.iter().skip(start.0).cloned();
         T::from_parts(&mut values)
     }
 }

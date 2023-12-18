@@ -92,9 +92,9 @@ async fn add_to_composite_value() {
     };
     let start_addr = Address(0);
     mem.set_composite(start_addr, point_before);
-    assert_eq!(mem.0[0], Some(2.0.into()));
-    assert_eq!(mem.0[1], Some(3.0.into()));
-    assert_eq!(mem.0[2], Some(4.0.into()));
+    assert_eq!(mem.get(&Address(0)), Some(&(2.0.into())));
+    assert_eq!(mem.get(&Address(1)), Some(&(3.0.into())));
+    assert_eq!(mem.get(&Address(2)), Some(&(4.0.into())));
 
     let client = test_client().await;
     // Update the point's x-value in memory.
@@ -267,7 +267,7 @@ async fn api_call_draw_cube() {
     // The image output was set to addr 99.
     // Outputs are two addresses long, addr 99 will store the data format (TAKE_SNAPSHOT)
     // and addr 100 will store its first field ('contents', the image bytes).
-    let Primitive::Bytes(b) = mem.0[100].as_ref().unwrap() else {
+    let Primitive::Bytes(b) = mem.get(&Address(100)).as_ref().unwrap() else {
         panic!("wrong format in memory addr 100");
     };
     // Visually check that the image is a cube.
@@ -302,23 +302,23 @@ fn debug_dump_memory(mem: &Memory) -> String {
         val_type: &'static str,
         value: String,
     }
-    let table_data: Vec<_> = mem
-        .0
-        .iter()
-        .enumerate()
-        .filter_map(|(i, val)| {
-            if let Some(val) = val {
-                let (val_type, value) = val.pretty_print();
-                Some(MemoryAddr {
-                    index: i,
-                    val_type,
-                    value,
-                })
-            } else {
-                None
-            }
-        })
-        .collect();
+    let table_data: Vec<_> =
+        mem.addresses
+            .iter()
+            .enumerate()
+            .filter_map(|(i, val)| {
+                if let Some(val) = val {
+                    let (val_type, value) = val.pretty_print();
+                    Some(MemoryAddr {
+                        index: i,
+                        val_type,
+                        value,
+                    })
+                } else {
+                    None
+                }
+            })
+            .collect();
     Table::new(table_data).with(Style::sharp()).to_string()
 }
 
