@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use parse_display_derive::{Display, FromStr};
 // //! Types for parameters to Modeling API commands.
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -15,6 +16,10 @@ use crate::{
     },
     units,
 };
+
+/// Start a new path.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct StartPath;
 
 /// Move the path's "pen".
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -521,8 +526,9 @@ pub struct CurveGetControlPoints {
 }
 
 /// Enum containing the variety of image formats snapshots may be exported to.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, FromStr, Display)]
 #[serde(rename_all = "snake_case")]
+#[display(style = "snake_case")]
 pub enum ImageFormat {
     /// .png format
     Png,

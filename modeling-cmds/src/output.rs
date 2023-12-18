@@ -8,7 +8,7 @@ use crate::{
     id::ModelingCmdId,
     shared::{CurveType, EntityType, ExportFile, PathCommand, Point2d, Point3d},
     traits::ModelingCmdOutput,
-    units,
+    units, EntityLinearPattern,
 };
 
 /// The response from the `Export` endpoint.
@@ -256,43 +256,36 @@ pub struct EntityGetDistance {
     pub max_distance: f64,
 }
 
-/// The response from the `EntityLinearPattern` command.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
-pub struct EntityLinearPattern {
-    /// The UUIDs of the entities that were created.
-    pub entity_ids: Vec<Uuid>,
-}
-
-impl<'de> ModelingCmdOutput<'de> for Export {}
-impl<'de> ModelingCmdOutput<'de> for SelectWithPoint {}
-impl<'de> ModelingCmdOutput<'de> for HighlightSetEntity {}
-impl<'de> ModelingCmdOutput<'de> for EntityGetChildUuid {}
-impl<'de> ModelingCmdOutput<'de> for EntityGetNumChildren {}
-impl<'de> ModelingCmdOutput<'de> for EntityGetParentId {}
-impl<'de> ModelingCmdOutput<'de> for EntityGetAllChildUuids {}
-impl<'de> ModelingCmdOutput<'de> for EntityGetDistance {}
-impl<'de> ModelingCmdOutput<'de> for EntityLinearPattern {}
-impl<'de> ModelingCmdOutput<'de> for SelectGet {}
-impl<'de> ModelingCmdOutput<'de> for GetEntityType {}
-impl<'de> ModelingCmdOutput<'de> for Solid3dGetAllEdgeFaces {}
-impl<'de> ModelingCmdOutput<'de> for Solid3dGetAllOppositeEdges {}
-impl<'de> ModelingCmdOutput<'de> for Solid3dGetOppositeEdge {}
-impl<'de> ModelingCmdOutput<'de> for Solid3dGetPrevAdjacentEdge {}
-impl<'de> ModelingCmdOutput<'de> for Solid3dGetNextAdjacentEdge {}
-impl<'de> ModelingCmdOutput<'de> for MouseClick {}
-impl<'de> ModelingCmdOutput<'de> for CurveGetType {}
-impl<'de> ModelingCmdOutput<'de> for CurveGetControlPoints {}
-impl<'de> ModelingCmdOutput<'de> for TakeSnapshot {}
-impl<'de> ModelingCmdOutput<'de> for PathGetInfo {}
-impl<'de> ModelingCmdOutput<'de> for PathGetCurveUuidsForVertices {}
-impl<'de> ModelingCmdOutput<'de> for PathGetVertexUuids {}
-impl<'de> ModelingCmdOutput<'de> for PlaneIntersectAndProject {}
-impl<'de> ModelingCmdOutput<'de> for CurveGetEndPoints {}
-impl<'de> ModelingCmdOutput<'de> for ImportFiles {}
-impl<'de> ModelingCmdOutput<'de> for Mass {}
-impl<'de> ModelingCmdOutput<'de> for Volume {}
-impl<'de> ModelingCmdOutput<'de> for Density {}
-impl<'de> ModelingCmdOutput<'de> for SurfaceArea {}
-impl<'de> ModelingCmdOutput<'de> for CenterOfMass {}
-impl<'de> ModelingCmdOutput<'de> for GetSketchModePlane {}
-impl<'de> ModelingCmdOutput<'de> for () {}
+impl ModelingCmdOutput for Export {}
+impl ModelingCmdOutput for SelectWithPoint {}
+impl ModelingCmdOutput for HighlightSetEntity {}
+impl ModelingCmdOutput for EntityGetChildUuid {}
+impl ModelingCmdOutput for EntityGetNumChildren {}
+impl ModelingCmdOutput for EntityGetParentId {}
+impl ModelingCmdOutput for EntityGetAllChildUuids {}
+impl ModelingCmdOutput for EntityGetDistance {}
+impl ModelingCmdOutput for EntityLinearPattern {}
+impl ModelingCmdOutput for SelectGet {}
+impl ModelingCmdOutput for GetEntityType {}
+impl ModelingCmdOutput for Solid3dGetAllEdgeFaces {}
+impl ModelingCmdOutput for Solid3dGetAllOppositeEdges {}
+impl ModelingCmdOutput for Solid3dGetOppositeEdge {}
+impl ModelingCmdOutput for Solid3dGetPrevAdjacentEdge {}
+impl ModelingCmdOutput for Solid3dGetNextAdjacentEdge {}
+impl ModelingCmdOutput for MouseClick {}
+impl ModelingCmdOutput for CurveGetType {}
+impl ModelingCmdOutput for CurveGetControlPoints {}
+impl ModelingCmdOutput for TakeSnapshot {}
+impl ModelingCmdOutput for PathGetInfo {}
+impl ModelingCmdOutput for PathGetCurveUuidsForVertices {}
+impl ModelingCmdOutput for PathGetVertexUuids {}
+impl ModelingCmdOutput for PlaneIntersectAndProject {}
+impl ModelingCmdOutput for CurveGetEndPoints {}
+impl ModelingCmdOutput for ImportFiles {}
+impl ModelingCmdOutput for Mass {}
+impl ModelingCmdOutput for Volume {}
+impl ModelingCmdOutput for Density {}
+impl ModelingCmdOutput for SurfaceArea {}
+impl ModelingCmdOutput for CenterOfMass {}
+impl ModelingCmdOutput for GetSketchModePlane {}
+impl ModelingCmdOutput for () {}

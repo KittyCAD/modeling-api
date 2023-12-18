@@ -25,7 +25,8 @@ jobs:
         - name: cargo test
           shell: bash
           run: |
-            cargo llvm-cov nextest --all-features --lcov --output-path lcov.info
+            export KITTYCAD_API_TOKEN=${{secrets.KITTYCAD_API_TOKEN}}
+            cargo llvm-cov nextest --all-features --workspace --lcov --output-path lcov.info
           env:
             RUST_BACKTRACE: 1
   
@@ -95,6 +96,17 @@ jobs:
           # Edit this file to tweak the typo list and other configuration.
           run: codespell --config .codespellrc
 
+    cargo-toml-sorted:
+      name: Check Cargo.toml is sorted
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Install cargo-sort
+          run: cargo install cargo-sort
+        - name: Run check
+          run: cargo sort --workspace --check
+
     semver-checks:
       runs-on: ubuntu-latest
       steps:
@@ -102,3 +114,5 @@ jobs:
           uses: actions/checkout@v4
         - name: Check semver
           uses: obi1kenobi/cargo-semver-checks-action@v2
+          with:
+            package: kittycad-modeling-cmds
