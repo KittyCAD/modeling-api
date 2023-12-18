@@ -189,7 +189,7 @@ pub struct EntityGetDistance {
     pub distance_type: DistanceType,
 }
 
-/// Create a linear patter using this entity
+/// Create a linear pattern using this entity
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct EntityLinearPattern {
     /// ID of the entity being copied.
