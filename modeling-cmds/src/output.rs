@@ -8,7 +8,7 @@ use crate::{
     id::ModelingCmdId,
     shared::{CurveType, EntityType, ExportFile, PathCommand, Point2d, Point3d},
     traits::ModelingCmdOutput,
-    units, EntityLinearPattern,
+    units,
 };
 
 /// The response from the `Export` endpoint.
@@ -254,6 +254,13 @@ pub struct EntityGetDistance {
     pub min_distance: f64,
     /// The maximum distance between the input entities.
     pub max_distance: f64,
+}
+
+/// The response from the `EntityLinearPattern` command.
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct EntityLinearPattern {
+    /// The UUIDs of the entities that were created.
+    pub entity_ids: Vec<Uuid>,
 }
 
 impl ModelingCmdOutput for Export {}
