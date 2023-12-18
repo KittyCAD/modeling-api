@@ -1,6 +1,38 @@
 use super::Result;
 use crate::{primitive::Primitive, value::Value, Address};
 
+/// Helper wrapper around Memory. It lets you push static data into memory before the program runs.
+pub struct StaticMemoryInitializer {
+    memory: Memory,
+    last: Address,
+}
+
+impl Default for StaticMemoryInitializer {
+    fn default() -> Self {
+        Self {
+            memory: Default::default(),
+            last: Address(0),
+        }
+    }
+}
+
+impl StaticMemoryInitializer {
+    /// Finish putting static data into memory, get ready to execute the plan.
+    /// Returns normal execution plan program memory.
+    pub fn finish(self) -> Memory {
+        self.memory
+    }
+
+    /// Put the next value into memory.
+    /// Returns the address that the value was inserted at.
+    pub fn push<T: Value>(&mut self, val: T) -> Address {
+        let addr_of_value = self.last;
+        let len = self.memory.set_composite(self.last, val);
+        self.last = self.last.offset(len);
+        addr_of_value
+    }
+}
+
 /// KCEP's program memory. A flat, linear list of values.
 #[derive(Debug)]
 #[cfg_attr(test, derive(PartialEq))]
@@ -51,6 +83,7 @@ impl Memory {
         T::from_parts(&mut values)
     }
 
+    /// Iterate over each memory address and its value.
     pub fn iter(&self) -> impl Iterator<Item = (usize, &Option<Primitive>)> {
         self.addresses.iter().enumerate()
     }

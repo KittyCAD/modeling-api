@@ -11,7 +11,7 @@ use std::fmt;
 use api_endpoint::ApiEndpoint;
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
-use memory::Memory;
+pub use memory::{Memory, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
 
 use self::{arithmetic::Arithmetic, primitive::Primitive};
@@ -27,6 +27,14 @@ mod value;
 /// An address in KCEP's program memory.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Address(usize);
+
+impl Address {
+    /// Offset the memory by `size` addresses.
+    pub fn offset(self, size: usize) -> Self {
+        let curr = self.0;
+        Self(curr + size)
+    }
+}
 
 impl fmt::Display for Address {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
