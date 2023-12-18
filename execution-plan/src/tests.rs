@@ -303,9 +303,7 @@ fn debug_dump_memory(mem: &Memory) -> String {
         value: String,
     }
     let table_data: Vec<_> =
-        mem.addresses
-            .iter()
-            .enumerate()
+        mem.iter()
             .filter_map(|(i, val)| {
                 if let Some(val) = val {
                     let (val_type, value) = val.pretty_print();
