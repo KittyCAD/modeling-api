@@ -1,5 +1,6 @@
 use std::env;
 
+use insta::assert_snapshot;
 use kittycad_modeling_cmds::shared::{PathSegment, Point3d};
 use kittycad_modeling_session::{Session, SessionBuilder};
 use tabled::{settings::Style, Table};
@@ -133,7 +134,7 @@ async fn api_call_draw_cube() {
 
     // Define primitives, load them into memory.
     let path_id_addr = Address(0);
-    let path = new_id();
+    let path = ModelingCmdId(Uuid::parse_str("4cd175a3-e313-4c91-b624-368bea3c0483").unwrap());
     let cube_height_addr = Address(2);
     let cube_height = Primitive::from(CUBE_WIDTH * 2.0);
     let cap_addr = Address(3);
@@ -192,6 +193,7 @@ async fn api_call_draw_cube() {
         let size = mem.set_composite(*addr, segment);
         segment_addrs.push(Address(addr.0 + size));
     }
+    assert_snapshot!("cube_memory_before", debug_dump_memory(&mem));
 
     // Run the plan!
     execute(
@@ -260,7 +262,7 @@ async fn api_call_draw_cube() {
     .unwrap();
 
     // Program executed successfully!
-    debug_dump_memory(&mem);
+    assert_snapshot!("cube_memory_after", debug_dump_memory(&mem));
 
     // The image output was set to addr 99.
     // Outputs are two addresses long, addr 99 will store the data format (TAKE_SNAPSHOT)
@@ -279,7 +281,8 @@ async fn api_call_draw_cube() {
     twenty_twenty::assert_image("tests/outputs/cube.png", &img, 0.9999);
 }
 
-fn debug_dump_memory(mem: &Memory) {
+/// Return a nicely-formatted table of memory.
+fn debug_dump_memory(mem: &Memory) -> String {
     impl Primitive {
         fn pretty_print(&self) -> (&'static str, String) {
             match self {
@@ -316,7 +319,7 @@ fn debug_dump_memory(mem: &Memory) {
             }
         })
         .collect();
-    eprintln!("{}", Table::new(table_data).with(Style::sharp()));
+    Table::new(table_data).with(Style::sharp()).to_string()
 }
 
 fn new_id() -> ModelingCmdId {

@@ -1,0 +1,37 @@
+---
+source: execution-plan/src/tests.rs
+expression: debug_dump_memory(&mem)
+---
+┌───────┬──────────┬──────────────────────────────────────┐
+│ index │ val_type │ value                                │
+├───────┼──────────┼──────────────────────────────────────┤
+│ 0     │ Uuid     │ 4cd175a3-e313-4c91-b624-368bea3c0483 │
+│ 2     │ Float    │ 40                                   │
+│ 3     │ Bool     │ true                                 │
+│ 4     │ String   │ png                                  │
+│ 6     │ Float    │ -20                                  │
+│ 7     │ Float    │ -20                                  │
+│ 8     │ Float    │ -20                                  │
+│ 9     │ String   │ line                                 │
+│ 10    │ Float    │ 20                                   │
+│ 11    │ Float    │ -20                                  │
+│ 12    │ Float    │ -20                                  │
+│ 13    │ Bool     │ false                                │
+│ 14    │ String   │ line                                 │
+│ 15    │ Float    │ 20                                   │
+│ 16    │ Float    │ 20                                   │
+│ 17    │ Float    │ -20                                  │
+│ 18    │ Bool     │ false                                │
+│ 19    │ String   │ line                                 │
+│ 20    │ Float    │ -20                                  │
+│ 21    │ Float    │ 20                                   │
+│ 22    │ Float    │ -20                                  │
+│ 23    │ Bool     │ false                                │
+│ 24    │ String   │ line                                 │
+│ 25    │ Float    │ -20                                  │
+│ 26    │ Float    │ -20                                  │
+│ 27    │ Float    │ -20                                  │
+│ 28    │ Bool     │ false                                │
+│ 99    │ String   │ TAKE_SNAPSHOT                        │
+│ 100   │ Bytes    │ length 129068                        │
+└───────┴──────────┴──────────────────────────────────────┘

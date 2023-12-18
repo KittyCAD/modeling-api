@@ -9,6 +9,7 @@ description = "A DSL for composing KittyCAD API queries"
 
 [dependencies]
 bytes = "1.5"
+insta = "1.34.0"
 kittycad = { version = "0.2.44", features = ["requests"] }
 kittycad-modeling-cmds = { path = "../modeling-cmds" }
 kittycad-modeling-session = { path = "../modeling-session" }
