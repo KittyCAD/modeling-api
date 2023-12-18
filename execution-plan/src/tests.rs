@@ -127,72 +127,46 @@ async fn add_to_composite_value() {
 
 #[tokio::test]
 async fn api_call_draw_cube() {
-    let mut mem = Memory::default();
     let client = test_client().await;
 
     const CUBE_WIDTH: f64 = 20.0;
 
     // Define primitives, load them into memory.
-    let path_id_addr = Address(0);
+    let mut static_data = StaticMemoryInitializer::default();
     let path = ModelingCmdId(Uuid::parse_str("4cd175a3-e313-4c91-b624-368bea3c0483").unwrap());
-    let cube_height_addr = Address(2);
-    let cube_height = Primitive::from(CUBE_WIDTH * 2.0);
-    let cap_addr = Address(3);
-    let cap = Primitive::Bool(true);
-    let img_format_addr = Address(4);
-    let img_format = Primitive::from("png".to_owned());
+    let path_id_addr = static_data.push(Primitive::from(path.0));
+    let cube_height_addr = static_data.push(Primitive::from(CUBE_WIDTH * 2.0));
+    let cap_addr = static_data.push(Primitive::from(true));
+    let img_format_addr = static_data.push(Primitive::from("png".to_owned()));
     let output_addr = Address(99);
-    mem.set(path_id_addr, Primitive::from(path.0));
-    mem.set(cube_height_addr, cube_height);
-    mem.set(cap_addr, cap);
-    mem.set(img_format_addr, img_format);
-
-    // Define composite objects, load them into memory.
-    let starting_point_addr = Address(6);
     let starting_point = Point3d {
         x: -CUBE_WIDTH,
         y: -CUBE_WIDTH,
         z: -CUBE_WIDTH,
     };
-    let point_size = mem.set_composite(starting_point_addr, starting_point);
-    let next_addr = Address(starting_point_addr.0 + point_size);
-    let segments =
-        [
-            PathSegment::Line {
-                end: Point3d {
-                    x: CUBE_WIDTH,
-                    y: -CUBE_WIDTH,
-                    z: -CUBE_WIDTH,
-                },
-                relative: false,
-            },
-            PathSegment::Line {
-                end: Point3d {
-                    x: CUBE_WIDTH,
-                    y: CUBE_WIDTH,
-                    z: -CUBE_WIDTH,
-                },
-                relative: false,
-            },
-            PathSegment::Line {
-                end: Point3d {
-                    x: -CUBE_WIDTH,
-                    y: CUBE_WIDTH,
-                    z: -CUBE_WIDTH,
-                },
-                relative: false,
-            },
-            PathSegment::Line {
-                end: starting_point,
-                relative: false,
-            },
-        ];
-    let mut segment_addrs = vec![next_addr];
-    for segment in segments {
-        let addr = segment_addrs.last().unwrap();
-        let size = mem.set_composite(*addr, segment);
-        segment_addrs.push(Address(addr.0 + size));
-    }
+    let starting_point_addr = static_data.push(starting_point);
+    let line_segment = |end: Point3d<f64>| PathSegment::Line { end, relative: false };
+    let segments = [
+        Point3d {
+            x: CUBE_WIDTH,
+            y: -CUBE_WIDTH,
+            z: -CUBE_WIDTH,
+        },
+        Point3d {
+            x: CUBE_WIDTH,
+            y: CUBE_WIDTH,
+            z: -CUBE_WIDTH,
+        },
+        Point3d {
+            x: -CUBE_WIDTH,
+            y: CUBE_WIDTH,
+            z: -CUBE_WIDTH,
+        },
+        starting_point,
+    ]
+    .map(line_segment);
+    let segment_addrs = segments.map(|segment| static_data.push(segment));
+    let mut mem = static_data.finish();
     assert_snapshot!("cube_memory_before", debug_dump_memory(&mem));
 
     // Run the plan!
