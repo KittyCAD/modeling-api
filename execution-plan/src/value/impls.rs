@@ -5,9 +5,10 @@
 //! - This canonical ordering is the order of the struct's fields in its Rust source code definition.
 //! - Enums get laid out by first putting the variant as a string, then putting the variant's fields.
 use kittycad_modeling_cmds::{
+    base64::Base64Data,
     ok_response::OkModelingCmdResponse,
     output,
-    shared::{Angle, PathSegment, Point2d, Point3d},
+    shared::{Angle, PathSegment, Point2d, Point3d, Point4d},
 };
 use uuid::Uuid;
 
@@ -26,6 +27,9 @@ fn err() -> ExecutionError {
     ExecutionError::MemoryWrongSize
 }
 
+/// Macro to generate an `impl Value` for the given type `$subject`.
+/// The type `$subject` must be "primitive-ish",
+/// i.e. something that can be converted Into a Primitive and TryFrom a primitive
 macro_rules! impl_value_on_primitive_ish {
     ($subject:ident) => {
         impl Value for $subject {
@@ -52,6 +56,7 @@ type VecU8 = Vec<u8>;
 impl_value_on_primitive_ish!(VecU8);
 impl_value_on_primitive_ish!(Angle);
 impl_value_on_primitive_ish!(usize);
+impl_value_on_primitive_ish!(Base64Data);
 
 /// Macro to generate the methods of trait `Value` for the given fields.
 /// Args:
@@ -100,8 +105,20 @@ where
     impl_value_on_struct_fields!(x, y, z);
 }
 
+impl<T> Value for Point4d<T>
+where
+    Primitive: From<T>,
+    T: Value,
+{
+    impl_value_on_struct_fields!(x, y, z, w);
+}
+
 impl Value for kittycad_modeling_cmds::shared::Color {
     impl_value_on_struct_fields!(r, g, b, a);
+}
+
+impl Value for kittycad_modeling_cmds::shared::ExportFile {
+    impl_value_on_struct_fields!(name, contents);
 }
 
 /// Layout:

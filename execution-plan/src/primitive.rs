@@ -1,4 +1,4 @@
-use kittycad_modeling_cmds::shared::Angle;
+use kittycad_modeling_cmds::{base64::Base64Data, shared::Angle};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -55,6 +55,12 @@ impl From<Angle> for Primitive {
 impl From<Vec<u8>> for Primitive {
     fn from(value: Vec<u8>) -> Self {
         Self::Bytes(value)
+    }
+}
+
+impl From<Base64Data> for Primitive {
+    fn from(value: Base64Data) -> Self {
+        Self::Bytes(value.into())
     }
 }
 
@@ -139,6 +145,14 @@ impl TryFrom<Primitive> for Vec<u8> {
                 actual: format!("{value:?}"),
             })
         }
+    }
+}
+
+impl TryFrom<Primitive> for Base64Data {
+    type Error = ExecutionError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        Vec::<u8>::try_from(value).map(Base64Data::from)
     }
 }
 
