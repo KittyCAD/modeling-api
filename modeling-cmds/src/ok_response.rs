@@ -33,6 +33,7 @@ build_enum! {
     SelectGet,
     GetEntityType,
     EntityGetDistance,
+    EntityLinearPattern,
     Solid3dGetAllEdgeFaces,
     Solid3dGetAllOppositeEdges,
     Solid3dGetOppositeEdge,

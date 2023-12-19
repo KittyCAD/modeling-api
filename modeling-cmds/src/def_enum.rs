@@ -163,6 +163,8 @@ pub enum ModelingCmd {
     ObjectSetMaterialParamsPbr(ObjectSetMaterialParamsPbr),
     /// What is the distance between these two entities?
     EntityGetDistance(EntityGetDistance),
+    /// Duplicate the given entity, evenly spaced along the chosen axis.
+    EntityLinearPattern(EntityLinearPattern),
 }
 
 impl ModelingCmd {
