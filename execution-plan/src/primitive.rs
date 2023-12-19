@@ -33,6 +33,12 @@ impl From<String> for Primitive {
     }
 }
 
+impl From<f32> for Primitive {
+    fn from(value: f32) -> Self {
+        Self::NumericValue(NumericPrimitive::Float(value as f64))
+    }
+}
+
 impl From<f64> for Primitive {
     fn from(value: f64) -> Self {
         Self::NumericValue(NumericPrimitive::Float(value))
@@ -113,6 +119,14 @@ impl TryFrom<Primitive> for f64 {
     }
 }
 
+impl TryFrom<Primitive> for f32 {
+    type Error = ExecutionError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        f64::try_from(value).map(|x| x as f32)
+    }
+}
+
 impl TryFrom<Primitive> for Vec<u8> {
     type Error = ExecutionError;
 
@@ -143,7 +157,21 @@ impl TryFrom<Primitive> for bool {
     }
 }
 
-#[cfg(test)]
+impl TryFrom<Primitive> for usize {
+    type Error = ExecutionError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::NumericValue(NumericPrimitive::Integer(x)) = value {
+            Ok(x)
+        } else {
+            Err(ExecutionError::MemoryWrongType {
+                expected: "usize",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
 impl From<usize> for Primitive {
     fn from(value: usize) -> Self {
         Self::NumericValue(NumericPrimitive::Integer(value))

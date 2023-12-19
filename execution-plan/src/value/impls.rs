@@ -9,6 +9,7 @@ use kittycad_modeling_cmds::{
     output,
     shared::{Angle, PathSegment, Point2d, Point3d},
 };
+use uuid::Uuid;
 
 use super::Value;
 use crate::{ExecutionError, Primitive};
@@ -25,45 +26,82 @@ fn err() -> ExecutionError {
     ExecutionError::MemoryWrongSize
 }
 
+macro_rules! impl_value_on_primitive_ish {
+    ($subject:ident) => {
+        impl Value for $subject {
+            fn into_parts(self) -> Vec<Primitive> {
+                vec![self.into()]
+            }
+
+            fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+            where
+                I: Iterator<Item = Option<Primitive>>,
+            {
+                values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()
+            }
+        }
+    };
+}
+
+impl_value_on_primitive_ish!(f32);
+impl_value_on_primitive_ish!(f64);
+impl_value_on_primitive_ish!(bool);
+impl_value_on_primitive_ish!(String);
+impl_value_on_primitive_ish!(Uuid);
+type VecU8 = Vec<u8>;
+impl_value_on_primitive_ish!(VecU8);
+impl_value_on_primitive_ish!(Angle);
+impl_value_on_primitive_ish!(usize);
+
+/// Macro to generate the methods of trait `Value` for the given fields.
+/// Args:
+/// `$field`: Repeated 0 or more times. Listing of each field in the struct.
+///           The order in which these fields are given determines the order that fields are
+///           written to and read from memory.
+macro_rules! impl_value_on_struct_fields {
+    ($($field:ident),*) => {
+        fn into_parts(self) -> Vec<Primitive> {
+            let mut parts = Vec::new();
+            $(
+            parts.extend(self.$field.into_parts());
+            )*
+            parts
+        }
+
+        fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+        where
+            I: Iterator<Item = Option<Primitive>>,
+        {
+            $(
+            let $field = Value::from_parts(values)?;
+            )*
+            Ok(Self {
+                $(
+                    $field,
+                )*
+            })
+        }
+    };
+}
+
 impl<T> Value for Point2d<T>
 where
     Primitive: From<T>,
-    T: TryFrom<Primitive, Error = ExecutionError>,
+    T: Value,
 {
-    fn into_parts(self) -> Vec<Primitive> {
-        let points = [self.x, self.y];
-        points.into_iter().map(|component| component.into()).collect()
-    }
-
-    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
-    where
-        I: Iterator<Item = Option<Primitive>>,
-    {
-        let x = values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()?;
-        let y = values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()?;
-        Ok(Self { x, y })
-    }
+    impl_value_on_struct_fields!(x, y);
 }
 
 impl<T> Value for Point3d<T>
 where
     Primitive: From<T>,
-    T: TryFrom<Primitive, Error = ExecutionError>,
+    T: Value,
 {
-    fn into_parts(self) -> Vec<Primitive> {
-        let points = [self.x, self.y, self.z];
-        points.into_iter().map(|component| component.into()).collect()
-    }
+    impl_value_on_struct_fields!(x, y, z);
+}
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
-    where
-        I: Iterator<Item = Option<Primitive>>,
-    {
-        let x = values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()?;
-        let y = values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()?;
-        let z = values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()?;
-        Ok(Self { x, y, z })
-    }
+impl Value for kittycad_modeling_cmds::shared::Color {
+    impl_value_on_struct_fields!(r, g, b, a);
 }
 
 /// Layout:
