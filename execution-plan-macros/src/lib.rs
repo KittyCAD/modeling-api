@@ -39,6 +39,9 @@ fn impl_value_on_struct(
         };
     };
 
+    // We're going to construct some fragments of Rust source code, which will get used in the
+    // final generated code this function returns.
+
     // For every field in the struct, this macro will:
     // - In the `into_parts`, extend the Vec of parts with that field, turned into parts.
     // - In the `from_parts`, instantiate a Self with a field from that part.
@@ -68,6 +71,8 @@ fn impl_value_on_struct(
     }
     let where_clause = generics.where_clause;
 
+    // Final return value: the generated Rust code to implement the trait.
+    // This uses the fragments above, interpolating them into the final outputted code.
     quote! {
         impl #generics_without_defaults kittycad_execution_plan_traits::Value for #name #generics_without_defaults
         #where_clause
