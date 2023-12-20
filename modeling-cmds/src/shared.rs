@@ -6,6 +6,8 @@ use diesel::{mysql::Mysql, serialize::ToSql, sql_types::Text};
 #[cfg(feature = "diesel")]
 use diesel_derives::{AsExpression, FromSqlRow};
 use enum_iterator::Sequence;
+use kittycad_execution_plan_macros::ExecutionPlanValue;
+use kittycad_execution_plan_traits as kcep;
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -50,7 +52,7 @@ pub struct AnnotationOptions {
     /// Color to render the annotation
     pub color: Option<Color>,
     /// Position to put the annotation
-    pub position: Option<Point3d>,
+    pub position: Option<Point3d<f32>>,
 }
 
 /// Options for annotation text
@@ -93,7 +95,7 @@ pub enum DistanceType {
 }
 
 /// An RGBA color
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct Color {
     /// Red
     pub r: f32,
@@ -138,10 +140,14 @@ pub enum AnnotationTextAlignmentY {
 impl_string_enum_sql! {AnnotationTextAlignmentY}
 
 /// A point in 3D space
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq, Default)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq, Default, ExecutionPlanValue)]
 #[serde(rename = "Point3d")]
 #[serde(rename_all = "snake_case")]
-pub struct Point3d<T = f32> {
+pub struct Point3d<T = f32>
+where
+    kcep::Primitive: From<T>,
+    T: kcep::Value,
+{
     #[allow(missing_docs)]
     pub x: T,
     #[allow(missing_docs)]
@@ -256,10 +262,14 @@ pub enum PathSegment {
 }
 
 /// A point in homogeneous (4D) space
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 #[serde(rename = "Point4d")]
 #[serde(rename_all = "snake_case")]
-pub struct Point4d<T = f32> {
+pub struct Point4d<T = f32>
+where
+    kcep::Primitive: From<T>,
+    T: kcep::Value,
+{
     #[allow(missing_docs)]
     pub x: T,
     #[allow(missing_docs)]
@@ -270,17 +280,21 @@ pub struct Point4d<T = f32> {
     pub w: T,
 }
 
-impl From<euler::Vec3> for Point3d {
+impl From<euler::Vec3> for Point3d<f32> {
     fn from(v: euler::Vec3) -> Self {
         Self { x: v.x, y: v.y, z: v.z }
     }
 }
 
 /// A point in 2D space
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default, ExecutionPlanValue)]
 #[serde(rename = "Point2d")]
 #[serde(rename_all = "snake_case")]
-pub struct Point2d<T = f32> {
+pub struct Point2d<T = f32>
+where
+    kcep::Primitive: From<T>,
+    T: kcep::Value,
+{
     #[allow(missing_docs)]
     pub x: T,
     #[allow(missing_docs)]
@@ -472,7 +486,7 @@ pub enum CurveType {
 }
 
 /// A file to be exported to the client.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct ExportFile {
     /// The name of the file.
     pub name: String,

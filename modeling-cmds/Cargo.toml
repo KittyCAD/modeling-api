@@ -22,6 +22,7 @@ enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
 http = "0.2.9"
 kittycad-execution-plan-traits = { path = "../execution-plan-traits" }
+kittycad-execution-plan-macros = { path = "../execution-plan-macros" }
 kittycad-unit-conversion-derive = "0.1.0"
 measurements = "0.11.0"
 parse-display = "0.8.2"
