@@ -3,71 +3,8 @@ use kittycad_execution_plan_traits::{MemoryError, Primitive, Value};
 use crate::{
     ok_response::OkModelingCmdResponse,
     output,
-    shared::{Angle, Color, ExportFile, PathSegment, Point2d, Point3d, Point4d},
+    shared::{Angle, PathSegment, Point2d, Point3d},
 };
-
-/// Macro to generate the methods of trait `Value` for the given fields.
-/// Args:
-/// `$field`: Repeated 0 or more times. Listing of each field in the struct.
-///           The order in which these fields are given determines the order that fields are
-///           written to and read from memory.
-macro_rules! impl_value_on_struct_fields {
-    ($($field:ident),*) => {
-        fn into_parts(self) -> Vec<Primitive> {
-            let mut parts = Vec::new();
-            $(
-            parts.extend(self.$field.into_parts());
-            )*
-            parts
-        }
-
-        fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
-        where
-            I: Iterator<Item = Option<Primitive>>,
-        {
-            $(
-            let $field = Value::from_parts(values)?;
-            )*
-            Ok(Self {
-                $(
-                    $field,
-                )*
-            })
-        }
-    };
-}
-
-impl<T> Value for Point2d<T>
-where
-    Primitive: From<T>,
-    T: Value,
-{
-    impl_value_on_struct_fields!(x, y);
-}
-
-impl<T> Value for Point3d<T>
-where
-    Primitive: From<T>,
-    T: Value,
-{
-    impl_value_on_struct_fields!(x, y, z);
-}
-
-impl<T> Value for Point4d<T>
-where
-    Primitive: From<T>,
-    T: Value,
-{
-    impl_value_on_struct_fields!(x, y, z, w);
-}
-
-impl Value for Color {
-    impl_value_on_struct_fields!(r, g, b, a);
-}
-
-impl Value for ExportFile {
-    impl_value_on_struct_fields!(name, contents);
-}
 
 pub(crate) const EMPTY: &str = "EMPTY";
 pub(crate) const TAKE_SNAPSHOT: &str = "TAKE_SNAPSHOT";

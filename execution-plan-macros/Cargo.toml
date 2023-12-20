@@ -1,0 +1,20 @@
+[package]
+name = "kittycad-execution-plan-macros"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/KittyCAD/execution-plan"
+rust-version = "1.73"
+description = "Macros for working with KittyCAD execution plans"
+authors = ["Adam Chalmers"]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+proc-macro2 = "1.0.70"
+quote = "1.0.33"
+syn = "2.0.41"
+
+[lib]
+proc-macro = true
+
+[dev-dependencies]
+kittycad-execution-plan-traits = { path = "../execution-plan-traits" }
