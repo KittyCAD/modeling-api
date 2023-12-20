@@ -1,4 +1,4 @@
-use kittycad_modeling_cmds::shared::Angle;
+use kittycad_modeling_cmds::{base64::Base64Data, shared::Angle};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -33,6 +33,12 @@ impl From<String> for Primitive {
     }
 }
 
+impl From<f32> for Primitive {
+    fn from(value: f32) -> Self {
+        Self::NumericValue(NumericPrimitive::Float(value as f64))
+    }
+}
+
 impl From<f64> for Primitive {
     fn from(value: f64) -> Self {
         Self::NumericValue(NumericPrimitive::Float(value))
@@ -49,6 +55,12 @@ impl From<Angle> for Primitive {
 impl From<Vec<u8>> for Primitive {
     fn from(value: Vec<u8>) -> Self {
         Self::Bytes(value)
+    }
+}
+
+impl From<Base64Data> for Primitive {
+    fn from(value: Base64Data) -> Self {
+        Self::Bytes(value.into())
     }
 }
 
@@ -113,6 +125,14 @@ impl TryFrom<Primitive> for f64 {
     }
 }
 
+impl TryFrom<Primitive> for f32 {
+    type Error = ExecutionError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        f64::try_from(value).map(|x| x as f32)
+    }
+}
+
 impl TryFrom<Primitive> for Vec<u8> {
     type Error = ExecutionError;
 
@@ -125,6 +145,14 @@ impl TryFrom<Primitive> for Vec<u8> {
                 actual: format!("{value:?}"),
             })
         }
+    }
+}
+
+impl TryFrom<Primitive> for Base64Data {
+    type Error = ExecutionError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        Vec::<u8>::try_from(value).map(Base64Data::from)
     }
 }
 
@@ -143,7 +171,21 @@ impl TryFrom<Primitive> for bool {
     }
 }
 
-#[cfg(test)]
+impl TryFrom<Primitive> for usize {
+    type Error = ExecutionError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::NumericValue(NumericPrimitive::Integer(x)) = value {
+            Ok(x)
+        } else {
+            Err(ExecutionError::MemoryWrongType {
+                expected: "usize",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
 impl From<usize> for Primitive {
     fn from(value: usize) -> Self {
         Self::NumericValue(NumericPrimitive::Integer(value))
