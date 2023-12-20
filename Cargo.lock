@@ -1532,6 +1532,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "kittycad-execution-plan-macros"
+version = "0.1.0"
+dependencies = [
+ "kittycad-execution-plan-traits",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.41",
+]
+
+[[package]]
 name = "kittycad-execution-plan-traits"
 version = "0.1.0"
 dependencies = [
