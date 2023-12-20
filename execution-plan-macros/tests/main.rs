@@ -17,3 +17,10 @@ struct FooConcrete {
     f: f64,
     i: usize,
 }
+
+#[allow(dead_code)]
+#[derive(ExecutionPlanValue)]
+enum FooEnum {
+    A { x: usize, y: usize },
+    B { z: usize, w: usize },
+}

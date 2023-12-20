@@ -76,9 +76,7 @@ where
     I: Iterator<Item = Option<Primitive>>,
     T: TryFrom<Primitive, Error = MemoryError>,
 {
-    let v = values.next().ok_or_else(err)?;
-    let v = v.ok_or_else(err)?;
-    T::try_from(v)
+    values.next().ok_or_else(err)?.ok_or_else(err)?.try_into()
 }
 
 /// Layout:
