@@ -1,5 +1,6 @@
-use super::Result;
-use crate::{primitive::Primitive, value::Value, Address};
+use kittycad_execution_plan_traits::{MemoryError, Primitive, Value};
+
+use crate::Address;
 
 /// Helper wrapper around Memory. It lets you push static data into memory before the program runs.
 pub struct StaticMemoryInitializer {
@@ -78,7 +79,7 @@ impl Memory {
 
     /// Get a value value (i.e. a value which takes up multiple addresses in memory).
     /// Its parts are stored in consecutive memory addresses starting at `start`.
-    pub fn get_composite<T: Value>(&self, start: Address) -> Result<T> {
+    pub fn get_composite<T: Value>(&self, start: Address) -> std::result::Result<T, MemoryError> {
         let mut values = self.addresses.iter().skip(start.0).cloned();
         T::from_parts(&mut values)
     }
