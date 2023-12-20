@@ -5,7 +5,6 @@ edition = "2021"
 repository = "https://github.com/KittyCAD/execution-plan"
 rust-version = "1.73"
 description = "A DSL for composing KittyCAD API queries"
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
