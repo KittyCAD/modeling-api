@@ -1,6 +1,7 @@
-use crate::primitive::{NumericPrimitive, Primitive};
-use crate::{ExecutionError, Memory, Operand, Operation};
+use kittycad_execution_plan_traits::{NumericPrimitive, Primitive};
 use serde::{Deserialize, Serialize};
+
+use crate::{ExecutionError, Memory, Operand, Operation};
 
 /// Instruction to perform arithmetic on values in memory.
 #[derive(Deserialize, Serialize)]
@@ -31,9 +32,7 @@ macro_rules! arithmetic_body {
                     (NumericPrimitive::Float(x), NumericPrimitive::Integer(y)) => {
                         NumericPrimitive::Float(x.$method(y as f64))
                     }
-                    (NumericPrimitive::Float(x), NumericPrimitive::Float(y)) => {
-                        NumericPrimitive::Float(x.$method(y))
-                    }
+                    (NumericPrimitive::Float(x), NumericPrimitive::Float(y)) => NumericPrimitive::Float(x.$method(y)),
                 };
                 Ok(Primitive::NumericValue(num))
             }

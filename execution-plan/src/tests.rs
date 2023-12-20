@@ -1,13 +1,13 @@
 use std::env;
 
 use insta::assert_snapshot;
+use kittycad_execution_plan_traits::{NumericPrimitive, Primitive};
 use kittycad_modeling_cmds::shared::{PathSegment, Point3d};
 use kittycad_modeling_session::{Session, SessionBuilder};
 use tabled::{settings::Style, Table};
 use uuid::Uuid;
 
 use super::*;
-use crate::primitive::NumericPrimitive;
 
 async fn test_client() -> Session {
     let kittycad_api_token = env::var("KITTYCAD_API_TOKEN").expect("You must set $KITTYCAD_API_TOKEN");
@@ -257,17 +257,15 @@ async fn api_call_draw_cube() {
 
 /// Return a nicely-formatted table of memory.
 fn debug_dump_memory(mem: &Memory) -> String {
-    impl Primitive {
-        fn pretty_print(&self) -> (&'static str, String) {
-            match self {
-                Primitive::String(v) => ("String", v.to_owned()),
-                Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
-                Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Integer", v.to_string()),
-                Primitive::Uuid(v) => ("Uuid", v.to_string()),
-                Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
-                Primitive::Bool(v) => ("Bool", v.to_string()),
-                Primitive::Nil => ("Nil", String::new()),
-            }
+    fn pretty_print(p: &Primitive) -> (&'static str, String) {
+        match p {
+            Primitive::String(v) => ("String", v.to_owned()),
+            Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
+            Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Integer", v.to_string()),
+            Primitive::Uuid(v) => ("Uuid", v.to_string()),
+            Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
+            Primitive::Bool(v) => ("Bool", v.to_string()),
+            Primitive::Nil => ("Nil", String::new()),
         }
     }
     #[derive(tabled::Tabled)]
@@ -280,7 +278,7 @@ fn debug_dump_memory(mem: &Memory) -> String {
         mem.iter()
             .filter_map(|(i, val)| {
                 if let Some(val) = val {
-                    let (val_type, value) = val.pretty_print();
+                    let (val_type, value) = pretty_print(val);
                     Some(MemoryAddr {
                         index: i,
                         val_type,

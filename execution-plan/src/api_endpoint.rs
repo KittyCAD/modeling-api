@@ -1,3 +1,4 @@
+use kittycad_execution_plan_traits::{MemoryError, Primitive, Value};
 use kittycad_modeling_cmds::{
     each_cmd::{MovePathPen, StartPath},
     id::ModelingCmdId,
@@ -5,7 +6,7 @@ use kittycad_modeling_cmds::{
 };
 use uuid::Uuid;
 
-use crate::{primitive::Primitive, value::Value, Address, ExecutionError, Memory, Result};
+use crate::{Address, ExecutionError, Memory, Result};
 
 /// All API endpoints that can be executed must implement this trait.
 pub trait ApiEndpoint: ModelingCmdVariant + Sized {
@@ -47,6 +48,7 @@ impl ApiEndpoint for ExtendPath {
     {
         let path = read::<Primitive>(fields.next(), mem)
             .and_then(Uuid::try_from)
+            .map_err(ExecutionError::from)
             .map(ModelingCmdId::from)?;
         let segment = read(fields.next(), mem)?;
         Ok(Self { path, segment })
@@ -73,9 +75,11 @@ impl ApiEndpoint for TakeSnapshot {
         I: Iterator<Item = Address>,
     {
         let format_str = read::<Primitive>(fields.next(), mem).and_then(String::try_from)?;
-        let format = format_str.parse().map_err(|_| ExecutionError::InvalidEnumVariant {
-            expected_type: "image format".to_owned(),
-            actual: format_str,
+        let format = format_str.parse().map_err(|_| {
+            ExecutionError::from(MemoryError::InvalidEnumVariant {
+                expected_type: "image format".to_owned(),
+                actual: format_str,
+            })
         })?;
         Ok(Self { format })
     }
@@ -91,7 +95,7 @@ impl ApiEndpoint for ClosePath {
     }
 }
 
-fn read<T: Value>(start_addr: Option<Address>, mem: &Memory) -> Result<T> {
-    let start_addr = start_addr.ok_or(ExecutionError::MemoryWrongSize)?;
+fn read<T: Value>(start_addr: Option<Address>, mem: &Memory) -> std::result::Result<T, MemoryError> {
+    let start_addr = start_addr.ok_or(MemoryError::MemoryWrongSize)?;
     mem.get_composite(start_addr)
 }

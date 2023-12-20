@@ -1,62 +1,10 @@
-//! General principles for implementing Value
-//!
-//! - Each struct should have a canonical ordering for its fields.
-//! - Always lay these fields out in the canonical ordering.
-//! - This canonical ordering is the order of the struct's fields in its Rust source code definition.
-//! - Enums get laid out by first putting the variant as a string, then putting the variant's fields.
-use kittycad_modeling_cmds::{
-    base64::Base64Data,
+use kittycad_execution_plan_traits::{MemoryError, Primitive, Value};
+
+use crate::{
     ok_response::OkModelingCmdResponse,
     output,
-    shared::{Angle, PathSegment, Point2d, Point3d, Point4d},
+    shared::{Angle, Color, ExportFile, PathSegment, Point2d, Point3d, Point4d},
 };
-use uuid::Uuid;
-
-use super::Value;
-use crate::{ExecutionError, Primitive};
-
-pub(crate) const EMPTY: &str = "EMPTY";
-pub(crate) const TAKE_SNAPSHOT: &str = "TAKE_SNAPSHOT";
-pub(crate) const ARC: &str = "arc";
-pub(crate) const LINE: &str = "line";
-pub(crate) const TAN_ARC: &str = "tan_arc";
-pub(crate) const TAN_ARC_TO: &str = "tan_arc_to";
-pub(crate) const BEZIER: &str = "bezier";
-
-fn err() -> ExecutionError {
-    ExecutionError::MemoryWrongSize
-}
-
-/// Macro to generate an `impl Value` for the given type `$subject`.
-/// The type `$subject` must be "primitive-ish",
-/// i.e. something that can be converted Into a Primitive and TryFrom a primitive
-macro_rules! impl_value_on_primitive_ish {
-    ($subject:ident) => {
-        impl Value for $subject {
-            fn into_parts(self) -> Vec<Primitive> {
-                vec![self.into()]
-            }
-
-            fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
-            where
-                I: Iterator<Item = Option<Primitive>>,
-            {
-                values.next().ok_or(err())?.to_owned().ok_or(err())?.try_into()
-            }
-        }
-    };
-}
-
-impl_value_on_primitive_ish!(f32);
-impl_value_on_primitive_ish!(f64);
-impl_value_on_primitive_ish!(bool);
-impl_value_on_primitive_ish!(String);
-impl_value_on_primitive_ish!(Uuid);
-type VecU8 = Vec<u8>;
-impl_value_on_primitive_ish!(VecU8);
-impl_value_on_primitive_ish!(Angle);
-impl_value_on_primitive_ish!(usize);
-impl_value_on_primitive_ish!(Base64Data);
 
 /// Macro to generate the methods of trait `Value` for the given fields.
 /// Args:
@@ -73,7 +21,7 @@ macro_rules! impl_value_on_struct_fields {
             parts
         }
 
-        fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+        fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
         where
             I: Iterator<Item = Option<Primitive>>,
         {
@@ -113,12 +61,24 @@ where
     impl_value_on_struct_fields!(x, y, z, w);
 }
 
-impl Value for kittycad_modeling_cmds::shared::Color {
+impl Value for Color {
     impl_value_on_struct_fields!(r, g, b, a);
 }
 
-impl Value for kittycad_modeling_cmds::shared::ExportFile {
+impl Value for ExportFile {
     impl_value_on_struct_fields!(name, contents);
+}
+
+pub(crate) const EMPTY: &str = "EMPTY";
+pub(crate) const TAKE_SNAPSHOT: &str = "TAKE_SNAPSHOT";
+pub(crate) const ARC: &str = "arc";
+pub(crate) const LINE: &str = "line";
+pub(crate) const TAN_ARC: &str = "tan_arc";
+pub(crate) const TAN_ARC_TO: &str = "tan_arc_to";
+pub(crate) const BEZIER: &str = "bezier";
+
+fn err() -> MemoryError {
+    MemoryError::MemoryWrongSize
 }
 
 /// Layout:
@@ -137,7 +97,7 @@ impl Value for OkModelingCmdResponse {
         }
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
     where
         I: Iterator<Item = Option<Primitive>>,
     {
@@ -161,7 +121,7 @@ impl Value for output::TakeSnapshot {
         vec![Primitive::Bytes(self.contents.into())]
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
     where
         I: Iterator<Item = Option<Primitive>>,
     {
@@ -174,10 +134,10 @@ impl Value for output::TakeSnapshot {
 
 /// Read the next primitive.
 /// If it's
-fn next<I, T>(values: &mut I) -> Result<T, ExecutionError>
+fn next<I, T>(values: &mut I) -> Result<T, MemoryError>
 where
     I: Iterator<Item = Option<Primitive>>,
-    T: TryFrom<Primitive, Error = ExecutionError>,
+    T: TryFrom<Primitive, Error = MemoryError>,
 {
     let v = values.next().ok_or_else(err)?;
     let v = v.ok_or_else(err)?;
@@ -250,7 +210,7 @@ impl Value for PathSegment {
         parts
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
     where
         I: Iterator<Item = Option<Primitive>>,
     {
@@ -304,7 +264,7 @@ impl Value for PathSegment {
                     angle_snap_increment,
                 })
             }
-            other => Err(ExecutionError::InvalidEnumVariant {
+            other => Err(MemoryError::InvalidEnumVariant {
                 expected_type: "line segment".to_owned(),
                 actual: other.to_owned(),
             }),

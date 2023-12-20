@@ -9,20 +9,19 @@
 use std::fmt;
 
 use api_endpoint::ApiEndpoint;
+use kittycad_execution_plan_traits::{MemoryError, Primitive};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
 
-use self::{arithmetic::Arithmetic, primitive::Primitive};
+use self::arithmetic::Arithmetic;
 
 mod api_endpoint;
 mod arithmetic;
 mod memory;
-mod primitive;
 #[cfg(test)]
 mod tests;
-mod value;
 
 /// An address in KCEP's program memory.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
@@ -231,17 +230,6 @@ pub enum ExecutionError {
         /// Operands being attempted
         operands: Vec<Primitive>,
     },
-    /// Type error, memory contained the wrong type.
-    #[error("Tried to read a '{expected}' from KCEP program memory, found an '{actual}' instead")]
-    MemoryWrongType {
-        /// What the KittyCAD executor expected memory to contain
-        expected: &'static str,
-        /// What was actually in memory
-        actual: String,
-    },
-    /// Memory address was not set.
-    #[error("Tried to read from empty memory address")]
-    MemoryWrongSize,
     /// You tried to call a KittyCAD endpoint that doesn't exist or isn't implemented.
     #[error("No endpoint {name} recognized")]
     UnrecognizedEndpoint {
@@ -251,12 +239,7 @@ pub enum ExecutionError {
     /// Error running a modeling command.
     #[error("Error sending command to API: {0}")]
     ModelingApiError(#[from] RunCommandError),
-    /// When trying to read an enum from memory, found a variant tag which is not valid for this enum.
-    #[error("Found an unexpected tag '{actual}' when trying to read an enum of type {expected_type} from memory")]
-    InvalidEnumVariant {
-        /// What type of enum was being read from memory.
-        expected_type: String,
-        /// The actual enum tag found in memory.
-        actual: String,
-    },
+    /// Error reading value from memory.
+    #[error("{0}")]
+    MemoryError(#[from] MemoryError),
 }
