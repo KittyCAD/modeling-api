@@ -5,6 +5,7 @@ use proc_macro2::Span;
 use quote::{quote, quote_spanned};
 use syn::{parse_macro_input, spanned::Spanned, DeriveInput, Fields, GenericParam};
 
+/// This will derive the trait `Value` from the `kittycad-execution-plan-traits` crate.
 #[proc_macro_derive(ExecutionPlanValue)]
 pub fn impl_value(input: TokenStream) -> TokenStream {
     // Parse the input tokens into a syntax tree
@@ -45,19 +46,28 @@ fn impl_value_on_struct(
     // For every field in the struct, this macro will:
     // - In the `into_parts`, extend the Vec of parts with that field, turned into parts.
     // - In the `from_parts`, instantiate a Self with a field from that part.
-    let field_names: Vec<_> = fields.named.iter().filter_map(|field| field.ident.as_ref()).collect();
-    let mut extend_per_field = quote!();
-    let mut instantiate_each_field = quote!();
-    for field in field_names {
-        extend_per_field = quote! {
-            parts.extend(self.#field.into_parts());
-            #extend_per_field
-        };
-        instantiate_each_field = quote! {
-            #field: kittycad_execution_plan_traits::Value::from_parts(values)?,
-            #instantiate_each_field
+    // Step one is to get a list of all named fields in the struct (and their spans):
+    let field_names: Vec<_> = fields
+        .named
+        .iter()
+        .filter_map(|field| field.ident.as_ref().map(|ident| (ident, field.span())))
+        .collect();
+    // Now we can construct those `into_parts` and `from_parts` fragments.
+    // We take some care to use the span of each `syn::Field` as
+    // the span of the corresponding `into_parts()` and `from_parts()`
+    // calls. This way if one of the field types does not
+    // implement `Value` then the compiler's error message
+    // underlines which field it is.
+    let extend_per_field = field_names.iter().map(|(ident, span)| {
+        quote_spanned! {*span=>
+            parts.extend(self.#ident.into_parts());
         }
-    }
+    });
+    let instantiate_each_field = field_names.iter().map(|(ident, span)| {
+        quote_spanned! {*span=>
+            #ident: kittycad_execution_plan_traits::Value::from_parts(values)?,
+        }
+    });
 
     // Handle generics in the original struct.
     // Firstly, if the original struct has defaults on its generics, e.g. Point2d<T = f32>,
@@ -79,7 +89,7 @@ fn impl_value_on_struct(
         {
             fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
                 let mut parts = Vec::new();
-                #extend_per_field
+                #(#extend_per_field)*
                 parts
             }
 
@@ -88,7 +98,7 @@ fn impl_value_on_struct(
                 I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
             {
                 Ok(Self {
-                    #instantiate_each_field
+                #(#instantiate_each_field)*
                 })
             }
         }
