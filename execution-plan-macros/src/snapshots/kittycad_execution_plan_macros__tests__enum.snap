@@ -24,6 +24,7 @@ impl kittycad_execution_plan_traits::Value for FooEnum {
                     Primitive::from(field1),
                 ]
             }
+            FooEnum::D => Vec::new(),
         }
     }
 
@@ -46,6 +47,7 @@ impl kittycad_execution_plan_traits::Value for FooEnum {
                 let field1 = String::from_parts(values)?;
                 Ok(Self::C(field0, field1))
             }
+            stringify!(D) => Ok(Self::D),
             other => Err(
                 kittycad_execution_plan_traits::MemoryError::InvalidEnumVariant {
                     expected_type: stringify!(FooEnum).to_owned(),

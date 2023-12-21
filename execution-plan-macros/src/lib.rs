@@ -83,7 +83,13 @@ fn impl_value_on_enum(
                     },
                 )
             }
-            Fields::Unit => todo!(),
+            // Enum variant with no fields.
+            Fields::Unit => (
+                quote_spanned! {variant.span() =>
+                    #name::#variant_name
+                },
+                quote_spanned! {variant.span()=> {Vec::new()}},
+            ),
         };
         quote_spanned! {variant.span() =>
             #lhs => {
@@ -141,7 +147,14 @@ fn impl_value_on_enum(
                         }
                     }
                 }
-                Fields::Unit => todo!(),
+                // Enum variant with no fields.
+                Fields::Unit => {
+                    quote_spanned! {variant.span()=>
+                        stringify!(#variant_name) => {
+                            Ok(Self::#variant_name)
+                        }
+                    }
+                }
             }
         })
         .collect();
@@ -254,6 +267,8 @@ fn impl_value_on_struct(
     }
 }
 
+/// Remove the defaults from a generic type.
+/// For example, turns <T = f32> into <T>.
 fn remove_generics_defaults(mut g: syn::Generics) -> syn::Generics {
     for generic_param in g.params.iter_mut() {
         if let GenericParam::Type(type_param) = generic_param {
@@ -272,9 +287,10 @@ mod tests {
     fn test_enum() {
         let input = quote! {
             enum FooEnum {
-                A {x: usize},
-                B {y: usize},
-                C (usize, String),
+                A{x: usize},
+                B{y: usize},
+                C(usize, String),
+                D,
             }
         };
         let input: DeriveInput = syn::parse2(input).unwrap();

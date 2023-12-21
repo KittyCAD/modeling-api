@@ -23,4 +23,5 @@ enum FooEnum {
     A { x: usize, y: usize },
     B { z: usize, w: usize },
     C(usize, String, f64, f32),
+    D,
 }
