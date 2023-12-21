@@ -1545,6 +1545,7 @@ name = "kittycad-execution-plan-macros"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "insta",
  "kittycad-execution-plan-traits",
  "proc-macro2",
  "quote",

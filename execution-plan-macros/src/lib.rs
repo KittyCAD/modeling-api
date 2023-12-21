@@ -280,7 +280,7 @@ mod tests {
         let input: DeriveInput = syn::parse2(input).unwrap();
         let out = impl_derive_value(input);
         let formatted = get_text_fmt(&out).unwrap();
-        println!("{formatted}");
+        insta::assert_snapshot!(formatted);
     }
 
     fn clean_text(s: &str) -> String {

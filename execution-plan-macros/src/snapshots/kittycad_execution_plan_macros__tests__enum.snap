@@ -1,0 +1,58 @@
+---
+source: execution-plan-macros/src/lib.rs
+expression: formatted
+---
+impl kittycad_execution_plan_traits::Value for FooEnum {
+    fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
+        match self {
+            FooEnum::A { x } => {
+                vec![
+                    Primitive::from(stringify!(A).to_owned()),
+                    Primitive::from(x),
+                ]
+            }
+            FooEnum::B { y } => {
+                vec![
+                    Primitive::from(stringify!(B).to_owned()),
+                    Primitive::from(y),
+                ]
+            }
+            FooEnum::C(field0, field1) => {
+                vec![
+                    Primitive::from(stringify!(C).to_owned()),
+                    Primitive::from(field0),
+                    Primitive::from(field1),
+                ]
+            }
+        }
+    }
+
+    fn from_parts<I>(values: &mut I) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+    where
+        I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
+    {
+        let variant_name = String::from_parts(values)?;
+        match variant_name.as_str() {
+            stringify!(A) => {
+                let x = usize::from_parts(values)?;
+                Ok(Self::A { x })
+            }
+            stringify!(B) => {
+                let y = usize::from_parts(values)?;
+                Ok(Self::B { y })
+            }
+            stringify!(C) => {
+                let field0 = usize::from_parts(values)?;
+                let field1 = String::from_parts(values)?;
+                Ok(Self::C(field0, field1))
+            }
+            other => Err(
+                kittycad_execution_plan_traits::MemoryError::InvalidEnumVariant {
+                    expected_type: stringify!(FooEnum).to_owned(),
+                    actual: other.to_owned(),
+                },
+            ),
+        }
+    }
+}
+
