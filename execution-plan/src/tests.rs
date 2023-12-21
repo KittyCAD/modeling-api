@@ -43,15 +43,15 @@ async fn add_literals() {
     let plan = vec![Instruction::Arithmetic {
         arithmetic: Arithmetic {
             operation: Operation::Add,
-            operand0: Operand::Literal(3.into()),
-            operand1: Operand::Literal(2.into()),
+            operand0: Operand::Literal(3u32.into()),
+            operand1: Operand::Literal(2u32.into()),
         },
         destination: Address(1),
     }];
     let mut mem = Memory::default();
     let client = test_client().await;
     execute(&mut mem, plan, client).await.expect("failed to execute plan");
-    assert_eq!(mem.get(&Address(1)), Some(&5.into()))
+    assert_eq!(mem.get(&Address(1)), Some(&5u32.into()))
 }
 
 #[tokio::test]
@@ -60,14 +60,14 @@ async fn add_literal_to_reference() {
         // Memory addr 0 contains 450
         Instruction::Set {
             address: Address(0),
-            value: 450.into(),
+            value: 450u32.into(),
         },
         // Add 20 to addr 0
         Instruction::Arithmetic {
             arithmetic: Arithmetic {
                 operation: Operation::Add,
                 operand0: Operand::Reference(Address(0)),
-                operand1: Operand::Literal(20.into()),
+                operand1: Operand::Literal(20u32.into()),
             },
             destination: Address(1),
         },
@@ -76,7 +76,7 @@ async fn add_literal_to_reference() {
     let mut mem = Memory::default();
     let client = test_client().await;
     execute(&mut mem, plan, client).await.expect("failed to execute plan");
-    assert_eq!(mem.get(&Address(1)), Some(&470.into()))
+    assert_eq!(mem.get(&Address(1)), Some(&470u32.into()))
 }
 
 #[tokio::test]
@@ -103,7 +103,7 @@ async fn add_to_composite_value() {
             arithmetic: Arithmetic {
                 operation: Operation::Add,
                 operand0: Operand::Reference(start_addr),
-                operand1: Operand::Literal(40.into()),
+                operand1: Operand::Literal(40u32.into()),
             },
             destination: start_addr,
         }],

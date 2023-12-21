@@ -4,6 +4,7 @@ use crate::{MemoryError, Primitive, Value};
 const NONE: &str = "None";
 const SOME: &str = "Some";
 
+/// Use the standard enum convention (a string for the variant tag, then all fields of the variant)
 impl<T> Value for Option<T>
 where
     T: Value,
@@ -40,5 +41,32 @@ where
                 actual: other.to_owned(),
             }),
         }
+    }
+}
+
+/// Store the vec's length as the first primitive, then lay out all elements.
+impl<T> Value for Vec<T>
+where
+    T: Value,
+{
+    fn into_parts(self) -> Vec<Primitive> {
+        let mut parts: Vec<Primitive> = Vec::with_capacity(self.len() + 1);
+        parts.push(self.len().into());
+        parts.extend(self.into_iter().flat_map(|part| part.into_parts()));
+        parts
+    }
+
+    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
+    where
+        I: Iterator<Item = Option<Primitive>>,
+    {
+        // Read the length of the vec -- how many elements does it have?
+        let n: usize = values
+            .next()
+            .flatten()
+            .ok_or(MemoryError::MemoryWrongSize)?
+            .try_into()?;
+        // Read `n` elements from the parts.
+        (0..n).map(|_| T::from_parts(values)).collect()
     }
 }

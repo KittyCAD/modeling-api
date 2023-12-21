@@ -16,7 +16,6 @@ pub mod id;
 pub mod impl_extern_type;
 mod impl_traits;
 mod kcep_primitive;
-mod kcep_value;
 /// When a modeling command is successful, these responses could be returned.
 pub mod ok_response;
 /// Output of each modeling command.

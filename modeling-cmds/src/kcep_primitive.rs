@@ -1,6 +1,6 @@
 use kittycad_execution_plan_traits::{impl_value_on_primitive_ish, MemoryError, NumericPrimitive, Primitive, Value};
 
-use crate::{base64::Base64Data, shared::Angle};
+use crate::{base64::Base64Data, id::ModelingCmdId, shared::Angle};
 
 /// Angle is always stored as f64 degrees.
 impl From<Angle> for Primitive {
@@ -40,3 +40,4 @@ impl TryFrom<Primitive> for Base64Data {
 
 impl_value_on_primitive_ish!(Value, Angle);
 impl_value_on_primitive_ish!(Value, Base64Data);
+impl_value_on_primitive_ish!(Value, ModelingCmdId);

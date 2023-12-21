@@ -45,7 +45,7 @@ fn test_derive_on_enum() {
         (
             "named fields",
             FooEnum::A { x: 3 },
-            vec![Primitive::from("A".to_owned()), Primitive::from(3)],
+            vec![Primitive::from("A".to_owned()), Primitive::from(3u32)],
         ),
         (
             "named fields with Option::Some",
@@ -53,7 +53,7 @@ fn test_derive_on_enum() {
             vec![
                 Primitive::from("B".to_owned()),
                 Primitive::from("Some".to_owned()),
-                Primitive::from(3),
+                Primitive::from(3u32),
             ],
         ),
         (
@@ -66,7 +66,7 @@ fn test_derive_on_enum() {
             FooEnum::C(4, "hello".to_owned()),
             vec![
                 Primitive::from("C".to_owned()),
-                Primitive::from(4),
+                Primitive::from(4u32),
                 Primitive::from("hello".to_owned()),
             ],
         ),
@@ -106,7 +106,7 @@ fn test_derive_on_struct() {
             },
             vec![
                 Primitive::from(1.2),
-                Primitive::from(2),
+                Primitive::from(2u32),
                 Primitive::from("Some".to_owned()),
                 Primitive::from(true),
                 Primitive::from("hello".to_owned()),
@@ -122,7 +122,7 @@ fn test_derive_on_struct() {
             },
             vec![
                 Primitive::from(1.2),
-                Primitive::from(2),
+                Primitive::from(2u32),
                 Primitive::from("None".to_owned()),
                 Primitive::from("hello".to_owned()),
             ],

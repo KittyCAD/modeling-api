@@ -5,6 +5,7 @@ use std::str::FromStr;
 use diesel::{mysql::Mysql, serialize::ToSql, sql_types::Text};
 #[cfg(feature = "diesel")]
 use diesel_derives::{AsExpression, FromSqlRow};
+use kittycad_execution_plan_macros::ExecutionPlanValue;
 use kittycad_unit_conversion_derive::UnitConversion;
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
@@ -50,6 +51,7 @@ macro_rules! impl_string_enum_sql {
     PartialOrd,
     UnitConversion,
     Hash,
+    ExecutionPlanValue,
 )]
 #[display(style = "snake_case")]
 pub enum UnitLength {
@@ -140,6 +142,7 @@ impl_string_enum_sql!(UnitAngle);
     UnitConversion,
     Default,
     Hash,
+    ExecutionPlanValue,
 )]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
@@ -212,6 +215,7 @@ impl UnitArea {
     Default,
     UnitConversion,
     Hash,
+    ExecutionPlanValue,
 )]
 #[display(style = "snake_case")]
 pub enum UnitDensity {
@@ -254,6 +258,7 @@ impl UnitDensity {
     PartialOrd,
     UnitConversion,
     Hash,
+    ExecutionPlanValue,
 )]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
@@ -301,6 +306,7 @@ impl UnitMass {
     PartialOrd,
     UnitConversion,
     Hash,
+    ExecutionPlanValue,
 )]
 #[display(style = "snake_case")]
 pub enum UnitVolume {
