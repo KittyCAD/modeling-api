@@ -495,6 +495,7 @@ pub enum EntityType {
     Edge,
     Face,
     Plane,
+    Vertex,
 }
 
 /// The type of Curve (embedded within path)
