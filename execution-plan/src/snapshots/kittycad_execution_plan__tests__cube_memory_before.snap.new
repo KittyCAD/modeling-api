@@ -1,0 +1,36 @@
+---
+source: execution-plan/src/tests.rs
+assertion_line: 170
+expression: debug_dump_memory(&mem)
+---
+┌───────┬──────────┬──────────────────────────────────────┐
+│ index │ val_type │ value                                │
+├───────┼──────────┼──────────────────────────────────────┤
+│ 0     │ Uuid     │ 4cd175a3-e313-4c91-b624-368bea3c0483 │
+│ 1     │ Float    │ 40                                   │
+│ 2     │ Bool     │ true                                 │
+│ 3     │ String   │ png                                  │
+│ 4     │ Float    │ -20                                  │
+│ 5     │ Float    │ -20                                  │
+│ 6     │ Float    │ -20                                  │
+│ 7     │ String   │ Line                                 │
+│ 8     │ Float    │ 20                                   │
+│ 9     │ Float    │ -20                                  │
+│ 10    │ Float    │ -20                                  │
+│ 11    │ Bool     │ false                                │
+│ 12    │ String   │ Line                                 │
+│ 13    │ Float    │ 20                                   │
+│ 14    │ Float    │ 20                                   │
+│ 15    │ Float    │ -20                                  │
+│ 16    │ Bool     │ false                                │
+│ 17    │ String   │ Line                                 │
+│ 18    │ Float    │ -20                                  │
+│ 19    │ Float    │ 20                                   │
+│ 20    │ Float    │ -20                                  │
+│ 21    │ Bool     │ false                                │
+│ 22    │ String   │ Line                                 │
+│ 23    │ Float    │ -20                                  │
+│ 24    │ Float    │ -20                                  │
+│ 25    │ Float    │ -20                                  │
+│ 26    │ Bool     │ false                                │
+└───────┴──────────┴──────────────────────────────────────┘
