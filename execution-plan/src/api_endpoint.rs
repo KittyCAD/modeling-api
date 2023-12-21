@@ -82,6 +82,7 @@ impl ApiEndpoint for ClosePath {
 }
 
 fn read<T: Value>(start_addr: Option<Address>, mem: &Memory) -> std::result::Result<T, MemoryError> {
-    let start_addr = start_addr.ok_or(MemoryError::MemoryWrongSize)?;
-    mem.get_composite(start_addr)
+    start_addr
+        .ok_or(MemoryError::MemoryWrongSize)
+        .and_then(|a| mem.get_composite(a))
 }

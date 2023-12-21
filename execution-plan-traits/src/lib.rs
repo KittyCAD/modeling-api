@@ -1,5 +1,4 @@
-//! TODO
-// pub use impl_value_on_primitive_ish;
+//! Traits and types used for KittyCAD Execution Plans.
 
 pub use self::primitive::{NumericPrimitive, Primitive};
 
@@ -7,7 +6,7 @@ pub use self::primitive::{NumericPrimitive, Primitive};
 mod primitive;
 mod containers;
 
-/// Types that can be written to or read from KCEP program memory.
+/// Types that can be written to or read from KCEP program memory, in one contiguous block.
 /// If they require multiple memory addresses, they will be laid out
 /// into multiple consecutive memory addresses.
 pub trait Value: Sized {
@@ -19,7 +18,27 @@ pub trait Value: Sized {
         I: Iterator<Item = Option<Primitive>>;
 }
 
-/// TODO
+/// Types that can be read from KCEP program memory,
+/// scattered across multiple places in the address space.
+pub trait FromMemory: Sized {
+    /// Read this type from memory, getting each field of the type from a different memory address.
+    fn from_memory<I, M>(fields: &mut I, mem: &M) -> Result<Self, MemoryError>
+    where
+        M: ReadMemory,
+        I: Iterator<Item = M::Address>;
+}
+
+/// Memory that a KittyCAD Execution Plan can read from.
+pub trait ReadMemory {
+    /// How the memory is indexed.
+    type Address;
+    /// Get a value from the given address.
+    fn get(&self, addr: &Self::Address) -> Option<&Primitive>;
+    /// Get a value from the given starting address. Value might require multiple addresses.
+    fn get_composite<T: Value>(&self, start: Self::Address) -> std::result::Result<T, MemoryError>;
+}
+
+/// Errors that could occur when reading a type from KittyCAD Execution Plan program memory.
 #[derive(Debug, thiserror::Error, Default)]
 pub enum MemoryError {
     /// Something went wrong
