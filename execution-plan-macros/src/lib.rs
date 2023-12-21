@@ -52,10 +52,10 @@ fn impl_value_on_enum(
                         #name::#variant_name{#(#field_idents),*}
                     },
                     quote_spanned! {expr.span()=>
-                        vec![
-                        Primitive::from(stringify!(#variant_name).to_owned()),
-                        #(Primitive::from(#field_idents),)*
-                        ]
+                        let mut parts = Vec::new();
+                        parts.push(kittycad_execution_plan_traits::Primitive::from(stringify!(#variant_name).to_owned()));
+                        #(parts.extend(#field_idents.into_parts());)*
+                        parts
                     },
                 )
             }
@@ -76,10 +76,10 @@ fn impl_value_on_enum(
                         #name::#variant_name(#(#placeholder_field_idents),*)
                     },
                     quote_spanned! {expr.span() =>
-                        vec![
-                        Primitive::from(stringify!(#variant_name).to_owned()),
-                        #(Primitive::from(#placeholder_field_idents),)*
-                        ]
+                        let mut parts = Vec::new();
+                        parts.push(kittycad_execution_plan_traits::Primitive::from(stringify!(#variant_name).to_owned()));
+                        #(parts.extend(#placeholder_field_idents.into_parts());)*
+                        parts
                     },
                 )
             }
@@ -113,7 +113,7 @@ fn impl_value_on_enum(
                     let (field_idents, field_types): (Vec<_>, Vec<_>) = expr
                         .named
                         .iter()
-                        .filter_map(|named| named.ident.as_ref().map(|id| (id, &named.ty)))
+                        .filter_map(|named| named.ident.as_ref().map(|id| (id, remove_generics(named.ty.clone()))))
                         .unzip();
                     let rhs = quote_spanned! {expr.span()=>
                         #(let #field_idents = #field_types::from_parts(values)?;)*
@@ -193,6 +193,17 @@ fn impl_value_on_enum(
             }
         }
     }
+}
+
+fn remove_generics(mut ty: syn::Type) -> syn::Type {
+    if let syn::Type::Path(ref mut p) = ty {
+        for segment in p.path.segments.iter_mut() {
+            if let syn::PathArguments::AngleBracketed(ref mut _a) = segment.arguments {
+                segment.arguments = syn::PathArguments::None;
+            }
+        }
+    }
+    ty
 }
 
 fn impl_value_on_struct(
@@ -291,6 +302,19 @@ mod tests {
                 B{y: usize},
                 C(usize, String),
                 D,
+            }
+        };
+        let input: DeriveInput = syn::parse2(input).unwrap();
+        let out = impl_derive_value(input);
+        let formatted = get_text_fmt(&out).unwrap();
+        insta::assert_snapshot!(formatted);
+    }
+
+    #[test]
+    fn test_enum_with_generics() {
+        let input = quote! {
+            enum Segment {
+                Line { point: Point3d<f64> }
             }
         };
         let input: DeriveInput = syn::parse2(input).unwrap();
