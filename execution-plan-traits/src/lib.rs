@@ -18,8 +18,8 @@ pub trait Value: Sized {
         I: Iterator<Item = Option<Primitive>>;
 }
 
-const NONE: &str = "none";
-const SOME: &str = "some";
+const NONE: &str = "None";
+const SOME: &str = "Some";
 
 impl<T> Value for Option<T>
 where
@@ -29,11 +29,11 @@ where
         match self {
             Some(v) => {
                 let mut parts = Vec::new();
-                parts.push("some".to_owned().into());
+                parts.push(SOME.to_owned().into());
                 parts.extend(v.into_parts());
                 parts
             }
-            None => vec!["none".to_owned().into()],
+            None => vec![NONE.to_owned().into()],
         }
     }
 

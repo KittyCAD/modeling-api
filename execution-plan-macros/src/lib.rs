@@ -1,11 +1,9 @@
 //! Proc-macros for implementing execution-plan traits.
 
 use proc_macro::TokenStream;
-use proc_macro2::Span;
-use proc_macro2::TokenStream as TokenStream2;
+use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::{quote, quote_spanned};
-use syn::Ident;
-use syn::{spanned::Spanned, DeriveInput, Fields, GenericParam};
+use syn::{spanned::Spanned, DeriveInput, Fields, GenericParam, Ident};
 
 /// This will derive the trait `Value` from the `kittycad-execution-plan-traits` crate.
 #[proc_macro_derive(ExecutionPlanValue)]
@@ -53,7 +51,8 @@ fn impl_value_on_enum(
                     },
                     quote_spanned! {expr.span()=>
                         let mut parts = Vec::new();
-                        parts.push(kittycad_execution_plan_traits::Primitive::from(stringify!(#variant_name).to_owned()));
+                        let tag = stringify!(#variant_name).to_owned();
+                        parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
                         #(parts.extend(#field_idents.into_parts());)*
                         parts
                     },
@@ -88,7 +87,10 @@ fn impl_value_on_enum(
                 quote_spanned! {variant.span() =>
                     #name::#variant_name
                 },
-                quote_spanned! {variant.span()=> {Vec::new()}},
+                quote_spanned! {variant.span()=>
+                    let part = kittycad_execution_plan_traits::Primitive::from(stringify!(#variant_name).to_owned());
+                    vec![part]
+                }
             ),
         };
         quote_spanned! {variant.span() =>
@@ -291,19 +293,21 @@ fn remove_generics_defaults(mut g: syn::Generics) -> syn::Generics {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use anyhow::Result;
+
+    use super::*;
 
     #[test]
     fn test_enum() {
-        let input = quote! {
-            enum FooEnum {
-                A{x: usize},
-                B{y: usize},
-                C(usize, String),
-                D,
-            }
-        };
+        let input =
+            quote! {
+                enum FooEnum {
+                    A{x: usize},
+                    B{y: usize},
+                    C(usize, String),
+                    D,
+                }
+            };
         let input: DeriveInput = syn::parse2(input).unwrap();
         let out = impl_derive_value(input);
         let formatted = get_text_fmt(&out).unwrap();

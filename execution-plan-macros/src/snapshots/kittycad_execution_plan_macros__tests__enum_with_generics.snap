@@ -7,9 +7,8 @@ impl kittycad_execution_plan_traits::Value for Segment {
         match self {
             Segment::Line { point } => {
                 let mut parts = Vec::new();
-                parts.push(
-                    kittycad_execution_plan_traits::Primitive::from(stringify!(Line).to_owned())
-                );
+                let tag = stringify!(Line).to_owned();
+                parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
                 parts.extend(point.into_parts());
                 parts
             }

@@ -24,7 +24,11 @@ impl kittycad_execution_plan_traits::Value for FooEnum {
                 parts.extend(field1.into_parts());
                 parts
             }
-            FooEnum::D => Vec::new(),
+            FooEnum::D => {
+                let part =
+                    kittycad_execution_plan_traits::Primitive::from(stringify!(D).to_owned());
+                vec![part]
+            }
         }
     }
 
