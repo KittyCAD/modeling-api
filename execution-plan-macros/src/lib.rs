@@ -3,7 +3,7 @@
 use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::{quote, quote_spanned};
-use syn::{spanned::Spanned, DeriveInput, Fields, GenericParam, Ident};
+use syn::{spanned::Spanned, DataEnum, DeriveInput, Fields, GenericParam, Ident};
 
 /// This will derive the trait `Value` from the `kittycad-execution-plan-traits` crate.
 #[proc_macro_derive(ExecutionPlanValue)]
@@ -35,79 +35,48 @@ fn impl_value_on_enum(
     data: syn::DataEnum,
     generics: syn::Generics,
 ) -> proc_macro2::TokenStream {
-    // Used in `into_parts()`
-    // This generates one match arm for each variant of the enum on which `trait Value` is being derived.
-    // Each match arm will call `into_parts()` recursively on each field of the enum variant.
-    let into_parts_match_each_variant = data.variants.iter().map(|variant| {
-        let variant_name = &variant.ident;
-        let fields = &variant.fields;
-        let (lhs, rhs) = match fields {
-            // Variant with named fields, like `Extrude{direction: Point3d, distance: f64}`
-            Fields::Named(expr) => {
-                let field_idents: Vec<_> = expr.named.iter().filter_map(|name| name.ident.as_ref()).collect();
-                (
-                    quote_spanned! {expr.span()=>
-                        #name::#variant_name{#(#field_idents),*}
-                    },
-                    quote_spanned! {expr.span()=>
-                        let mut parts = Vec::new();
-                        let tag = stringify!(#variant_name).to_owned();
-                        parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
-                        #(parts.extend(#field_idents.into_parts());)*
-                        parts
-                    },
-                )
+    // First build fragments of the AST, then we'll combine them into a final output below.
+    // Build the arms of the `match` statements we'll use below.
+    let into_parts_match_each_variant = into_parts_match_arms(&data, &name);
+    let from_parts_match_each_variant = from_parts_match_arms(&data);
+    let generics_without_defaults = remove_generics_defaults(generics.clone());
+    let where_clause = generics.where_clause;
+
+    // Final return value: the generated Rust code to implement the trait.
+    // This uses the fragments above, interpolating them into the final outputted code.
+    quote! {
+        impl #generics_without_defaults kittycad_execution_plan_traits::Value for #name #generics_without_defaults
+        #where_clause
+        {
+            fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
+                match self {
+                    #(#into_parts_match_each_variant)*
+                }
             }
-            // Variant with unnamed (positional) fields,
-            // like `Towards(Point3d)`
-            Fields::Unnamed(expr) => {
-                // The fields don't have built-in names, but we still need to choose identifiers
-                // for the variables we're going to match them into.
-                // Something like MyVariant(field0, field1) => {...}
-                let placeholder_field_idents: Vec<_> = expr
-                    .unnamed
-                    .iter()
-                    .enumerate()
-                    .map(|(i, field)| Ident::new(&format!("field{i}"), field.span()))
-                    .collect();
-                (
-                    quote_spanned! {expr.span() =>
-                        #name::#variant_name(#(#placeholder_field_idents),*)
-                    },
-                    quote_spanned! {expr.span() =>
-                        let mut parts = Vec::new();
-                        let tag = stringify!(#variant_name).to_owned();
-                        parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
-                        #(parts.extend(#placeholder_field_idents.into_parts());)*
-                        parts
-                    },
-                )
-            }
-            // Enum variant with no fields.
-            Fields::Unit => (
-                quote_spanned! {variant.span() =>
-                    #name::#variant_name
-                },
-                quote_spanned! {variant.span()=>
-                    let tag = stringify!(#variant_name).to_owned();
-                    let part = kittycad_execution_plan_traits::Primitive::from(tag);
-                    vec![part]
-                },
-            ),
-        };
-        quote_spanned! {variant.span() =>
-            #lhs => {
-                #rhs
+
+            fn from_parts<I>(values: &mut I) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+            where
+                I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
+            {
+                let variant_name = String::from_parts(values)?;
+                match variant_name.as_str() {
+                    #(#from_parts_match_each_variant)*
+                    other => Err(kittycad_execution_plan_traits::MemoryError::InvalidEnumVariant{
+                        expected_type: stringify!(#name).to_owned(),
+                        actual: other.to_owned(),
+                    })
+                }
             }
         }
-    });
+    }
+}
 
-    // Used in `from_parts()`
-    // This generates one match arm for each variant of the enum on which `trait Value` is being derived.
-    // Each match arm will call `from_parts()` recursively on each field of the enum variant,
-    // then reconstruct the enum from those parts.
-    let from_parts_match_each_variant: Vec<_> = data
-        .variants
+// Used in `from_parts()`
+// This generates one match arm for each variant of the enum on which `trait Value` is being derived.
+// Each match arm will call `from_parts()` recursively on each field of the enum variant,
+// then reconstruct the enum from those parts.
+fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
+    data.variants
         .iter()
         .map(|variant| {
             let variant_name = &variant.ident;
@@ -161,42 +130,79 @@ fn impl_value_on_enum(
                 }
             }
         })
-        .collect();
+        .collect()
+}
 
-    // Handle generics in the original struct.
-    // Firstly, if the original struct has defaults on its generics, e.g. Point2d<T = f32>,
-    // don't include those defaults in this macro's output, because the compiler
-    // complains it's unnecessary and will soon be a compile error.
-    let generics_without_defaults = remove_generics_defaults(generics.clone());
-    let where_clause = generics.where_clause;
-
-    // Final return value: the generated Rust code to implement the trait.
-    // This uses the fragments above, interpolating them into the final outputted code.
-    quote! {
-        impl #generics_without_defaults kittycad_execution_plan_traits::Value for #name #generics_without_defaults
-        #where_clause
-        {
-            fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
-                match self {
-                    #(#into_parts_match_each_variant)*
+// Used in `into_parts()`
+// This generates one match arm for each variant of the enum on which `trait Value` is being derived.
+// Each match arm will call `into_parts()` recursively on each field of the enum variant.
+fn into_parts_match_arms(data: &DataEnum, name: &proc_macro2::Ident) -> Vec<TokenStream2> {
+    data.variants
+        .iter()
+        .map(|variant| {
+            let variant_name = &variant.ident;
+            let fields = &variant.fields;
+            let (lhs, rhs) = match fields {
+                // Variant with named fields, like `Extrude{direction: Point3d, distance: f64}`
+                Fields::Named(expr) => {
+                    let field_idents: Vec<_> = expr.named.iter().filter_map(|name| name.ident.as_ref()).collect();
+                    (
+                        quote_spanned! {expr.span()=>
+                            #name::#variant_name{#(#field_idents),*}
+                        },
+                        quote_spanned! {expr.span()=>
+                            let mut parts = Vec::new();
+                            let tag = stringify!(#variant_name).to_owned();
+                            parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
+                            #(parts.extend(#field_idents.into_parts());)*
+                            parts
+                        },
+                    )
+                }
+                // Variant with unnamed (positional) fields,
+                // like `Towards(Point3d)`
+                Fields::Unnamed(expr) => {
+                    // The fields don't have built-in names, but we still need to choose identifiers
+                    // for the variables we're going to match them into.
+                    // Something like MyVariant(field0, field1) => {...}
+                    let placeholder_field_idents: Vec<_> = expr
+                        .unnamed
+                        .iter()
+                        .enumerate()
+                        .map(|(i, field)| Ident::new(&format!("field{i}"), field.span()))
+                        .collect();
+                    (
+                        quote_spanned! {expr.span() =>
+                            #name::#variant_name(#(#placeholder_field_idents),*)
+                        },
+                        quote_spanned! {expr.span() =>
+                            let mut parts = Vec::new();
+                            let tag = stringify!(#variant_name).to_owned();
+                            parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
+                            #(parts.extend(#placeholder_field_idents.into_parts());)*
+                            parts
+                        },
+                    )
+                }
+                // Enum variant with no fields.
+                Fields::Unit => (
+                    quote_spanned! {variant.span() =>
+                        #name::#variant_name
+                    },
+                    quote_spanned! {variant.span()=>
+                        let tag = stringify!(#variant_name).to_owned();
+                        let part = kittycad_execution_plan_traits::Primitive::from(tag);
+                        vec![part]
+                    },
+                ),
+            };
+            quote_spanned! {variant.span() =>
+                #lhs => {
+                    #rhs
                 }
             }
-
-            fn from_parts<I>(values: &mut I) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
-            where
-                I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
-            {
-                let variant_name = String::from_parts(values)?;
-                match variant_name.as_str() {
-                    #(#from_parts_match_each_variant)*
-                    other => Err(kittycad_execution_plan_traits::MemoryError::InvalidEnumVariant{
-                        expected_type: stringify!(#name).to_owned(),
-                        actual: other.to_owned(),
-                    })
-                }
-            }
-        }
-    }
+        })
+        .collect()
 }
 
 fn remove_generics(mut ty: syn::Type) -> syn::Type {
@@ -284,6 +290,9 @@ fn impl_value_on_struct(
 
 /// Remove the defaults from a generic type.
 /// For example, turns <T = f32> into <T>.
+/// This is useful because defaults like that are valid when declaring a type, but should NOT
+/// be included everywhere the type gets used.
+/// E.g. you can't say `struct Foo { field: Option<T = f32> }`
 fn remove_generics_defaults(mut g: syn::Generics) -> syn::Generics {
     for generic_param in g.params.iter_mut() {
         if let GenericParam::Type(type_param) = generic_param {
