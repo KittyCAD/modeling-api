@@ -1,4 +1,4 @@
-use kittycad_execution_plan_macros::ExecutionPlanValue;
+use kittycad_execution_plan_macros::{ExecutionPlanFromMemory, ExecutionPlanValue};
 use kittycad_execution_plan_traits::{Primitive, Value};
 
 #[test]
@@ -108,5 +108,15 @@ fn test_derive_value_on_struct() {
         let mut actual_iter = actual.into_iter().map(Some);
         let inverted = MyStruct::from_parts(&mut actual_iter).expect("from_parts should succeed");
         assert_eq!(inverted, input, "failed test {i}, '{test_name}'.\nInput value (right) != input value turned into parts then back into value (left).");
+    }
+}
+
+#[test]
+fn test_derive_from_memory_on_struct() {
+    #[derive(Debug, Clone, ExecutionPlanFromMemory)]
+    pub struct Extrude {
+        pub target: u32,
+        pub distance: f64,
+        pub cap: bool,
     }
 }
