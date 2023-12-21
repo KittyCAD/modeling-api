@@ -18,9 +18,9 @@ struct FooConcrete {
     i: usize,
 }
 
-#[allow(dead_code)]
 #[derive(ExecutionPlanValue)]
 enum FooEnum {
     A { x: usize, y: usize },
     B { z: usize, w: usize },
+    C(usize, String, f64, f32),
 }

@@ -4,6 +4,7 @@ use proc_macro::TokenStream;
 use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::{quote, quote_spanned};
+use syn::Ident;
 use syn::{spanned::Spanned, DeriveInput, Fields, GenericParam};
 
 /// This will derive the trait `Value` from the `kittycad-execution-plan-traits` crate.
@@ -37,10 +38,13 @@ fn impl_value_on_enum(
     generics: syn::Generics,
 ) -> proc_macro2::TokenStream {
     // Used in `into_parts()`
+    // This generates one match arm for each variant of the enum on which `trait Value` is being derived.
+    // Each match arm will call `into_parts()` recursively on each field of the enum variant.
     let into_parts_match_each_variant = data.variants.iter().map(|variant| {
         let variant_name = &variant.ident;
         let fields = &variant.fields;
         let (lhs, rhs) = match fields {
+            // Variant with named fields, like `Extrude{direction: Point3d, distance: f64}`
             Fields::Named(expr) => {
                 let field_idents: Vec<_> = expr.named.iter().filter_map(|name| name.ident.as_ref()).collect();
                 (
@@ -55,7 +59,30 @@ fn impl_value_on_enum(
                     },
                 )
             }
-            Fields::Unnamed(_) => todo!(),
+            // Variant with unnamed (positional) fields,
+            // like `Towards(Point3d)`
+            Fields::Unnamed(expr) => {
+                // The fields don't have built-in names, but we still need to choose identifiers
+                // for the variables we're going to match them into.
+                // Something like MyVariant(field0, field1) => {...}
+                let placeholder_field_idents: Vec<_> = expr
+                    .unnamed
+                    .iter()
+                    .enumerate()
+                    .map(|(i, field)| Ident::new(&format!("field{i}"), field.span()))
+                    .collect();
+                (
+                    quote_spanned! {expr.span() =>
+                        #name::#variant_name(#(#placeholder_field_idents),*)
+                    },
+                    quote_spanned! {expr.span() =>
+                        vec![
+                        Primitive::from(stringify!(#variant_name).to_owned()),
+                        #(Primitive::from(#placeholder_field_idents),)*
+                        ]
+                    },
+                )
+            }
             Fields::Unit => todo!(),
         };
         quote_spanned! {variant.span() =>
@@ -66,12 +93,16 @@ fn impl_value_on_enum(
     });
 
     // Used in `from_parts()`
+    // This generates one match arm for each variant of the enum on which `trait Value` is being derived.
+    // Each match arm will call `from_parts()` recursively on each field of the enum variant,
+    // then reconstruct the enum from those parts.
     let from_parts_match_each_variant: Vec<_> = data
         .variants
         .iter()
         .map(|variant| {
             let variant_name = &variant.ident;
             match &variant.fields {
+                // Variant with named fields, like `Extrude{direction: Point3d, distance: f64}`
                 Fields::Named(expr) => {
                     let (field_idents, field_types): (Vec<_>, Vec<_>) = expr
                         .named
@@ -88,7 +119,29 @@ fn impl_value_on_enum(
                         }
                     }
                 }
-                Fields::Unnamed(_) | Fields::Unit => quote! {},
+                // Variant with unnamed (positional) fields,
+                // like `Towards(Point3d)`
+                Fields::Unnamed(expr) => {
+                    // The fields don't have built-in names, but we still need to choose identifiers
+                    // for the variables we're going to match them into.
+                    // Something like MyVariant(field0, field1) => {...}
+                    let (field_idents, field_types): (Vec<_>, Vec<_>) = expr
+                        .unnamed
+                        .iter()
+                        .enumerate()
+                        .map(|(i, field)| (Ident::new(&format!("field{i}"), field.span()), &field.ty))
+                        .unzip();
+                    let rhs = quote_spanned! {expr.span()=>
+                        #(let #field_idents = #field_types::from_parts(values)?;)*
+                        Ok(Self::#variant_name(#(#field_idents),* ))
+                    };
+                    quote_spanned! {expr.span() =>
+                        stringify!(#variant_name) => {
+                            #rhs
+                        }
+                    }
+                }
+                Fields::Unit => todo!(),
             }
         })
         .collect();
@@ -99,6 +152,7 @@ fn impl_value_on_enum(
     // complains it's unnecessary and will soon be a compile error.
     let generics_without_defaults = remove_generics_defaults(generics.clone());
     let where_clause = generics.where_clause;
+
     // Final return value: the generated Rust code to implement the trait.
     // This uses the fragments above, interpolating them into the final outputted code.
     quote! {
@@ -215,11 +269,12 @@ mod tests {
     use anyhow::Result;
 
     #[test]
-    fn test_name() {
+    fn test_enum() {
         let input = quote! {
             enum FooEnum {
-                A {x: i32},
-                B {y: i32},
+                A {x: usize},
+                B {y: usize},
+                C (usize, String),
             }
         };
         let input: DeriveInput = syn::parse2(input).unwrap();
@@ -241,9 +296,7 @@ mod tests {
 
     /// Format a TokenStream as a string and run `rustfmt` on the result.
     pub fn get_text_fmt(output: &proc_macro2::TokenStream) -> Result<String> {
-        // Format the file with rustfmt.
         let content = rustfmt_wrapper::rustfmt(output).unwrap();
-
         Ok(clean_text(&content))
     }
 }
