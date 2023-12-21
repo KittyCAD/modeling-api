@@ -1,3 +1,4 @@
+use kittycad_execution_plan_traits::{MemoryError, Primitive};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -30,5 +31,26 @@ impl From<ModelingCmdId> for Uuid {
 impl std::fmt::Display for ModelingCmdId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.fmt(f)
+    }
+}
+
+impl From<ModelingCmdId> for Primitive {
+    fn from(id: ModelingCmdId) -> Self {
+        Self::Uuid(id.into())
+    }
+}
+
+impl TryFrom<Primitive> for ModelingCmdId {
+    type Error = MemoryError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::Uuid(u) = value {
+            Ok(u.into())
+        } else {
+            Err(MemoryError::MemoryWrongType {
+                expected: "uuid",
+                actual: format!("{value:?}"),
+            })
+        }
     }
 }

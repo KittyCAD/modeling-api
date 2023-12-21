@@ -154,9 +154,33 @@ impl TryFrom<Primitive> for usize {
     }
 }
 
+impl TryFrom<Primitive> for u32 {
+    type Error = MemoryError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::NumericValue(NumericPrimitive::Integer(x)) = value {
+            Ok(x.try_into().map_err(|_| MemoryError::MemoryWrongType {
+                expected: "u32",
+                actual: x.to_string(),
+            })?)
+        } else {
+            Err(MemoryError::MemoryWrongType {
+                expected: "u32",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
 impl From<usize> for Primitive {
     fn from(value: usize) -> Self {
         Self::NumericValue(NumericPrimitive::Integer(value))
+    }
+}
+
+impl From<u32> for Primitive {
+    fn from(value: u32) -> Self {
+        Self::NumericValue(NumericPrimitive::Integer(value as usize))
     }
 }
 
@@ -202,3 +226,4 @@ impl_value_on_primitive_ish!(Value, Uuid);
 type VecU8 = Vec<u8>;
 impl_value_on_primitive_ish!(Value, VecU8);
 impl_value_on_primitive_ish!(Value, usize);
+impl_value_on_primitive_ish!(Value, u32);
