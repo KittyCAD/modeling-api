@@ -323,6 +323,19 @@ mod tests {
         insta::assert_snapshot!(formatted);
     }
 
+    #[test]
+    fn test_struct() {
+        let input = quote! {
+            struct Line {
+                point: Point3d<f64>,
+            }
+        };
+        let input: DeriveInput = syn::parse2(input).unwrap();
+        let out = impl_derive_value(input);
+        let formatted = get_text_fmt(&out).unwrap();
+        insta::assert_snapshot!(formatted);
+    }
+
     fn clean_text(s: &str) -> String {
         // Add newlines after end-braces at <= two levels of indentation.
         if cfg!(not(windows)) {
