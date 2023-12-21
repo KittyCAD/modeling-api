@@ -8,20 +8,23 @@ use syn::{spanned::Spanned, DataEnum, DeriveInput, Fields, GenericParam, Ident};
 /// This will derive the trait `Value` from the `kittycad-execution-plan-traits` crate.
 #[proc_macro_derive(ExecutionPlanValue)]
 pub fn derive_value(input: TokenStream) -> TokenStream {
+    // Parse the input into a stream of Rust syntax tokens.
     let input: DeriveInput = syn::parse2(input.into()).unwrap();
+    // Generate a new stream of Rust syntax tokens from the input stream.
+    // Then hand them back to the compiler.
+    // It's idiomatic to make your proc macros a thin wrapper around an "impl" function, because it
+    // simplifies unit testing. This is recommended in The Rust Book.
     TokenStream::from(impl_derive_value(input))
 }
 
 pub(crate) fn impl_derive_value(input: DeriveInput) -> TokenStream2 {
-    // Parse the input tokens into a syntax tree
-
+    // Where in the input source code is this type defined?
     let span = input.span();
     // Name of type that is deriving Value
     let name = input.ident;
-    let data = input.data;
+    // Any generics defined on the type deriving Value.
     let generics = input.generics;
-    // Hand the output tokens back to the compiler
-    match data {
+    match input.data {
         syn::Data::Struct(data) => impl_value_on_struct(span, name, data, generics),
         syn::Data::Enum(data) => impl_value_on_enum(name, data, generics),
         syn::Data::Union(_) => quote_spanned! {span =>
@@ -81,7 +84,12 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
         .map(|variant| {
             let variant_name = &variant.ident;
             match &variant.fields {
-                // Variant with named fields, like `Extrude{direction: Point3d, distance: f64}`
+                // Variant with named fields, like
+                // ```
+                // enum MyEnum {
+                //      Extrude{direction: Point3d, distance: f64},
+                // }
+                // ```
                 Fields::Named(expr) => {
                     let (field_idents, field_types): (Vec<_>, Vec<_>) = expr
                         .named
@@ -98,8 +106,12 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
                         }
                     }
                 }
-                // Variant with unnamed (positional) fields,
-                // like `Towards(Point3d)`
+                // Variant with unnamed fields (i.e. fields referenced by position, not name), like
+                // ```
+                // enum MyEnum {
+                //      Extrude(f64),
+                // }
+                // ```
                 Fields::Unnamed(expr) => {
                     // The fields don't have built-in names, but we still need to choose identifiers
                     // for the variables we're going to match them into.
@@ -120,7 +132,12 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
                         }
                     }
                 }
-                // Enum variant with no fields.
+                // Variant with no fields (or, equivalently, where the fields are () aka the unit type), like
+                // ```
+                // enum MyEnum {
+                //      Extrude,
+                // }
+                // ```
                 Fields::Unit => {
                     quote_spanned! {variant.span()=>
                         stringify!(#variant_name) => {
@@ -143,7 +160,12 @@ fn into_parts_match_arms(data: &DataEnum, name: &proc_macro2::Ident) -> Vec<Toke
             let variant_name = &variant.ident;
             let fields = &variant.fields;
             let (lhs, rhs) = match fields {
-                // Variant with named fields, like `Extrude{direction: Point3d, distance: f64}`
+                // Variant with named fields, like
+                // ```
+                // enum MyEnum {
+                //      Extrude{direction: Point3d, distance: f64},
+                // }
+                // ```
                 Fields::Named(expr) => {
                     let field_idents: Vec<_> = expr.named.iter().filter_map(|name| name.ident.as_ref()).collect();
                     (
@@ -159,8 +181,12 @@ fn into_parts_match_arms(data: &DataEnum, name: &proc_macro2::Ident) -> Vec<Toke
                         },
                     )
                 }
-                // Variant with unnamed (positional) fields,
-                // like `Towards(Point3d)`
+                // Variant with unnamed fields (i.e. fields referenced by position, not name), like
+                // ```
+                // enum MyEnum {
+                //      Extrude(f64),
+                // }
+                // ```
                 Fields::Unnamed(expr) => {
                     // The fields don't have built-in names, but we still need to choose identifiers
                     // for the variables we're going to match them into.
@@ -184,7 +210,12 @@ fn into_parts_match_arms(data: &DataEnum, name: &proc_macro2::Ident) -> Vec<Toke
                         },
                     )
                 }
-                // Enum variant with no fields.
+                // Variant with no fields (or, equivalently, where the fields are () aka the unit type), like
+                // ```
+                // enum MyEnum {
+                //      Extrude,
+                // }
+                // ```
                 Fields::Unit => (
                     quote_spanned! {variant.span() =>
                         #name::#variant_name
