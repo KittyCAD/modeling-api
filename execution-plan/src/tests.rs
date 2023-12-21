@@ -40,15 +40,14 @@ async fn write_addr_to_memory() {
 
 #[tokio::test]
 async fn add_literals() {
-    let plan =
-        vec![Instruction::Arithmetic {
-            arithmetic: Arithmetic {
-                operation: Operation::Add,
-                operand0: Operand::Literal(3.into()),
-                operand1: Operand::Literal(2.into()),
-            },
-            destination: Address(1),
-        }];
+    let plan = vec![Instruction::Arithmetic {
+        arithmetic: Arithmetic {
+            operation: Operation::Add,
+            operand0: Operand::Literal(3.into()),
+            operand1: Operand::Literal(2.into()),
+        },
+        destination: Address(1),
+    }];
     let mut mem = Memory::default();
     let client = test_client().await;
     execute(&mut mem, plan, client).await.expect("failed to execute plan");
@@ -246,12 +245,11 @@ async fn api_call_draw_cube() {
     };
     // Visually check that the image is a cube.
     use image::io::Reader as ImageReader;
-    let img =
-        ImageReader::new(std::io::Cursor::new(b))
-            .with_guessed_format()
-            .unwrap()
-            .decode()
-            .unwrap();
+    let img = ImageReader::new(std::io::Cursor::new(b))
+        .with_guessed_format()
+        .unwrap()
+        .decode()
+        .unwrap();
     twenty_twenty::assert_image("tests/outputs/cube.png", &img, 0.9999);
 }
 
@@ -274,21 +272,21 @@ fn debug_dump_memory(mem: &Memory) -> String {
         val_type: &'static str,
         value: String,
     }
-    let table_data: Vec<_> =
-        mem.iter()
-            .filter_map(|(i, val)| {
-                if let Some(val) = val {
-                    let (val_type, value) = pretty_print(val);
-                    Some(MemoryAddr {
-                        index: i,
-                        val_type,
-                        value,
-                    })
-                } else {
-                    None
-                }
-            })
-            .collect();
+    let table_data: Vec<_> = mem
+        .iter()
+        .filter_map(|(i, val)| {
+            if let Some(val) = val {
+                let (val_type, value) = pretty_print(val);
+                Some(MemoryAddr {
+                    index: i,
+                    val_type,
+                    value,
+                })
+            } else {
+                None
+            }
+        })
+        .collect();
     Table::new(table_data).with(Style::sharp()).to_string()
 }
 

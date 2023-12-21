@@ -1,0 +1,37 @@
+---
+source: execution-plan-macros/src/lib.rs
+expression: formatted
+---
+impl kittycad_execution_plan_traits::Value for Segment {
+    fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
+        match self {
+            Segment::Line { point } => {
+                let mut parts = Vec::new();
+                let tag = stringify!(Line).to_owned();
+                parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
+                parts.extend(point.into_parts());
+                parts
+            }
+        }
+    }
+
+    fn from_parts<I>(values: &mut I) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+    where
+        I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
+    {
+        let variant_name = String::from_parts(values)?;
+        match variant_name.as_str() {
+            stringify!(Line) => {
+                let point = Point3d::from_parts(values)?;
+                Ok(Self::Line { point })
+            }
+            other => Err(
+                kittycad_execution_plan_traits::MemoryError::InvalidEnumVariant {
+                    expected_type: stringify!(Segment).to_owned(),
+                    actual: other.to_owned(),
+                },
+            ),
+        }
+    }
+}
+

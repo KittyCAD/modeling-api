@@ -205,7 +205,7 @@ pub enum CameraDragInteractionType {
 
 /// A segment of a path.
 /// Paths are composed of many segments.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum PathSegment {
     /// A straight line segment.

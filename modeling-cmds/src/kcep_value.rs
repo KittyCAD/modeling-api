@@ -1,18 +1,9 @@
 use kittycad_execution_plan_traits::{MemoryError, Primitive, Value};
 
-use crate::{
-    ok_response::OkModelingCmdResponse,
-    output,
-    shared::{Angle, PathSegment, Point2d, Point3d},
-};
+use crate::{ok_response::OkModelingCmdResponse, output};
 
 pub(crate) const EMPTY: &str = "EMPTY";
 pub(crate) const TAKE_SNAPSHOT: &str = "TAKE_SNAPSHOT";
-pub(crate) const ARC: &str = "arc";
-pub(crate) const LINE: &str = "line";
-pub(crate) const TAN_ARC: &str = "tan_arc";
-pub(crate) const TAN_ARC_TO: &str = "tan_arc_to";
-pub(crate) const BEZIER: &str = "bezier";
 
 fn err() -> MemoryError {
     MemoryError::MemoryWrongSize
@@ -76,135 +67,5 @@ where
     I: Iterator<Item = Option<Primitive>>,
     T: TryFrom<Primitive, Error = MemoryError>,
 {
-    let v = values.next().ok_or_else(err)?;
-    let v = v.ok_or_else(err)?;
-    T::try_from(v)
-}
-
-/// Layout:
-/// - One memory address to store the variant name
-/// - Following memory addresses to store the variant's fields.
-impl Value for PathSegment {
-    fn into_parts(self) -> Vec<Primitive> {
-        let name: String = match &self {
-            PathSegment::Line { .. } => LINE.to_owned(),
-            PathSegment::Arc { .. } => ARC.to_owned(),
-            PathSegment::Bezier { .. } => BEZIER.to_owned(),
-            PathSegment::TangentialArc { .. } => TAN_ARC.to_owned(),
-            PathSegment::TangentialArcTo { .. } => TAN_ARC_TO.to_owned(),
-        };
-        let name = Primitive::from(name);
-        let data = match self {
-            PathSegment::Line { end, relative } => {
-                let mut parts = end.into_parts();
-                parts.push(relative.into());
-                parts
-            }
-            PathSegment::Arc {
-                center,
-                radius,
-                start,
-                end,
-                relative,
-            } => {
-                let mut parts = center.into_parts();
-                parts.push(radius.into());
-                parts.push(start.into());
-                parts.push(end.into());
-                parts.push(relative.into());
-                parts
-            }
-            PathSegment::Bezier {
-                control1,
-                control2,
-                end,
-                relative,
-            } => {
-                let mut parts = control1.into_parts();
-                parts.extend(control2.into_parts());
-                parts.extend(end.into_parts());
-                parts.push(relative.into());
-                parts
-            }
-            PathSegment::TangentialArc { radius, offset } => {
-                vec![radius.into(), offset.into()]
-            }
-            PathSegment::TangentialArcTo {
-                to,
-                angle_snap_increment,
-            } => {
-                let mut parts = to.into_parts();
-                parts.push(match angle_snap_increment {
-                    Some(angle) => angle.into(),
-                    None => Primitive::Nil,
-                });
-                parts
-            }
-        };
-        let mut parts = Vec::with_capacity(1 + data.len());
-        parts.push(name);
-        parts.extend(data);
-        parts
-    }
-
-    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
-    where
-        I: Iterator<Item = Option<Primitive>>,
-    {
-        let variant_name: String = next(values)?;
-        match variant_name.as_str() {
-            LINE => {
-                let end = Point3d::from_parts(values)?;
-                let relative = next(values)?;
-                Ok(Self::Line { end, relative })
-            }
-            ARC => {
-                let center = Point2d::from_parts(values)?;
-                let radius = Primitive::from_parts(values)?.try_into()?;
-                let start = Primitive::from_parts(values)?.try_into()?;
-                let end = Primitive::from_parts(values)?.try_into()?;
-                let relative = Primitive::from_parts(values)?.try_into()?;
-                Ok(Self::Arc {
-                    center,
-                    radius,
-                    start,
-                    end,
-                    relative,
-                })
-            }
-            BEZIER => {
-                let control1 = Point3d::from_parts(values)?;
-                let control2 = Point3d::from_parts(values)?;
-                let end = Point3d::from_parts(values)?;
-                let relative = Primitive::from_parts(values)?.try_into()?;
-                Ok(Self::Bezier {
-                    control1,
-                    control2,
-                    end,
-                    relative,
-                })
-            }
-            TAN_ARC => {
-                let radius = Primitive::from_parts(values).and_then(f64::try_from)?;
-                let offset = Primitive::from_parts(values).and_then(Angle::try_from)?;
-                Ok(Self::TangentialArc { radius, offset })
-            }
-            TAN_ARC_TO => {
-                let to = Point3d::from_parts(values)?;
-                let angle_snap_increment = if let Some(Some(primitive)) = values.next() {
-                    Some(Angle::try_from(primitive)?)
-                } else {
-                    None
-                };
-                Ok(Self::TangentialArcTo {
-                    to,
-                    angle_snap_increment,
-                })
-            }
-            other => Err(MemoryError::InvalidEnumVariant {
-                expected_type: "line segment".to_owned(),
-                actual: other.to_owned(),
-            }),
-        }
-    }
+    values.next().ok_or_else(err)?.ok_or_else(err)?.try_into()
 }
