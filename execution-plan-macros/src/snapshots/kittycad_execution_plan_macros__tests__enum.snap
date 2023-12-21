@@ -7,26 +7,29 @@ impl kittycad_execution_plan_traits::Value for FooEnum {
         match self {
             FooEnum::A { x } => {
                 let mut parts = Vec::new();
-                parts . push (kittycad_execution_plan_traits :: Primitive :: from (stringify ! (A) . to_owned ())) ;
+                let tag = stringify!(A).to_owned();
+                parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
                 parts.extend(x.into_parts());
                 parts
             }
             FooEnum::B { y } => {
                 let mut parts = Vec::new();
-                parts . push (kittycad_execution_plan_traits :: Primitive :: from (stringify ! (B) . to_owned ())) ;
+                let tag = stringify!(B).to_owned();
+                parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
                 parts.extend(y.into_parts());
                 parts
             }
             FooEnum::C(field0, field1) => {
                 let mut parts = Vec::new();
-                parts . push (kittycad_execution_plan_traits :: Primitive :: from (stringify ! (C) . to_owned ())) ;
+                let tag = stringify!(C).to_owned();
+                parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
                 parts.extend(field0.into_parts());
                 parts.extend(field1.into_parts());
                 parts
             }
             FooEnum::D => {
-                let part =
-                    kittycad_execution_plan_traits::Primitive::from(stringify!(D).to_owned());
+                let tag = stringify!(D).to_owned();
+                let part = kittycad_execution_plan_traits::Primitive::from(tag);
                 vec![part]
             }
         }

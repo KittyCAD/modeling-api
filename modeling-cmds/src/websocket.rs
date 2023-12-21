@@ -699,16 +699,15 @@ mod tests {
 
     #[test]
     fn serialize_websocket_modeling_ok() {
-        let actual =
-            WebSocketResponse::Success(SuccessWebSocketResponse {
-                success: true,
-                request_id: Some(REQ_ID),
-                resp: OkWebSocketResponseData::Modeling {
-                    modeling_response: OkModelingCmdResponse::CurveGetControlPoints(
-                        output::CurveGetControlPoints { control_points: vec![] }
-                    ),
-                },
-            });
+        let actual = WebSocketResponse::Success(SuccessWebSocketResponse {
+            success: true,
+            request_id: Some(REQ_ID),
+            resp: OkWebSocketResponseData::Modeling {
+                modeling_response: OkModelingCmdResponse::CurveGetControlPoints(output::CurveGetControlPoints {
+                    control_points: vec![],
+                }),
+            },
+        });
         let expected = serde_json::json!({
             "success": true,
             "request_id": "cc30d5e2-482b-4498-b5d2-6131c30a50a4",
@@ -732,17 +731,16 @@ mod tests {
             request_id: Some(REQ_ID),
             resp: OkWebSocketResponseData::IceServerInfo { ice_servers: vec![] },
         });
-        let expected =
-            serde_json::json!({
-                "success": true,
-                "request_id": "cc30d5e2-482b-4498-b5d2-6131c30a50a4",
-                "resp": {
-                    "type": "ice_server_info",
-                    "data": {
-                        "ice_servers": []
-                    }
+        let expected = serde_json::json!({
+            "success": true,
+            "request_id": "cc30d5e2-482b-4498-b5d2-6131c30a50a4",
+            "resp": {
+                "type": "ice_server_info",
+                "data": {
+                    "ice_servers": []
                 }
-            });
+            }
+        });
         assert_json_eq(actual, expected);
     }
 
@@ -753,15 +751,14 @@ mod tests {
             request_id: Some(REQ_ID),
             resp: OkWebSocketResponseData::Export { files: vec![] },
         });
-        let expected =
-            serde_json::json!({
-                "success": true,
-                "request_id": "cc30d5e2-482b-4498-b5d2-6131c30a50a4",
-                "resp": {
-                    "type": "export",
-                    "data": {"files": [] }
-                }
-            });
+        let expected = serde_json::json!({
+            "success": true,
+            "request_id": "cc30d5e2-482b-4498-b5d2-6131c30a50a4",
+            "resp": {
+                "type": "export",
+                "data": {"files": [] }
+            }
+        });
         assert_json_eq(actual, expected);
     }
 

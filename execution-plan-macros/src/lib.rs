@@ -76,7 +76,8 @@ fn impl_value_on_enum(
                     },
                     quote_spanned! {expr.span() =>
                         let mut parts = Vec::new();
-                        parts.push(kittycad_execution_plan_traits::Primitive::from(stringify!(#variant_name).to_owned()));
+                        let tag = stringify!(#variant_name).to_owned();
+                        parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
                         #(parts.extend(#placeholder_field_idents.into_parts());)*
                         parts
                     },
@@ -88,9 +89,10 @@ fn impl_value_on_enum(
                     #name::#variant_name
                 },
                 quote_spanned! {variant.span()=>
-                    let part = kittycad_execution_plan_traits::Primitive::from(stringify!(#variant_name).to_owned());
+                    let tag = stringify!(#variant_name).to_owned();
+                    let part = kittycad_execution_plan_traits::Primitive::from(tag);
                     vec![part]
-                }
+                },
             ),
         };
         quote_spanned! {variant.span() =>
@@ -299,15 +301,14 @@ mod tests {
 
     #[test]
     fn test_enum() {
-        let input =
-            quote! {
-                enum FooEnum {
-                    A{x: usize},
-                    B{y: usize},
-                    C(usize, String),
-                    D,
-                }
-            };
+        let input = quote! {
+            enum FooEnum {
+                A{x: usize},
+                B{y: usize},
+                C(usize, String),
+                D,
+            }
+        };
         let input: DeriveInput = syn::parse2(input).unwrap();
         let out = impl_derive_value(input);
         let formatted = get_text_fmt(&out).unwrap();
