@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use kittycad_execution_plan_macros::ExecutionPlanValue;
 use parse_display_derive::{Display, FromStr};
 // //! Types for parameters to Modeling API commands.
 use schemars::JsonSchema;
@@ -526,7 +527,7 @@ pub struct CurveGetControlPoints {
 }
 
 /// Enum containing the variety of image formats snapshots may be exported to.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, FromStr, Display)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, FromStr, Display, ExecutionPlanValue)]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum ImageFormat {
