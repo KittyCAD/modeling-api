@@ -1,12 +1,10 @@
-use kittycad_execution_plan_traits::{MemoryError, Primitive, Value};
+use kittycad_execution_plan_traits::{MemoryError, Value};
 use kittycad_modeling_cmds::{
     each_cmd::{MovePathPen, StartPath},
-    id::ModelingCmdId,
     ClosePath, ExtendPath, Extrude, ModelingCmdVariant, TakeSnapshot,
 };
-use uuid::Uuid;
 
-use crate::{Address, ExecutionError, Memory, Result};
+use crate::{Address, Memory, Result};
 
 /// All API endpoints that can be executed must implement this trait.
 pub trait ApiEndpoint: ModelingCmdVariant + Sized {
@@ -34,8 +32,7 @@ impl ApiEndpoint for MovePathPen {
     where
         I: Iterator<Item = Address>,
     {
-        let path: Uuid = read::<Primitive>(fields.next(), mem)?.try_into()?;
-        let path = ModelingCmdId::from(path);
+        let path = read(fields.next(), mem)?;
         let to = read(fields.next(), mem)?;
         Ok(Self { path, to })
     }
@@ -46,10 +43,7 @@ impl ApiEndpoint for ExtendPath {
     where
         I: Iterator<Item = Address>,
     {
-        let path = read::<Primitive>(fields.next(), mem)
-            .and_then(Uuid::try_from)
-            .map_err(ExecutionError::from)
-            .map(ModelingCmdId::from)?;
+        let path = read(fields.next(), mem)?;
         let segment = read(fields.next(), mem)?;
         Ok(Self { path, segment })
     }
@@ -60,11 +54,9 @@ impl ApiEndpoint for Extrude {
     where
         I: Iterator<Item = Address>,
     {
-        let target = read::<Primitive>(fields.next(), mem)
-            .and_then(Uuid::try_from)
-            .map(ModelingCmdId)?;
-        let distance = read::<Primitive>(fields.next(), mem).and_then(f64::try_from)?;
-        let cap = read::<Primitive>(fields.next(), mem).and_then(bool::try_from)?;
+        let target = read(fields.next(), mem)?;
+        let distance = read(fields.next(), mem)?;
+        let cap = read(fields.next(), mem)?;
         Ok(Self { target, distance, cap })
     }
 }
@@ -74,13 +66,7 @@ impl ApiEndpoint for TakeSnapshot {
     where
         I: Iterator<Item = Address>,
     {
-        let format_str = read::<Primitive>(fields.next(), mem).and_then(String::try_from)?;
-        let format = format_str.parse().map_err(|_| {
-            ExecutionError::from(MemoryError::InvalidEnumVariant {
-                expected_type: "image format".to_owned(),
-                actual: format_str,
-            })
-        })?;
+        let format = read(fields.next(), mem)?;
         Ok(Self { format })
     }
 }
@@ -90,7 +76,7 @@ impl ApiEndpoint for ClosePath {
     where
         I: Iterator<Item = Address>,
     {
-        let path_id = read::<Primitive>(fields.next(), mem).and_then(Uuid::try_from)?;
+        let path_id = read(fields.next(), mem)?;
         Ok(Self { path_id })
     }
 }
