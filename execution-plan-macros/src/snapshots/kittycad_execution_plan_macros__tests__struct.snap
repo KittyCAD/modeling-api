@@ -6,6 +6,7 @@ impl kittycad_execution_plan_traits::Value for Line {
     fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
         let mut parts = Vec::new();
         parts.extend(self.point.into_parts());
+        parts.extend(self.tag.into_parts());
         parts
     }
 
@@ -15,6 +16,7 @@ impl kittycad_execution_plan_traits::Value for Line {
     {
         Ok(Self {
             point: kittycad_execution_plan_traits::Value::from_parts(values)?,
+            tag: kittycad_execution_plan_traits::Value::from_parts(values)?,
         })
     }
 }

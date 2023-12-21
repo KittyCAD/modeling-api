@@ -328,6 +328,7 @@ mod tests {
         let input = quote! {
             struct Line {
                 point: Point3d<f64>,
+                tag: Option<String>,
             }
         };
         let input: DeriveInput = syn::parse2(input).unwrap();

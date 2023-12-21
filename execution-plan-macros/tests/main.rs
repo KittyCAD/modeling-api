@@ -4,6 +4,7 @@ use kittycad_execution_plan_macros::ExecutionPlanValue;
 struct FooConcrete {
     f: f64,
     i: usize,
+    o: Option<usize>,
 }
 
 #[derive(ExecutionPlanValue)]
