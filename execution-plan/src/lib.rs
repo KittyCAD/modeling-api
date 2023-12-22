@@ -8,8 +8,7 @@
 
 use std::fmt;
 
-use api_endpoint::ApiEndpoint;
-use kittycad_execution_plan_traits::{MemoryError, Primitive};
+use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, StaticMemoryInitializer};
@@ -17,7 +16,6 @@ use serde::{Deserialize, Serialize};
 
 use self::arithmetic::Arithmetic;
 
-mod api_endpoint;
 mod arithmetic;
 mod memory;
 #[cfg(test)]

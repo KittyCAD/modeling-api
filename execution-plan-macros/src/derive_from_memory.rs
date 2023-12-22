@@ -1,6 +1,6 @@
 use proc_macro2::{Span, TokenStream as TokenStream2};
-use quote::{quote, quote_spanned};
-use syn::{spanned::Spanned, DeriveInput, Fields};
+use quote::quote_spanned;
+use syn::{spanned::Spanned, DeriveInput, Fields, FieldsNamed};
 
 use crate::helpers::remove_generics_defaults;
 
@@ -12,25 +12,49 @@ pub(crate) fn impl_derive_from_memory(input: DeriveInput) -> TokenStream2 {
     // Any generics defined on the type deriving Value.
     let generics = input.generics;
     match input.data {
-        syn::Data::Struct(data) => impl_on_struct(span, name, data, generics),
+        syn::Data::Struct(data) => match data.fields {
+            Fields::Named(expr) => impl_on_struct_named_fields(span, name, expr, generics),
+            Fields::Unnamed(_) => todo!(),
+            Fields::Unit => impl_on_struct_no_fields(span, name, generics),
+        },
         _ => quote_spanned! {span =>
             compile_error!("Value cannot be implemented on an enum or union type")
         },
     }
 }
 
-fn impl_on_struct(
+fn impl_on_struct_no_fields(span: Span, name: proc_macro2::Ident, generics: syn::Generics) -> TokenStream2 {
+    // Handle generics in the original struct.
+    // Firstly, if the original struct has defaults on its generics, e.g. Point2d<T = f32>,
+    // don't include those defaults in this macro's output, because the compiler
+    // complains it's unnecessary and will soon be a compile error.
+    let generics_without_defaults = remove_generics_defaults(generics.clone());
+    let where_clause = generics.where_clause;
+
+    // Final return value: the generated Rust code to implement the trait.
+    // This uses the fragments above, interpolating them into the final outputted code.
+    quote_spanned! {span=>
+        impl #generics_without_defaults kittycad_execution_plan_traits::FromMemory for #name #generics_without_defaults
+        #where_clause
+        {
+            fn from_memory<I, M>(_fields: &mut I, _mem: &M) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+            where
+                M: kittycad_execution_plan_traits::ReadMemory,
+                I: Iterator<Item = M::Address>
+            {
+
+                Ok(Self {})
+            }
+        }
+    }
+}
+
+fn impl_on_struct_named_fields(
     span: Span,
     name: proc_macro2::Ident,
-    data: syn::DataStruct,
+    fields: FieldsNamed,
     generics: syn::Generics,
-) -> proc_macro2::TokenStream {
-    let Fields::Named(ref fields) = data.fields else {
-        return quote_spanned! {span =>
-            compile_error!("Value cannot be implemented on a struct with unnamed fields")
-        };
-    };
-
+) -> TokenStream2 {
     // We're going to construct some fragments of Rust source code, which will get used in the
     // final generated code this function returns.
 
@@ -71,7 +95,7 @@ fn impl_on_struct(
 
     // Final return value: the generated Rust code to implement the trait.
     // This uses the fragments above, interpolating them into the final outputted code.
-    quote! {
+    quote_spanned! {span=>
         impl #generics_without_defaults kittycad_execution_plan_traits::FromMemory for #name #generics_without_defaults
         #where_clause
         {
