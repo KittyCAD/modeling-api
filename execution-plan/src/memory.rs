@@ -49,12 +49,23 @@ impl Default for Memory {
     }
 }
 
-impl Memory {
+impl kittycad_execution_plan_traits::ReadMemory for Memory {
+    type Address = crate::Address;
+
     /// Get a value from KCEP's program memory.
-    pub fn get(&self, Address(addr): &Address) -> Option<&Primitive> {
+    fn get(&self, Address(addr): &Address) -> Option<&Primitive> {
         self.addresses[*addr].as_ref()
     }
 
+    /// Get a value value (i.e. a value which takes up multiple addresses in memory).
+    /// Its parts are stored in consecutive memory addresses starting at `start`.
+    fn get_composite<T: Value>(&self, start: Address) -> std::result::Result<T, MemoryError> {
+        let mut values = self.addresses.iter().skip(start.0).cloned();
+        T::from_parts(&mut values)
+    }
+}
+
+impl Memory {
     /// Store a value in KCEP's program memory.
     pub fn set(&mut self, Address(addr): Address, value: Primitive) {
         // If isn't big enough for this value, double the size of memory until it is.
@@ -75,13 +86,6 @@ impl Memory {
             total_addrs += 1;
         }
         total_addrs
-    }
-
-    /// Get a value value (i.e. a value which takes up multiple addresses in memory).
-    /// Its parts are stored in consecutive memory addresses starting at `start`.
-    pub fn get_composite<T: Value>(&self, start: Address) -> std::result::Result<T, MemoryError> {
-        let mut values = self.addresses.iter().skip(start.0).cloned();
-        T::from_parts(&mut values)
     }
 
     /// Iterate over each memory address and its value.
