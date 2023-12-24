@@ -8,7 +8,7 @@ expression: debug_dump_memory(&mem)
 │ 0     │ Uuid     │ 4cd175a3-e313-4c91-b624-368bea3c0483 │
 │ 1     │ Float    │ 40                                   │
 │ 2     │ Bool     │ true                                 │
-│ 3     │ String   │ png                                  │
+│ 3     │ String   │ Png                                  │
 │ 4     │ Float    │ -20                                  │
 │ 5     │ Float    │ -20                                  │
 │ 6     │ Float    │ -20                                  │
@@ -32,6 +32,6 @@ expression: debug_dump_memory(&mem)
 │ 24    │ Float    │ -20                                  │
 │ 25    │ Float    │ -20                                  │
 │ 26    │ Bool     │ false                                │
-│ 99    │ String   │ TAKE_SNAPSHOT                        │
+│ 99    │ String   │ TakeSnapshot                         │
 │ 100   │ Bytes    │ length 129068                        │
 └───────┴──────────┴──────────────────────────────────────┘

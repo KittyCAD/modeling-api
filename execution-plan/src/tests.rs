@@ -136,7 +136,7 @@ async fn api_call_draw_cube() {
     let path_id_addr = static_data.push(Primitive::from(path.0));
     let cube_height_addr = static_data.push(Primitive::from(CUBE_WIDTH * 2.0));
     let cap_addr = static_data.push(Primitive::from(true));
-    let img_format_addr = static_data.push(Primitive::from("png".to_owned()));
+    let img_format_addr = static_data.push(Primitive::from("Png".to_owned()));
     let output_addr = Address(99);
     let starting_point = Point3d {
         x: -CUBE_WIDTH,
