@@ -42,7 +42,7 @@ jobs:
   
     check-lint:
       name: Check lints
-      runs-on: ubuntu-latest-8-cores
+      runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
         - uses: taiki-e/install-action@just
@@ -57,7 +57,7 @@ jobs:
  
     cargo-fmt:
         name: cargo fmt
-        runs-on: ubuntu-latest-8-cores
+        runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4
           - name: Install Rust
@@ -79,7 +79,6 @@ jobs:
         - name: Install codespell
           run: python -m pip install codespell
         - name: Run codespell
-          # Edit this file to tweak the typo list and other configuration.
           run: just check-typos
 
     cargo-toml-sorted:
