@@ -21,12 +21,13 @@ jobs:
         - uses: taiki-e/install-action@cargo-llvm-cov
         - uses: taiki-e/install-action@nextest
         - uses: Swatinem/rust-cache@v2.7.0
+        - uses: taiki-e/install-action@just
 
         - name: cargo test
           shell: bash
           run: |
             export KITTYCAD_API_TOKEN=${{secrets.KITTYCAD_API_TOKEN}}
-            cargo llvm-cov nextest --all-features --workspace --lcov --output-path lcov.info
+            just test-with-coverage
           env:
             RUST_BACKTRACE: 1
   
@@ -39,32 +40,20 @@ jobs:
             verbose: true
             files: lcov.info
   
-    cargo-clippy:
-      name: cargo clippy
+    check-lint:
+      name: Check lints
       runs-on: ubuntu-latest-8-cores
       steps:
         - uses: actions/checkout@v4
+        - uses: taiki-e/install-action@just
         - name: Install Rust
           uses: dtolnay/rust-toolchain@stable
           with:
             components: clippy
         - uses: Swatinem/rust-cache@v2.7.0
 
-        - name: Run clippy (no default features)
-          shell: bash
-          run: cargo clippy --tests --benches --workspace --examples --no-default-features -- -D warnings
-          env:
-            RUST_BACKTRACE: 1
-        - name: Run clippy (only default features)
-          shell: bash
-          run: cargo clippy --tests --benches --workspace --examples -- -D warnings
-          env:
-            RUST_BACKTRACE: 1
-        - name: Run clippy (all features)
-          shell: bash
-          run: cargo clippy --tests --benches --workspace --examples --all-features -- -D warnings
-          env:
-            RUST_BACKTRACE: 1
+        - name: Check lints
+          run: just lint
  
     cargo-fmt:
         name: cargo fmt
@@ -77,24 +66,21 @@ jobs:
                 components: rustfmt
   
           - name: cargo fmt
-            shell: bash
-            run: |
-              cargo fmt
-            env:
-              RUST_BACKTRACE: 1
+            run: cargo fmt
 
     check-typos:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
+        - uses: taiki-e/install-action@just
         - name: Set up Python
           uses: actions/setup-python@v4
         - name: Install codespell
           run: python -m pip install codespell
         - name: Run codespell
           # Edit this file to tweak the typo list and other configuration.
-          run: codespell --config .codespellrc
+          run: just check-typos
 
     cargo-toml-sorted:
       name: Check Cargo.toml is sorted
