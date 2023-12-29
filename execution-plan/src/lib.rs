@@ -189,7 +189,7 @@ impl Operand {
 
 /// Execute the plan.
 pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: ModelingSession) -> Result<()> {
-    for (_step_number, step) in plan.into_iter().enumerate() {
+    for step in plan.into_iter() {
         match step {
             Instruction::ApiRequest(req) => {
                 req.execute(&mut session, mem).await?;
