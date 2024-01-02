@@ -336,7 +336,20 @@ impl Angle {
 
 /// The type of scene selection change
 #[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
@@ -485,6 +498,7 @@ pub enum PathCommand {
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
+#[repr(u8)]
 pub enum EntityType {
     Entity,
     Object,
@@ -605,7 +619,6 @@ pub enum FileImportFormat {
 }
 
 /// The type of error sent by the KittyCAD graphics engine.
-/// A subset of [`ErrorCode`].
 #[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
 #[serde(rename_all = "snake_case")]
 pub enum EngineErrorCode {
