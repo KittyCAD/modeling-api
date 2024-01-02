@@ -11,7 +11,7 @@ use crate::{
     format::OutputFormat,
     id::ModelingCmdId,
     shared::{
-        AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType,
+        AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
         PathComponentConstraintBound, PathComponentConstraintType, PathSegment, Point2d, Point3d, SceneSelectionType,
         SceneToolType,
     },
@@ -732,10 +732,24 @@ pub struct SurfaceArea {
 }
 
 /// Focus the default camera upon an object in the scene.
-#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize)]
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
 pub struct DefaultCameraFocusOn {
     /// UUID of object to focus on.
     pub uuid: Uuid,
+}
+/// When you select some entity with the current tool, what should happen to the entity?
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+pub struct SetSelectionType {
+    /// What type of selection should occur when you select something?
+    pub selection_type: SceneSelectionType,
+}
+
+/// What kind of entities can be selected?
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+pub struct SetSelectionFilter {
+    /// If vector is empty, clear all filters.
+    /// If vector is non-empty, only the given entity types will be selectable.
+    pub filter: Vec<EntityType>,
 }
 
 /// Mike says this usually looks nice.
