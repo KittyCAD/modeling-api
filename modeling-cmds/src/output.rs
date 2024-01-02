@@ -257,31 +257,21 @@ pub struct EntityGetDistance {
     pub max_distance: f64,
 }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-/// The response from the `EntityLinearPattern` command.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
-=======
 /// The response from the `EntityLinearPattern` command.
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
->>>>>>> main
 pub struct EntityLinearPattern {
     /// The UUIDs of the entities that were created.
     pub entity_ids: Vec<Uuid>,
 }
 
-<<<<<<< HEAD
 /// The response from the `EntityCircularPattern` command.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct EntityCircularPattern {
     /// The UUIDs of the entities that were created.
     pub entity_ids: Vec<Uuid>,
 }
 
->>>>>>> Stashed changes
-=======
->>>>>>> main
+
 impl ModelingCmdOutput for Export {}
 impl ModelingCmdOutput for SelectWithPoint {}
 impl ModelingCmdOutput for HighlightSetEntity {}
@@ -290,15 +280,8 @@ impl ModelingCmdOutput for EntityGetNumChildren {}
 impl ModelingCmdOutput for EntityGetParentId {}
 impl ModelingCmdOutput for EntityGetAllChildUuids {}
 impl ModelingCmdOutput for EntityGetDistance {}
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
 impl ModelingCmdOutput for EntityLinearPattern {}
 impl ModelingCmdOutput for EntityCircularPattern {}
->>>>>>> Stashed changes
-=======
-impl ModelingCmdOutput for EntityLinearPattern {}
->>>>>>> main
 impl ModelingCmdOutput for SelectGet {}
 impl ModelingCmdOutput for GetEntityType {}
 impl ModelingCmdOutput for Solid3dGetAllEdgeFaces {}

@@ -190,11 +190,6 @@ pub struct EntityGetDistance {
     pub distance_type: DistanceType,
 }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> main
 /// Create a linear pattern using this entity (currently only valid for 3D solids).
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct EntityLinearPattern {
@@ -207,8 +202,6 @@ pub struct EntityLinearPattern {
     /// Spacing between repetitions.
     pub spacing: f64,
 }
-
-<<<<<<< HEAD
 /// Create a circular pattern using this entity (currently only valid for 3D solids).
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct EntityCircularPattern {
@@ -222,9 +215,6 @@ pub struct EntityCircularPattern {
     pub arc_degrees: f64,
 }
 
->>>>>>> Stashed changes
-=======
->>>>>>> main
 /// Enter edit mode
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct EditModeEnter {
