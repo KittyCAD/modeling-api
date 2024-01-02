@@ -485,6 +485,7 @@ pub enum PathCommand {
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
+#[repr(u8)]
 pub enum EntityType {
     Entity,
     Object,
