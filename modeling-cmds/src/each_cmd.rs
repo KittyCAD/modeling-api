@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use kittycad_execution_plan_macros::{ExecutionPlanFromMemory, ExecutionPlanValue};
 use parse_display_derive::{Display, FromStr};
 // //! Types for parameters to Modeling API commands.
 use schemars::JsonSchema;
@@ -18,11 +19,11 @@ use crate::{
 };
 
 /// Start a new path.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
 pub struct StartPath;
 
 /// Move the path's "pen".
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
 pub struct MovePathPen {
     /// The ID of the command which created the path.
     pub path: ModelingCmdId,
@@ -32,7 +33,7 @@ pub struct MovePathPen {
 
 /// Extend a path by adding a new segment which starts at the path's "pen".
 /// If no "pen" location has been set before (via `MovePen`), then the pen is at the origin.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
 pub struct ExtendPath {
     /// The ID of the command which created the path.
     pub path: ModelingCmdId,
@@ -42,7 +43,7 @@ pub struct ExtendPath {
 }
 
 /// Command for extruding a solid.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
 pub struct Extrude {
     /// Which sketch to extrude.
     /// Must be a closed 2D solid.
@@ -56,7 +57,7 @@ pub struct Extrude {
 }
 
 /// Closes a path, converting it to a 2D solid.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
 pub struct ClosePath {
     /// Which path to close.
     pub path_id: Uuid,
@@ -189,8 +190,11 @@ pub struct EntityGetDistance {
     pub distance_type: DistanceType,
 }
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
+=======
+>>>>>>> main
 /// Create a linear pattern using this entity (currently only valid for 3D solids).
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct EntityLinearPattern {
@@ -204,6 +208,7 @@ pub struct EntityLinearPattern {
     pub spacing: f64,
 }
 
+<<<<<<< HEAD
 /// Create a circular pattern using this entity (currently only valid for 3D solids).
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct EntityCircularPattern {
@@ -218,6 +223,8 @@ pub struct EntityCircularPattern {
 }
 
 >>>>>>> Stashed changes
+=======
+>>>>>>> main
 /// Enter edit mode
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct EditModeEnter {
@@ -542,7 +549,7 @@ pub struct CurveGetControlPoints {
 }
 
 /// Enum containing the variety of image formats snapshots may be exported to.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, FromStr, Display)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, FromStr, Display, ExecutionPlanValue)]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum ImageFormat {
@@ -553,7 +560,7 @@ pub enum ImageFormat {
 }
 
 /// Take a snapshot of the current view.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
 pub struct TakeSnapshot {
     /// What image format to return.
     pub format: ImageFormat,

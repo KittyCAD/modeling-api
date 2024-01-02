@@ -1,17 +1,22 @@
-use kittycad_modeling_cmds::shared::Angle;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::ExecutionError;
+use crate::{impl_value_on_primitive_ish, MemoryError, Value};
 
 /// A value stored in KCEP program memory.
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub enum Primitive {
+    /// UTF-8 text
     String(String),
+    /// Various number kinds
     NumericValue(NumericPrimitive),
+    /// UUID
     Uuid(Uuid),
+    /// Raw binary
     Bytes(Vec<u8>),
+    /// True or false
     Bool(bool),
+    /// An optional value which was not given.
     Nil,
 }
 
@@ -33,16 +38,15 @@ impl From<String> for Primitive {
     }
 }
 
-impl From<f64> for Primitive {
-    fn from(value: f64) -> Self {
-        Self::NumericValue(NumericPrimitive::Float(value))
+impl From<f32> for Primitive {
+    fn from(value: f32) -> Self {
+        Self::NumericValue(NumericPrimitive::Float(value as f64))
     }
 }
 
-/// Angle is always stored as f64 degrees.
-impl From<Angle> for Primitive {
-    fn from(value: Angle) -> Self {
-        Self::NumericValue(NumericPrimitive::Float(value.to_degrees()))
+impl From<f64> for Primitive {
+    fn from(value: f64) -> Self {
+        Self::NumericValue(NumericPrimitive::Float(value))
     }
 }
 
@@ -53,13 +57,13 @@ impl From<Vec<u8>> for Primitive {
 }
 
 impl TryFrom<Primitive> for String {
-    type Error = ExecutionError;
+    type Error = MemoryError;
 
     fn try_from(value: Primitive) -> Result<Self, Self::Error> {
         if let Primitive::String(s) = value {
             Ok(s)
         } else {
-            Err(ExecutionError::MemoryWrongType {
+            Err(MemoryError::MemoryWrongType {
                 expected: "string",
                 actual: format!("{value:?}"),
             })
@@ -68,13 +72,13 @@ impl TryFrom<Primitive> for String {
 }
 
 impl TryFrom<Primitive> for Uuid {
-    type Error = ExecutionError;
+    type Error = MemoryError;
 
     fn try_from(value: Primitive) -> Result<Self, Self::Error> {
         if let Primitive::Uuid(u) = value {
             Ok(u)
         } else {
-            Err(ExecutionError::MemoryWrongType {
+            Err(MemoryError::MemoryWrongType {
                 expected: "uuid",
                 actual: format!("{value:?}"),
             })
@@ -82,30 +86,14 @@ impl TryFrom<Primitive> for Uuid {
     }
 }
 
-/// Angle is always stored as f64 degrees.
-impl TryFrom<Primitive> for Angle {
-    type Error = ExecutionError;
-
-    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
-        if let Primitive::NumericValue(x) = value {
-            Ok(Angle::from_degrees(x.into()))
-        } else {
-            Err(ExecutionError::MemoryWrongType {
-                expected: "number",
-                actual: format!("{value:?}"),
-            })
-        }
-    }
-}
-
 impl TryFrom<Primitive> for f64 {
-    type Error = ExecutionError;
+    type Error = MemoryError;
 
     fn try_from(value: Primitive) -> Result<Self, Self::Error> {
         if let Primitive::NumericValue(NumericPrimitive::Float(x)) = value {
             Ok(x)
         } else {
-            Err(ExecutionError::MemoryWrongType {
+            Err(MemoryError::MemoryWrongType {
                 expected: "float",
                 actual: format!("{value:?}"),
             })
@@ -113,14 +101,22 @@ impl TryFrom<Primitive> for f64 {
     }
 }
 
+impl TryFrom<Primitive> for f32 {
+    type Error = MemoryError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        f64::try_from(value).map(|x| x as f32)
+    }
+}
+
 impl TryFrom<Primitive> for Vec<u8> {
-    type Error = ExecutionError;
+    type Error = MemoryError;
 
     fn try_from(value: Primitive) -> Result<Self, Self::Error> {
         if let Primitive::Bytes(x) = value {
             Ok(x)
         } else {
-            Err(ExecutionError::MemoryWrongType {
+            Err(MemoryError::MemoryWrongType {
                 expected: "bytes",
                 actual: format!("{value:?}"),
             })
@@ -129,13 +125,13 @@ impl TryFrom<Primitive> for Vec<u8> {
 }
 
 impl TryFrom<Primitive> for bool {
-    type Error = ExecutionError;
+    type Error = MemoryError;
 
     fn try_from(value: Primitive) -> Result<Self, Self::Error> {
         if let Primitive::Bool(x) = value {
             Ok(x)
         } else {
-            Err(ExecutionError::MemoryWrongType {
+            Err(MemoryError::MemoryWrongType {
                 expected: "bool",
                 actual: format!("{value:?}"),
             })
@@ -143,32 +139,73 @@ impl TryFrom<Primitive> for bool {
     }
 }
 
-#[cfg(test)]
+impl TryFrom<Primitive> for usize {
+    type Error = MemoryError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::NumericValue(NumericPrimitive::Integer(x)) = value {
+            Ok(x)
+        } else {
+            Err(MemoryError::MemoryWrongType {
+                expected: "usize",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
+impl TryFrom<Primitive> for u32 {
+    type Error = MemoryError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::NumericValue(NumericPrimitive::Integer(x)) = value {
+            Ok(x.try_into().map_err(|_| MemoryError::MemoryWrongType {
+                expected: "u32",
+                actual: x.to_string(),
+            })?)
+        } else {
+            Err(MemoryError::MemoryWrongType {
+                expected: "u32",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
 impl From<usize> for Primitive {
     fn from(value: usize) -> Self {
         Self::NumericValue(NumericPrimitive::Integer(value))
     }
 }
 
+impl From<u32> for Primitive {
+    fn from(value: u32) -> Self {
+        Self::NumericValue(NumericPrimitive::Integer(value as usize))
+    }
+}
+
+/// Various kinds of number.
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub enum NumericPrimitive {
+    /// Unsigned integer
     Integer(usize),
+    /// Floating point
     Float(f64),
 }
 
-impl crate::value::Value for Primitive {
+impl crate::Value for Primitive {
     fn into_parts(self) -> Vec<Primitive> {
         vec![self]
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, ExecutionError>
+    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
     where
         I: Iterator<Item = Option<Primitive>>,
     {
         values
             .next()
             .and_then(|v| v.to_owned())
-            .ok_or(ExecutionError::MemoryWrongSize)
+            .ok_or(MemoryError::MemoryWrongSize)
     }
 }
 
@@ -180,3 +217,13 @@ impl From<NumericPrimitive> for f64 {
         }
     }
 }
+
+impl_value_on_primitive_ish!(Value, f32);
+impl_value_on_primitive_ish!(Value, f64);
+impl_value_on_primitive_ish!(Value, bool);
+impl_value_on_primitive_ish!(Value, String);
+impl_value_on_primitive_ish!(Value, Uuid);
+type VecU8 = Vec<u8>;
+impl_value_on_primitive_ish!(Value, VecU8);
+impl_value_on_primitive_ish!(Value, usize);
+impl_value_on_primitive_ish!(Value, u32);

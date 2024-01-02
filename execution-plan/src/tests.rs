@@ -1,12 +1,13 @@
 use std::env;
 
+use insta::assert_snapshot;
+use kittycad_execution_plan_traits::{NumericPrimitive, Primitive};
 use kittycad_modeling_cmds::shared::{PathSegment, Point3d};
 use kittycad_modeling_session::{Session, SessionBuilder};
 use tabled::{settings::Style, Table};
 use uuid::Uuid;
 
 use super::*;
-use crate::primitive::NumericPrimitive;
 
 async fn test_client() -> Session {
     let kittycad_api_token = env::var("KITTYCAD_API_TOKEN").expect("You must set $KITTYCAD_API_TOKEN");
@@ -39,19 +40,18 @@ async fn write_addr_to_memory() {
 
 #[tokio::test]
 async fn add_literals() {
-    let plan =
-        vec![Instruction::Arithmetic {
-            arithmetic: Arithmetic {
-                operation: Operation::Add,
-                operand0: Operand::Literal(3.into()),
-                operand1: Operand::Literal(2.into()),
-            },
-            destination: Address(1),
-        }];
+    let plan = vec![Instruction::Arithmetic {
+        arithmetic: Arithmetic {
+            operation: Operation::Add,
+            operand0: Operand::Literal(3u32.into()),
+            operand1: Operand::Literal(2u32.into()),
+        },
+        destination: Address(1),
+    }];
     let mut mem = Memory::default();
     let client = test_client().await;
     execute(&mut mem, plan, client).await.expect("failed to execute plan");
-    assert_eq!(mem.get(&Address(1)), Some(&5.into()))
+    assert_eq!(mem.get(&Address(1)), Some(&5u32.into()))
 }
 
 #[tokio::test]
@@ -60,14 +60,14 @@ async fn add_literal_to_reference() {
         // Memory addr 0 contains 450
         Instruction::Set {
             address: Address(0),
-            value: 450.into(),
+            value: 450u32.into(),
         },
         // Add 20 to addr 0
         Instruction::Arithmetic {
             arithmetic: Arithmetic {
                 operation: Operation::Add,
                 operand0: Operand::Reference(Address(0)),
-                operand1: Operand::Literal(20.into()),
+                operand1: Operand::Literal(20u32.into()),
             },
             destination: Address(1),
         },
@@ -76,7 +76,7 @@ async fn add_literal_to_reference() {
     let mut mem = Memory::default();
     let client = test_client().await;
     execute(&mut mem, plan, client).await.expect("failed to execute plan");
-    assert_eq!(mem.get(&Address(1)), Some(&470.into()))
+    assert_eq!(mem.get(&Address(1)), Some(&470u32.into()))
 }
 
 #[tokio::test]
@@ -91,9 +91,9 @@ async fn add_to_composite_value() {
     };
     let start_addr = Address(0);
     mem.set_composite(start_addr, point_before);
-    assert_eq!(mem.0[0], Some(2.0.into()));
-    assert_eq!(mem.0[1], Some(3.0.into()));
-    assert_eq!(mem.0[2], Some(4.0.into()));
+    assert_eq!(mem.get(&Address(0)), Some(&(2.0.into())));
+    assert_eq!(mem.get(&Address(1)), Some(&(3.0.into())));
+    assert_eq!(mem.get(&Address(2)), Some(&(4.0.into())));
 
     let client = test_client().await;
     // Update the point's x-value in memory.
@@ -103,7 +103,7 @@ async fn add_to_composite_value() {
             arithmetic: Arithmetic {
                 operation: Operation::Add,
                 operand0: Operand::Reference(start_addr),
-                operand1: Operand::Literal(40.into()),
+                operand1: Operand::Literal(40u32.into()),
             },
             destination: start_addr,
         }],
@@ -126,72 +126,47 @@ async fn add_to_composite_value() {
 
 #[tokio::test]
 async fn api_call_draw_cube() {
-    let mut mem = Memory::default();
     let client = test_client().await;
 
     const CUBE_WIDTH: f64 = 20.0;
 
     // Define primitives, load them into memory.
-    let path_id_addr = Address(0);
-    let path = new_id();
-    let cube_height_addr = Address(2);
-    let cube_height = Primitive::from(CUBE_WIDTH * 2.0);
-    let cap_addr = Address(3);
-    let cap = Primitive::Bool(true);
-    let img_format_addr = Address(4);
-    let img_format = Primitive::from("png".to_owned());
+    let mut static_data = StaticMemoryInitializer::default();
+    let path = ModelingCmdId(Uuid::parse_str("4cd175a3-e313-4c91-b624-368bea3c0483").unwrap());
+    let path_id_addr = static_data.push(Primitive::from(path.0));
+    let cube_height_addr = static_data.push(Primitive::from(CUBE_WIDTH * 2.0));
+    let cap_addr = static_data.push(Primitive::from(true));
+    let img_format_addr = static_data.push(Primitive::from("Png".to_owned()));
     let output_addr = Address(99);
-    mem.set(path_id_addr, Primitive::from(path.0));
-    mem.set(cube_height_addr, cube_height);
-    mem.set(cap_addr, cap);
-    mem.set(img_format_addr, img_format);
-
-    // Define composite objects, load them into memory.
-    let starting_point_addr = Address(6);
     let starting_point = Point3d {
         x: -CUBE_WIDTH,
         y: -CUBE_WIDTH,
         z: -CUBE_WIDTH,
     };
-    let point_size = mem.set_composite(starting_point_addr, starting_point);
-    let next_addr = Address(starting_point_addr.0 + point_size);
-    let segments =
-        [
-            PathSegment::Line {
-                end: Point3d {
-                    x: CUBE_WIDTH,
-                    y: -CUBE_WIDTH,
-                    z: -CUBE_WIDTH,
-                },
-                relative: false,
-            },
-            PathSegment::Line {
-                end: Point3d {
-                    x: CUBE_WIDTH,
-                    y: CUBE_WIDTH,
-                    z: -CUBE_WIDTH,
-                },
-                relative: false,
-            },
-            PathSegment::Line {
-                end: Point3d {
-                    x: -CUBE_WIDTH,
-                    y: CUBE_WIDTH,
-                    z: -CUBE_WIDTH,
-                },
-                relative: false,
-            },
-            PathSegment::Line {
-                end: starting_point,
-                relative: false,
-            },
-        ];
-    let mut segment_addrs = vec![next_addr];
-    for segment in segments {
-        let addr = segment_addrs.last().unwrap();
-        let size = mem.set_composite(*addr, segment);
-        segment_addrs.push(Address(addr.0 + size));
-    }
+    let starting_point_addr = static_data.push(starting_point);
+    let line_segment = |end: Point3d<f64>| PathSegment::Line { end, relative: false };
+    let segments = [
+        Point3d {
+            x: CUBE_WIDTH,
+            y: -CUBE_WIDTH,
+            z: -CUBE_WIDTH,
+        },
+        Point3d {
+            x: CUBE_WIDTH,
+            y: CUBE_WIDTH,
+            z: -CUBE_WIDTH,
+        },
+        Point3d {
+            x: -CUBE_WIDTH,
+            y: CUBE_WIDTH,
+            z: -CUBE_WIDTH,
+        },
+        starting_point,
+    ]
+    .map(line_segment);
+    let segment_addrs = segments.map(|segment| static_data.push(segment));
+    let mut mem = static_data.finish();
+    assert_snapshot!("cube_memory_before", debug_dump_memory(&mem));
 
     // Run the plan!
     execute(
@@ -260,37 +235,35 @@ async fn api_call_draw_cube() {
     .unwrap();
 
     // Program executed successfully!
-    debug_dump_memory(&mem);
+    assert_snapshot!("cube_memory_after", debug_dump_memory(&mem));
 
     // The image output was set to addr 99.
     // Outputs are two addresses long, addr 99 will store the data format (TAKE_SNAPSHOT)
     // and addr 100 will store its first field ('contents', the image bytes).
-    let Primitive::Bytes(b) = mem.0[100].as_ref().unwrap() else {
+    let Primitive::Bytes(b) = mem.get(&Address(100)).as_ref().unwrap() else {
         panic!("wrong format in memory addr 100");
     };
     // Visually check that the image is a cube.
     use image::io::Reader as ImageReader;
-    let img =
-        ImageReader::new(std::io::Cursor::new(b))
-            .with_guessed_format()
-            .unwrap()
-            .decode()
-            .unwrap();
+    let img = ImageReader::new(std::io::Cursor::new(b))
+        .with_guessed_format()
+        .unwrap()
+        .decode()
+        .unwrap();
     twenty_twenty::assert_image("tests/outputs/cube.png", &img, 0.9999);
 }
 
-fn debug_dump_memory(mem: &Memory) {
-    impl Primitive {
-        fn pretty_print(&self) -> (&'static str, String) {
-            match self {
-                Primitive::String(v) => ("String", v.to_owned()),
-                Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
-                Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Integer", v.to_string()),
-                Primitive::Uuid(v) => ("Uuid", v.to_string()),
-                Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
-                Primitive::Bool(v) => ("Bool", v.to_string()),
-                Primitive::Nil => ("Nil", String::new()),
-            }
+/// Return a nicely-formatted table of memory.
+fn debug_dump_memory(mem: &Memory) -> String {
+    fn pretty_print(p: &Primitive) -> (&'static str, String) {
+        match p {
+            Primitive::String(v) => ("String", v.to_owned()),
+            Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
+            Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Integer", v.to_string()),
+            Primitive::Uuid(v) => ("Uuid", v.to_string()),
+            Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
+            Primitive::Bool(v) => ("Bool", v.to_string()),
+            Primitive::Nil => ("Nil", String::new()),
         }
     }
     #[derive(tabled::Tabled)]
@@ -300,12 +273,10 @@ fn debug_dump_memory(mem: &Memory) {
         value: String,
     }
     let table_data: Vec<_> = mem
-        .0
         .iter()
-        .enumerate()
         .filter_map(|(i, val)| {
             if let Some(val) = val {
-                let (val_type, value) = val.pretty_print();
+                let (val_type, value) = pretty_print(val);
                 Some(MemoryAddr {
                     index: i,
                     val_type,
@@ -316,7 +287,7 @@ fn debug_dump_memory(mem: &Memory) {
             }
         })
         .collect();
-    eprintln!("{}", Table::new(table_data).with(Style::sharp()));
+    Table::new(table_data).with(Style::sharp()).to_string()
 }
 
 fn new_id() -> ModelingCmdId {

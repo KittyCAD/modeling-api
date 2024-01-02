@@ -1,3 +1,4 @@
+use kittycad_execution_plan_macros::ExecutionPlanValue;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -7,7 +8,7 @@ macro_rules! build_enum {
     ($( $variant:ident ),* ) => {
 /// A successful response from a modeling command.
 /// This can be one of several types of responses, depending on the command.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 #[serde(rename_all = "snake_case", tag = "type", content = "data")]
 pub enum OkModelingCmdResponse {
     /// An empty response, used for any command that does not explicitly have a response
@@ -33,6 +34,7 @@ build_enum! {
     SelectGet,
     GetEntityType,
     EntityGetDistance,
+    EntityLinearPattern,
     Solid3dGetAllEdgeFaces,
     Solid3dGetAllOppositeEdges,
     Solid3dGetOppositeEdge,

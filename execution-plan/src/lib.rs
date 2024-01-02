@@ -8,35 +8,30 @@
 
 use std::fmt;
 
-use api_endpoint::ApiEndpoint;
+use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
+pub use memory::{Memory, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
-use value::Value;
 
-use self::{arithmetic::Arithmetic, primitive::Primitive};
+use self::arithmetic::Arithmetic;
 
-mod api_endpoint;
 mod arithmetic;
-mod primitive;
+mod memory;
 #[cfg(test)]
 mod tests;
-mod value;
-
-/// KCEP's program memory. A flat, linear list of values.
-#[derive(Debug)]
-#[cfg_attr(test, derive(PartialEq))]
-pub struct Memory(Vec<Option<Primitive>>);
-
-impl Default for Memory {
-    fn default() -> Self {
-        Self(vec![None; 1024])
-    }
-}
 
 /// An address in KCEP's program memory.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Address(usize);
+
+impl Address {
+    /// Offset the memory by `size` addresses.
+    pub fn offset(self, size: usize) -> Self {
+        let curr = self.0;
+        Self(curr + size)
+    }
+}
 
 impl fmt::Display for Address {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -47,42 +42,6 @@ impl fmt::Display for Address {
 impl From<usize> for Address {
     fn from(value: usize) -> Self {
         Self(value)
-    }
-}
-
-impl Memory {
-    /// Get a value from KCEP's program memory.
-    pub fn get(&self, Address(addr): &Address) -> Option<&Primitive> {
-        self.0[*addr].as_ref()
-    }
-
-    /// Store a value in KCEP's program memory.
-    pub fn set(&mut self, Address(addr): Address, value: Primitive) {
-        // If isn't big enough for this value, double the size of memory until it is.
-        while addr > self.0.len() {
-            self.0.extend(vec![None; self.0.len()]);
-        }
-        self.0[addr] = Some(value);
-    }
-
-    /// Store a value value (i.e. a value which takes up multiple addresses in memory).
-    /// Store its parts in consecutive memory addresses starting at `start`.
-    /// Returns how many memory addresses the data took up.
-    pub fn set_composite<T: Value>(&mut self, start: Address, composite_value: T) -> usize {
-        let parts = composite_value.into_parts().into_iter();
-        let mut total_addrs = 0;
-        for (value, addr) in parts.zip(start.0..) {
-            self.0[addr] = Some(value);
-            total_addrs += 1;
-        }
-        total_addrs
-    }
-
-    /// Get a value value (i.e. a value which takes up multiple addresses in memory).
-    /// Its parts are stored in consecutive memory addresses starting at `start`.
-    pub fn get_composite<T: Value>(&self, start: Address) -> Result<T> {
-        let mut values = self.0.iter().skip(start.0).cloned();
-        T::from_parts(&mut values)
     }
 }
 
@@ -230,7 +189,7 @@ impl Operand {
 
 /// Execute the plan.
 pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: ModelingSession) -> Result<()> {
-    for (_step_number, step) in plan.into_iter().enumerate() {
+    for step in plan.into_iter() {
         match step {
             Instruction::ApiRequest(req) => {
                 req.execute(&mut session, mem).await?;
@@ -269,17 +228,6 @@ pub enum ExecutionError {
         /// Operands being attempted
         operands: Vec<Primitive>,
     },
-    /// Type error, memory contained the wrong type.
-    #[error("Tried to read a '{expected}' from KCEP program memory, found an '{actual}' instead")]
-    MemoryWrongType {
-        /// What the KittyCAD executor expected memory to contain
-        expected: &'static str,
-        /// What was actually in memory
-        actual: String,
-    },
-    /// Memory address was not set.
-    #[error("Tried to read from empty memory address")]
-    MemoryWrongSize,
     /// You tried to call a KittyCAD endpoint that doesn't exist or isn't implemented.
     #[error("No endpoint {name} recognized")]
     UnrecognizedEndpoint {
@@ -289,12 +237,7 @@ pub enum ExecutionError {
     /// Error running a modeling command.
     #[error("Error sending command to API: {0}")]
     ModelingApiError(#[from] RunCommandError),
-    /// When trying to read an enum from memory, found a variant tag which is not valid for this enum.
-    #[error("Found an unexpected tag '{actual}' when trying to read an enum of type {expected_type} from memory")]
-    InvalidEnumVariant {
-        /// What type of enum was being read from memory.
-        expected_type: String,
-        /// The actual enum tag found in memory.
-        actual: String,
-    },
+    /// Error reading value from memory.
+    #[error("{0}")]
+    MemoryError(#[from] MemoryError),
 }

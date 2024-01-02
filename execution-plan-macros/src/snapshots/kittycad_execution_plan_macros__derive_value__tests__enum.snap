@@ -1,0 +1,67 @@
+---
+source: execution-plan-macros/src/derive_value.rs
+expression: formatted
+---
+impl kittycad_execution_plan_traits::Value for FooEnum {
+    fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
+        match self {
+            FooEnum::A { x } => {
+                let mut parts = Vec::new();
+                let tag = stringify!(A).to_owned();
+                parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
+                parts.extend(x.into_parts());
+                parts
+            }
+            FooEnum::B { y } => {
+                let mut parts = Vec::new();
+                let tag = stringify!(B).to_owned();
+                parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
+                parts.extend(y.into_parts());
+                parts
+            }
+            FooEnum::C(field0, field1) => {
+                let mut parts = Vec::new();
+                let tag = stringify!(C).to_owned();
+                parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
+                parts.extend(field0.into_parts());
+                parts.extend(field1.into_parts());
+                parts
+            }
+            FooEnum::D => {
+                let tag = stringify!(D).to_owned();
+                let part = kittycad_execution_plan_traits::Primitive::from(tag);
+                vec![part]
+            }
+        }
+    }
+
+    fn from_parts<I>(values: &mut I) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+    where
+        I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
+    {
+        let variant_name = String::from_parts(values)?;
+        match variant_name.as_str() {
+            stringify!(A) => {
+                let x = usize::from_parts(values)?;
+                Ok(Self::A { x })
+            }
+            stringify!(B) => {
+                let y = usize::from_parts(values)?;
+                Ok(Self::B { y })
+            }
+            stringify!(C) => {
+                let field0 = usize::from_parts(values)?;
+                let field1 = String::from_parts(values)?;
+                Ok(Self::C(field0, field1))
+            }
+            stringify!(D) => Ok(Self::D),
+            other => Err(
+                kittycad_execution_plan_traits::MemoryError::InvalidEnumVariant {
+                    expected_type: stringify!(FooEnum).to_owned(),
+                    actual: other.to_owned(),
+                },
+            ),
+        }
+    }
+}
+
