@@ -641,6 +641,18 @@ impl From<EngineErrorCode> for http::StatusCode {
 
 impl_string_enum_sql! {FileImportFormat}
 
+/// Defines a perspective view.
+#[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd, ExecutionPlanValue)]
+#[serde(rename_all = "snake_case")]
+pub struct PerspectiveCameraParameters {
+    /// Camera frustum vertical field of view.
+    fov_y: f32,
+    /// Camera frustum near plane.
+    z_near: f32,
+    /// Camera frustum far plane.
+    z_far: f32,
+}
+
 /// An enum that contains the three global axes.
 #[derive(
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,

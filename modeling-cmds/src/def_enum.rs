@@ -169,6 +169,10 @@ pub enum ModelingCmd {
     SetSelectionType(SetSelectionType),
     /// What kind of entities can be selected?
     SetSelectionFilter(SetSelectionFilter),
+    /// Use orthographic projection.
+    DefaultCameraSetOrthographic(DefaultCameraSetOrthographic),
+    /// Use perspective projection.
+    DefaultCameraSetPerspective(DefaultCameraSetPerspective),
 }
 
 impl ModelingCmd {

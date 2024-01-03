@@ -12,8 +12,8 @@ use crate::{
     id::ModelingCmdId,
     shared::{
         AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
-        PathComponentConstraintBound, PathComponentConstraintType, PathSegment, Point2d, Point3d, SceneSelectionType,
-        SceneToolType,
+        PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters, Point2d,
+        Point3d, SceneSelectionType, SceneToolType,
     },
     units,
 };
@@ -750,6 +750,17 @@ pub struct SetSelectionFilter {
     /// If vector is empty, clear all filters.
     /// If vector is non-empty, only the given entity types will be selectable.
     pub filter: Vec<EntityType>,
+}
+
+/// Use orthographic projection.
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+pub struct DefaultCameraSetOrthographic;
+
+/// Use perspective projection.
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+pub struct DefaultCameraSetPerspective {
+    /// If this is not given, use the same parameters as last time the perspective camera was used.
+    pub parameters: Option<PerspectiveCameraParameters>,
 }
 
 /// Mike says this usually looks nice.
