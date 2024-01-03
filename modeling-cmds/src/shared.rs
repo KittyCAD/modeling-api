@@ -646,11 +646,11 @@ impl_string_enum_sql! {FileImportFormat}
 #[serde(rename_all = "snake_case")]
 pub struct PerspectiveCameraParameters {
     /// Camera frustum vertical field of view.
-    fov_y: f32,
+    pub fov_y: f32,
     /// Camera frustum near plane.
-    z_near: f32,
+    pub z_near: f32,
     /// Camera frustum far plane.
-    z_far: f32,
+    pub z_far: f32,
 }
 
 /// An enum that contains the three global axes.
