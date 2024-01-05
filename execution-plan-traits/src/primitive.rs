@@ -254,3 +254,4 @@ type VecU8 = Vec<u8>;
 impl_value_on_primitive_ish!(Value, VecU8);
 impl_value_on_primitive_ish!(Value, usize);
 impl_value_on_primitive_ish!(Value, u32);
+impl_value_on_primitive_ish!(Value, i64);
