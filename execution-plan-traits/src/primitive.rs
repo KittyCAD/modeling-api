@@ -143,7 +143,7 @@ impl TryFrom<Primitive> for usize {
     type Error = MemoryError;
 
     fn try_from(value: Primitive) -> Result<Self, Self::Error> {
-        if let Primitive::NumericValue(NumericPrimitive::Integer(x)) = value {
+        if let Primitive::NumericValue(NumericPrimitive::UInteger(x)) = value {
             Ok(x)
         } else {
             Err(MemoryError::MemoryWrongType {
@@ -158,7 +158,7 @@ impl TryFrom<Primitive> for u32 {
     type Error = MemoryError;
 
     fn try_from(value: Primitive) -> Result<Self, Self::Error> {
-        if let Primitive::NumericValue(NumericPrimitive::Integer(x)) = value {
+        if let Primitive::NumericValue(NumericPrimitive::UInteger(x)) = value {
             Ok(x.try_into().map_err(|_| MemoryError::MemoryWrongType {
                 expected: "u32",
                 actual: x.to_string(),
@@ -176,11 +176,8 @@ impl TryFrom<Primitive> for i64 {
     type Error = MemoryError;
 
     fn try_from(value: Primitive) -> Result<Self, Self::Error> {
-        if let Primitive::NumericValue(NumericPrimitive::IInteger(x)) = value {
-            Ok(x.try_into().map_err(|_| MemoryError::MemoryWrongType {
-                expected: "i64",
-                actual: x.to_string(),
-            })?)
+        if let Primitive::NumericValue(NumericPrimitive::Integer(x)) = value {
+            Ok(x)
         } else {
             Err(MemoryError::MemoryWrongType {
                 expected: "i64",
@@ -192,19 +189,19 @@ impl TryFrom<Primitive> for i64 {
 
 impl From<usize> for Primitive {
     fn from(value: usize) -> Self {
-        Self::NumericValue(NumericPrimitive::Integer(value))
+        Self::NumericValue(NumericPrimitive::UInteger(value))
     }
 }
 
 impl From<u32> for Primitive {
     fn from(value: u32) -> Self {
-        Self::NumericValue(NumericPrimitive::Integer(value as usize))
+        Self::NumericValue(NumericPrimitive::UInteger(value as usize))
     }
 }
 
 impl From<i64> for Primitive {
     fn from(value: i64) -> Self {
-        Self::NumericValue(NumericPrimitive::IInteger(value))
+        Self::NumericValue(NumericPrimitive::Integer(value))
     }
 }
 
@@ -212,9 +209,9 @@ impl From<i64> for Primitive {
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub enum NumericPrimitive {
     /// Unsigned integer
-    Integer(usize),
+    UInteger(usize),
     /// Signed integer
-    IInteger(i64),
+    Integer(i64),
     /// Floating point
     Float(f64),
 }
@@ -238,8 +235,8 @@ impl crate::Value for Primitive {
 impl From<NumericPrimitive> for f64 {
     fn from(value: NumericPrimitive) -> Self {
         match value {
+            NumericPrimitive::UInteger(x) => x as f64,
             NumericPrimitive::Integer(x) => x as f64,
-            NumericPrimitive::IInteger(x) => x as f64,
             NumericPrimitive::Float(x) => x,
         }
     }
