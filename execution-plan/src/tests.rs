@@ -259,7 +259,8 @@ fn debug_dump_memory(mem: &Memory) -> String {
         match p {
             Primitive::String(v) => ("String", v.to_owned()),
             Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
-            Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Integer", v.to_string()),
+            Primitive::NumericValue(NumericPrimitive::UInteger(v)) => ("Uint", v.to_string()),
+            Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Int", v.to_string()),
             Primitive::Uuid(v) => ("Uuid", v.to_string()),
             Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
             Primitive::Bool(v) => ("Bool", v.to_string()),
