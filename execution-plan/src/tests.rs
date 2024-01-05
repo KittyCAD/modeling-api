@@ -28,7 +28,7 @@ async fn test_client() -> Session {
 
 #[tokio::test]
 async fn write_addr_to_memory() {
-    let plan = vec![Instruction::Set {
+    let plan = vec![Instruction::SetPrimitive {
         address: Address(0),
         value: 3.4.into(),
     }];
@@ -58,7 +58,7 @@ async fn add_literals() {
 async fn add_literal_to_reference() {
     let plan = vec![
         // Memory addr 0 contains 450
-        Instruction::Set {
+        Instruction::SetPrimitive {
             address: Address(0),
             value: 450u32.into(),
         },

@@ -60,12 +60,19 @@ impl From<usize> for Address {
 pub enum Instruction {
     /// Call the KittyCAD API.
     ApiRequest(ApiRequest),
-    /// Set a value in memory.
-    Set {
+    /// Set a primitive to a memory address.
+    SetPrimitive {
         /// Which memory address to set.
         address: Address,
         /// What value to set the memory address to.
         value: Primitive,
+    },
+    /// Lay out a multi-address value in memory.
+    SetValue {
+        /// Which memory address to set.
+        address: Address,
+        /// What values to put into memory.
+        value_parts: Vec<Primitive>,
     },
     /// Perform arithmetic on values in memory.
     Arithmetic {
@@ -204,8 +211,13 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Mode
             Instruction::ApiRequest(req) => {
                 req.execute(&mut session, mem).await?;
             }
-            Instruction::Set { address, value } => {
+            Instruction::SetPrimitive { address, value } => {
                 mem.set(address, value);
+            }
+            Instruction::SetValue { address, value_parts } => {
+                value_parts.into_iter().enumerate().for_each(|(i, part)| {
+                    mem.set(address.offset(i), part);
+                });
             }
             Instruction::Arithmetic {
                 arithmetic,
