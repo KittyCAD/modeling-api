@@ -172,6 +172,24 @@ impl TryFrom<Primitive> for u32 {
     }
 }
 
+impl TryFrom<Primitive> for i64 {
+    type Error = MemoryError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::NumericValue(NumericPrimitive::IInteger(x)) = value {
+            Ok(x.try_into().map_err(|_| MemoryError::MemoryWrongType {
+                expected: "i64",
+                actual: x.to_string(),
+            })?)
+        } else {
+            Err(MemoryError::MemoryWrongType {
+                expected: "i64",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
 impl From<usize> for Primitive {
     fn from(value: usize) -> Self {
         Self::NumericValue(NumericPrimitive::Integer(value))
@@ -184,11 +202,19 @@ impl From<u32> for Primitive {
     }
 }
 
+impl From<i64> for Primitive {
+    fn from(value: i64) -> Self {
+        Self::NumericValue(NumericPrimitive::IInteger(value))
+    }
+}
+
 /// Various kinds of number.
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub enum NumericPrimitive {
     /// Unsigned integer
     Integer(usize),
+    /// Signed integer
+    IInteger(i64),
     /// Floating point
     Float(f64),
 }
@@ -213,6 +239,7 @@ impl From<NumericPrimitive> for f64 {
     fn from(value: NumericPrimitive) -> Self {
         match value {
             NumericPrimitive::Integer(x) => x as f64,
+            NumericPrimitive::IInteger(x) => x as f64,
             NumericPrimitive::Float(x) => x,
         }
     }
