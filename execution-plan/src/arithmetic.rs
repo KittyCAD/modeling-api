@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::{ExecutionError, Memory, Operand, Operation};
 
 /// Instruction to perform arithmetic on values in memory.
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct Arithmetic {
     /// Apply this operation
     pub operation: Operation,
@@ -23,6 +23,16 @@ macro_rules! arithmetic_body {
             // If both operands are numeric, then do the arithmetic operation.
             (Primitive::NumericValue(x), Primitive::NumericValue(y)) => {
                 let num = match (x, y) {
+                    (NumericPrimitive::UInteger(x), NumericPrimitive::UInteger(y)) => {
+                        NumericPrimitive::UInteger(x.$method(y))
+                    }
+                    (NumericPrimitive::UInteger(x), NumericPrimitive::Float(y)) => {
+                        NumericPrimitive::Float((x as f64).$method(y))
+                    }
+                    (NumericPrimitive::Float(x), NumericPrimitive::UInteger(y)) => {
+                        NumericPrimitive::Float(x.$method(y as f64))
+                    }
+                    (NumericPrimitive::Float(x), NumericPrimitive::Float(y)) => NumericPrimitive::Float(x.$method(y)),
                     (NumericPrimitive::Integer(x), NumericPrimitive::Integer(y)) => {
                         NumericPrimitive::Integer(x.$method(y))
                     }
@@ -32,7 +42,12 @@ macro_rules! arithmetic_body {
                     (NumericPrimitive::Float(x), NumericPrimitive::Integer(y)) => {
                         NumericPrimitive::Float(x.$method(y as f64))
                     }
-                    (NumericPrimitive::Float(x), NumericPrimitive::Float(y)) => NumericPrimitive::Float(x.$method(y)),
+                    (NumericPrimitive::Integer(x), NumericPrimitive::UInteger(y)) => {
+                        NumericPrimitive::Integer(x.$method(y as i64))
+                    }
+                    (NumericPrimitive::UInteger(x), NumericPrimitive::Integer(y)) => {
+                        NumericPrimitive::Integer((x as i64).$method(y))
+                    }
                 };
                 Ok(Primitive::NumericValue(num))
             }
