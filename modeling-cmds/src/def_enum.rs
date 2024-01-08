@@ -165,6 +165,8 @@ pub enum ModelingCmd {
     EntityGetDistance(EntityGetDistance),
     /// Duplicate the given entity, evenly spaced along the chosen axis.
     EntityLinearPattern(EntityLinearPattern),
+    /// Duplicate the given entity, evenly spaced around the specified axis, spanning the arc.
+    EntityCircularPattern(EntityCircularPattern),
     /// When you select some entity with the current tool, what should happen to the entity?
     SetSelectionType(SetSelectionType),
     /// What kind of entities can be selected?
