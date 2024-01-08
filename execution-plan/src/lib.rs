@@ -14,7 +14,7 @@ use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
 
-use self::arithmetic::Arithmetic;
+pub use self::arithmetic::Arithmetic;
 
 mod arithmetic;
 mod memory;
@@ -22,14 +22,24 @@ mod memory;
 mod tests;
 
 /// An address in KCEP's program memory.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Address(usize);
 
 impl Address {
+    /// First memory address available.
+    pub const ZERO: Self = Self(0);
+
     /// Offset the memory by `size` addresses.
     pub fn offset(self, size: usize) -> Self {
         let curr = self.0;
         Self(curr + size)
+    }
+
+    /// Returns self, then offsets self by `size` addresses.
+    pub fn offset_by(&mut self, size: usize) -> Self {
+        let old = *self;
+        self.0 += size;
+        old
     }
 }
 
@@ -46,16 +56,23 @@ impl From<usize> for Address {
 }
 
 /// One step of the execution plan.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub enum Instruction {
     /// Call the KittyCAD API.
     ApiRequest(ApiRequest),
-    /// Set a value in memory.
-    Set {
+    /// Set a primitive to a memory address.
+    SetPrimitive {
         /// Which memory address to set.
         address: Address,
         /// What value to set the memory address to.
         value: Primitive,
+    },
+    /// Lay out a multi-address value in memory.
+    SetValue {
+        /// Which memory address to set.
+        address: Address,
+        /// What values to put into memory.
+        value_parts: Vec<Primitive>,
     },
     /// Perform arithmetic on values in memory.
     Arithmetic {
@@ -67,7 +84,7 @@ pub enum Instruction {
 }
 
 /// Request sent to the KittyCAD API.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct ApiRequest {
     /// Which ModelingCmd to call.
     pub endpoint: Endpoint,
@@ -81,7 +98,7 @@ pub struct ApiRequest {
 }
 
 /// A KittyCAD modeling command.
-#[derive(Serialize, Deserialize, parse_display_derive::Display)]
+#[derive(Serialize, Deserialize, parse_display_derive::Display, Debug, PartialEq)]
 pub enum Endpoint {
     #[allow(missing_docs)]
     StartPath,
@@ -141,7 +158,7 @@ impl ApiRequest {
 }
 
 /// Operations that can be applied to values in memory.
-#[derive(Debug, Deserialize, Serialize, Clone, Copy)]
+#[derive(Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq)]
 pub enum Operation {
     /// Addition
     Add,
@@ -166,7 +183,7 @@ impl fmt::Display for Operation {
 }
 
 /// Argument to an operation.
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub enum Operand {
     /// A literal value.
     Literal(Primitive),
@@ -194,8 +211,13 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Mode
             Instruction::ApiRequest(req) => {
                 req.execute(&mut session, mem).await?;
             }
-            Instruction::Set { address, value } => {
+            Instruction::SetPrimitive { address, value } => {
                 mem.set(address, value);
+            }
+            Instruction::SetValue { address, value_parts } => {
+                value_parts.into_iter().enumerate().for_each(|(i, part)| {
+                    mem.set(address.offset(i), part);
+                });
             }
             Instruction::Arithmetic {
                 arithmetic,

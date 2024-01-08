@@ -11,9 +11,9 @@ use crate::{
     format::OutputFormat,
     id::ModelingCmdId,
     shared::{
-        AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType,
-        PathComponentConstraintBound, PathComponentConstraintType, PathSegment, Point2d, Point3d, SceneSelectionType,
-        SceneToolType,
+        AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
+        PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters, Point2d,
+        Point3d, SceneSelectionType, SceneToolType,
     },
     units,
 };
@@ -744,10 +744,35 @@ pub struct SurfaceArea {
 }
 
 /// Focus the default camera upon an object in the scene.
-#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize)]
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
 pub struct DefaultCameraFocusOn {
     /// UUID of object to focus on.
     pub uuid: Uuid,
+}
+/// When you select some entity with the current tool, what should happen to the entity?
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+pub struct SetSelectionType {
+    /// What type of selection should occur when you select something?
+    pub selection_type: SceneSelectionType,
+}
+
+/// What kind of entities can be selected?
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+pub struct SetSelectionFilter {
+    /// If vector is empty, clear all filters.
+    /// If vector is non-empty, only the given entity types will be selectable.
+    pub filter: Vec<EntityType>,
+}
+
+/// Use orthographic projection.
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+pub struct DefaultCameraSetOrthographic;
+
+/// Use perspective projection.
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+pub struct DefaultCameraSetPerspective {
+    /// If this is not given, use the same parameters as last time the perspective camera was used.
+    pub parameters: Option<PerspectiveCameraParameters>,
 }
 
 /// Mike says this usually looks nice.

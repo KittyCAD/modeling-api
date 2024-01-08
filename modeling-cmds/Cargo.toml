@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-modeling-cmds"
-version = "0.1.8"
+version = "0.1.11"
 edition = "2021"
 authors = ["KittyCAD, Inc."]
 description = "Commands in the KittyCAD Modeling API"
@@ -15,19 +15,31 @@ anyhow = "1.0.75"
 chrono = "0.4.31"
 cxx = { version = "1.0", optional = true }
 data-encoding = "2.5.0"
-diesel = { version = "2.1.1", features = ["serde_json", "mysql", "chrono", "r2d2", "uuid", "numeric"], optional = true }
+diesel = { version = "2.1.1", features = [
+  "serde_json",
+  "mysql",
+  "chrono",
+  "r2d2",
+  "uuid",
+  "numeric",
+], optional = true }
 diesel_derives = "2.1.2"
 enum-iterator = "1.4.1"
 enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
 http = "0.2.9"
-kittycad-execution-plan-macros = { path = "../execution-plan-macros" }
-kittycad-execution-plan-traits = { path = "../execution-plan-traits" }
+kittycad-execution-plan-macros = "0.1.2"
+kittycad-execution-plan-traits = "0.1.2"
 kittycad-unit-conversion-derive = "0.1.0"
 measurements = "0.11.0"
 parse-display = "0.8.2"
 parse-display-derive = "0.8.2"
-schemars = { version = "0.8.16", features = ["bigdecimal04", "chrono", "url", "uuid1"] }
+schemars = { version = "0.8.16", features = [
+  "bigdecimal04",
+  "chrono",
+  "url",
+  "uuid1",
+] }
 serde = { version = "1.0.193", features = ["derive"] }
 serde_bytes = "0.11.12"
 serde_json = { version = "1.0.108", optional = true }

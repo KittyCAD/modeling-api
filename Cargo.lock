@@ -1528,7 +1528,7 @@ dependencies = [
  "image",
  "insta",
  "kittycad",
- "kittycad-execution-plan-traits",
+ "kittycad-execution-plan-traits 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "kittycad-modeling-cmds",
  "kittycad-modeling-session",
  "parse-display-derive",
@@ -1542,11 +1542,11 @@ dependencies = [
 
 [[package]]
 name = "kittycad-execution-plan-macros"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "insta",
- "kittycad-execution-plan-traits",
+ "kittycad-execution-plan-traits 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "proc-macro2",
  "quote",
  "regex",
@@ -1555,8 +1555,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "kittycad-execution-plan-macros"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03e86c3ddefd89be816db24186c3e2fbd427675198f4d64b6d244dd2c1a3bae3"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.41",
+]
+
+[[package]]
 name = "kittycad-execution-plan-traits"
-version = "0.1.0"
+version = "0.1.2"
+dependencies = [
+ "serde",
+ "thiserror",
+ "uuid",
+]
+
+[[package]]
+name = "kittycad-execution-plan-traits"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a49e5ad9fd3c4277e1e770029fc63d530c023268379dac59684fbba797729c0e"
 dependencies = [
  "serde",
  "thiserror",
@@ -1565,7 +1587,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds"
-version = "0.1.8"
+version = "0.1.11"
 dependencies = [
  "anyhow",
  "chrono",
@@ -1577,8 +1599,8 @@ dependencies = [
  "enum-iterator-derive",
  "euler",
  "http 0.2.11",
- "kittycad-execution-plan-macros",
- "kittycad-execution-plan-traits",
+ "kittycad-execution-plan-macros 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "kittycad-execution-plan-traits 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "measurements",
  "parse-display",

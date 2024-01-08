@@ -167,6 +167,14 @@ pub enum ModelingCmd {
     EntityLinearPattern(EntityLinearPattern),
     /// Duplicate the given entity, evenly spaced around the specified axis, spanning the arc.
     EntityCircularPattern(EntityCircularPattern),
+    /// When you select some entity with the current tool, what should happen to the entity?
+    SetSelectionType(SetSelectionType),
+    /// What kind of entities can be selected?
+    SetSelectionFilter(SetSelectionFilter),
+    /// Use orthographic projection.
+    DefaultCameraSetOrthographic(DefaultCameraSetOrthographic),
+    /// Use perspective projection.
+    DefaultCameraSetPerspective(DefaultCameraSetPerspective),
 }
 
 impl ModelingCmd {

@@ -336,7 +336,20 @@ impl Angle {
 
 /// The type of scene selection change
 #[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
@@ -485,6 +498,7 @@ pub enum PathCommand {
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
+#[repr(u8)]
 pub enum EntityType {
     Entity,
     Object,
@@ -605,7 +619,6 @@ pub enum FileImportFormat {
 }
 
 /// The type of error sent by the KittyCAD graphics engine.
-/// A subset of [`ErrorCode`].
 #[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
 #[serde(rename_all = "snake_case")]
 pub enum EngineErrorCode {
@@ -627,6 +640,18 @@ impl From<EngineErrorCode> for http::StatusCode {
 }
 
 impl_string_enum_sql! {FileImportFormat}
+
+/// Defines a perspective view.
+#[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd, ExecutionPlanValue)]
+#[serde(rename_all = "snake_case")]
+pub struct PerspectiveCameraParameters {
+    /// Camera frustum vertical field of view.
+    pub fov_y: f32,
+    /// Camera frustum near plane.
+    pub z_near: f32,
+    /// Camera frustum far plane.
+    pub z_far: f32,
+}
 
 /// An enum that contains the three global axes.
 #[derive(

@@ -28,7 +28,7 @@ async fn test_client() -> Session {
 
 #[tokio::test]
 async fn write_addr_to_memory() {
-    let plan = vec![Instruction::Set {
+    let plan = vec![Instruction::SetPrimitive {
         address: Address(0),
         value: 3.4.into(),
     }];
@@ -58,7 +58,7 @@ async fn add_literals() {
 async fn add_literal_to_reference() {
     let plan = vec![
         // Memory addr 0 contains 450
-        Instruction::Set {
+        Instruction::SetPrimitive {
             address: Address(0),
             value: 450u32.into(),
         },
@@ -259,7 +259,8 @@ fn debug_dump_memory(mem: &Memory) -> String {
         match p {
             Primitive::String(v) => ("String", v.to_owned()),
             Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
-            Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Integer", v.to_string()),
+            Primitive::NumericValue(NumericPrimitive::UInteger(v)) => ("Uint", v.to_string()),
+            Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Int", v.to_string()),
             Primitive::Uuid(v) => ("Uuid", v.to_string()),
             Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
             Primitive::Bool(v) => ("Bool", v.to_string()),

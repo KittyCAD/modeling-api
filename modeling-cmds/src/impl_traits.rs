@@ -101,3 +101,7 @@ impl_variant_output!(Density);
 impl_variant_output!(SurfaceArea);
 impl_variant_output!(CenterOfMass);
 impl_variant_output!(GetSketchModePlane);
+impl_variant_empty!(SetSelectionFilter);
+impl_variant_empty!(SetSelectionType);
+impl_variant_empty!(DefaultCameraSetOrthographic);
+impl_variant_empty!(DefaultCameraSetPerspective);

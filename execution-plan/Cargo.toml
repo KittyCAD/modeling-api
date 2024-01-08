@@ -11,7 +11,7 @@ description = "A DSL for composing KittyCAD API queries"
 bytes = "1.5"
 insta = "1.34.0"
 kittycad = { version = "0.2.44", features = ["requests"] }
-kittycad-execution-plan-traits = { path = "../execution-plan-traits" }
+kittycad-execution-plan-traits = "0.1.2"
 kittycad-modeling-cmds = { path = "../modeling-cmds" }
 kittycad-modeling-session = { path = "../modeling-session" }
 parse-display-derive = "0.8.2"
