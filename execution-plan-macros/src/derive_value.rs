@@ -146,10 +146,37 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
 }
 
 fn make_instantiate_field(ty: syn::Type, id: &Ident) -> TokenStream2 {
-    let field_type = remove_generics(ty);
-    quote! {
-        let #id = #field_type::from_parts(values)?;
+    if let Some(ub) = unbox(ty.clone()) {
+        quote! {
+            let #id = Box::new(#ub::from_parts(values)?);
+        }
+    } else {
+        let field_type = remove_generics(ty);
+        quote! {
+            let #id = #field_type::from_parts(values)?;
+        }
     }
+}
+
+/// Given `Box<T>`, returns `T`.
+/// i.e. it returns the inner type of a boxed type.
+fn unbox(ty: syn::Type) -> Option<syn::Type> {
+    let syn::Type::Path(p) = ty else {
+        return None;
+    };
+    let Some(first) = p.path.segments.into_iter().next() else {
+        return None;
+    };
+    if first.ident != "Box" {
+        return None;
+    }
+    let syn::PathArguments::AngleBracketed(type_of_box) = first.arguments else {
+        return None;
+    };
+    let Some(syn::GenericArgument::Type(type_of_box)) = type_of_box.args.into_iter().next() else {
+        return None;
+    };
+    Some(type_of_box)
 }
 
 // Used in `into_parts()`
@@ -368,6 +395,27 @@ mod tests {
         let out = impl_derive_value(input);
         let formatted = get_text_fmt(&out).unwrap();
         insta::assert_snapshot!(formatted);
+    }
+
+    #[test]
+    fn test_unbox() {
+        let tests = [
+            // Positive case
+            (quote! {Box<usize>}, Some(quote! {usize})),
+            // Negative case
+            (quote! {usize}, None),
+        ];
+        for (input, expected) in tests {
+            let input_type: syn::Type = syn::parse2(input).unwrap();
+            let actual = unbox(input_type);
+            match expected {
+                None => assert_eq!(None, actual, "expected unbox to return None but it returned Some"),
+                Some(expected) => {
+                    let expected: syn::Type = syn::parse2(expected).unwrap();
+                    assert_eq!(actual.unwrap(), expected);
+                }
+            };
+        }
     }
 
     fn clean_text(s: &str) -> String {
