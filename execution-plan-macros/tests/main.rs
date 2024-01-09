@@ -75,6 +75,7 @@ fn test_derive_value_on_struct() {
         i: usize,
         o: Option<bool>,
         s: String,
+        b: Box<usize>,
     }
     for (i, (test_name, input, expected)) in [
         (
@@ -84,6 +85,7 @@ fn test_derive_value_on_struct() {
                 i: 2,
                 o: Some(true),
                 s: "hello".to_owned(),
+                b: Box::new(2),
             },
             vec![
                 Primitive::from(1.2),
@@ -91,6 +93,7 @@ fn test_derive_value_on_struct() {
                 Primitive::from("Some".to_owned()),
                 Primitive::from(true),
                 Primitive::from("hello".to_owned()),
+                Primitive::from(2usize),
             ],
         ),
         (
@@ -100,12 +103,14 @@ fn test_derive_value_on_struct() {
                 i: 2,
                 o: None,
                 s: "hello".to_owned(),
+                b: Box::new(2),
             },
             vec![
                 Primitive::from(1.2),
                 Primitive::from(2u32),
                 Primitive::from("None".to_owned()),
                 Primitive::from("hello".to_owned()),
+                Primitive::from(2usize),
             ],
         ),
     ]
