@@ -9,6 +9,8 @@ fn test_derive_value_on_enum() {
         B { y: Option<usize> },
         C(usize, String),
         D,
+        E(Box<usize>),
+        F { boxed: Box<usize> },
     }
     for (i, (test_name, input, expected)) in [
         (
@@ -40,6 +42,16 @@ fn test_derive_value_on_enum() {
             ],
         ),
         ("unit variant", FooEnum::D, vec![Primitive::from("D".to_owned())]),
+        (
+            "Boxed unnamed field",
+            FooEnum::E(Box::new(2)),
+            vec![Primitive::from("E".to_owned()), Primitive::from(2usize)],
+        ),
+        (
+            "Boxed unnamed field",
+            FooEnum::F { boxed: Box::new(2) },
+            vec![Primitive::from("F".to_owned()), Primitive::from(2usize)],
+        ),
     ]
     .into_iter()
     .enumerate()
