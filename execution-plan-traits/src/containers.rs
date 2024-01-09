@@ -70,3 +70,20 @@ where
         (0..n).map(|_| T::from_parts(values)).collect()
     }
 }
+
+/// `Box<T>` is laid out identically to an unboxed `T`.
+impl<T> Value for Box<T>
+where
+    T: Value,
+{
+    fn into_parts(self) -> Vec<Primitive> {
+        (*self).into_parts()
+    }
+
+    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
+    where
+        I: Iterator<Item = Option<Primitive>>,
+    {
+        T::from_parts(values).map(Box::new)
+    }
+}
