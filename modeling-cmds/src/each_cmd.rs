@@ -213,6 +213,8 @@ pub struct EntityCircularPattern {
     pub num_repetitions: u32,
     /// Arc angle (in degrees) to place repetitions along.
     pub arc_degrees: f64,
+    /// Whether or not to rotate the objects as they are copied.
+    pub rotate_duplicates: bool,
 }
 
 /// Enter edit mode
