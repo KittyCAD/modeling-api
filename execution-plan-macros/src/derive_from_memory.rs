@@ -34,12 +34,12 @@ fn impl_on_struct_no_fields(span: Span, name: proc_macro2::Ident, generics: syn:
     // Final return value: the generated Rust code to implement the trait.
     // This uses the fragments above, interpolating them into the final outputted code.
     quote_spanned! {span=>
-        impl #generics_without_defaults kittycad_execution_plan_traits::FromMemory for #name #generics_without_defaults
+        impl #generics_without_defaults ::kittycad_execution_plan_traits::FromMemory for #name #generics_without_defaults
         #where_clause
         {
-            fn from_memory<I, M>(_fields: &mut I, _mem: &M) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+            fn from_memory<I, M>(_fields: &mut I, _mem: &M) -> Result<Self, ::kittycad_execution_plan_traits::MemoryError>
             where
-                M: kittycad_execution_plan_traits::ReadMemory,
+                M: ::kittycad_execution_plan_traits::ReadMemory,
                 I: Iterator<Item = M::Address>
             {
 
@@ -76,7 +76,7 @@ fn impl_on_struct_named_fields(
     let read_each_field = field_names.iter().map(|(ident, span)| {
         quote_spanned! {*span=>
             let #ident = fields.next()
-                .ok_or(kittycad_execution_plan_traits::MemoryError::MemoryWrongSize)
+                .ok_or(::kittycad_execution_plan_traits::MemoryError::MemoryWrongSize)
                 .and_then(|a| mem.get_composite(a))?;
         }
     });
@@ -96,12 +96,12 @@ fn impl_on_struct_named_fields(
     // Final return value: the generated Rust code to implement the trait.
     // This uses the fragments above, interpolating them into the final outputted code.
     quote_spanned! {span=>
-        impl #generics_without_defaults kittycad_execution_plan_traits::FromMemory for #name #generics_without_defaults
+        impl #generics_without_defaults ::kittycad_execution_plan_traits::FromMemory for #name #generics_without_defaults
         #where_clause
         {
-            fn from_memory<I, M>(fields: &mut I, mem: &M) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+            fn from_memory<I, M>(fields: &mut I, mem: &M) -> Result<Self, ::kittycad_execution_plan_traits::MemoryError>
             where
-                M: kittycad_execution_plan_traits::ReadMemory,
+                M: ::kittycad_execution_plan_traits::ReadMemory,
                 I: Iterator<Item = M::Address>
             {
                 #(#read_each_field)*
