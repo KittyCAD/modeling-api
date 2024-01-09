@@ -9,6 +9,7 @@ fn test_derive_value_on_enum() {
         B { y: Option<usize> },
         C(usize, String),
         D,
+        // E(Box<usize>),
     }
     for (i, (test_name, input, expected)) in [
         (

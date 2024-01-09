@@ -78,13 +78,18 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
                 // }
                 // ```
                 Fields::Named(expr) => {
-                    let (field_idents, field_types): (Vec<_>, Vec<_>) = expr
+                    let (field_idents, instantiate_fields): (Vec<_>, Vec<_>) = expr
                         .named
                         .iter()
-                        .filter_map(|named| named.ident.as_ref().map(|id| (id, remove_generics(named.ty.clone()))))
+                        .filter_map(|named| {
+                            named
+                                .ident
+                                .as_ref()
+                                .map(|id| (id, make_instantiate_field(named.ty.clone(), id)))
+                        })
                         .unzip();
                     let rhs = quote_spanned! {expr.span()=>
-                        #(let #field_idents = #field_types::from_parts(values)?;)*
+                        #(#instantiate_fields)*
                         Ok(Self::#variant_name{ #(#field_idents),* })
                     };
                     quote_spanned! {variant.span() =>
@@ -103,14 +108,17 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
                     // The fields don't have built-in names, but we still need to choose identifiers
                     // for the variables we're going to match them into.
                     // Something like MyVariant(field0, field1) => {...}
-                    let (field_idents, field_types): (Vec<_>, Vec<_>) = expr
+                    let (field_idents, instantiate_fields): (Vec<_>, Vec<_>) = expr
                         .unnamed
                         .iter()
                         .enumerate()
-                        .map(|(i, field)| (Ident::new(&format!("field{i}"), field.span()), &field.ty))
+                        .map(|(i, field)| {
+                            let id = Ident::new(&format!("field{i}"), field.span());
+                            (id.clone(), make_instantiate_field(field.ty.clone(), &id))
+                        })
                         .unzip();
                     let rhs = quote_spanned! {expr.span()=>
-                        #(let #field_idents = #field_types::from_parts(values)?;)*
+                        #(#instantiate_fields)*
                         Ok(Self::#variant_name(#(#field_idents),* ))
                     };
                     quote_spanned! {expr.span() =>
@@ -135,6 +143,13 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
             }
         })
         .collect()
+}
+
+fn make_instantiate_field(ty: syn::Type, id: &Ident) -> TokenStream2 {
+    let field_type = remove_generics(ty);
+    quote! {
+        let #id = #field_type::from_parts(values)?;
+    }
 }
 
 // Used in `into_parts()`
