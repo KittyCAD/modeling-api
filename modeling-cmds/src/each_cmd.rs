@@ -207,8 +207,10 @@ pub struct EntityLinearPattern {
 pub struct EntityCircularPattern {
     /// ID of the entity being copied.
     pub entity_id: Uuid,
-    /// Axis around which to make the copites
+    /// Axis around which to make the copies
     pub axis: Point3d<f64>,
+    /// Point around which to make the copies
+    pub center: Point3d<f64>,
     /// Number of repetitions to make.
     pub num_repetitions: u32,
     /// Arc angle (in degrees) to place repetitions along.
