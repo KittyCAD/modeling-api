@@ -43,6 +43,26 @@ impl Address {
     }
 }
 
+/// Offset the address.
+impl std::ops::Add<usize> for Address {
+    type Output = Self;
+
+    /// Offset the address.
+    fn add(self, rhs: usize) -> Self::Output {
+        self.offset(rhs)
+    }
+}
+
+/// Offset the address.
+impl std::ops::Add for Address {
+    type Output = Self;
+
+    /// Offset the address.
+    fn add(self, rhs: Self) -> Self::Output {
+        self.offset(rhs.0)
+    }
+}
+
 impl fmt::Display for Address {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)

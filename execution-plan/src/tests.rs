@@ -216,6 +216,7 @@ async fn api_call_draw_cube() {
                 arguments: vec![path_id_addr],
                 cmd_id: new_id(),
             }),
+            // Turn square into cube
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::Extrude,
                 store_response: None,
