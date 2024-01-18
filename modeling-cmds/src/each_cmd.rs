@@ -106,6 +106,23 @@ pub struct DefaultCameraLookAt {
     pub up: Point3d,
 }
 
+/// Change what the default camera is looking at.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct DefaultCameraPerspectiveSettings {
+    /// Where the camera is positioned
+    pub vantage: Point3d,
+    /// What the camera is looking at. Center of the camera's field of vision
+    pub center: Point3d,
+    /// Which way is "up", from the camera's point of view.
+    pub up: Point3d,
+    /// The field of view angle in the y direction, in degrees.
+    pub fov_y: f32,
+    /// The distance to the near clipping plane.
+    pub z_near: f32,
+    /// The distance to the far clipping plane.
+    pub z_far: f32,
+}
+
 /// Adjust zoom of the default camera.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct DefaultCameraZoom {
