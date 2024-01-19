@@ -264,6 +264,14 @@ pub struct EntityLinearPattern {
     pub entity_ids: Vec<Uuid>,
 }
 
+/// The response from the `EntityCircularPattern` command.
+#[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
+pub struct EntityCircularPattern {
+    /// The UUIDs of the entities that were created.
+    pub entity_ids: Vec<Uuid>,
+}
+
+
 impl ModelingCmdOutput for Export {}
 impl ModelingCmdOutput for SelectWithPoint {}
 impl ModelingCmdOutput for HighlightSetEntity {}
@@ -273,6 +281,7 @@ impl ModelingCmdOutput for EntityGetParentId {}
 impl ModelingCmdOutput for EntityGetAllChildUuids {}
 impl ModelingCmdOutput for EntityGetDistance {}
 impl ModelingCmdOutput for EntityLinearPattern {}
+impl ModelingCmdOutput for EntityCircularPattern {}
 impl ModelingCmdOutput for SelectGet {}
 impl ModelingCmdOutput for GetEntityType {}
 impl ModelingCmdOutput for Solid3dGetAllEdgeFaces {}

@@ -202,6 +202,22 @@ pub struct EntityLinearPattern {
     /// Spacing between repetitions.
     pub spacing: f64,
 }
+/// Create a circular pattern using this entity (currently only valid for 3D solids).
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct EntityCircularPattern {
+    /// ID of the entity being copied.
+    pub entity_id: Uuid,
+    /// Axis around which to make the copies
+    pub axis: Point3d<f64>,
+    /// Point around which to make the copies
+    pub center: Point3d<f64>,
+    /// Number of repetitions to make.
+    pub num_repetitions: u32,
+    /// Arc angle (in degrees) to place repetitions along.
+    pub arc_degrees: f64,
+    /// Whether or not to rotate the objects as they are copied.
+    pub rotate_duplicates: bool,
+}
 
 /// Enter edit mode
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
