@@ -7,6 +7,8 @@ use kittycad_modeling_session::{Session, SessionBuilder};
 use tabled::{settings::Style, Table};
 use uuid::Uuid;
 
+use crate::arithmetic::operator::BinaryOperation;
+
 use super::*;
 
 async fn test_client() -> Session {

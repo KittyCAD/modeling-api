@@ -1,7 +1,10 @@
 use kittycad_execution_plan_traits::{NumericPrimitive, Primitive};
 use serde::{Deserialize, Serialize};
 
-use crate::{BinaryOperation, ExecutionError, Memory, Operand, UnaryOperation};
+use self::operator::{BinaryOperation, UnaryOperation};
+use crate::{ExecutionError, Memory, Operand};
+
+pub mod operator;
 
 /// Instruction to perform arithmetic on values in memory.
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
@@ -24,7 +27,7 @@ pub struct UnaryArithmetic {
 }
 impl UnaryArithmetic {
     pub(crate) fn calculate(self, mem: &mut Memory) -> Result<Primitive, ExecutionError> {
-        let val = self.operand.eval(&mem)?.clone();
+        let val = self.operand.eval(mem)?.clone();
         match self.operation {
             UnaryOperation::Not => {
                 if let Primitive::Bool(b) = val {
