@@ -14,7 +14,7 @@ use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
 
-pub use self::arithmetic::Arithmetic;
+pub use self::arithmetic::BinaryArithmetic;
 
 mod arithmetic;
 mod memory;
@@ -97,7 +97,7 @@ pub enum Instruction {
     /// Perform arithmetic on values in memory.
     Arithmetic {
         /// What to do.
-        arithmetic: Arithmetic,
+        arithmetic: BinaryArithmetic,
         /// Write the output to this memory address.
         destination: Address,
     },

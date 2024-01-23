@@ -5,7 +5,7 @@ use crate::{ExecutionError, Memory, Operand, Operation};
 
 /// Instruction to perform arithmetic on values in memory.
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
-pub struct Arithmetic {
+pub struct BinaryArithmetic {
     /// Apply this operation
     pub operation: Operation,
     /// First operand for the operation
@@ -62,7 +62,7 @@ macro_rules! arithmetic_body {
         }
     };
 }
-impl Arithmetic {
+impl BinaryArithmetic {
     /// Calculate the the arithmetic equation.
     /// May read values from the given memory.
     pub fn calculate(self, mem: &Memory) -> Result<Primitive, ExecutionError> {
