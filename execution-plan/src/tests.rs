@@ -40,7 +40,7 @@ async fn write_addr_to_memory() {
 
 #[tokio::test]
 async fn add_literals() {
-    let plan = vec![Instruction::Arithmetic {
+    let plan = vec![Instruction::BinaryArithmetic {
         arithmetic: BinaryArithmetic {
             operation: BinaryOperation::Add,
             operand0: Operand::Literal(3u32.into()),
@@ -63,7 +63,7 @@ async fn add_literal_to_reference() {
             value: 450u32.into(),
         },
         // Add 20 to addr 0
-        Instruction::Arithmetic {
+        Instruction::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Add,
                 operand0: Operand::Reference(Address(0)),
@@ -99,7 +99,7 @@ async fn add_to_composite_value() {
     // Update the point's x-value in memory.
     execute(
         &mut mem,
-        vec![Instruction::Arithmetic {
+        vec![Instruction::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Add,
                 operand0: Operand::Reference(start_addr),

@@ -22,6 +22,35 @@ pub struct UnaryArithmetic {
     /// Operand for the operation
     pub operand: Operand,
 }
+impl UnaryArithmetic {
+    pub(crate) fn calculate(self, mem: &mut Memory) -> Result<Primitive, ExecutionError> {
+        let val = self.operand.eval(&mem)?.clone();
+        match self.operation {
+            UnaryOperation::Not => {
+                if let Primitive::Bool(b) = val {
+                    Ok(Primitive::Bool(!b))
+                } else {
+                    Err(ExecutionError::CannotApplyOperation {
+                        op: self.operation.into(),
+                        operands: vec![val],
+                    })
+                }
+            }
+            UnaryOperation::Neg => match val {
+                Primitive::NumericValue(NumericPrimitive::Float(x)) => {
+                    Ok(Primitive::NumericValue(NumericPrimitive::Float(-x)))
+                }
+                Primitive::NumericValue(NumericPrimitive::Integer(x)) => {
+                    Ok(Primitive::NumericValue(NumericPrimitive::Integer(-x)))
+                }
+                _ => Err(ExecutionError::CannotApplyOperation {
+                    op: self.operation.into(),
+                    operands: vec![val],
+                }),
+            },
+        }
+    }
+}
 
 macro_rules! arithmetic_body {
     ($arith:ident, $mem:ident, $method:ident) => {
@@ -62,7 +91,7 @@ macro_rules! arithmetic_body {
             }
             // This operation can only be done on numeric types.
             _ => Err(ExecutionError::CannotApplyOperation {
-                op: $arith.operation,
+                op: $arith.operation.into(),
                 operands: vec![
                     $arith.operand0.eval(&$mem)?.clone().to_owned(),
                     $arith.operand1.eval(&$mem)?.clone().to_owned(),

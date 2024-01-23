@@ -8,6 +8,7 @@
 
 use std::fmt;
 
+use arithmetic::UnaryArithmetic;
 use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
@@ -95,9 +96,16 @@ pub enum Instruction {
         value_parts: Vec<Primitive>,
     },
     /// Perform arithmetic on values in memory.
-    Arithmetic {
+    BinaryArithmetic {
         /// What to do.
         arithmetic: BinaryArithmetic,
+        /// Write the output to this memory address.
+        destination: Address,
+    },
+    /// Perform arithmetic on a value in memory.
+    UnaryArithmetic {
+        /// What to do.
+        arithmetic: UnaryArithmetic,
         /// Write the output to this memory address.
         destination: Address,
     },
@@ -179,6 +187,36 @@ impl ApiRequest {
 
 /// Operations that can be applied to values in memory.
 #[derive(Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq)]
+pub enum Operation {
+    /// Requires one operand (e.g. negating a number)
+    Unary(UnaryOperation),
+    /// Requires two operands (e.g. addition)
+    Binary(BinaryOperation),
+}
+
+impl From<BinaryOperation> for Operation {
+    fn from(value: BinaryOperation) -> Self {
+        Self::Binary(value)
+    }
+}
+
+impl From<UnaryOperation> for Operation {
+    fn from(value: UnaryOperation) -> Self {
+        Self::Unary(value)
+    }
+}
+
+impl std::fmt::Display for Operation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Operation::Unary(o) => o.fmt(f),
+            Operation::Binary(o) => o.fmt(f),
+        }
+    }
+}
+
+/// Operations that can be applied to values in memory, requiring two operands.
+#[derive(Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq)]
 pub enum BinaryOperation {
     /// Addition
     Add,
@@ -190,7 +228,7 @@ pub enum BinaryOperation {
     Div,
 }
 
-/// Operations that can be applied to a value in memory.
+/// Operations that can be applied to a value in memory, requiring one operand.
 #[derive(Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq)]
 pub enum UnaryOperation {
     /// Logical negation
@@ -198,7 +236,15 @@ pub enum UnaryOperation {
     /// Flip the sign of a signed number
     Neg,
 }
-
+impl fmt::Display for UnaryOperation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            UnaryOperation::Neg => "-",
+            UnaryOperation::Not => "!",
+        }
+        .fmt(f)
+    }
+}
 impl fmt::Display for BinaryOperation {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -248,7 +294,14 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Mode
                     mem.set(address.offset(i), part);
                 });
             }
-            Instruction::Arithmetic {
+            Instruction::BinaryArithmetic {
+                arithmetic,
+                destination,
+            } => {
+                let out = arithmetic.calculate(mem)?;
+                mem.set(destination, out);
+            }
+            Instruction::UnaryArithmetic {
                 arithmetic,
                 destination,
             } => {
@@ -275,7 +328,7 @@ pub enum ExecutionError {
     #[error("Cannot apply operation {op} to operands {operands:?}")]
     CannotApplyOperation {
         /// Operation being attempted
-        op: BinaryOperation,
+        op: Operation,
         /// Operands being attempted
         operands: Vec<Primitive>,
     },
