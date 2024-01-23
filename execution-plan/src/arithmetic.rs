@@ -1,13 +1,13 @@
 use kittycad_execution_plan_traits::{NumericPrimitive, Primitive};
 use serde::{Deserialize, Serialize};
 
-use crate::{ExecutionError, Memory, Operand, Operation};
+use crate::{BinaryOperation, ExecutionError, Memory, Operand};
 
 /// Instruction to perform arithmetic on values in memory.
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct BinaryArithmetic {
     /// Apply this operation
-    pub operation: Operation,
+    pub operation: BinaryOperation,
     /// First operand for the operation
     pub operand0: Operand,
     /// Second operand for the operation
@@ -68,16 +68,16 @@ impl BinaryArithmetic {
     pub fn calculate(self, mem: &Memory) -> Result<Primitive, ExecutionError> {
         use std::ops::{Add, Div, Mul, Sub};
         match self.operation {
-            Operation::Add => {
+            BinaryOperation::Add => {
                 arithmetic_body!(self, mem, add)
             }
-            Operation::Mul => {
+            BinaryOperation::Mul => {
                 arithmetic_body!(self, mem, mul)
             }
-            Operation::Sub => {
+            BinaryOperation::Sub => {
                 arithmetic_body!(self, mem, sub)
             }
-            Operation::Div => {
+            BinaryOperation::Div => {
                 arithmetic_body!(self, mem, div)
             }
         }

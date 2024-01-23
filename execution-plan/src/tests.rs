@@ -42,7 +42,7 @@ async fn write_addr_to_memory() {
 async fn add_literals() {
     let plan = vec![Instruction::Arithmetic {
         arithmetic: BinaryArithmetic {
-            operation: Operation::Add,
+            operation: BinaryOperation::Add,
             operand0: Operand::Literal(3u32.into()),
             operand1: Operand::Literal(2u32.into()),
         },
@@ -65,7 +65,7 @@ async fn add_literal_to_reference() {
         // Add 20 to addr 0
         Instruction::Arithmetic {
             arithmetic: BinaryArithmetic {
-                operation: Operation::Add,
+                operation: BinaryOperation::Add,
                 operand0: Operand::Reference(Address(0)),
                 operand1: Operand::Literal(20u32.into()),
             },
@@ -101,7 +101,7 @@ async fn add_to_composite_value() {
         &mut mem,
         vec![Instruction::Arithmetic {
             arithmetic: BinaryArithmetic {
-                operation: Operation::Add,
+                operation: BinaryOperation::Add,
                 operand0: Operand::Reference(start_addr),
                 operand1: Operand::Literal(40u32.into()),
             },

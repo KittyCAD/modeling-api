@@ -179,7 +179,7 @@ impl ApiRequest {
 
 /// Operations that can be applied to values in memory.
 #[derive(Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq)]
-pub enum Operation {
+pub enum BinaryOperation {
     /// Addition
     Add,
     /// Multiplication
@@ -190,13 +190,13 @@ pub enum Operation {
     Div,
 }
 
-impl fmt::Display for Operation {
+impl fmt::Display for BinaryOperation {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Operation::Add => "+",
-            Operation::Mul => "*",
-            Operation::Sub => "-",
-            Operation::Div => "/",
+            BinaryOperation::Add => "+",
+            BinaryOperation::Mul => "*",
+            BinaryOperation::Sub => "-",
+            BinaryOperation::Div => "/",
         }
         .fmt(f)
     }
@@ -266,7 +266,7 @@ pub enum ExecutionError {
     #[error("Cannot apply operation {op} to operands {operands:?}")]
     CannotApplyOperation {
         /// Operation being attempted
-        op: Operation,
+        op: BinaryOperation,
         /// Operands being attempted
         operands: Vec<Primitive>,
     },
