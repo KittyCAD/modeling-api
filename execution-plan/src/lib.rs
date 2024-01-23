@@ -190,6 +190,15 @@ pub enum BinaryOperation {
     Div,
 }
 
+/// Operations that can be applied to a value in memory.
+#[derive(Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq)]
+pub enum UnaryOperation {
+    /// Logical negation
+    Not,
+    /// Flip the sign of a signed number
+    Neg,
+}
+
 impl fmt::Display for BinaryOperation {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {

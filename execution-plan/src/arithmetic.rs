@@ -1,7 +1,7 @@
 use kittycad_execution_plan_traits::{NumericPrimitive, Primitive};
 use serde::{Deserialize, Serialize};
 
-use crate::{BinaryOperation, ExecutionError, Memory, Operand};
+use crate::{BinaryOperation, ExecutionError, Memory, Operand, UnaryOperation};
 
 /// Instruction to perform arithmetic on values in memory.
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
@@ -12,6 +12,15 @@ pub struct BinaryArithmetic {
     pub operand0: Operand,
     /// Second operand for the operation
     pub operand1: Operand,
+}
+
+/// Instruction to perform arithmetic on values in memory.
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
+pub struct UnaryArithmetic {
+    /// Apply this operation
+    pub operation: UnaryOperation,
+    /// Operand for the operation
+    pub operand: Operand,
 }
 
 macro_rules! arithmetic_body {
