@@ -8,14 +8,16 @@
 
 use std::fmt;
 
-use arithmetic::{operator::Operation, UnaryArithmetic};
 use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
 
-pub use self::arithmetic::BinaryArithmetic;
+pub use self::arithmetic::{
+    operator::{BinaryOperation, Operation, UnaryOperation},
+    BinaryArithmetic, UnaryArithmetic,
+};
 
 mod arithmetic;
 mod memory;
@@ -184,8 +186,6 @@ impl ApiRequest {
         Ok(())
     }
 }
-
-///
 
 /// Argument to an operation.
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
