@@ -8,13 +8,14 @@
 
 use std::fmt;
 
+use arithmetic::{operator::Operation, UnaryArithmetic};
 use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
 
-pub use self::arithmetic::Arithmetic;
+pub use self::arithmetic::BinaryArithmetic;
 
 mod arithmetic;
 mod memory;
@@ -95,9 +96,16 @@ pub enum Instruction {
         value_parts: Vec<Primitive>,
     },
     /// Perform arithmetic on values in memory.
-    Arithmetic {
+    BinaryArithmetic {
         /// What to do.
-        arithmetic: Arithmetic,
+        arithmetic: BinaryArithmetic,
+        /// Write the output to this memory address.
+        destination: Address,
+    },
+    /// Perform arithmetic on a value in memory.
+    UnaryArithmetic {
+        /// What to do.
+        arithmetic: UnaryArithmetic,
         /// Write the output to this memory address.
         destination: Address,
     },
@@ -177,30 +185,7 @@ impl ApiRequest {
     }
 }
 
-/// Operations that can be applied to values in memory.
-#[derive(Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq)]
-pub enum Operation {
-    /// Addition
-    Add,
-    /// Multiplication
-    Mul,
-    /// Subtraction
-    Sub,
-    /// Division
-    Div,
-}
-
-impl fmt::Display for Operation {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Operation::Add => "+",
-            Operation::Mul => "*",
-            Operation::Sub => "-",
-            Operation::Div => "/",
-        }
-        .fmt(f)
-    }
-}
+///
 
 /// Argument to an operation.
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
@@ -239,7 +224,14 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Mode
                     mem.set(address.offset(i), part);
                 });
             }
-            Instruction::Arithmetic {
+            Instruction::BinaryArithmetic {
+                arithmetic,
+                destination,
+            } => {
+                let out = arithmetic.calculate(mem)?;
+                mem.set(destination, out);
+            }
+            Instruction::UnaryArithmetic {
                 arithmetic,
                 destination,
             } => {

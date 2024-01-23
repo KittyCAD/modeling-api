@@ -1,17 +1,58 @@
 use kittycad_execution_plan_traits::{NumericPrimitive, Primitive};
 use serde::{Deserialize, Serialize};
 
-use crate::{ExecutionError, Memory, Operand, Operation};
+use self::operator::{BinaryOperation, UnaryOperation};
+use crate::{ExecutionError, Memory, Operand};
+
+pub mod operator;
 
 /// Instruction to perform arithmetic on values in memory.
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
-pub struct Arithmetic {
+pub struct BinaryArithmetic {
     /// Apply this operation
-    pub operation: Operation,
+    pub operation: BinaryOperation,
     /// First operand for the operation
     pub operand0: Operand,
     /// Second operand for the operation
     pub operand1: Operand,
+}
+
+/// Instruction to perform arithmetic on values in memory.
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
+pub struct UnaryArithmetic {
+    /// Apply this operation
+    pub operation: UnaryOperation,
+    /// Operand for the operation
+    pub operand: Operand,
+}
+impl UnaryArithmetic {
+    pub(crate) fn calculate(self, mem: &mut Memory) -> Result<Primitive, ExecutionError> {
+        let val = self.operand.eval(mem)?.clone();
+        match self.operation {
+            UnaryOperation::Not => {
+                if let Primitive::Bool(b) = val {
+                    Ok(Primitive::Bool(!b))
+                } else {
+                    Err(ExecutionError::CannotApplyOperation {
+                        op: self.operation.into(),
+                        operands: vec![val],
+                    })
+                }
+            }
+            UnaryOperation::Neg => match val {
+                Primitive::NumericValue(NumericPrimitive::Float(x)) => {
+                    Ok(Primitive::NumericValue(NumericPrimitive::Float(-x)))
+                }
+                Primitive::NumericValue(NumericPrimitive::Integer(x)) => {
+                    Ok(Primitive::NumericValue(NumericPrimitive::Integer(-x)))
+                }
+                _ => Err(ExecutionError::CannotApplyOperation {
+                    op: self.operation.into(),
+                    operands: vec![val],
+                }),
+            },
+        }
+    }
 }
 
 macro_rules! arithmetic_body {
@@ -53,7 +94,7 @@ macro_rules! arithmetic_body {
             }
             // This operation can only be done on numeric types.
             _ => Err(ExecutionError::CannotApplyOperation {
-                op: $arith.operation,
+                op: $arith.operation.into(),
                 operands: vec![
                     $arith.operand0.eval(&$mem)?.clone().to_owned(),
                     $arith.operand1.eval(&$mem)?.clone().to_owned(),
@@ -62,22 +103,22 @@ macro_rules! arithmetic_body {
         }
     };
 }
-impl Arithmetic {
+impl BinaryArithmetic {
     /// Calculate the the arithmetic equation.
     /// May read values from the given memory.
     pub fn calculate(self, mem: &Memory) -> Result<Primitive, ExecutionError> {
         use std::ops::{Add, Div, Mul, Sub};
         match self.operation {
-            Operation::Add => {
+            BinaryOperation::Add => {
                 arithmetic_body!(self, mem, add)
             }
-            Operation::Mul => {
+            BinaryOperation::Mul => {
                 arithmetic_body!(self, mem, mul)
             }
-            Operation::Sub => {
+            BinaryOperation::Sub => {
                 arithmetic_body!(self, mem, sub)
             }
-            Operation::Div => {
+            BinaryOperation::Div => {
                 arithmetic_body!(self, mem, div)
             }
         }
