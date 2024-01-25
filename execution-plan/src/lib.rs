@@ -57,6 +57,14 @@ impl std::ops::Add<usize> for Address {
 }
 
 /// Offset the address.
+impl std::ops::AddAssign<usize> for Address {
+    /// Offset the address.
+    fn add_assign(&mut self, rhs: usize) {
+        self.0 += rhs;
+    }
+}
+
+/// Offset the address.
 impl std::ops::Add for Address {
     type Output = Self;
 
@@ -96,6 +104,35 @@ pub enum Instruction {
         address: Address,
         /// What values to put into memory.
         value_parts: Vec<Primitive>,
+    },
+    /// Get the element at `index` of the array which begins at `start` into the `destination`.
+    /// Push it onto the stack (does not include the element length header).
+    /// Assumes the array is formatted according to [`Instruction::SetArray`] documentation.
+    GetElement {
+        /// Starting address of the array
+        start: Address,
+        /// Element number
+        index: usize,
+    },
+    /// Set an array of elements into memory.
+    /// # Format
+    /// Arrays have this format (each line represents a memory address starting at `start`):
+    ///
+    /// <number of elements>
+    /// <n = size of element 0>
+    /// <element 0, address 0>
+    /// <...>
+    /// <element 0, address n>
+    /// <n = size of element 1>
+    /// <element 1, address 0>
+    /// <...>
+    /// <element 1, address n>
+    /// etc etc for each element.
+    SetArray {
+        /// Array will start at this element.
+        start: Address,
+        /// Each element
+        elements: Vec<Vec<Primitive>>,
     },
     /// Perform arithmetic on values in memory.
     BinaryArithmetic {
@@ -238,6 +275,38 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Mode
                 let out = arithmetic.calculate(mem)?;
                 mem.set(destination, out);
             }
+            Instruction::SetArray { start, elements } => {
+                // Store size of array.
+                let mut curr = start;
+                mem.set(curr, elements.len().into());
+                curr += 1;
+                for element in elements {
+                    // Store each element's size
+                    mem.set(curr, element.len().into());
+                    curr += 1;
+                    // Then store each primitive of the element.
+                    for primitive in element {
+                        mem.set(curr, primitive);
+                        curr += 1
+                    }
+                }
+            }
+            Instruction::GetElement { start, index } => {
+                // Check size of the array.
+                let size: usize = mem.get_primitive(&start)?;
+                if index >= size {
+                    return Err(ExecutionError::ArrayIndexOutOfBounds { size, index });
+                }
+                // Find the given element
+                let mut curr = start + 1;
+                for _ in 0..index {
+                    let size_of_element: usize = mem.get_primitive(&curr)?;
+                    curr += size_of_element + 1;
+                }
+                let size_of_element: usize = mem.get_primitive(&curr)?;
+                let element = mem.get_slice(curr + 1, size_of_element)?;
+                mem.stack.push(element);
+            }
         }
     }
     Ok(())
@@ -274,4 +343,15 @@ pub enum ExecutionError {
     /// Error reading value from memory.
     #[error("{0}")]
     MemoryError(#[from] MemoryError),
+    /// Array index out of bounds.
+    #[error("you tried to access element {index} in an array of size {size}")]
+    ArrayIndexOutOfBounds {
+        /// Size of array.   
+        size: usize,
+        /// Index which user attempted to access.
+        index: usize,
+    },
+    /// Tried to pop from empty stack.
+    #[error("tried to pop from empty stack")]
+    StackEmpty,
 }

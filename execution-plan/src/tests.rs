@@ -1,8 +1,8 @@
 use std::env;
 
 use insta::assert_snapshot;
-use kittycad_execution_plan_traits::{NumericPrimitive, Primitive};
-use kittycad_modeling_cmds::shared::{PathSegment, Point3d};
+use kittycad_execution_plan_traits::{NumericPrimitive, Primitive, Value};
+use kittycad_modeling_cmds::shared::{PathSegment, Point3d, Point4d};
 use kittycad_modeling_session::{Session, SessionBuilder};
 use tabled::{settings::Style, Table};
 use uuid::Uuid;
@@ -124,6 +124,47 @@ async fn add_to_composite_value() {
             z: 4.0
         }
     )
+}
+
+#[tokio::test]
+async fn get_element_of_array() {
+    let client = test_client().await;
+    let mut mem = Memory::default();
+    let point_4d = Point4d {
+        x: 20.0f64,
+        y: 21.0,
+        z: 22.0,
+        w: 23.0,
+    };
+    let array = vec![
+        Point3d {
+            x: 12.0f64,
+            y: 13.0,
+            z: 14.0,
+        }
+        .into_parts(),
+        point_4d.into_parts(),
+    ];
+    execute(
+        &mut mem,
+        vec![
+            Instruction::SetArray {
+                start: 10.into(),
+                elements: array,
+            },
+            Instruction::GetElement {
+                start: 10.into(),
+                index: 1,
+            },
+        ],
+        client,
+    )
+    .await
+    .unwrap();
+    assert_snapshot!("set_array_memory", debug_dump_memory(&mem));
+
+    let actual = mem.stack.pop().unwrap();
+    assert_eq!(actual, point_4d.into_parts());
 }
 
 #[tokio::test]
@@ -257,6 +298,7 @@ async fn api_call_draw_cube() {
 }
 
 /// Return a nicely-formatted table of memory.
+#[must_use]
 fn debug_dump_memory(mem: &Memory) -> String {
     fn pretty_print(p: &Primitive) -> (&'static str, String) {
         match p {
