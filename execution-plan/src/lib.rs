@@ -139,15 +139,29 @@ pub enum Instruction {
         /// What to do.
         arithmetic: BinaryArithmetic,
         /// Write the output to this memory address.
-        destination: Address,
+        destination: Destination,
     },
     /// Perform arithmetic on a value in memory.
     UnaryArithmetic {
         /// What to do.
         arithmetic: UnaryArithmetic,
         /// Write the output to this memory address.
-        destination: Address,
+        destination: Destination,
     },
+    /// Push this data onto the stack.
+    StackPush {
+        /// Data that will be pushed.
+        data: Vec<Primitive>,
+    },
+}
+
+/// Somewhere values can be written to.
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub enum Destination {
+    /// Write to main memory at the given address.
+    Address(Address),
+    /// Push onto the stack.
+    StackPush,
 }
 
 /// Request sent to the KittyCAD API.
@@ -231,17 +245,35 @@ pub enum Operand {
     Literal(Primitive),
     /// An address which contains some literal value.
     Reference(Address),
+    /// Pop the value from the top of the stack.
+    StackPop,
 }
 
 impl Operand {
     /// Evaluate the operand, getting its value.
-    fn eval(&self, mem: &Memory) -> Result<Primitive> {
+    fn eval(&self, mem: &mut Memory) -> Result<Primitive> {
         match self {
             Operand::Literal(v) => Ok(v.to_owned()),
             Operand::Reference(addr) => match mem.get(addr) {
                 None => Err(ExecutionError::MemoryEmpty { addr: *addr }),
                 Some(v) => Ok(v.to_owned()),
             },
+            Operand::StackPop => {
+                let mut prims = mem.stack.pop()?;
+                let prim = prims
+                    .pop()
+                    .ok_or(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                        expected: "a single primitive on the stack",
+                        actual: "empty Vec<Primitive> on the stack".to_owned(),
+                    }))?;
+                if !prims.is_empty() {
+                    return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                        expected: "a single primitive on the stack",
+                        actual: format!("A Vec<Primitive> of length {}", prims.len() + 1),
+                    }));
+                }
+                Ok(prim)
+            }
         }
     }
 }
@@ -266,14 +298,20 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Mode
                 destination,
             } => {
                 let out = arithmetic.calculate(mem)?;
-                mem.set(destination, out);
+                match destination {
+                    Destination::Address(addr) => mem.set(addr, out),
+                    Destination::StackPush => mem.stack.push(vec![out]),
+                };
             }
             Instruction::UnaryArithmetic {
                 arithmetic,
                 destination,
             } => {
                 let out = arithmetic.calculate(mem)?;
-                mem.set(destination, out);
+                match destination {
+                    Destination::Address(addr) => mem.set(addr, out),
+                    Destination::StackPush => mem.stack.push(vec![out]),
+                };
             }
             Instruction::SetArray { start, elements } => {
                 // Store size of array.
@@ -306,6 +344,9 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Mode
                 let size_of_element: usize = mem.get_primitive(&curr)?;
                 let element = mem.get_slice(curr + 1, size_of_element)?;
                 mem.stack.push(element);
+            }
+            Instruction::StackPush { data } => {
+                mem.stack.push(data);
             }
         }
     }
