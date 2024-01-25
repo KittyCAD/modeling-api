@@ -57,6 +57,27 @@ async fn add_literals() {
 }
 
 #[tokio::test]
+async fn add_stack() {
+    let plan = vec![
+        Instruction::StackPush {
+            data: vec![10u32.into()],
+        },
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Add,
+                operand0: Operand::Literal(20u32.into()),
+                operand1: Operand::StackPop,
+            },
+            destination: Address(0),
+        },
+    ];
+    let mut mem = Memory::default();
+    let client = test_client().await;
+    execute(&mut mem, plan, client).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&Address(0)), Some(&30u32.into()))
+}
+
+#[tokio::test]
 async fn add_literal_to_reference() {
     let plan = vec![
         // Memory addr 0 contains 450
