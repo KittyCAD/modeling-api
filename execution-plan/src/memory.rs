@@ -1,6 +1,6 @@
-use kittycad_execution_plan_traits::{MemoryError, Primitive, Value};
+use kittycad_execution_plan_traits::{MemoryError, Primitive, ReadMemory, Value};
 
-use crate::Address;
+use crate::{Address, ExecutionError};
 
 /// Helper wrapper around Memory. It lets you push static data into memory before the program runs.
 pub struct StaticMemoryInitializer {
@@ -39,12 +39,15 @@ impl StaticMemoryInitializer {
 #[cfg_attr(test, derive(PartialEq))]
 pub struct Memory {
     addresses: Vec<Option<Primitive>>,
+    /// A stack where temporary values can be pushed or popped.
+    pub stack: Stack<Vec<Primitive>>,
 }
 
 impl Default for Memory {
     fn default() -> Self {
         Self {
             addresses: vec![None; 1024],
+            stack: Stack::default(),
         }
     }
 }
@@ -91,5 +94,46 @@ impl Memory {
     /// Iterate over each memory address and its value.
     pub fn iter(&self) -> impl Iterator<Item = (usize, &Option<Primitive>)> {
         self.addresses.iter().enumerate()
+    }
+
+    /// Get a primitive from `addr`. If it's of type T, extract that T. Otherwise error.
+    pub fn get_primitive<T>(&self, addr: &Address) -> Result<T, ExecutionError>
+    where
+        T: TryFrom<Primitive, Error = MemoryError>,
+    {
+        let primitive = self
+            .get(addr)
+            .cloned()
+            .ok_or(ExecutionError::MemoryEmpty { addr: *addr })?;
+        primitive.try_into().map_err(ExecutionError::MemoryError)
+    }
+
+    /// Get a range of addresses, starting at `start` and continuing for `len` more.
+    pub fn get_slice(&self, start: Address, len: usize) -> Result<Vec<Primitive>, ExecutionError> {
+        let slice = &self.addresses[start.0..start.0 + len];
+        let x = slice
+            .iter()
+            .cloned()
+            .enumerate()
+            .map(|(addr, prim)| prim.ok_or(ExecutionError::MemoryEmpty { addr: Address(addr) }))
+            .collect::<Result<Vec<_>, _>>()?;
+        Ok(x)
+    }
+}
+
+/// A stack where values can be pushed/popped.
+#[derive(Debug, Eq, PartialEq, Default)]
+pub struct Stack<T> {
+    inner: Vec<T>,
+}
+
+impl<T> Stack<T> {
+    /// Add a value to the top of the stack (above any previous values).
+    pub fn push(&mut self, t: T) {
+        self.inner.push(t);
+    }
+    /// Remove a value from the top of the stack, and return it.
+    pub fn pop(&mut self) -> Result<T, ExecutionError> {
+        self.inner.pop().ok_or(ExecutionError::StackEmpty)
     }
 }
