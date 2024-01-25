@@ -57,10 +57,7 @@ impl UnaryArithmetic {
 
 macro_rules! arithmetic_body {
     ($arith:ident, $mem:ident, $method:ident) => {
-        match (
-            $arith.operand0.eval(&$mem)?.clone(),
-            $arith.operand1.eval(&$mem)?.clone(),
-        ) {
+        match ($arith.operand0.eval($mem)?.clone(), $arith.operand1.eval($mem)?.clone()) {
             // If both operands are numeric, then do the arithmetic operation.
             (Primitive::NumericValue(x), Primitive::NumericValue(y)) => {
                 let num = match (x, y) {
@@ -96,8 +93,8 @@ macro_rules! arithmetic_body {
             _ => Err(ExecutionError::CannotApplyOperation {
                 op: $arith.operation.into(),
                 operands: vec![
-                    $arith.operand0.eval(&$mem)?.clone().to_owned(),
-                    $arith.operand1.eval(&$mem)?.clone().to_owned(),
+                    $arith.operand0.eval($mem)?.clone().to_owned(),
+                    $arith.operand1.eval($mem)?.clone().to_owned(),
                 ],
             }),
         }
@@ -106,7 +103,7 @@ macro_rules! arithmetic_body {
 impl BinaryArithmetic {
     /// Calculate the the arithmetic equation.
     /// May read values from the given memory.
-    pub fn calculate(self, mem: &Memory) -> Result<Primitive, ExecutionError> {
+    pub fn calculate(self, mem: &mut Memory) -> Result<Primitive, ExecutionError> {
         use std::ops::{Add, Div, Mul, Sub};
         match self.operation {
             BinaryOperation::Add => {
