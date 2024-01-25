@@ -48,7 +48,7 @@ async fn add_literals() {
             operand0: Operand::Literal(3u32.into()),
             operand1: Operand::Literal(2u32.into()),
         },
-        destination: Address(1),
+        destination: Destination::Address(Address(1)),
     }];
     let mut mem = Memory::default();
     let client = test_client().await;
@@ -68,7 +68,7 @@ async fn add_stack() {
                 operand0: Operand::Literal(20u32.into()),
                 operand1: Operand::StackPop,
             },
-            destination: Address(0),
+            destination: Destination::Address(Address(0)),
         },
     ];
     let mut mem = Memory::default();
@@ -92,7 +92,7 @@ async fn add_literal_to_reference() {
                 operand0: Operand::Reference(Address(0)),
                 operand1: Operand::Literal(20u32.into()),
             },
-            destination: Address(1),
+            destination: Destination::Address(Address(1)),
         },
     ];
     // 20 + 450 = 470
@@ -128,7 +128,7 @@ async fn add_to_composite_value() {
                 operand0: Operand::Reference(start_addr),
                 operand1: Operand::Literal(40u32.into()),
             },
-            destination: start_addr,
+            destination: Destination::Address(start_addr),
         }],
         client,
     )

@@ -139,20 +139,29 @@ pub enum Instruction {
         /// What to do.
         arithmetic: BinaryArithmetic,
         /// Write the output to this memory address.
-        destination: Address,
+        destination: Destination,
     },
     /// Perform arithmetic on a value in memory.
     UnaryArithmetic {
         /// What to do.
         arithmetic: UnaryArithmetic,
         /// Write the output to this memory address.
-        destination: Address,
+        destination: Destination,
     },
     /// Push this data onto the stack.
     StackPush {
         /// Data that will be pushed.
         data: Vec<Primitive>,
     },
+}
+
+/// Somewhere values can be written to.
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub enum Destination {
+    /// Write to main memory at the given address.
+    Address(Address),
+    /// Push onto the stack.
+    StackPush,
 }
 
 /// Request sent to the KittyCAD API.
@@ -289,14 +298,20 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Mode
                 destination,
             } => {
                 let out = arithmetic.calculate(mem)?;
-                mem.set(destination, out);
+                match destination {
+                    Destination::Address(addr) => mem.set(addr, out),
+                    Destination::StackPush => mem.stack.push(vec![out]),
+                };
             }
             Instruction::UnaryArithmetic {
                 arithmetic,
                 destination,
             } => {
                 let out = arithmetic.calculate(mem)?;
-                mem.set(destination, out);
+                match destination {
+                    Destination::Address(addr) => mem.set(addr, out),
+                    Destination::StackPush => mem.stack.push(vec![out]),
+                };
             }
             Instruction::SetArray { start, elements } => {
                 // Store size of array.
