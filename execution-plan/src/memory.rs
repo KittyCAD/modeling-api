@@ -136,6 +136,10 @@ impl<T> Stack<T> {
     pub fn pop(&mut self) -> Result<T, ExecutionError> {
         self.inner.pop().ok_or(ExecutionError::StackEmpty)
     }
+    /// Is the stack empty?
+    pub fn is_empty(&self) -> bool {
+        self.inner.is_empty()
+    }
 }
 
 impl Stack<Vec<Primitive>> {

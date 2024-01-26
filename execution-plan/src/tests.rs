@@ -57,6 +57,23 @@ async fn add_literals() {
 }
 
 #[tokio::test]
+async fn basic_stack() {
+    let plan = vec![
+        Instruction::StackPush {
+            data: vec![33u32.into()],
+        },
+        Instruction::StackPop {
+            destination: Some(Address::ZERO),
+        },
+    ];
+    let mut mem = Memory::default();
+    let client = test_client().await;
+    execute(&mut mem, plan, client).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&Address(0)), Some(&33u32.into()));
+    assert!(mem.stack.is_empty());
+}
+
+#[tokio::test]
 async fn add_stack() {
     let plan = vec![
         Instruction::StackPush {
