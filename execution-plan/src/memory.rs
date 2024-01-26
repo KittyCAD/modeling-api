@@ -137,3 +137,18 @@ impl<T> Stack<T> {
         self.inner.pop().ok_or(ExecutionError::StackEmpty)
     }
 }
+
+impl Stack<Vec<Primitive>> {
+    pub fn pop_single(&mut self) -> Result<Primitive, ExecutionError> {
+        let mut slice = self.pop()?;
+        let prim = slice
+            .pop()
+            .ok_or(ExecutionError::StackNotPrimitive { actual_length: 0 })?;
+        if !slice.is_empty() {
+            return Err(ExecutionError::StackNotPrimitive {
+                actual_length: slice.len() + 1,
+            });
+        }
+        Ok(prim)
+    }
+}

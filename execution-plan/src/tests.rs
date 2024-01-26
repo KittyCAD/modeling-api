@@ -175,7 +175,7 @@ async fn get_element_of_array() {
             },
             Instruction::GetElement {
                 start: 10.into(),
-                index: 1,
+                index: Operand::Literal(Primitive::from(1usize)),
             },
         ],
         client,

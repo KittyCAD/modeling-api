@@ -8,7 +8,7 @@
 
 use std::fmt;
 
-use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
+use kittycad_execution_plan_traits::{FromMemory, MemoryError, NumericPrimitive, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, StaticMemoryInitializer};
@@ -112,7 +112,7 @@ pub enum Instruction {
         /// Starting address of the array
         start: Address,
         /// Element number
-        index: usize,
+        index: Operand,
     },
     /// Set an array of elements into memory.
     /// # Format
@@ -258,22 +258,7 @@ impl Operand {
                 None => Err(ExecutionError::MemoryEmpty { addr: *addr }),
                 Some(v) => Ok(v.to_owned()),
             },
-            Operand::StackPop => {
-                let mut prims = mem.stack.pop()?;
-                let prim = prims
-                    .pop()
-                    .ok_or(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                        expected: "a single primitive on the stack",
-                        actual: "empty Vec<Primitive> on the stack".to_owned(),
-                    }))?;
-                if !prims.is_empty() {
-                    return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                        expected: "a single primitive on the stack",
-                        actual: format!("A Vec<Primitive> of length {}", prims.len() + 1),
-                    }));
-                }
-                Ok(prim)
-            }
+            Operand::StackPop => mem.stack.pop_single(),
         }
     }
 }
@@ -330,6 +315,23 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Mode
                 }
             }
             Instruction::GetElement { start, index } => {
+                // Resolve the index.
+                let index_primitive: Primitive = match index {
+                    // Any numeric literal will do, as long as it's >= 0.
+                    Operand::Literal(p) => p,
+                    Operand::Reference(addr) => mem.get(&addr).ok_or(ExecutionError::MemoryEmpty { addr })?.clone(),
+                    Operand::StackPop => mem.stack.pop_single()?,
+                };
+                let index = match index_primitive {
+                    Primitive::NumericValue(NumericPrimitive::UInteger(i)) => i,
+                    Primitive::NumericValue(NumericPrimitive::Integer(i)) if i >= 0 => i.try_into().unwrap(),
+                    other => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "non-negative integer",
+                            actual: format!("{other:?}"),
+                        }))
+                    }
+                };
                 // Check size of the array.
                 let size: usize = mem.get_primitive(&start)?;
                 if index >= size {
@@ -358,6 +360,13 @@ type Result<T> = std::result::Result<T, ExecutionError>;
 /// Errors that could occur when executing a KittyCAD execution plan.
 #[derive(Debug, thiserror::Error)]
 pub enum ExecutionError {
+    /// Stack should have contained a single primitive but it had a composite value instead.
+    #[error("Expected stack to contain a single primitive, but it had a slice of length {actual_length}")]
+    StackNotPrimitive {
+        /// The actual size of the data that was popped off the stack
+        /// Expected to be 1, but it was something else.
+        actual_length: usize,
+    },
     /// Memory address was not set.
     #[error("Memory address {addr} was not set")]
     MemoryEmpty {
