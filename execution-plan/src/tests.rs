@@ -23,9 +23,43 @@ async fn test_client() -> Session {
         buffer_reqs: None,
         await_response_timeout: None,
     };
-    Session::start(session_builder)
-        .await
-        .expect("could not connect to KittyCAD engine")
+    match Session::start(session_builder).await {
+        Err(e) => match e {
+            kittycad::types::error::Error::InvalidRequest(s) => panic!("Request did not meet requirements {s}"),
+            kittycad::types::error::Error::CommunicationError(e) => {
+                panic!(" A server error either due to the data, or with the connection: {e}")
+            }
+            kittycad::types::error::Error::RequestError(e) => panic!("Could not build request: {e}"),
+            kittycad::types::error::Error::SerdeError { error, status } => {
+                panic!("Serde error (HTTP {status}): {error}")
+            }
+            kittycad::types::error::Error::InvalidResponsePayload { error, response } => {
+                panic!("Invalid response payload. Error {error}, response {response:?}")
+            }
+            kittycad::types::error::Error::Server { body, status } => panic!("Server error (HTTP {status}): {body}"),
+            kittycad::types::error::Error::UnexpectedResponse(resp) => {
+                let status = resp.status();
+                let url = resp.url().to_owned();
+                match resp.text().await {
+                    Ok(body) => panic!(
+                        "Unexpected response from KittyCAD API.
+                        URL:{url}
+                        HTTP {status}
+                        ---Body----
+                        {body}"
+                    ),
+                    Err(e) => panic!(
+                        "Unexpected response from KittyCAD API.
+                        URL:{url}
+                        HTTP {status}
+                        ---Body could not be read, the error is----
+                        {e}"
+                    ),
+                }
+            }
+        },
+        Ok(x) => x,
+    }
 }
 
 #[tokio::test]
@@ -54,6 +88,23 @@ async fn add_literals() {
     let client = test_client().await;
     execute(&mut mem, plan, client).await.expect("failed to execute plan");
     assert_eq!(mem.get(&Address(1)), Some(&5u32.into()))
+}
+
+#[tokio::test]
+async fn basic_stack() {
+    let plan = vec![
+        Instruction::StackPush {
+            data: vec![33u32.into()],
+        },
+        Instruction::StackPop {
+            destination: Some(Address::ZERO),
+        },
+    ];
+    let mut mem = Memory::default();
+    let client = test_client().await;
+    execute(&mut mem, plan, client).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&Address(0)), Some(&33u32.into()));
+    assert!(mem.stack.is_empty());
 }
 
 #[tokio::test]

@@ -153,6 +153,12 @@ pub enum Instruction {
         /// Data that will be pushed.
         data: Vec<Primitive>,
     },
+    /// Pop data off the stack into memory.
+    StackPop {
+        /// If Some, the value popped will be stored at that address.
+        /// If None, the value won't be stored anywhere.
+        destination: Option<Address>,
+    },
 }
 
 /// Somewhere values can be written to.
@@ -349,6 +355,13 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Mode
             }
             Instruction::StackPush { data } => {
                 mem.stack.push(data);
+            }
+            Instruction::StackPop { destination } => {
+                let data = mem.stack.pop()?;
+                let Some(destination) = destination else { continue };
+                for (i, data_part) in data.into_iter().enumerate() {
+                    mem.set(destination + i, data_part);
+                }
             }
         }
     }
