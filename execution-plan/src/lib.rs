@@ -270,11 +270,15 @@ impl Operand {
 }
 
 /// Execute the plan.
-pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: ModelingSession) -> Result<()> {
+pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Option<ModelingSession>) -> Result<()> {
     for step in plan.into_iter() {
         match step {
             Instruction::ApiRequest(req) => {
-                req.execute(&mut session, mem).await?;
+                if let Some(ref mut session) = session {
+                    req.execute(session, mem).await?;
+                } else {
+                    return Err(ExecutionError::NoApiClient);
+                }
             }
             Instruction::SetPrimitive { address, value } => {
                 mem.set(address, value);
@@ -417,4 +421,7 @@ pub enum ExecutionError {
     /// Tried to pop from empty stack.
     #[error("tried to pop from empty stack")]
     StackEmpty,
+    /// Could not make API call because no KittyCAD API client was provided
+    #[error("could not make API call because no KittyCAD API client was provided")]
+    NoApiClient,
 }
