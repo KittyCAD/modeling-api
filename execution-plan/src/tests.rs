@@ -70,7 +70,9 @@ async fn write_addr_to_memory() {
     }];
     let mut mem = Memory::default();
     let client = test_client().await;
-    execute(&mut mem, plan, client).await.expect("failed to execute plan");
+    execute(&mut mem, plan, Some(client))
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&Address(0)), Some(&3.4.into()))
 }
 
@@ -86,7 +88,9 @@ async fn add_literals() {
     }];
     let mut mem = Memory::default();
     let client = test_client().await;
-    execute(&mut mem, plan, client).await.expect("failed to execute plan");
+    execute(&mut mem, plan, Some(client))
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&Address(1)), Some(&5u32.into()))
 }
 
@@ -102,7 +106,9 @@ async fn basic_stack() {
     ];
     let mut mem = Memory::default();
     let client = test_client().await;
-    execute(&mut mem, plan, client).await.expect("failed to execute plan");
+    execute(&mut mem, plan, Some(client))
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&Address(0)), Some(&33u32.into()));
     assert!(mem.stack.is_empty());
 }
@@ -124,7 +130,9 @@ async fn add_stack() {
     ];
     let mut mem = Memory::default();
     let client = test_client().await;
-    execute(&mut mem, plan, client).await.expect("failed to execute plan");
+    execute(&mut mem, plan, Some(client))
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&Address(0)), Some(&30u32.into()))
 }
 
@@ -149,7 +157,9 @@ async fn add_literal_to_reference() {
     // 20 + 450 = 470
     let mut mem = Memory::default();
     let client = test_client().await;
-    execute(&mut mem, plan, client).await.expect("failed to execute plan");
+    execute(&mut mem, plan, Some(client))
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&Address(1)), Some(&470u32.into()))
 }
 
@@ -181,7 +191,7 @@ async fn add_to_composite_value() {
             },
             destination: Destination::Address(start_addr),
         }],
-        client,
+        Some(client),
     )
     .await
     .unwrap();
@@ -229,7 +239,7 @@ async fn get_element_of_array() {
                 index: Operand::Literal(Primitive::from(1usize)),
             },
         ],
-        client,
+        Some(client),
     )
     .await
     .unwrap();
@@ -345,7 +355,7 @@ async fn api_call_draw_cube() {
                 cmd_id: new_id(),
             }),
         ],
-        client,
+        Some(client),
     )
     .await
     .unwrap();
