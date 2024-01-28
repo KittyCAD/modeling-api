@@ -69,10 +69,7 @@ async fn write_addr_to_memory() {
         value: 3.4.into(),
     }];
     let mut mem = Memory::default();
-    let client = test_client().await;
-    execute(&mut mem, plan, Some(client))
-        .await
-        .expect("failed to execute plan");
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
     assert_eq!(mem.get(&Address::ZERO), Some(&3.4.into()))
 }
 
@@ -87,10 +84,7 @@ async fn add_literals() {
         destination: Destination::Address(Address::ZERO + 1),
     }];
     let mut mem = Memory::default();
-    let client = test_client().await;
-    execute(&mut mem, plan, Some(client))
-        .await
-        .expect("failed to execute plan");
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&5u32.into()))
 }
 
@@ -105,10 +99,7 @@ async fn basic_stack() {
         },
     ];
     let mut mem = Memory::default();
-    let client = test_client().await;
-    execute(&mut mem, plan, Some(client))
-        .await
-        .expect("failed to execute plan");
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
     assert_eq!(mem.get(&Address::ZERO), Some(&33u32.into()));
     assert!(mem.stack.is_empty());
 }
@@ -129,10 +120,7 @@ async fn add_stack() {
         },
     ];
     let mut mem = Memory::default();
-    let client = test_client().await;
-    execute(&mut mem, plan, Some(client))
-        .await
-        .expect("failed to execute plan");
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
     assert_eq!(mem.get(&Address::ZERO), Some(&30u32.into()))
 }
 
@@ -156,10 +144,7 @@ async fn add_literal_to_reference() {
     ];
     // 20 + 450 = 470
     let mut mem = Memory::default();
-    let client = test_client().await;
-    execute(&mut mem, plan, Some(client))
-        .await
-        .expect("failed to execute plan");
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&470u32.into()))
 }
 
@@ -179,7 +164,6 @@ async fn add_to_composite_value() {
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&(3.0.into())));
     assert_eq!(mem.get(&(Address::ZERO + 2)), Some(&(4.0.into())));
 
-    let client = test_client().await;
     // Update the point's x-value in memory.
     execute(
         &mut mem,
@@ -191,7 +175,7 @@ async fn add_to_composite_value() {
             },
             destination: Destination::Address(start_addr),
         }],
-        Some(client),
+        None,
     )
     .await
     .unwrap();
@@ -210,7 +194,6 @@ async fn add_to_composite_value() {
 
 #[tokio::test]
 async fn get_element_of_array() {
-    let client = test_client().await;
     let mut mem = Memory::default();
     let point_4d = Point4d {
         x: 20.0f64,
@@ -239,7 +222,7 @@ async fn get_element_of_array() {
                 index: Operand::Literal(Primitive::from(1usize)),
             },
         ],
-        Some(client),
+        None,
     )
     .await
     .unwrap();
