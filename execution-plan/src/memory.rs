@@ -12,7 +12,7 @@ impl Default for StaticMemoryInitializer {
     fn default() -> Self {
         Self {
             memory: Default::default(),
-            last: Address(0),
+            last: Address::ZERO,
         }
     }
 }
