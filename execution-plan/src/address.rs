@@ -51,11 +51,12 @@ impl std::ops::Add for Address {
     }
 }
 
+/// Find the offset between two addresses.
 impl std::ops::Sub for Address {
-    type Output = Self;
+    type Output = usize;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        Self(self.0 - rhs.0)
+        self.0 - rhs.0
     }
 }
 
