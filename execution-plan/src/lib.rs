@@ -6,85 +6,23 @@
 //! You can think of it as a domain-specific language for making KittyCAD API calls and using
 //! the results to make other API calls.
 
-use std::fmt;
-
 use kittycad_execution_plan_traits::{FromMemory, MemoryError, NumericPrimitive, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
 
+pub use self::address::Address;
 pub use self::arithmetic::{
     operator::{BinaryOperation, Operation, UnaryOperation},
     BinaryArithmetic, UnaryArithmetic,
 };
 
+mod address;
 mod arithmetic;
 mod memory;
 #[cfg(test)]
 mod tests;
-
-/// An address in KCEP's program memory.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-pub struct Address(usize);
-
-impl Address {
-    /// First memory address available.
-    pub const ZERO: Self = Self(0);
-
-    /// Offset the memory by `size` addresses.
-    pub fn offset(self, size: usize) -> Self {
-        let curr = self.0;
-        Self(curr + size)
-    }
-
-    /// Returns self, then offsets self by `size` addresses.
-    pub fn offset_by(&mut self, size: usize) -> Self {
-        let old = *self;
-        self.0 += size;
-        old
-    }
-}
-
-/// Offset the address.
-impl std::ops::Add<usize> for Address {
-    type Output = Self;
-
-    /// Offset the address.
-    fn add(self, rhs: usize) -> Self::Output {
-        self.offset(rhs)
-    }
-}
-
-/// Offset the address.
-impl std::ops::AddAssign<usize> for Address {
-    /// Offset the address.
-    fn add_assign(&mut self, rhs: usize) {
-        self.0 += rhs;
-    }
-}
-
-/// Offset the address.
-impl std::ops::Add for Address {
-    type Output = Self;
-
-    /// Offset the address.
-    fn add(self, rhs: Self) -> Self::Output {
-        self.offset(rhs.0)
-    }
-}
-
-impl fmt::Display for Address {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.0.fmt(f)
-    }
-}
-
-impl From<usize> for Address {
-    fn from(value: usize) -> Self {
-        Self(value)
-    }
-}
 
 /// One step of the execution plan.
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
@@ -349,6 +287,8 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
                 }
                 // Find the given element
                 let mut curr = start + 1;
+                eprintln!("{:#?}", mem.iter().take(10).collect::<Vec<_>>());
+                eprintln!("Starting curr at {start}+1={curr}");
                 for _ in 0..index {
                     let size_of_element: usize = mem.get_primitive(&curr)?;
                     curr += size_of_element + 1;
