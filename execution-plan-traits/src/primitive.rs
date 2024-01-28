@@ -16,8 +16,20 @@ pub enum Primitive {
     Bytes(Vec<u8>),
     /// True or false
     Bool(bool),
+    /// List metadata.
+    ListHeader(ListHeader),
     /// An optional value which was not given.
     Nil,
+}
+
+/// List metadata.
+/// A KCEP list is a layout for variable-length lists whose elements may be different types.
+#[derive(Clone, Copy, Eq, PartialEq, Deserialize, Serialize, Debug)]
+pub struct ListHeader {
+    /// How many elements are in the list?
+    count: usize,
+    /// How many addresses does the list take up in total?
+    size: usize,
 }
 
 impl From<bool> for Primitive {
@@ -53,6 +65,12 @@ impl From<f64> for Primitive {
 impl From<Vec<u8>> for Primitive {
     fn from(value: Vec<u8>) -> Self {
         Self::Bytes(value)
+    }
+}
+
+impl From<ListHeader> for Primitive {
+    fn from(value: ListHeader) -> Self {
+        Self::ListHeader(value)
     }
 }
 
@@ -166,6 +184,21 @@ impl TryFrom<Primitive> for u32 {
         } else {
             Err(MemoryError::MemoryWrongType {
                 expected: "u32",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
+impl TryFrom<Primitive> for ListHeader {
+    type Error = MemoryError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::ListHeader(x) = value {
+            Ok(x)
+        } else {
+            Err(MemoryError::MemoryWrongType {
+                expected: "ListHeader",
                 actual: format!("{value:?}"),
             })
         }
