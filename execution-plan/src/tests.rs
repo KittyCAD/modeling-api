@@ -213,7 +213,7 @@ async fn get_element_of_array() {
     execute(
         &mut mem,
         vec![
-            Instruction::SetArray {
+            Instruction::SetList {
                 start: START_DATA_AT.into(),
                 elements: list,
             },
