@@ -27,9 +27,9 @@ pub enum Primitive {
 #[derive(Clone, Copy, Eq, PartialEq, Deserialize, Serialize, Debug)]
 pub struct ListHeader {
     /// How many elements are in the list?
-    count: usize,
+    pub count: usize,
     /// How many addresses does the list take up in total?
-    size: usize,
+    pub size: usize,
 }
 
 impl From<bool> for Primitive {
