@@ -264,7 +264,7 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
                 mem.set(
                     start,
                     Primitive::from(ListHeader {
-                        count: n.into(),
+                        count: n,
                         size: (curr - start) - 1,
                     }),
                 );
