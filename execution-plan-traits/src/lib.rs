@@ -1,6 +1,6 @@
 //! Traits and types used for KittyCAD Execution Plans.
 
-pub use self::primitive::{ListHeader, NumericPrimitive, Primitive};
+pub use self::primitive::{ListHeader, NumericPrimitive, ObjectHeader, Primitive};
 
 #[macro_use]
 mod primitive;

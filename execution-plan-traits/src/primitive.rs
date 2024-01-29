@@ -18,17 +18,31 @@ pub enum Primitive {
     Bool(bool),
     /// List metadata.
     ListHeader(ListHeader),
+    /// Object metadata.
+    ObjectHeader(ObjectHeader),
     /// An optional value which was not given.
     Nil,
 }
 
 /// List metadata.
-/// A KCEP list is a layout for variable-length lists whose elements may be different types.
+/// A KCEP list is a layout for variable-length lists whose elements may be different types,
+/// and are identified by a uint index.
 #[derive(Clone, Copy, Eq, PartialEq, Deserialize, Serialize, Debug)]
 pub struct ListHeader {
     /// How many elements are in the list?
     pub count: usize,
     /// How many addresses does the list take up in total?
+    pub size: usize,
+}
+
+/// Object metadata.
+/// A KCEP object is a layout for objects whose elements may be different types,
+/// and are identified by a string key.
+#[derive(Clone, Eq, PartialEq, Deserialize, Serialize, Debug)]
+pub struct ObjectHeader {
+    /// What properties does the object have, and in what order are they laid out?
+    pub properties: Vec<String>,
+    /// What is the total size of this object
     pub size: usize,
 }
 
@@ -71,6 +85,12 @@ impl From<Vec<u8>> for Primitive {
 impl From<ListHeader> for Primitive {
     fn from(value: ListHeader) -> Self {
         Self::ListHeader(value)
+    }
+}
+
+impl From<ObjectHeader> for Primitive {
+    fn from(value: ObjectHeader) -> Self {
+        Self::ObjectHeader(value)
     }
 }
 
@@ -199,6 +219,21 @@ impl TryFrom<Primitive> for ListHeader {
         } else {
             Err(MemoryError::MemoryWrongType {
                 expected: "ListHeader",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
+impl TryFrom<Primitive> for ObjectHeader {
+    type Error = MemoryError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::ObjectHeader(x) = value {
+            Ok(x)
+        } else {
+            Err(MemoryError::MemoryWrongType {
+                expected: "ObjectHeader",
                 actual: format!("{value:?}"),
             })
         }
