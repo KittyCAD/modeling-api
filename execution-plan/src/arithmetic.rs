@@ -118,6 +118,8 @@ impl BinaryArithmetic {
             BinaryOperation::Div => {
                 arithmetic_body!(self, mem, div)
             }
+            BinaryOperation::Mod => todo!(),
+            BinaryOperation::Pow => todo!(),
         }
     }
 }

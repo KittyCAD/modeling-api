@@ -21,6 +21,10 @@ pub enum BinaryOperation {
     Sub,
     /// Division
     Div,
+    /// Modulo
+    Mod,
+    /// Power
+    Pow,
 }
 
 /// Operations that can be applied to a value in memory, requiring one operand.
@@ -70,6 +74,8 @@ impl fmt::Display for BinaryOperation {
             BinaryOperation::Mul => "*",
             BinaryOperation::Sub => "-",
             BinaryOperation::Div => "/",
+            BinaryOperation::Mod => "%",
+            BinaryOperation::Pow => "^",
         }
         .fmt(f)
     }
