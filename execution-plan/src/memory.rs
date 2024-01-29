@@ -1,4 +1,6 @@
-use kittycad_execution_plan_traits::{ListHeader, MemoryError, NumericPrimitive, Primitive, ReadMemory, Value};
+use kittycad_execution_plan_traits::{
+    ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
+};
 
 use crate::{Address, ExecutionError};
 
@@ -135,6 +137,10 @@ impl Memory {
                 Primitive::ListHeader(ListHeader { count, size }) => {
                     ("List header", format!("{count} elements, {size} primitives"))
                 }
+                Primitive::ObjectHeader(ObjectHeader { properties, size }) => (
+                    "Object header",
+                    format!("keys {}, {size} primitives", properties.clone().join(",")),
+                ),
                 Primitive::Nil => ("Nil", String::new()),
             }
         }

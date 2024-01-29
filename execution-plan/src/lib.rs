@@ -6,7 +6,9 @@
 //! You can think of it as a domain-specific language for making KittyCAD API calls and using
 //! the results to make other API calls.
 
-use kittycad_execution_plan_traits::{FromMemory, ListHeader, MemoryError, NumericPrimitive, Primitive, ReadMemory};
+use kittycad_execution_plan_traits::{
+    FromMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory,
+};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, StaticMemoryInitializer};
@@ -51,6 +53,15 @@ pub enum Instruction {
         start: Address,
         /// Element number
         index: Operand,
+    },
+    /// Get the element at `index` of the list which begins at `start` into the `destination`.
+    /// Push it onto the stack (does not include the element length header).
+    /// Objects are laid out like lists, but with different header.
+    GetProperty {
+        /// Starting address of the object.
+        start: Address,
+        /// Which property to retrieve
+        property: Operand,
     },
     /// Set a list of elements into memory.
     /// # Format
@@ -301,6 +312,57 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
                     let size_of_element: usize = match mem.get(&curr).ok_or(MemoryError::MemoryWrongSize)? {
                         Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
                         Primitive::ListHeader(ListHeader { count: _, size }) => *size,
+                        Primitive::ObjectHeader(ObjectHeader { properties: _, size }) => *size,
+                        other => {
+                            return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                                expected: "ListHeader or usize",
+                                actual: format!("{other:?}"),
+                            }))
+                        }
+                    };
+                    curr += size_of_element + 1;
+                }
+                let size_of_element: usize = mem.get_primitive(&curr)?;
+                let element = mem.get_slice(curr + 1, size_of_element)?;
+                mem.stack.push(element);
+            }
+            Instruction::GetProperty { start, property } => {
+                // Resolve the index.
+                let property_primitive: Primitive = match property {
+                    // Any numeric literal will do, as long as it's >= 0.
+                    Operand::Literal(p) => p,
+                    Operand::Reference(addr) => mem.get(&addr).ok_or(ExecutionError::MemoryEmpty { addr })?.clone(),
+                    Operand::StackPop => mem.stack.pop_single()?,
+                };
+                let property = match property_primitive {
+                    Primitive::String(p) => p,
+                    other => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "String",
+                            actual: format!("{other:?}"),
+                        }))
+                    }
+                };
+
+                // Check size of the list.
+                let ObjectHeader { properties, size: _ }: ObjectHeader = mem.get_primitive(&start)?;
+                let index =
+                    properties
+                        .iter()
+                        .position(|prop| prop == &property)
+                        .ok_or(ExecutionError::UndefinedProperty {
+                            property,
+                            address: start,
+                        })?;
+                // Find the given element
+                let mut curr = start + 1;
+                eprintln!("{}", mem.debug_table());
+                eprintln!("Starting curr at {start}+1={curr}");
+                for _ in 0..index {
+                    let size_of_element: usize = match mem.get(&curr).ok_or(MemoryError::MemoryWrongSize)? {
+                        Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
+                        Primitive::ListHeader(ListHeader { count: _, size }) => *size,
+                        Primitive::ObjectHeader(ObjectHeader { properties: _, size }) => *size,
                         other => {
                             return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
                                 expected: "ListHeader or usize",
@@ -381,4 +443,12 @@ pub enum ExecutionError {
     /// Could not make API call because no KittyCAD API client was provided
     #[error("could not make API call because no KittyCAD API client was provided")]
     NoApiClient,
+    /// Property not found in object.
+    #[error("No property '{property}' exists in the object starting at {address}")]
+    UndefinedProperty {
+        /// Which property the program was trying to access.
+        property: String,
+        /// Starting address of the object
+        address: Address,
+    },
 }

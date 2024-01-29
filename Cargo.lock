@@ -1528,7 +1528,7 @@ dependencies = [
  "image",
  "insta",
  "kittycad",
- "kittycad-execution-plan-traits 0.1.5",
+ "kittycad-execution-plan-traits 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "kittycad-modeling-cmds",
  "kittycad-modeling-session",
  "parse-display-derive",
@@ -1546,7 +1546,7 @@ version = "0.1.2"
 dependencies = [
  "anyhow",
  "insta",
- "kittycad-execution-plan-traits 0.1.5",
+ "kittycad-execution-plan-traits 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "proc-macro2",
  "quote",
  "regex",
@@ -1567,9 +1567,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-execution-plan-traits"
-version = "0.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "29dc558ca98b726d998fe9617f7cab0c427f54b49b42fb68d0a69d85e1b52dc7"
+version = "0.1.6"
 dependencies = [
  "serde",
  "thiserror",
@@ -1579,6 +1577,8 @@ dependencies = [
 [[package]]
 name = "kittycad-execution-plan-traits"
 version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d6f893f7837d95bb669781581842511307e42622221c6d241031f1c35c11a2af"
 dependencies = [
  "serde",
  "thiserror",
@@ -1600,7 +1600,7 @@ dependencies = [
  "euler",
  "http 0.2.11",
  "kittycad-execution-plan-macros 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "kittycad-execution-plan-traits 0.1.5",
+ "kittycad-execution-plan-traits 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "measurements",
  "parse-display",
