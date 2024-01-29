@@ -6,7 +6,7 @@
 //! You can think of it as a domain-specific language for making KittyCAD API calls and using
 //! the results to make other API calls.
 
-use kittycad_execution_plan_traits::{FromMemory, MemoryError, NumericPrimitive, Primitive, ReadMemory};
+use kittycad_execution_plan_traits::{FromMemory, ListHeader, MemoryError, NumericPrimitive, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, StaticMemoryInitializer};
@@ -249,8 +249,8 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
             Instruction::SetArray { start, elements } => {
                 // Store size of array.
                 let mut curr = start;
-                mem.set(curr, elements.len().into());
                 curr += 1;
+                let n = elements.len();
                 for element in elements {
                     // Store each element's size
                     mem.set(curr, element.len().into());
@@ -261,6 +261,13 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
                         curr += 1
                     }
                 }
+                mem.set(
+                    start,
+                    Primitive::from(ListHeader {
+                        count: n.into(),
+                        size: (curr - start) - 1,
+                    }),
+                );
             }
             Instruction::GetElement { start, index } => {
                 // Resolve the index.
@@ -280,17 +287,27 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
                         }))
                     }
                 };
+
                 // Check size of the array.
-                let size: usize = mem.get_primitive(&start)?;
-                if index >= size {
-                    return Err(ExecutionError::ArrayIndexOutOfBounds { size, index });
+                let ListHeader { count, size: _ }: ListHeader = mem.get_primitive(&start)?;
+                if index >= count {
+                    return Err(ExecutionError::ArrayIndexOutOfBounds { count, index });
                 }
                 // Find the given element
                 let mut curr = start + 1;
-                eprintln!("{:#?}", mem.iter().take(10).collect::<Vec<_>>());
+                eprintln!("{}", mem.debug_table());
                 eprintln!("Starting curr at {start}+1={curr}");
                 for _ in 0..index {
-                    let size_of_element: usize = mem.get_primitive(&curr)?;
+                    let size_of_element: usize = match mem.get(&curr).ok_or(MemoryError::MemoryWrongSize)? {
+                        Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
+                        Primitive::ListHeader(ListHeader { count: _, size }) => *size,
+                        other => {
+                            return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                                expected: "ListHeader or usize",
+                                actual: format!("{other:?}"),
+                            }))
+                        }
+                    };
                     curr += size_of_element + 1;
                 }
                 let size_of_element: usize = mem.get_primitive(&curr)?;
@@ -351,10 +368,10 @@ pub enum ExecutionError {
     #[error("{0}")]
     MemoryError(#[from] MemoryError),
     /// Array index out of bounds.
-    #[error("you tried to access element {index} in an array of size {size}")]
+    #[error("you tried to access element {index} in an array of size {count}")]
     ArrayIndexOutOfBounds {
-        /// Size of array.   
-        size: usize,
+        /// Number of elements in the array.
+        count: usize,
         /// Index which user attempted to access.
         index: usize,
     },
