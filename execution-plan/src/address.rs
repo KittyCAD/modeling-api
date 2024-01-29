@@ -2,8 +2,14 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// An address in KCEP's program memory.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Address(pub(crate) usize);
+
+impl fmt::Debug for Address {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Addr({})", self.0)
+    }
+}
 
 impl Address {
     /// First memory address available.
