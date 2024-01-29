@@ -167,6 +167,8 @@ pub enum ModelingCmd {
     EntityLinearPattern(EntityLinearPattern),
     /// Duplicate the given entity, evenly spaced around the specified axis, spanning the arc.
     EntityCircularPattern(EntityCircularPattern),
+    /// Create a helix using the cylinder and specified parameters.
+    MakeHelix(MakeHelix),
     /// When you select some entity with the current tool, what should happen to the entity?
     SetSelectionType(SetSelectionType),
     /// What kind of entities can be selected?

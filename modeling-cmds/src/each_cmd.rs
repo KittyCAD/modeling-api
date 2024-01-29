@@ -219,6 +219,21 @@ pub struct EntityCircularPattern {
     pub rotate_duplicates: bool,
 }
 
+/// Create a helix using the input cylinder and other specified parameters.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct MakeHelix {
+    /// ID of the cylinder.
+    pub cylinder_id: Uuid,
+   /// Number of revolutions.
+   pub revolutions: f64,
+   /// Start angle (in degrees).
+    pub start_angle: f64,
+    /// Is the helix rotation clockwise? 
+    pub is_clockwise: bool,
+    /// Length of the helix.
+    pub length: f64,
+}
+
 /// Enter edit mode
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct EditModeEnter {

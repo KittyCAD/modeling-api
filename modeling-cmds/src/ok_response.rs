@@ -36,6 +36,7 @@ build_enum! {
     EntityGetDistance,
     EntityLinearPattern,
     EntityCircularPattern,
+    MakeHelix,
     Solid3dGetAllEdgeFaces,
     Solid3dGetAllOppositeEdges,
     Solid3dGetOppositeEdge,

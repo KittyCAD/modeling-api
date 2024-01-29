@@ -50,6 +50,7 @@ impl_variant_output!(EntityGetAllChildUuids);
 impl_variant_output!(EntityGetDistance);
 impl_variant_output!(EntityLinearPattern);
 impl_variant_output!(EntityCircularPattern);
+impl_variant_output!(MakeHelix);
 impl_variant_empty!(EditModeEnter);
 impl_variant_output!(SelectWithPoint);
 impl_variant_empty!(SelectAdd);
