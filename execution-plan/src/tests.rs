@@ -1,10 +1,9 @@
 use std::env;
 
 use insta::assert_snapshot;
-use kittycad_execution_plan_traits::{NumericPrimitive, Primitive, Value};
+use kittycad_execution_plan_traits::{Primitive, Value};
 use kittycad_modeling_cmds::shared::{PathSegment, Point3d, Point4d};
 use kittycad_modeling_session::{Session, SessionBuilder};
-use tabled::{settings::Style, Table};
 use uuid::Uuid;
 
 use crate::{arithmetic::operator::BinaryOperation, Address};
@@ -195,13 +194,14 @@ async fn add_to_composite_value() {
 #[tokio::test]
 async fn get_element_of_array() {
     let mut mem = Memory::default();
+    const START_DATA_AT: usize = 10;
     let point_4d = Point4d {
         x: 20.0f64,
         y: 21.0,
         z: 22.0,
         w: 23.0,
     };
-    let array = vec![
+    let list = vec![
         Point3d {
             x: 12.0f64,
             y: 13.0,
@@ -213,9 +213,9 @@ async fn get_element_of_array() {
     execute(
         &mut mem,
         vec![
-            Instruction::SetArray {
-                start: 10.into(),
-                elements: array,
+            Instruction::SetList {
+                start: START_DATA_AT.into(),
+                elements: list,
             },
             Instruction::GetElement {
                 start: 10.into(),
@@ -226,10 +226,18 @@ async fn get_element_of_array() {
     )
     .await
     .unwrap();
-    assert_snapshot!("set_array_memory", debug_dump_memory(&mem));
+    assert_snapshot!("set_array_memory", mem.debug_table());
 
+    // The last instruction put the 4D point (element 1) on the stack.
+    // Check it's there.
     let actual = mem.stack.pop().unwrap();
     assert_eq!(actual, point_4d.into_parts());
+
+    // The memory should start with a list header.
+    let ListHeader { count: _, size } = mem.get_primitive(&(Address::ZERO + START_DATA_AT)).unwrap();
+    // Check the edge of `size`.
+    assert!(mem.get(&(Address::ZERO + START_DATA_AT + size)).is_some());
+    assert!(mem.get(&(Address::ZERO + START_DATA_AT + size + 1)).is_none());
 }
 
 #[tokio::test]
@@ -274,7 +282,7 @@ async fn api_call_draw_cube() {
     .map(line_segment);
     let segment_addrs = segments.map(|segment| static_data.push(segment));
     let mut mem = static_data.finish();
-    assert_snapshot!("cube_memory_before", debug_dump_memory(&mem));
+    assert_snapshot!("cube_memory_before", mem.debug_table());
 
     // Run the plan!
     execute(
@@ -344,7 +352,7 @@ async fn api_call_draw_cube() {
     .unwrap();
 
     // Program executed successfully!
-    assert_snapshot!("cube_memory_after", debug_dump_memory(&mem));
+    assert_snapshot!("cube_memory_after", mem.debug_table());
 
     // The image output was set to addr 99.
     // Outputs are two addresses long, addr 99 will store the data format (TAKE_SNAPSHOT)
@@ -360,45 +368,6 @@ async fn api_call_draw_cube() {
         .decode()
         .unwrap();
     twenty_twenty::assert_image("tests/outputs/cube.png", &img, 0.9999);
-}
-
-/// Return a nicely-formatted table of memory.
-#[must_use]
-fn debug_dump_memory(mem: &Memory) -> String {
-    fn pretty_print(p: &Primitive) -> (&'static str, String) {
-        match p {
-            Primitive::String(v) => ("String", v.to_owned()),
-            Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
-            Primitive::NumericValue(NumericPrimitive::UInteger(v)) => ("Uint", v.to_string()),
-            Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Int", v.to_string()),
-            Primitive::Uuid(v) => ("Uuid", v.to_string()),
-            Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
-            Primitive::Bool(v) => ("Bool", v.to_string()),
-            Primitive::Nil => ("Nil", String::new()),
-        }
-    }
-    #[derive(tabled::Tabled)]
-    struct MemoryAddr {
-        index: usize,
-        val_type: &'static str,
-        value: String,
-    }
-    let table_data: Vec<_> = mem
-        .iter()
-        .filter_map(|(i, val)| {
-            if let Some(val) = val {
-                let (val_type, value) = pretty_print(val);
-                Some(MemoryAddr {
-                    index: i,
-                    val_type,
-                    value,
-                })
-            } else {
-                None
-            }
-        })
-        .collect();
-    Table::new(table_data).with(Style::sharp()).to_string()
 }
 
 fn new_id() -> ModelingCmdId {

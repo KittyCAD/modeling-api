@@ -1,4 +1,4 @@
-use kittycad_execution_plan_traits::{MemoryError, Primitive, ReadMemory, Value};
+use kittycad_execution_plan_traits::{ListHeader, MemoryError, NumericPrimitive, Primitive, ReadMemory, Value};
 
 use crate::{Address, ExecutionError};
 
@@ -118,6 +118,50 @@ impl Memory {
             .map(|(addr, prim)| prim.ok_or(ExecutionError::MemoryEmpty { addr: Address(addr) }))
             .collect::<Result<Vec<_>, _>>()?;
         Ok(x)
+    }
+
+    /// Return a nicely-formatted table of memory.
+    #[must_use]
+    pub fn debug_table(&self) -> String {
+        fn pretty_print(p: &Primitive) -> (&'static str, String) {
+            match p {
+                Primitive::String(v) => ("String", v.to_owned()),
+                Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
+                Primitive::NumericValue(NumericPrimitive::UInteger(v)) => ("Uint", v.to_string()),
+                Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Int", v.to_string()),
+                Primitive::Uuid(v) => ("Uuid", v.to_string()),
+                Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
+                Primitive::Bool(v) => ("Bool", v.to_string()),
+                Primitive::ListHeader(ListHeader { count, size }) => {
+                    ("List header", format!("{count} elements, {size} primitives"))
+                }
+                Primitive::Nil => ("Nil", String::new()),
+            }
+        }
+        #[derive(tabled::Tabled)]
+        struct MemoryAddr {
+            index: usize,
+            val_type: &'static str,
+            value: String,
+        }
+        let table_data: Vec<_> = self
+            .iter()
+            .filter_map(|(i, val)| {
+                if let Some(val) = val {
+                    let (val_type, value) = pretty_print(val);
+                    Some(MemoryAddr {
+                        index: i,
+                        val_type,
+                        value,
+                    })
+                } else {
+                    None
+                }
+            })
+            .collect();
+        tabled::Table::new(table_data)
+            .with(tabled::settings::Style::sharp())
+            .to_string()
     }
 }
 

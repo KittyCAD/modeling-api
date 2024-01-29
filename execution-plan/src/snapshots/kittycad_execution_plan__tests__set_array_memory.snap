@@ -1,18 +1,18 @@
 ---
 source: execution-plan/src/tests.rs
-expression: debug_dump_memory(&mem)
+expression: mem.debug_table()
 ---
-┌───────┬──────────┬───────┐
-│ index │ val_type │ value │
-├───────┼──────────┼───────┤
-│ 10    │ Uint     │ 2     │
-│ 11    │ Uint     │ 3     │
-│ 12    │ Float    │ 12    │
-│ 13    │ Float    │ 13    │
-│ 14    │ Float    │ 14    │
-│ 15    │ Uint     │ 4     │
-│ 16    │ Float    │ 20    │
-│ 17    │ Float    │ 21    │
-│ 18    │ Float    │ 22    │
-│ 19    │ Float    │ 23    │
-└───────┴──────────┴───────┘
+┌───────┬─────────────┬──────────────────────────┐
+│ index │ val_type    │ value                    │
+├───────┼─────────────┼──────────────────────────┤
+│ 10    │ List header │ 2 elements, 9 primitives │
+│ 11    │ Uint        │ 3                        │
+│ 12    │ Float       │ 12                       │
+│ 13    │ Float       │ 13                       │
+│ 14    │ Float       │ 14                       │
+│ 15    │ Uint        │ 4                        │
+│ 16    │ Float       │ 20                       │
+│ 17    │ Float       │ 21                       │
+│ 18    │ Float       │ 22                       │
+│ 19    │ Float       │ 23                       │
+└───────┴─────────────┴──────────────────────────┘

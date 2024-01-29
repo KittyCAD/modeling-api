@@ -6,7 +6,7 @@
 //! You can think of it as a domain-specific language for making KittyCAD API calls and using
 //! the results to make other API calls.
 
-use kittycad_execution_plan_traits::{FromMemory, MemoryError, NumericPrimitive, Primitive, ReadMemory};
+use kittycad_execution_plan_traits::{FromMemory, ListHeader, MemoryError, NumericPrimitive, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, StaticMemoryInitializer};
@@ -43,18 +43,18 @@ pub enum Instruction {
         /// What values to put into memory.
         value_parts: Vec<Primitive>,
     },
-    /// Get the element at `index` of the array which begins at `start` into the `destination`.
+    /// Get the element at `index` of the list which begins at `start` into the `destination`.
     /// Push it onto the stack (does not include the element length header).
-    /// Assumes the array is formatted according to [`Instruction::SetArray`] documentation.
+    /// Assumes the list is formatted according to [`Instruction::SetList`] documentation.
     GetElement {
-        /// Starting address of the array
+        /// Starting address of the list
         start: Address,
         /// Element number
         index: Operand,
     },
-    /// Set an array of elements into memory.
+    /// Set a list of elements into memory.
     /// # Format
-    /// Arrays have this format (each line represents a memory address starting at `start`):
+    /// Lists have this format (each line represents a memory address starting at `start`):
     ///
     /// <number of elements>
     /// <n = size of element 0>
@@ -66,8 +66,8 @@ pub enum Instruction {
     /// <...>
     /// <element 1, address n>
     /// etc etc for each element.
-    SetArray {
-        /// Array will start at this element.
+    SetList {
+        /// List will start at this element.
         start: Address,
         /// Each element
         elements: Vec<Vec<Primitive>>,
@@ -246,11 +246,11 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
                     Destination::StackPush => mem.stack.push(vec![out]),
                 };
             }
-            Instruction::SetArray { start, elements } => {
-                // Store size of array.
+            Instruction::SetList { start, elements } => {
+                // Store size of list.
                 let mut curr = start;
-                mem.set(curr, elements.len().into());
                 curr += 1;
+                let n = elements.len();
                 for element in elements {
                     // Store each element's size
                     mem.set(curr, element.len().into());
@@ -261,6 +261,13 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
                         curr += 1
                     }
                 }
+                mem.set(
+                    start,
+                    Primitive::from(ListHeader {
+                        count: n,
+                        size: (curr - start) - 1,
+                    }),
+                );
             }
             Instruction::GetElement { start, index } => {
                 // Resolve the index.
@@ -280,17 +287,27 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
                         }))
                     }
                 };
-                // Check size of the array.
-                let size: usize = mem.get_primitive(&start)?;
-                if index >= size {
-                    return Err(ExecutionError::ArrayIndexOutOfBounds { size, index });
+
+                // Check size of the list.
+                let ListHeader { count, size: _ }: ListHeader = mem.get_primitive(&start)?;
+                if index >= count {
+                    return Err(ExecutionError::ListIndexOutOfBounds { count, index });
                 }
                 // Find the given element
                 let mut curr = start + 1;
-                eprintln!("{:#?}", mem.iter().take(10).collect::<Vec<_>>());
+                eprintln!("{}", mem.debug_table());
                 eprintln!("Starting curr at {start}+1={curr}");
                 for _ in 0..index {
-                    let size_of_element: usize = mem.get_primitive(&curr)?;
+                    let size_of_element: usize = match mem.get(&curr).ok_or(MemoryError::MemoryWrongSize)? {
+                        Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
+                        Primitive::ListHeader(ListHeader { count: _, size }) => *size,
+                        other => {
+                            return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                                expected: "ListHeader or usize",
+                                actual: format!("{other:?}"),
+                            }))
+                        }
+                    };
                     curr += size_of_element + 1;
                 }
                 let size_of_element: usize = mem.get_primitive(&curr)?;
@@ -350,11 +367,11 @@ pub enum ExecutionError {
     /// Error reading value from memory.
     #[error("{0}")]
     MemoryError(#[from] MemoryError),
-    /// Array index out of bounds.
-    #[error("you tried to access element {index} in an array of size {size}")]
-    ArrayIndexOutOfBounds {
-        /// Size of array.   
-        size: usize,
+    /// List index out of bounds.
+    #[error("you tried to access element {index} in a list of size {count}")]
+    ListIndexOutOfBounds {
+        /// Number of elements in the list.
+        count: usize,
         /// Index which user attempted to access.
         index: usize,
     },
