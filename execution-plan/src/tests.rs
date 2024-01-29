@@ -241,6 +241,49 @@ async fn get_element_of_array() {
 }
 
 #[tokio::test]
+async fn get_key_of_object() {
+    let point_4d = Point4d {
+        x: 20.0f64,
+        y: 21.0,
+        z: 22.0,
+        w: 23.0,
+    };
+    let point_3d = Point3d {
+        x: 12.0f64,
+        y: 13.0,
+        z: 14.0,
+    };
+    let mut smem = StaticMemoryInitializer::default();
+    let size = 9;
+    let start = smem.push(Primitive::from(ObjectHeader {
+        properties: vec!["first".to_owned(), "second".to_owned()],
+        size,
+    }));
+    smem.push(Primitive::from(3usize));
+    smem.push(point_3d);
+    smem.push(Primitive::from(4usize));
+    smem.push(point_4d);
+    let mut mem = smem.finish();
+    execute(
+        &mut mem,
+        vec![Instruction::GetProperty {
+            start,
+            property: Operand::Literal("second".to_owned().into()),
+        }],
+        None,
+    )
+    .await
+    .unwrap();
+
+    // The last instruction put the 4D point (element 1) on the stack.
+    // Check it's there.
+    let actual = mem.stack.pop().unwrap();
+    assert_eq!(actual, point_4d.into_parts());
+    assert!(mem.get(&Address(size)).is_some());
+    assert!(mem.get(&Address(size + 1)).is_none());
+}
+
+#[tokio::test]
 async fn api_call_draw_cube() {
     let client = test_client().await;
 
