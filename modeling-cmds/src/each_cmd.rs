@@ -221,7 +221,7 @@ pub struct EntityCircularPattern {
 
 /// Create a helix using the input cylinder and other specified parameters.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct MakeHelix {
+pub struct EntityMakeHelix {
     /// ID of the cylinder.
     pub cylinder_id: Uuid,
    /// Number of revolutions.

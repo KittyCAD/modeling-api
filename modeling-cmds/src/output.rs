@@ -271,9 +271,9 @@ pub struct EntityCircularPattern {
     pub entity_ids: Vec<Uuid>,
 }
 
-/// The response from the `MakeHelix` command.
+/// The response from the `EntityMakeHelix` command.
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
-pub struct MakeHelix {
+pub struct EntityMakeHelix {
     /// The UUID of the helix that was created.
     pub helix_id: Uuid,
 }
@@ -289,7 +289,7 @@ impl ModelingCmdOutput for EntityGetAllChildUuids {}
 impl ModelingCmdOutput for EntityGetDistance {}
 impl ModelingCmdOutput for EntityLinearPattern {}
 impl ModelingCmdOutput for EntityCircularPattern {}
-impl ModelingCmdOutput for MakeHelix {}
+impl ModelingCmdOutput for EntityMakeHelix {}
 impl ModelingCmdOutput for SelectGet {}
 impl ModelingCmdOutput for GetEntityType {}
 impl ModelingCmdOutput for Solid3dGetAllEdgeFaces {}
