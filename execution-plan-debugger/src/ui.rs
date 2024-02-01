@@ -23,13 +23,15 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
         .split(body_chunks[1]);
 
-    let title_block = Block::default().borders(Borders::ALL).style(Style::default());
-    let title =
-        Paragraph::new(Text::styled("Execution Plan Replay", Style::default().fg(Color::Green))).block(title_block);
+    let title = Paragraph::new(Text::styled("Execution Plan Replay", Style::default().fg(Color::Green)))
+        .block(Block::default().borders(Borders::ALL).style(Style::default()));
 
     // TODO: replace this with a table, with columns for the instruction type,
     // operands, etc.
-    let instruction_block = Block::default().borders(Borders::ALL).style(Style::default());
+    let instruction_block = Block::default()
+        .borders(Borders::ALL)
+        .style(Style::default())
+        .title("Instructions");
     let instruction_view = make_instruction_view(instruction_block, ctx);
 
     // Render the main memory view.
@@ -51,7 +53,11 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let main_mem_view = match active_instruction {
         Some(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
-            Some(Paragraph::new(Text::styled(mem.debug_table(max_mem), Style::default())))
+            let block = Block::default()
+                .borders(Borders::ALL)
+                .style(Style::default())
+                .title("Address Memory");
+            Some(Paragraph::new(Text::styled(mem.debug_table(max_mem), Style::default())).block(block))
         }
         _ => None,
     };
@@ -60,8 +66,12 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let stack_mem_view = match active_instruction {
         Some(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
+            let block = Block::default()
+                .borders(Borders::ALL)
+                .style(Style::default())
+                .title("Stack Memory");
             if !mem.stack.is_empty() {
-                Some(Paragraph::new(Text::styled(mem.debug_table_stack(), Style::default())))
+                Some(Paragraph::new(Text::styled(mem.debug_table_stack(), Style::default())).block(block))
             } else {
                 None
             }
@@ -119,20 +129,14 @@ fn make_instruction_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
         },
     ));
     Table::new(rows, widths)
-        // ...and they can be separated by a fixed spacing.
         .column_spacing(1)
-        // It has an optional header, which is simply a Row always visible at the top.
         .header(
             Row::new(vec!["#", "Type", "Operands"])
                 .style(Style::new().bold())
-                // To add space between the header and the rest of the rows, specify the margin
                 .bottom_margin(1),
         )
-        // As any other widget, a Table can be wrapped in a Block.
-        .block(Block::default().title("Table"))
-        // The selected row and its content can also be styled.
+        // Styles the selected row
         .highlight_style(Style::new().reversed())
-        // ...and potentially show a symbol in front of the selection.
         .highlight_symbol(">>")
         .block(block)
 }
