@@ -110,120 +110,16 @@ pub enum Instruction {
     },
 }
 
-/// Somewhere values can be written to.
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-pub enum Destination {
-    /// Write to main memory at the given address.
-    Address(Address),
-    /// Push onto the stack.
-    StackPush,
-}
-
-/// Request sent to the KittyCAD API.
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-pub struct ApiRequest {
-    /// Which ModelingCmd to call.
-    pub endpoint: Endpoint,
-    /// Which address should the response be stored in?
-    /// If none, the response will be ignored.
-    pub store_response: Option<Address>,
-    /// Look up each parameter at this address.
-    pub arguments: Vec<Address>,
-    /// The ID of this command.
-    pub cmd_id: ModelingCmdId,
-}
-
-/// A KittyCAD modeling command.
-#[derive(Serialize, Deserialize, parse_display_derive::Display, Debug, PartialEq)]
-pub enum Endpoint {
-    #[allow(missing_docs)]
-    StartPath,
-    #[allow(missing_docs)]
-    MovePathPen,
-    #[allow(missing_docs)]
-    ExtendPath,
-    #[allow(missing_docs)]
-    ClosePath,
-    #[allow(missing_docs)]
-    Extrude,
-    #[allow(missing_docs)]
-    TakeSnapshot,
-}
-
-impl ApiRequest {
-    async fn execute(self, session: &mut ModelingSession, mem: &mut Memory) -> Result<()> {
-        let Self {
-            endpoint,
-            store_response,
-            arguments,
-            cmd_id,
-        } = self;
-        let mut arguments = arguments.into_iter();
-        let output = match endpoint {
-            Endpoint::StartPath => {
-                let cmd = each_cmd::StartPath::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-            Endpoint::MovePathPen => {
-                let cmd = each_cmd::MovePathPen::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-            Endpoint::ExtendPath => {
-                let cmd = each_cmd::ExtendPath::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-            Endpoint::ClosePath => {
-                let cmd = each_cmd::ClosePath::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-            Endpoint::Extrude => {
-                let cmd = each_cmd::Extrude::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-            Endpoint::TakeSnapshot => {
-                let cmd = each_cmd::TakeSnapshot::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-        };
-        // Write out to memory.
-        if let Some(output_address) = store_response {
-            mem.set_composite(output_address, output);
-        }
-        Ok(())
-    }
-}
-
-/// Argument to an operation.
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
-pub enum Operand {
-    /// A literal value.
-    Literal(Primitive),
-    /// An address which contains some literal value.
-    Reference(Address),
-    /// Pop the value from the top of the stack.
-    StackPop,
-}
-
-impl Operand {
-    /// Evaluate the operand, getting its value.
-    fn eval(&self, mem: &mut Memory) -> Result<Primitive> {
+impl Instruction {
+    /// Execute the instruction
+    pub async fn execute(
+        self,
+        mem: &mut Memory,
+        session: Option<&mut kittycad_modeling_session::Session>,
+    ) -> Result<()> {
         match self {
-            Operand::Literal(v) => Ok(v.to_owned()),
-            Operand::Reference(addr) => match mem.get(addr) {
-                None => Err(ExecutionError::MemoryEmpty { addr: *addr }),
-                Some(v) => Ok(v.to_owned()),
-            },
-            Operand::StackPop => mem.stack.pop_single(),
-        }
-    }
-}
-
-/// Execute the plan.
-pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Option<ModelingSession>) -> Result<()> {
-    for step in plan.into_iter() {
-        match step {
             Instruction::ApiRequest(req) => {
-                if let Some(ref mut session) = session {
+                if let Some(session) = session {
                     req.execute(session, mem).await?;
                 } else {
                     return Err(ExecutionError::NoApiClient);
@@ -367,12 +263,128 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
             }
             Instruction::StackPop { destination } => {
                 let data = mem.stack.pop()?;
-                let Some(destination) = destination else { continue };
+                let Some(destination) = destination else { return Ok(()) };
                 for (i, data_part) in data.into_iter().enumerate() {
                     mem.set(destination + i, data_part);
                 }
             }
         }
+        Ok(())
+    }
+}
+
+/// Somewhere values can be written to.
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub enum Destination {
+    /// Write to main memory at the given address.
+    Address(Address),
+    /// Push onto the stack.
+    StackPush,
+}
+
+/// Request sent to the KittyCAD API.
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct ApiRequest {
+    /// Which ModelingCmd to call.
+    pub endpoint: Endpoint,
+    /// Which address should the response be stored in?
+    /// If none, the response will be ignored.
+    pub store_response: Option<Address>,
+    /// Look up each parameter at this address.
+    pub arguments: Vec<Address>,
+    /// The ID of this command.
+    pub cmd_id: ModelingCmdId,
+}
+
+/// A KittyCAD modeling command.
+#[derive(Serialize, Deserialize, parse_display_derive::Display, Debug, PartialEq)]
+pub enum Endpoint {
+    #[allow(missing_docs)]
+    StartPath,
+    #[allow(missing_docs)]
+    MovePathPen,
+    #[allow(missing_docs)]
+    ExtendPath,
+    #[allow(missing_docs)]
+    ClosePath,
+    #[allow(missing_docs)]
+    Extrude,
+    #[allow(missing_docs)]
+    TakeSnapshot,
+}
+
+impl ApiRequest {
+    async fn execute(self, session: &mut ModelingSession, mem: &mut Memory) -> Result<()> {
+        let Self {
+            endpoint,
+            store_response,
+            arguments,
+            cmd_id,
+        } = self;
+        let mut arguments = arguments.into_iter();
+        let output = match endpoint {
+            Endpoint::StartPath => {
+                let cmd = each_cmd::StartPath::from_memory(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
+            Endpoint::MovePathPen => {
+                let cmd = each_cmd::MovePathPen::from_memory(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
+            Endpoint::ExtendPath => {
+                let cmd = each_cmd::ExtendPath::from_memory(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
+            Endpoint::ClosePath => {
+                let cmd = each_cmd::ClosePath::from_memory(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
+            Endpoint::Extrude => {
+                let cmd = each_cmd::Extrude::from_memory(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
+            Endpoint::TakeSnapshot => {
+                let cmd = each_cmd::TakeSnapshot::from_memory(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
+        };
+        // Write out to memory.
+        if let Some(output_address) = store_response {
+            mem.set_composite(output_address, output);
+        }
+        Ok(())
+    }
+}
+
+/// Argument to an operation.
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
+pub enum Operand {
+    /// A literal value.
+    Literal(Primitive),
+    /// An address which contains some literal value.
+    Reference(Address),
+    /// Pop the value from the top of the stack.
+    StackPop,
+}
+
+impl Operand {
+    /// Evaluate the operand, getting its value.
+    fn eval(&self, mem: &mut Memory) -> Result<Primitive> {
+        match self {
+            Operand::Literal(v) => Ok(v.to_owned()),
+            Operand::Reference(addr) => match mem.get(addr) {
+                None => Err(ExecutionError::MemoryEmpty { addr: *addr }),
+                Some(v) => Ok(v.to_owned()),
+            },
+            Operand::StackPop => mem.stack.pop_single(),
+        }
+    }
+}
+
+/// Execute the plan.
+pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Option<ModelingSession>) -> Result<()> {
+    for instruction in plan.into_iter() {
+        instruction.execute(mem, session.as_mut()).await?;
     }
     Ok(())
 }
