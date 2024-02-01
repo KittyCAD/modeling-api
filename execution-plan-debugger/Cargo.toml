@@ -11,7 +11,7 @@ description = "Debugger for KittyCAD execution plans"
 anyhow = "1"
 crossterm = "0.27.0"
 kittycad-execution-plan = { path = "../execution-plan" }
-kittycad-execution-plan-traits = "0.1.6"
+kittycad-execution-plan-traits = "0.1.7"
 kittycad-modeling-cmds = { path = "../modeling-cmds" }
 kittycad-modeling-session = { path = "../modeling-session" }
 ratatui = { version = "0.25.0", features = ["all-widgets"] }
