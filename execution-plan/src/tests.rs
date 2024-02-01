@@ -1,7 +1,7 @@
 use std::env;
 
 use insta::assert_snapshot;
-use kittycad_execution_plan_traits::{Primitive, Value};
+use kittycad_execution_plan_traits::{ListHeader, ObjectHeader, Primitive, Value};
 use kittycad_modeling_cmds::shared::{PathSegment, Point3d, Point4d};
 use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
