@@ -306,8 +306,6 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
                 }
                 // Find the given element
                 let mut curr = start + 1;
-                eprintln!("{}", mem.debug_table());
-                eprintln!("Starting curr at {start}+1={curr}");
                 for _ in 0..index {
                     let size_of_element: usize = match mem.get(&curr).ok_or(MemoryError::MemoryWrongSize)? {
                         Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
@@ -315,7 +313,7 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
                         Primitive::ObjectHeader(ObjectHeader { properties: _, size }) => *size,
                         other => {
                             return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                                expected: "ListHeader or usize",
+                                expected: "ListHeader, ObjectHeader, or usize",
                                 actual: format!("{other:?}"),
                             }))
                         }
@@ -356,23 +354,11 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
                         })?;
                 // Find the given element
                 let mut curr = start + 1;
-                eprintln!("{}", mem.debug_table());
-                eprintln!("Starting curr at {start}+1={curr}");
                 for _ in 0..index {
-                    let size_of_element: usize = match mem.get(&curr).ok_or(MemoryError::MemoryWrongSize)? {
-                        Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
-                        Primitive::ListHeader(ListHeader { count: _, size }) => *size,
-                        Primitive::ObjectHeader(ObjectHeader { properties: _, size }) => *size,
-                        other => {
-                            return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                                expected: "ListHeader or usize",
-                                actual: format!("{other:?}"),
-                            }))
-                        }
-                    };
+                    let size_of_element = mem.get_size(&curr)?;
                     curr += size_of_element + 1;
                 }
-                let size_of_element: usize = mem.get_primitive(&curr)?;
+                let size_of_element: usize = mem.get_size(&curr)?;
                 let element = mem.get_slice(curr + 1, size_of_element)?;
                 mem.stack.push(element);
             }

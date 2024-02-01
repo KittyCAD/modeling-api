@@ -110,6 +110,24 @@ impl Memory {
         primitive.try_into().map_err(ExecutionError::MemoryError)
     }
 
+    /// Look for either a usize or an object/list header at the given address.
+    /// Return that usize, or the `size` field of the header.
+    pub fn get_size(&self, addr: &Address) -> Result<usize, ExecutionError> {
+        let primitive = self.get(addr).ok_or(ExecutionError::MemoryEmpty { addr: *addr })?;
+        let size = match primitive {
+            Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
+            Primitive::ListHeader(ListHeader { count: _, size }) => *size,
+            Primitive::ObjectHeader(ObjectHeader { properties: _, size }) => *size,
+            other => {
+                return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                    expected: "ObjectHeader, ListHeader, or usize",
+                    actual: format!("{other:?}"),
+                }))
+            }
+        };
+        Ok(size)
+    }
+
     /// Get a range of addresses, starting at `start` and continuing for `len` more.
     pub fn get_slice(&self, start: Address, len: usize) -> Result<Vec<Primitive>, ExecutionError> {
         let slice = &self.addresses[start.0..start.0 + len];
@@ -122,28 +140,33 @@ impl Memory {
         Ok(x)
     }
 
+    /// Return a nicely-formatted table of stack.
+    #[must_use]
+    pub fn debug_table_stack(&self) -> String {
+        #[derive(tabled::Tabled)]
+        struct StackLevel {
+            depth: usize,
+            value: String,
+        }
+
+        let table_data: Vec<_> = self
+            .stack
+            .inner
+            .iter()
+            .enumerate()
+            .map(|(depth, slice)| StackLevel {
+                depth,
+                value: format!("{slice:?}"),
+            })
+            .collect();
+        tabled::Table::new(table_data)
+            .with(tabled::settings::Style::sharp())
+            .to_string()
+    }
+
     /// Return a nicely-formatted table of memory.
     #[must_use]
     pub fn debug_table(&self) -> String {
-        fn pretty_print(p: &Primitive) -> (&'static str, String) {
-            match p {
-                Primitive::String(v) => ("String", v.to_owned()),
-                Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
-                Primitive::NumericValue(NumericPrimitive::UInteger(v)) => ("Uint", v.to_string()),
-                Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Int", v.to_string()),
-                Primitive::Uuid(v) => ("Uuid", v.to_string()),
-                Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
-                Primitive::Bool(v) => ("Bool", v.to_string()),
-                Primitive::ListHeader(ListHeader { count, size }) => {
-                    ("List header", format!("{count} elements, {size} primitives"))
-                }
-                Primitive::ObjectHeader(ObjectHeader { properties, size }) => (
-                    "Object header",
-                    format!("keys {}, {size} primitives", properties.clone().join(",")),
-                ),
-                Primitive::Nil => ("Nil", String::new()),
-            }
-        }
         #[derive(tabled::Tabled)]
         struct MemoryAddr {
             index: usize,
@@ -168,6 +191,26 @@ impl Memory {
         tabled::Table::new(table_data)
             .with(tabled::settings::Style::sharp())
             .to_string()
+    }
+}
+
+fn pretty_print(p: &Primitive) -> (&'static str, String) {
+    match p {
+        Primitive::String(v) => ("String", v.to_owned()),
+        Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
+        Primitive::NumericValue(NumericPrimitive::UInteger(v)) => ("Uint", v.to_string()),
+        Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Int", v.to_string()),
+        Primitive::Uuid(v) => ("Uuid", v.to_string()),
+        Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
+        Primitive::Bool(v) => ("Bool", v.to_string()),
+        Primitive::ListHeader(ListHeader { count, size }) => {
+            ("List header", format!("{count} elements, {size} primitives"))
+        }
+        Primitive::ObjectHeader(ObjectHeader { properties, size }) => (
+            "Object header",
+            format!("keys {}, {size} primitives", properties.clone().join(",")),
+        ),
+        Primitive::Nil => ("Nil", String::new()),
     }
 }
 
