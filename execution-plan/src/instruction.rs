@@ -6,7 +6,7 @@ use crate::{
 };
 
 /// One step of the execution plan.
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub enum Instruction {
     /// Call the KittyCAD API.
     ApiRequest(ApiRequest),

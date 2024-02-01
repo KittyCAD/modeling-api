@@ -7,7 +7,7 @@ use crate::{ExecutionError, Memory, Operand};
 pub mod operator;
 
 /// Instruction to perform arithmetic on values in memory.
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub struct BinaryArithmetic {
     /// Apply this operation
     pub operation: BinaryOperation,
@@ -18,7 +18,7 @@ pub struct BinaryArithmetic {
 }
 
 /// Instruction to perform arithmetic on values in memory.
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub struct UnaryArithmetic {
     /// Apply this operation
     pub operation: UnaryOperation,

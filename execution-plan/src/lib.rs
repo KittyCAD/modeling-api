@@ -27,7 +27,7 @@ mod memory;
 mod tests;
 
 /// Somewhere values can be written to.
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub enum Destination {
     /// Write to main memory at the given address.
     Address(Address),
@@ -36,7 +36,7 @@ pub enum Destination {
 }
 
 /// Request sent to the KittyCAD API.
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct ApiRequest {
     /// Which ModelingCmd to call.
     pub endpoint: Endpoint,
@@ -50,7 +50,7 @@ pub struct ApiRequest {
 }
 
 /// A KittyCAD modeling command.
-#[derive(Serialize, Deserialize, parse_display_derive::Display, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, parse_display_derive::Display, Debug, PartialEq, Clone, Copy)]
 pub enum Endpoint {
     #[allow(missing_docs)]
     StartPath,
@@ -110,7 +110,7 @@ impl ApiRequest {
 }
 
 /// Argument to an operation.
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub enum Operand {
     /// A literal value.
     Literal(Primitive),
@@ -140,6 +140,34 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
         instruction.execute(mem, session.as_mut()).await?;
     }
     Ok(())
+}
+
+/// Current state of execution.
+pub struct ExecutionState {
+    /// State of memory after executing the instruction
+    pub mem: Memory,
+    /// Which instruction was executed? Index into the Vec<Instruction> for the plan.
+    pub active_instruction: usize,
+}
+
+/// Execute the plan, returning the state at every moment of execution.
+pub async fn execute_time_travel(
+    mem: &mut Memory,
+    plan: Vec<Instruction>,
+    mut session: Option<ModelingSession>,
+) -> (Vec<ExecutionState>, Result<()>) {
+    let mut out = Vec::new();
+    for (active_instruction, instruction) in plan.into_iter().enumerate() {
+        let res = instruction.execute(mem, session.as_mut()).await;
+        out.push(ExecutionState {
+            mem: mem.clone(),
+            active_instruction,
+        });
+        if res.is_err() {
+            return (out, res);
+        }
+    }
+    (out, Ok(()))
 }
 
 type Result<T> = std::result::Result<T, ExecutionError>;
