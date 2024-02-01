@@ -110,6 +110,169 @@ pub enum Instruction {
     },
 }
 
+impl Instruction {
+    /// Execute the instruction
+    pub async fn execute(
+        self,
+        mem: &mut Memory,
+        session: Option<&mut kittycad_modeling_session::Session>,
+    ) -> Result<()> {
+        match self {
+            Instruction::ApiRequest(req) => {
+                if let Some(session) = session {
+                    req.execute(session, mem).await?;
+                } else {
+                    return Err(ExecutionError::NoApiClient);
+                }
+            }
+            Instruction::SetPrimitive { address, value } => {
+                mem.set(address, value);
+            }
+            Instruction::SetValue { address, value_parts } => {
+                value_parts.into_iter().enumerate().for_each(|(i, part)| {
+                    mem.set(address.offset(i), part);
+                });
+            }
+            Instruction::BinaryArithmetic {
+                arithmetic,
+                destination,
+            } => {
+                let out = arithmetic.calculate(mem)?;
+                match destination {
+                    Destination::Address(addr) => mem.set(addr, out),
+                    Destination::StackPush => mem.stack.push(vec![out]),
+                };
+            }
+            Instruction::UnaryArithmetic {
+                arithmetic,
+                destination,
+            } => {
+                let out = arithmetic.calculate(mem)?;
+                match destination {
+                    Destination::Address(addr) => mem.set(addr, out),
+                    Destination::StackPush => mem.stack.push(vec![out]),
+                };
+            }
+            Instruction::SetList { start, elements } => {
+                // Store size of list.
+                let mut curr = start;
+                curr += 1;
+                let n = elements.len();
+                for element in elements {
+                    // Store each element's size
+                    mem.set(curr, element.len().into());
+                    curr += 1;
+                    // Then store each primitive of the element.
+                    for primitive in element {
+                        mem.set(curr, primitive);
+                        curr += 1
+                    }
+                }
+                mem.set(
+                    start,
+                    Primitive::from(ListHeader {
+                        count: n,
+                        size: (curr - start) - 1,
+                    }),
+                );
+            }
+            Instruction::GetElement { start, index } => {
+                // Resolve the index.
+                let index_primitive: Primitive = match index {
+                    // Any numeric literal will do, as long as it's >= 0.
+                    Operand::Literal(p) => p,
+                    Operand::Reference(addr) => mem.get(&addr).ok_or(ExecutionError::MemoryEmpty { addr })?.clone(),
+                    Operand::StackPop => mem.stack.pop_single()?,
+                };
+                let index = match index_primitive {
+                    Primitive::NumericValue(NumericPrimitive::UInteger(i)) => i,
+                    Primitive::NumericValue(NumericPrimitive::Integer(i)) if i >= 0 => i.try_into().unwrap(),
+                    other => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "non-negative integer",
+                            actual: format!("{other:?}"),
+                        }))
+                    }
+                };
+
+                // Check size of the list.
+                let ListHeader { count, size: _ }: ListHeader = mem.get_primitive(&start)?;
+                if index >= count {
+                    return Err(ExecutionError::ListIndexOutOfBounds { count, index });
+                }
+                // Find the given element
+                let mut curr = start + 1;
+                for _ in 0..index {
+                    let size_of_element: usize = match mem.get(&curr).ok_or(MemoryError::MemoryWrongSize)? {
+                        Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
+                        Primitive::ListHeader(ListHeader { count: _, size }) => *size,
+                        Primitive::ObjectHeader(ObjectHeader { properties: _, size }) => *size,
+                        other => {
+                            return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                                expected: "ListHeader, ObjectHeader, or usize",
+                                actual: format!("{other:?}"),
+                            }))
+                        }
+                    };
+                    curr += size_of_element + 1;
+                }
+                let size_of_element: usize = mem.get_primitive(&curr)?;
+                let element = mem.get_slice(curr + 1, size_of_element)?;
+                mem.stack.push(element);
+            }
+            Instruction::GetProperty { start, property } => {
+                // Resolve the index.
+                let property_primitive: Primitive = match property {
+                    // Any numeric literal will do, as long as it's >= 0.
+                    Operand::Literal(p) => p,
+                    Operand::Reference(addr) => mem.get(&addr).ok_or(ExecutionError::MemoryEmpty { addr })?.clone(),
+                    Operand::StackPop => mem.stack.pop_single()?,
+                };
+                let property = match property_primitive {
+                    Primitive::String(p) => p,
+                    other => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "String",
+                            actual: format!("{other:?}"),
+                        }))
+                    }
+                };
+
+                // Check size of the list.
+                let ObjectHeader { properties, size: _ }: ObjectHeader = mem.get_primitive(&start)?;
+                let index =
+                    properties
+                        .iter()
+                        .position(|prop| prop == &property)
+                        .ok_or(ExecutionError::UndefinedProperty {
+                            property,
+                            address: start,
+                        })?;
+                // Find the given element
+                let mut curr = start + 1;
+                for _ in 0..index {
+                    let size_of_element = mem.get_size(&curr)?;
+                    curr += size_of_element + 1;
+                }
+                let size_of_element: usize = mem.get_size(&curr)?;
+                let element = mem.get_slice(curr + 1, size_of_element)?;
+                mem.stack.push(element);
+            }
+            Instruction::StackPush { data } => {
+                mem.stack.push(data);
+            }
+            Instruction::StackPop { destination } => {
+                let data = mem.stack.pop()?;
+                let Some(destination) = destination else { return Ok(()) };
+                for (i, data_part) in data.into_iter().enumerate() {
+                    mem.set(destination + i, data_part);
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
 /// Somewhere values can be written to.
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub enum Destination {
@@ -220,173 +383,8 @@ impl Operand {
 
 /// Execute the plan.
 pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Option<ModelingSession>) -> Result<()> {
-    for step in plan.into_iter() {
-        match step {
-            Instruction::ApiRequest(req) => {
-                if let Some(ref mut session) = session {
-                    req.execute(session, mem).await?;
-                } else {
-                    return Err(ExecutionError::NoApiClient);
-                }
-            }
-            Instruction::SetPrimitive { address, value } => {
-                mem.set(address, value);
-            }
-            Instruction::SetValue { address, value_parts } => {
-                value_parts.into_iter().enumerate().for_each(|(i, part)| {
-                    mem.set(address.offset(i), part);
-                });
-            }
-            Instruction::BinaryArithmetic {
-                arithmetic,
-                destination,
-            } => {
-                let out = arithmetic.calculate(mem)?;
-                match destination {
-                    Destination::Address(addr) => mem.set(addr, out),
-                    Destination::StackPush => mem.stack.push(vec![out]),
-                };
-            }
-            Instruction::UnaryArithmetic {
-                arithmetic,
-                destination,
-            } => {
-                let out = arithmetic.calculate(mem)?;
-                match destination {
-                    Destination::Address(addr) => mem.set(addr, out),
-                    Destination::StackPush => mem.stack.push(vec![out]),
-                };
-            }
-            Instruction::SetList { start, elements } => {
-                // Store size of list.
-                let mut curr = start;
-                curr += 1;
-                let n = elements.len();
-                for element in elements {
-                    // Store each element's size
-                    mem.set(curr, element.len().into());
-                    curr += 1;
-                    // Then store each primitive of the element.
-                    for primitive in element {
-                        mem.set(curr, primitive);
-                        curr += 1
-                    }
-                }
-                mem.set(
-                    start,
-                    Primitive::from(ListHeader {
-                        count: n,
-                        size: (curr - start) - 1,
-                    }),
-                );
-            }
-            Instruction::GetElement { start, index } => {
-                // Resolve the index.
-                let index_primitive: Primitive = match index {
-                    // Any numeric literal will do, as long as it's >= 0.
-                    Operand::Literal(p) => p,
-                    Operand::Reference(addr) => mem.get(&addr).ok_or(ExecutionError::MemoryEmpty { addr })?.clone(),
-                    Operand::StackPop => mem.stack.pop_single()?,
-                };
-                let index = match index_primitive {
-                    Primitive::NumericValue(NumericPrimitive::UInteger(i)) => i,
-                    Primitive::NumericValue(NumericPrimitive::Integer(i)) if i >= 0 => i.try_into().unwrap(),
-                    other => {
-                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                            expected: "non-negative integer",
-                            actual: format!("{other:?}"),
-                        }))
-                    }
-                };
-
-                // Check size of the list.
-                let ListHeader { count, size: _ }: ListHeader = mem.get_primitive(&start)?;
-                if index >= count {
-                    return Err(ExecutionError::ListIndexOutOfBounds { count, index });
-                }
-                // Find the given element
-                let mut curr = start + 1;
-                eprintln!("{}", mem.debug_table());
-                eprintln!("Starting curr at {start}+1={curr}");
-                for _ in 0..index {
-                    let size_of_element: usize = match mem.get(&curr).ok_or(MemoryError::MemoryWrongSize)? {
-                        Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
-                        Primitive::ListHeader(ListHeader { count: _, size }) => *size,
-                        Primitive::ObjectHeader(ObjectHeader { properties: _, size }) => *size,
-                        other => {
-                            return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                                expected: "ListHeader or usize",
-                                actual: format!("{other:?}"),
-                            }))
-                        }
-                    };
-                    curr += size_of_element + 1;
-                }
-                let size_of_element: usize = mem.get_primitive(&curr)?;
-                let element = mem.get_slice(curr + 1, size_of_element)?;
-                mem.stack.push(element);
-            }
-            Instruction::GetProperty { start, property } => {
-                // Resolve the index.
-                let property_primitive: Primitive = match property {
-                    // Any numeric literal will do, as long as it's >= 0.
-                    Operand::Literal(p) => p,
-                    Operand::Reference(addr) => mem.get(&addr).ok_or(ExecutionError::MemoryEmpty { addr })?.clone(),
-                    Operand::StackPop => mem.stack.pop_single()?,
-                };
-                let property = match property_primitive {
-                    Primitive::String(p) => p,
-                    other => {
-                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                            expected: "String",
-                            actual: format!("{other:?}"),
-                        }))
-                    }
-                };
-
-                // Check size of the list.
-                let ObjectHeader { properties, size: _ }: ObjectHeader = mem.get_primitive(&start)?;
-                let index =
-                    properties
-                        .iter()
-                        .position(|prop| prop == &property)
-                        .ok_or(ExecutionError::UndefinedProperty {
-                            property,
-                            address: start,
-                        })?;
-                // Find the given element
-                let mut curr = start + 1;
-                eprintln!("{}", mem.debug_table());
-                eprintln!("Starting curr at {start}+1={curr}");
-                for _ in 0..index {
-                    let size_of_element: usize = match mem.get(&curr).ok_or(MemoryError::MemoryWrongSize)? {
-                        Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
-                        Primitive::ListHeader(ListHeader { count: _, size }) => *size,
-                        Primitive::ObjectHeader(ObjectHeader { properties: _, size }) => *size,
-                        other => {
-                            return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                                expected: "ListHeader or usize",
-                                actual: format!("{other:?}"),
-                            }))
-                        }
-                    };
-                    curr += size_of_element + 1;
-                }
-                let size_of_element: usize = mem.get_primitive(&curr)?;
-                let element = mem.get_slice(curr + 1, size_of_element)?;
-                mem.stack.push(element);
-            }
-            Instruction::StackPush { data } => {
-                mem.stack.push(data);
-            }
-            Instruction::StackPop { destination } => {
-                let data = mem.stack.pop()?;
-                let Some(destination) = destination else { continue };
-                for (i, data_part) in data.into_iter().enumerate() {
-                    mem.set(destination + i, data_part);
-                }
-            }
-        }
+    for instruction in plan.into_iter() {
+        instruction.execute(mem, session.as_mut()).await?;
     }
     Ok(())
 }
