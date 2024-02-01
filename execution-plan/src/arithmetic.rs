@@ -55,6 +55,30 @@ impl UnaryArithmetic {
     }
 }
 
+trait Power { 
+    fn power(self, other: Self) -> Self;
+}
+
+macro_rules! power_float_impl {
+    ($($t:ty)*) => ($(
+        impl Power for $t {
+            fn power(self, other: $t) -> $t { self.powf(other) }
+        }
+
+    )*)
+}
+power_float_impl! { f32 f64 }
+
+macro_rules! power_int_impl {
+    ($($t:ty)*) => ($(
+        impl Power for $t {
+            fn power(self, other: $t) -> $t { self.overflowing_pow(other as u32).0 }
+        }
+
+    )*)
+}
+power_int_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 }
+
 macro_rules! arithmetic_body {
     ($arith:ident, $mem:ident, $method:ident) => {
         match ($arith.operand0.eval($mem)?.clone(), $arith.operand1.eval($mem)?.clone()) {
@@ -104,7 +128,7 @@ impl BinaryArithmetic {
     /// Calculate the the arithmetic equation.
     /// May read values from the given memory.
     pub fn calculate(self, mem: &mut Memory) -> Result<Primitive, ExecutionError> {
-        use std::ops::{Add, Div, Mul, Sub};
+        use std::ops::{Add, Div, Mul, Rem, Sub};
         match self.operation {
             BinaryOperation::Add => {
                 arithmetic_body!(self, mem, add)
@@ -118,8 +142,12 @@ impl BinaryArithmetic {
             BinaryOperation::Div => {
                 arithmetic_body!(self, mem, div)
             }
-            BinaryOperation::Mod => todo!(),
-            BinaryOperation::Pow => todo!(),
+            BinaryOperation::Mod => {
+                arithmetic_body!(self, mem, rem)
+            }
+            BinaryOperation::Pow => {
+                arithmetic_body!(self, mem, power)
+            }
         }
     }
 }

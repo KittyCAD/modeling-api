@@ -271,7 +271,6 @@ pub struct EntityCircularPattern {
     pub entity_ids: Vec<Uuid>,
 }
 
-
 impl ModelingCmdOutput for Export {}
 impl ModelingCmdOutput for SelectWithPoint {}
 impl ModelingCmdOutput for HighlightSetEntity {}
