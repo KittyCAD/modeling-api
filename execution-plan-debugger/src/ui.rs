@@ -1,15 +1,15 @@
-use kittycad_execution_plan::ExecutionState;
+use kittycad_execution_plan::{ExecutionState, Instruction};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style},
-    text::{self, Span, Text},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
+    style::{Color, Style, Stylize as _},
+    text::Text,
+    widgets::{Block, Borders, Paragraph, Row, Table},
     Frame,
 };
 
 use crate::app::{Context, State};
 
-pub fn ui(f: &mut Frame, ctx: &Context, state: &State) {
+pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Length(3), Constraint::Min(1), Constraint::Length(3)])
@@ -30,7 +30,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &State) {
     // TODO: replace this with a table, with columns for the instruction type,
     // operands, etc.
     let instruction_block = Block::default().borders(Borders::ALL).style(Style::default());
-    let instruction_view = make_instruction_view(instruction_block, ctx, state);
+    let instruction_view = make_instruction_view(instruction_block, ctx);
 
     // Render the main memory view.
     let max_mem = ctx
@@ -45,26 +45,31 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &State) {
                 .find_map(|(i, mem)| if mem.is_none() { Some(i) } else { None })
         })
         .max();
-    let main_mem_view = if let Some(active_instruction) = state.counter.curr {
-        let mem = &ctx.history[active_instruction].mem;
-        Some(Paragraph::new(Text::styled(mem.debug_table(max_mem), Style::default())))
-    } else {
-        None
+
+    let active_instruction = state.active_instruction();
+
+    let main_mem_view = match active_instruction {
+        Some(active_instruction) => {
+            let mem = &ctx.history[active_instruction].mem;
+            Some(Paragraph::new(Text::styled(mem.debug_table(max_mem), Style::default())))
+        }
+        _ => None,
     };
 
     // Render the stack view.
-    let stack_mem_view = if let Some(active_instruction) = state.counter.curr {
-        let mem = &ctx.history[active_instruction].mem;
-        if mem.stack.is_empty() {
-            None
-        } else {
-            Some(Paragraph::new(Text::styled(mem.debug_table_stack(), Style::default())))
+    let stack_mem_view = match active_instruction {
+        Some(active_instruction) => {
+            let mem = &ctx.history[active_instruction].mem;
+            if !mem.stack.is_empty() {
+                Some(Paragraph::new(Text::styled(mem.debug_table_stack(), Style::default())))
+            } else {
+                None
+            }
         }
-    } else {
-        None
+        _ => None,
     };
 
-    f.render_widget(instruction_view, body_chunks[0]);
+    f.render_stateful_widget(instruction_view, body_chunks[0], &mut state.instruction_table_state);
     f.render_widget(title, chunks[0]);
     if let Some(view) = main_mem_view {
         f.render_widget(view, mem_chunks[0]);
@@ -74,21 +79,15 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &State) {
     }
 }
 
-fn make_instruction_view<'a>(instruction_block: Block<'a>, ctx: &Context, state: &State) -> List<'a> {
-    const ARROW: &str = "*";
-    const NO_ARROW: &str = " ";
-    const HIGHLIGHT: Color = Color::LightBlue;
-    let mut instruction_entries = Vec::with_capacity(ctx.history.len() + 1);
-    let (arrow, color) = if state.counter.is_start() {
-        (ARROW, HIGHLIGHT)
-    } else {
-        (NO_ARROW, Color::default())
-    };
-    instruction_entries.push(ListItem::new(text::Line::from(Span::styled(
-        format!("{arrow}Start"),
-        Style::default().fg(color),
-    ))));
-    instruction_entries.extend(ctx.history.iter().enumerate().map(
+fn make_instruction_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
+    let widths = [
+        Constraint::Percentage(10),
+        Constraint::Percentage(20),
+        Constraint::Percentage(70),
+    ];
+    let mut rows = Vec::with_capacity(ctx.history.len() + 1);
+    rows.push(Row::new(vec!["Start".to_owned()]));
+    rows.extend(ctx.history.iter().enumerate().map(
         |(
             i,
             ExecutionState {
@@ -97,17 +96,43 @@ fn make_instruction_view<'a>(instruction_block: Block<'a>, ctx: &Context, state:
             },
         )| {
             let instruction = &ctx.plan[*active_instruction];
-            let (arrow, color) = if state.counter == Some(i) {
-                (ARROW, HIGHLIGHT)
-            } else {
-                (NO_ARROW, Color::default())
-            };
 
-            ListItem::new(text::Line::from(Span::styled(
-                format!("{arrow}{instruction:?}"),
-                Style::default().fg(color),
-            )))
+            let (instr_type, operands) = match instruction {
+                Instruction::ApiRequest(_) => ("API request", "".to_owned()),
+                Instruction::SetPrimitive { address, value } => ("SetPrimitive", format!("{address} to {value:?}")),
+                Instruction::SetValue { address, value_parts } => ("SetValue", format!("{address} to {value_parts:?}")),
+                Instruction::GetElement { start, index } => ("GetElement", format!("Addr {start} elem #{index:?}")),
+                Instruction::GetProperty { start, property } => ("GetProperty", format!("Addr {start}[#{property:?}]")),
+                Instruction::SetList { start, elements } => ("SetList", format!("{start:?}: {elements:?}")),
+                Instruction::BinaryArithmetic {
+                    arithmetic,
+                    destination,
+                } => ("BinaryArithmetic", format!("{arithmetic:?} to {destination:?}")),
+                Instruction::UnaryArithmetic {
+                    arithmetic,
+                    destination,
+                } => ("UnaryArithmetic", format!("{arithmetic:?} to {destination:?}")),
+                Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
+                Instruction::StackPop { destination } => ("StackPop", format!("{destination:?}")),
+            };
+            Row::new(vec![i.to_string(), instr_type.to_owned(), operands])
         },
     ));
-    List::new(instruction_entries).block(instruction_block)
+    Table::new(rows, widths)
+        // ...and they can be separated by a fixed spacing.
+        .column_spacing(1)
+        // It has an optional header, which is simply a Row always visible at the top.
+        .header(
+            Row::new(vec!["#", "Type", "Operands"])
+                .style(Style::new().bold())
+                // To add space between the header and the rest of the rows, specify the margin
+                .bottom_margin(1),
+        )
+        // As any other widget, a Table can be wrapped in a Block.
+        .block(Block::default().title("Table"))
+        // The selected row and its content can also be styled.
+        .highlight_style(Style::new().reversed())
+        // ...and potentially show a symbol in front of the selection.
+        .highlight_symbol(">>")
+        .block(block)
 }

@@ -5,7 +5,6 @@ use anyhow::{bail, Context, Result};
 use kittycad_execution_plan::Instruction;
 
 mod app;
-mod counter;
 mod ui;
 
 const INVALID_JSON: &str =

@@ -1,9 +1,7 @@
 use std::{io::stderr, ops::ControlFlow, time::Duration};
 
 use kittycad_execution_plan::Instruction;
-use ratatui::{backend::CrosstermBackend, Terminal};
-
-use crate::counter::Counter;
+use ratatui::{backend::CrosstermBackend, widgets::TableState, Terminal};
 
 const REFRESH_RATE: Duration = Duration::from_millis(250);
 
@@ -16,7 +14,17 @@ pub struct Context {
 
 /// Probably mutable
 pub struct State {
-    pub counter: Counter,
+    pub instruction_table_state: TableState,
+    pub num_rows: usize,
+}
+
+impl State {
+    pub fn active_instruction(&self) -> Option<usize> {
+        match self.instruction_table_state.selected() {
+            Some(i) if i > 0 => Some(i - 1),
+            _ => None,
+        }
+    }
 }
 
 pub fn run(ctx: Context) -> anyhow::Result<()> {
@@ -26,8 +34,11 @@ pub fn run(ctx: Context) -> anyhow::Result<()> {
     let mut terminal = Terminal::new(CrosstermBackend::new(stderr()))?;
 
     // App-specific
+    let mut instruction_table_state = TableState::default();
+    instruction_table_state.select(Some(0));
     let mut state = State {
-        counter: Counter::new(ctx.history.len()),
+        instruction_table_state,
+        num_rows: ctx.history.len() + 1,
     };
 
     loop {
@@ -55,8 +66,14 @@ fn main_loop(
         if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
             if key.kind == crossterm::event::KeyEventKind::Press {
                 match KeyPress::try_from(key.code) {
-                    Ok(KeyPress::Left) => state.counter.dec(),
-                    Ok(KeyPress::Right) => state.counter.inc(),
+                    Ok(KeyPress::Backwards) => match state.instruction_table_state.selected_mut() {
+                        Some(x) if *x > 0 => *x -= 1,
+                        _ => {}
+                    },
+                    Ok(KeyPress::Forwards) => match state.instruction_table_state.selected_mut() {
+                        Some(x) if *x < state.num_rows - 1 => *x += 1,
+                        _ => {}
+                    },
                     Ok(KeyPress::Quit) => return Ok(ControlFlow::Break(())),
                     Err(()) => {}
                 }
@@ -67,8 +84,8 @@ fn main_loop(
 }
 
 enum KeyPress {
-    Left,
-    Right,
+    Backwards,
+    Forwards,
     Quit,
 }
 
@@ -79,8 +96,8 @@ impl TryFrom<crossterm::event::KeyCode> for KeyPress {
         use crossterm::event::KeyCode;
         use crossterm::event::KeyCode::Char;
         let key = match value {
-            Char('a' | 'h' | 'w' | 'k') | KeyCode::Up | KeyCode::Left => Self::Left,
-            Char('d' | 'l' | 's' | 'j') | KeyCode::Down | KeyCode::Right => Self::Right,
+            Char('a' | 'h' | 'w' | 'k') | KeyCode::Up | KeyCode::Left => Self::Backwards,
+            Char('d' | 'l' | 's' | 'j') | KeyCode::Down | KeyCode::Right => Self::Forwards,
             Char('q') | KeyCode::Esc => Self::Quit,
             _ => return Err(()),
         };

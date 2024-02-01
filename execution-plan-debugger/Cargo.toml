@@ -16,7 +16,6 @@ kittycad-modeling-cmds = { path = "../modeling-cmds" }
 kittycad-modeling-session = { path = "../modeling-session" }
 ratatui = { version = "0.25.0", features = ["all-widgets"] }
 serde_json = "1.0"
-tabled = "0.15.0"
 tokio = { version = "1.35.0", features = ["rt", "macros"] }
 
 [lints]
