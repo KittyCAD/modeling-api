@@ -192,6 +192,72 @@ async fn add_to_composite_value() {
 }
 
 #[tokio::test]
+async fn modulo_and_power_with_reference() {
+    let plan = vec![
+        // Memory addr 0 contains 450
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: 450u32.into(),
+        },
+        // Take (address 0) % 20
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Mod,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal(20u32.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // 450 % 20 = 10
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&10u32.into()));
+
+    let plan = vec![
+        // Memory addr 0 contains 5
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: 5u32.into(),
+        },
+        // Take (address 0) ^ 4
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Pow,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal(4u32.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // 5^4 = 625
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&625u32.into()));
+
+    let plan = vec![
+        // Memory addr 0 contains 5
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: 2.5f32.into(),
+        },
+        // Take (address 0) ^ 2
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Pow,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal(2u32.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // 5^4 = 625
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&6.25f32.into()))
+}
+
+#[tokio::test]
 async fn get_element_of_array() {
     let mut mem = Memory::default();
     const START_DATA_AT: usize = 10;

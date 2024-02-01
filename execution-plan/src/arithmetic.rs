@@ -55,7 +55,7 @@ impl UnaryArithmetic {
     }
 }
 
-trait Power { 
+trait Power {
     fn power(self, other: Self) -> Self;
 }
 
