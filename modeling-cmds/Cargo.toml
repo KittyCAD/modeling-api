@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-modeling-cmds"
-version = "0.1.12"
+version = "0.1.13"
 edition = "2021"
 authors = ["KittyCAD, Inc."]
 description = "Commands in the KittyCAD Modeling API"
