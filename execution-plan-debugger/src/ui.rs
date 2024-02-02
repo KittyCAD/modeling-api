@@ -170,23 +170,39 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
 
             let (instr_type, operands) = match instruction {
                 Instruction::ApiRequest(_) => ("API request", "".to_owned()),
-                Instruction::SetPrimitive { address, value } => ("SetPrimitive", format!("{address} to {value:?}")),
-                Instruction::SetValue { address, value_parts } => ("SetValue", format!("{address} to {value_parts:?}")),
-                Instruction::GetElement { start, index } => ("GetElement", format!("Addr {start} elem #{index:?}")),
-                Instruction::GetProperty { start, property } => ("GetProperty", format!("Addr {start}[#{property:?}]")),
-                Instruction::SetList { start, elements } => ("SetList", format!("{start:?}: {elements:?}")),
+                Instruction::SetPrimitive { address, value } => {
+                    ("SetPrimitive", format!("Set addr {address} to {value:?}"))
+                }
+                Instruction::SetValue { address, value_parts } => (
+                    "SetValue",
+                    format!("Write {value_parts:?} starting at address {address}"),
+                ),
+                Instruction::GetElement { start, index } => (
+                    "GetElement",
+                    format!("Find element #{index:?}\nof array at address {start}"),
+                ),
+                Instruction::GetProperty { start, property } => (
+                    "GetProperty",
+                    format!("Find property '{property:?}'\nof object at address {start}"),
+                ),
+                Instruction::SetList { start, elements } => (
+                    "SetList",
+                    format!("Create list at {start:?}\nwith elements {elements:?}"),
+                ),
                 Instruction::BinaryArithmetic {
                     arithmetic,
                     destination,
-                } => ("BinaryArithmetic", format!("{arithmetic:?} to {destination:?}")),
+                } => ("BinaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
                 Instruction::UnaryArithmetic {
                     arithmetic,
                     destination,
-                } => ("UnaryArithmetic", format!("{arithmetic:?} to {destination:?}")),
+                } => ("UnaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
                 Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
                 Instruction::StackPop { destination } => ("StackPop", format!("{destination:?}")),
             };
+            let height = operands.chars().filter(|ch| ch == &'\n').count();
             Row::new(vec![(i + 1).to_string(), instr_type.to_owned(), operands])
+                .height(height.try_into().expect("height of cell must fit into u16"))
         },
     ));
     rows.push(Row::new(vec![
