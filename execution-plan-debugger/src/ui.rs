@@ -1,10 +1,13 @@
-use kittycad_execution_plan::{ExecutionState, Instruction};
+use kittycad_execution_plan::{
+    events::{Event, Severity},
+    BinaryArithmetic, ExecutionState, Instruction,
+};
 use kittycad_execution_plan_traits::Primitive;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize as _},
     text::Text,
-    widgets::{Block, Borders, Cell, Paragraph, Row, Table},
+    widgets::{Block, Borders, Cell, Padding, Paragraph, Row, Table},
     Frame,
 };
 
@@ -31,15 +34,24 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
             Constraint::Percentage(50),
         ])
         .split(chunks[1]);
-    let mem_chunks = Layout::default()
+    let right_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
             // Top left, for main memory
-            Constraint::Percentage(50),
+            Constraint::Percentage(75),
             // Bottom left, for stack memory
-            Constraint::Percentage(50),
+            Constraint::Percentage(25),
         ])
         .split(body_chunks[1]);
+    let left_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([
+            // Top left, for history
+            Constraint::Percentage(75),
+            // Bottom left, for events
+            Constraint::Percentage(25),
+        ])
+        .split(body_chunks[0]);
 
     let title = Paragraph::new(Text::styled("Execution Plan Replay", Style::default().fg(Color::Green)))
         .block(Block::default().borders(Borders::ALL).style(Style::default()));
@@ -47,8 +59,20 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let history_block = Block::default()
         .borders(Borders::ALL)
         .style(Style::default())
+        .padding(Padding::vertical(1))
         .title("History");
     let history_view = make_history_view(history_block, ctx);
+
+    let event_block = Block::default()
+        .borders(Borders::ALL)
+        .style(Style::default())
+        .padding(Padding::vertical(1))
+        .title("Events");
+    let events = match state.active_instruction() {
+        HistorySelected::Instruction(i) => &ctx.history[i].events,
+        _ => [].as_slice(),
+    };
+    let event_view = make_events_view(event_block, events);
 
     // Render the main memory view.
     let num_memory_rows = ctx
@@ -71,6 +95,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
             let block = Block::default()
                 .borders(Borders::ALL)
                 .style(Style::default())
+                .padding(Padding::vertical(1))
                 .title("Address Memory");
             Some(make_memory_view(block, mem, num_memory_rows))
         }
@@ -84,6 +109,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
             let block = Block::default()
                 .borders(Borders::ALL)
                 .style(Style::default())
+                .padding(Padding::vertical(1))
                 .title("Stack Memory");
             Some(make_stack_view(block, &mem.stack))
         }
@@ -96,20 +122,20 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     ))
     .block(Block::default().borders(Borders::ALL).style(Style::default()));
 
-    f.render_stateful_widget(history_view, body_chunks[0], &mut state.instruction_table_state);
+    f.render_stateful_widget(history_view, left_chunks[0], &mut state.instruction_table_state);
+    f.render_widget(event_view, left_chunks[1]);
     f.render_widget(title, chunks[0]);
     if let Some(view) = main_mem_view {
-        f.render_widget(view, mem_chunks[0]);
+        f.render_widget(view, right_chunks[0]);
     }
     if let Some(view) = stack_mem_view {
-        f.render_widget(view, mem_chunks[1]);
+        f.render_widget(view, right_chunks[1]);
     }
     f.render_widget(footer, chunks[2]);
 }
 
 fn make_stack_view<'a>(block: Block<'a>, stack: &kittycad_execution_plan::Stack<Vec<Primitive>>) -> Table<'a> {
     let rows = stack
-        .inner
         .iter()
         .enumerate()
         .map(|(depth, val)| Row::new(vec![depth.to_string(), format!("{val:?}")]));
@@ -125,6 +151,39 @@ fn make_stack_view<'a>(block: Block<'a>, stack: &kittycad_execution_plan::Stack<
     )
     .column_spacing(1)
     .header(Row::new(vec!["Depth", "Value"]).style(Style::new().bold()))
+    .block(block)
+}
+
+fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> Table<'a> {
+    let rows = events.iter().cloned().enumerate().map(|(i, event)| {
+        let color = match event.severity {
+            Severity::Info => Color::default(),
+            Severity::Debug => Color::DarkGray,
+        };
+        Row::new(vec![
+            // Event number
+            Cell::from(i.to_string()),
+            // Severity
+            // Cell::from(event.severity.to_string()),
+            Cell::new(Text::styled(event.severity.to_string(), Style::default().fg(color))),
+            // Text
+            Cell::new(Text::styled(event.text.to_string(), Style::default().fg(color))),
+        ])
+    });
+
+    Table::new(
+        rows,
+        [
+            // Event number
+            Constraint::Length(3),
+            // Event severity
+            Constraint::Length(6),
+            // Message
+            Constraint::Max(50),
+        ],
+    )
+    .column_spacing(1)
+    .header(Row::new(vec!["#", "Level", "Msg"]).style(Style::new().bold()))
     .block(block)
 }
 
@@ -164,6 +223,7 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
             ExecutionState {
                 mem: _,
                 active_instruction,
+                events: _,
             },
         )| {
             let instruction = &ctx.plan[*active_instruction];
@@ -192,13 +252,30 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
                 Instruction::BinaryArithmetic {
                     arithmetic,
                     destination,
-                } => ("BinaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
+                } => {
+                    let BinaryArithmetic {
+                        operation,
+                        operand0,
+                        operand1,
+                    } = arithmetic;
+                    let arith_description = format!("{operand0:?} {operation} {operand1:?}");
+                    (
+                        "BinaryArithmetic",
+                        format!("Set {destination:?}\nto {arith_description}"),
+                    )
+                }
                 Instruction::UnaryArithmetic {
                     arithmetic,
                     destination,
                 } => ("UnaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
                 Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
-                Instruction::StackPop { destination } => ("StackPop", format!("{destination:?}")),
+                Instruction::StackPop { destination } => (
+                    "StackPop",
+                    match destination {
+                        Some(dst) => format!("Into: {dst:?}"),
+                        None => "Discard".to_owned(),
+                    },
+                ),
             };
             let height = operands.chars().filter(|ch| ch == &'\n').count() + 1;
             Row::new(vec![(i + 1).to_string(), instr_type.to_owned(), operands])

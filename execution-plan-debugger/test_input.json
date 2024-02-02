@@ -22,7 +22,11 @@
     },
     {
         "StackPush": {
-            "data": [{"String": "foo"}]
+            "data": [
+                {
+                    "String": "foo"
+                }
+            ]
         }
     },
     {
@@ -60,6 +64,26 @@
         }
     },
     {
+        "BinaryArithmetic": {
+            "destination": {
+                "Address": 4
+            },
+            "arithmetic": {
+                "operation": "Add",
+                "operand0": {
+                    "Reference": 4
+                },
+                "operand1": {
+                    "Literal": {
+                        "NumericValue": {
+                            "Integer": 55
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
         "StackPop": {}
     },
     {
@@ -91,6 +115,8 @@
         }
     },
     {
-        "StackPop": {}
+        "StackPop": {
+            "destination": 10
+        }
     }
 ]

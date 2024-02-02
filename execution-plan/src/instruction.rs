@@ -2,6 +2,7 @@ use kittycad_execution_plan_traits::{ListHeader, MemoryError, NumericPrimitive, 
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    events::{Event, EventWriter},
     Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, Memory, Operand, Result, UnaryArithmetic,
 };
 
@@ -95,6 +96,7 @@ impl Instruction {
         self,
         mem: &mut Memory,
         session: Option<&mut kittycad_modeling_session::Session>,
+        events: &mut EventWriter,
     ) -> Result<()> {
         match self {
             Instruction::ApiRequest(req) => {
@@ -116,7 +118,7 @@ impl Instruction {
                 arithmetic,
                 destination,
             } => {
-                let out = arithmetic.calculate(mem)?;
+                let out = arithmetic.calculate(mem, events)?;
                 match destination {
                     Destination::Address(addr) => mem.set(addr, out),
                     Destination::StackPush => mem.stack.push(vec![out]),
@@ -195,8 +197,17 @@ impl Instruction {
                     };
                     curr += size_of_element + 1;
                 }
+                events.push(Event {
+                    text: format!("Reading size of element from {curr}"),
+                    severity: crate::events::Severity::Info,
+                });
                 let size_of_element: usize = mem.get_primitive(&curr)?;
-                let element = mem.get_slice(curr + 1, size_of_element)?;
+                let addr_of_element = curr + 1;
+                events.push(Event {
+                    text: format!("Element begins at {addr_of_element} and has length {size_of_element}"),
+                    severity: crate::events::Severity::Info,
+                });
+                let element = mem.get_slice(addr_of_element, size_of_element)?;
                 mem.stack.push(element);
             }
             Instruction::GetProperty { start, property } => {
@@ -233,8 +244,17 @@ impl Instruction {
                     let size_of_element = mem.get_size(&curr)?;
                     curr += size_of_element + 1;
                 }
+                events.push(Event {
+                    text: format!("Reading size of property from {curr}"),
+                    severity: crate::events::Severity::Info,
+                });
                 let size_of_element: usize = mem.get_size(&curr)?;
-                let element = mem.get_slice(curr + 1, size_of_element)?;
+                let addr_of_element = curr + 1;
+                events.push(Event {
+                    text: format!("Property begins at {addr_of_element} and has length {size_of_element}"),
+                    severity: crate::events::Severity::Info,
+                });
+                let element = mem.get_slice(addr_of_element, size_of_element)?;
                 mem.stack.push(element);
             }
             Instruction::StackPush { data } => {
