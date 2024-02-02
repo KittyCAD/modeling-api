@@ -200,7 +200,7 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
                 Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
                 Instruction::StackPop { destination } => ("StackPop", format!("{destination:?}")),
             };
-            let height = operands.chars().filter(|ch| ch == &'\n').count();
+            let height = operands.chars().filter(|ch| ch == &'\n').count() + 1;
             Row::new(vec![(i + 1).to_string(), instr_type.to_owned(), operands])
                 .height(height.try_into().expect("height of cell must fit into u16"))
         },
