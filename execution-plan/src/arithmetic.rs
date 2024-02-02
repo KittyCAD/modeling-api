@@ -67,7 +67,7 @@ macro_rules! arithmetic_body {
             severity: crate::events::Severity::Info,
         });
         $events.push(crate::events::Event {
-            text: "Evaluating left operand".to_owned(),
+            text: "Evaluating right operand".to_owned(),
             severity: crate::events::Severity::Info,
         });
         let r = $arith.operand1.eval($mem)?.clone();
@@ -105,7 +105,12 @@ macro_rules! arithmetic_body {
                         NumericPrimitive::Integer((x as i64).$method(y))
                     }
                 };
-                Ok(Primitive::NumericValue(num))
+                let prim = Primitive::NumericValue(num);
+                $events.push(crate::events::Event {
+                    text: format!("Output is {prim:?}"),
+                    severity: crate::events::Severity::Info,
+                });
+                Ok(prim)
             }
             // This operation can only be done on numeric types.
             _ => Err(ExecutionError::CannotApplyOperation {

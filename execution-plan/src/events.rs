@@ -2,7 +2,9 @@
 /// Meant for debugging by a human.
 #[derive(Debug, Clone)]
 pub struct Event {
+    /// What happened in the event.
     pub text: String,
+    /// How important the event was.
     pub severity: Severity,
 }
 
