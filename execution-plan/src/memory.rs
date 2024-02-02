@@ -228,7 +228,9 @@ fn pretty_print(p: &Primitive) -> (&'static str, String) {
 /// A stack where values can be pushed/popped.
 #[derive(Debug, Eq, PartialEq, Default, Clone)]
 pub struct Stack<T> {
-    inner: Vec<T>,
+    // TODO: should not be pub
+    #[doc(hidden)]
+    pub inner: Vec<T>,
 }
 
 impl<T> Stack<T> {
@@ -247,6 +249,8 @@ impl<T> Stack<T> {
 }
 
 impl Stack<Vec<Primitive>> {
+    /// Remove a value from the top of the stack, and return it.
+    /// If it's a single primitive long, return Ok, otherwise error.
     pub fn pop_single(&mut self) -> Result<Primitive, ExecutionError> {
         let mut slice = self.pop()?;
         let prim = slice

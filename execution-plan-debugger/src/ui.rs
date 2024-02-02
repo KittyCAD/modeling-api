@@ -1,4 +1,5 @@
 use kittycad_execution_plan::{ExecutionState, Instruction};
+use kittycad_execution_plan_traits::Primitive;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize as _},
@@ -84,11 +85,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
                 .borders(Borders::ALL)
                 .style(Style::default())
                 .title("Stack Memory");
-            if !mem.stack.is_empty() {
-                Some(Paragraph::new(Text::styled(mem.debug_table_stack(), Style::default())).block(block))
-            } else {
-                None
-            }
+            Some(make_stack_view(block, &mem.stack))
         }
         _ => None,
     };
@@ -101,6 +98,27 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     if let Some(view) = stack_mem_view {
         f.render_widget(view, mem_chunks[1]);
     }
+}
+
+fn make_stack_view<'a>(block: Block<'a>, stack: &kittycad_execution_plan::Stack<Vec<Primitive>>) -> Table<'a> {
+    let rows = stack
+        .inner
+        .iter()
+        .enumerate()
+        .map(|(depth, val)| Row::new(vec![depth.to_string(), format!("{val:?}")]));
+
+    Table::new(
+        rows,
+        [
+            // Depth
+            Constraint::Length(5),
+            // Value
+            Constraint::Max(50),
+        ],
+    )
+    .column_spacing(1)
+    .header(Row::new(vec!["Depth", "Value"]).style(Style::new().bold()))
+    .block(block)
 }
 
 fn make_memory_view<'a>(block: Block<'a>, mem: &kittycad_execution_plan::Memory, num_rows: usize) -> Table<'a> {

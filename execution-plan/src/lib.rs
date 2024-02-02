@@ -9,7 +9,7 @@
 use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
-pub use memory::{Memory, StaticMemoryInitializer};
+pub use memory::{Memory, Stack, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
 
 pub use self::address::Address;
