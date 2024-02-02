@@ -50,7 +50,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let history_view = make_history_view(history_block, ctx);
 
     // Render the main memory view.
-    let max_mem = ctx
+    let num_memory_rows = ctx
         .history
         .iter()
         .filter_map(|exec_st| {
@@ -61,7 +61,8 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
                 .enumerate()
                 .find_map(|(i, mem)| if mem.is_none() { Some(i) } else { None })
         })
-        .max();
+        .max()
+        .unwrap();
 
     let main_mem_view = match state.active_instruction() {
         HistorySelected::Instruction(active_instruction) => {
@@ -70,7 +71,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
                 .borders(Borders::ALL)
                 .style(Style::default())
                 .title("Address Memory");
-            Some(Paragraph::new(Text::styled(mem.debug_table(max_mem), Style::default())).block(block))
+            Some(make_memory_view(block, mem, num_memory_rows))
         }
         _ => None,
     };
@@ -100,6 +101,30 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     if let Some(view) = stack_mem_view {
         f.render_widget(view, mem_chunks[1]);
     }
+}
+
+fn make_memory_view<'a>(block: Block<'a>, mem: &kittycad_execution_plan::Memory, num_rows: usize) -> Table<'a> {
+    let rows = mem
+        .addresses
+        .iter()
+        .cloned()
+        .enumerate()
+        .filter_map(|(addr, val)| val.map(|val| (addr, val)))
+        .take(num_rows)
+        .map(|(addr, val)| Row::new(vec![addr.to_string(), format!("{val:?}")]));
+
+    Table::new(
+        rows,
+        [
+            // Address
+            Constraint::Length(4),
+            // Value
+            Constraint::Max(50),
+        ],
+    )
+    .column_spacing(1)
+    .header(Row::new(vec!["Address", "Value"]).style(Style::new().bold()))
+    .block(block)
 }
 
 fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
@@ -163,9 +188,7 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
     )
     .column_spacing(1)
     .header(
-        Row::new(vec!["#", "Type", "Operands"])
-            .style(Style::new().bold())
-            .bottom_margin(1),
+        Row::new(vec!["Time", "Type", "Operands"]).style(Style::new().bold()), // .bottom_margin(1),
     )
     // Styles the selected row
     .highlight_style(Style::new().reversed())
