@@ -400,7 +400,7 @@ pub struct Solid3dGetPrevAdjacentEdge {
 /// Fillets the given edge with the specified radius.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct Solid3dFilletEdge {
-    /// Which object is being queried.
+    /// Which object is being filletted.
     pub object_id: Uuid,
     /// Which edge you want to fillet.
     pub edge_id: Uuid,
