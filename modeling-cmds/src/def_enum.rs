@@ -90,6 +90,8 @@ pub enum ModelingCmd {
     Solid3dGetNextAdjacentEdge(Solid3dGetNextAdjacentEdge),
     /// Gets the previous adjacent edge for the given edge, along the given face.
     Solid3dGetPrevAdjacentEdge(Solid3dGetPrevAdjacentEdge),
+    /// Fillets the specified edge with the given radius.
+    Solid3dFilletEdge(Solid3dFilletEdge),
     /// Sends object to front or back.
     SendObject(SendObject),
     /// Set opacity of the entity.

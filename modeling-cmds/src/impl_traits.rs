@@ -68,6 +68,7 @@ impl_variant_output!(Solid3dGetAllOppositeEdges);
 impl_variant_output!(Solid3dGetOppositeEdge);
 impl_variant_output!(Solid3dGetNextAdjacentEdge);
 impl_variant_output!(Solid3dGetPrevAdjacentEdge);
+impl_variant_empty!(Solid3dFilletEdge);
 impl_variant_empty!(SendObject);
 impl_variant_empty!(ObjectSetMaterialParamsPbr);
 impl_variant_empty!(EntitySetOpacity);

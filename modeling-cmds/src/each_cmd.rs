@@ -397,6 +397,17 @@ pub struct Solid3dGetPrevAdjacentEdge {
     pub face_id: Uuid,
 }
 
+/// Fillets the given edge with the specified radius.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct Solid3dFilletEdge {
+    /// Which object is being filletted.
+    pub object_id: Uuid,
+    /// Which edge you want to fillet.
+    pub edge_id: Uuid,
+    /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
+    pub radius: f64,
+}
+
 /// Send object to front or back.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct SendObject {
