@@ -1,4 +1,4 @@
-use kittycad_execution_plan::{Event, ExecutionState, Instruction};
+use kittycad_execution_plan::{BinaryArithmetic, Event, ExecutionState, Instruction};
 use kittycad_execution_plan_traits::Primitive;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
@@ -152,21 +152,24 @@ fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> Table<'a> {
         .iter()
         .cloned()
         .enumerate()
-        .map(|(i, event)| Row::new(vec![i.to_string(), event.text]));
+        .map(|(i, event)| Row::new(vec![i.to_string(), event.severity.to_string(), event.text]));
 
     Table::new(
         rows,
         [
-            // Address
+            // Event number
             Constraint::Length(4),
-            // Value
+            // Event severity
+            Constraint::Length(5),
+            // Message
             Constraint::Max(50),
         ],
     )
     .column_spacing(1)
-    .header(Row::new(vec!["Address", "Value"]).style(Style::new().bold()))
+    .header(Row::new(vec!["#", "Level", "Msg"]).style(Style::new().bold()))
     .block(block)
 }
+
 fn make_memory_view<'a>(block: Block<'a>, mem: &kittycad_execution_plan::Memory, num_rows: usize) -> Table<'a> {
     let rows = mem
         .addresses
@@ -232,7 +235,18 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
                 Instruction::BinaryArithmetic {
                     arithmetic,
                     destination,
-                } => ("BinaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
+                } => {
+                    let BinaryArithmetic {
+                        operation,
+                        operand0,
+                        operand1,
+                    } = arithmetic;
+                    let arith_description = format!("{operand0:?} {operation} {operand1:?}");
+                    (
+                        "BinaryArithmetic",
+                        format!("Set {destination:?}\nto {arith_description}"),
+                    )
+                }
                 Instruction::UnaryArithmetic {
                     arithmetic,
                     destination,

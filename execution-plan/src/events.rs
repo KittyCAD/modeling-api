@@ -14,6 +14,15 @@ pub enum Severity {
     Info,
 }
 
+impl std::fmt::Display for Severity {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            Severity::Info => "Info",
+        };
+        write!(f, "{s}")
+    }
+}
+
 /// Tracks events that occur during execution.
 #[derive(Debug, Default, Clone)]
 pub struct EventWriter {
