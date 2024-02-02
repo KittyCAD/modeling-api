@@ -37,10 +37,11 @@ impl StaticMemoryInitializer {
 }
 
 /// KCEP's program memory. A flat, linear list of values.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(test, derive(PartialEq))]
 pub struct Memory {
-    addresses: Vec<Option<Primitive>>,
+    /// Each address of memory.
+    pub addresses: Vec<Option<Primitive>>,
     /// A stack where temporary values can be pushed or popped.
     pub stack: Stack<Vec<Primitive>>,
 }
@@ -166,10 +167,10 @@ impl Memory {
 
     /// Return a nicely-formatted table of memory.
     #[must_use]
-    pub fn debug_table(&self) -> String {
+    pub fn debug_table(&self, up_to: Option<usize>) -> String {
         #[derive(tabled::Tabled)]
         struct MemoryAddr {
-            index: usize,
+            addr: String,
             val_type: &'static str,
             value: String,
         }
@@ -179,10 +180,20 @@ impl Memory {
                 if let Some(val) = val {
                     let (val_type, value) = pretty_print(val);
                     Some(MemoryAddr {
-                        index: i,
+                        addr: i.to_string(),
                         val_type,
                         value,
                     })
+                } else if let Some(up_to) = up_to {
+                    if i <= up_to {
+                        Some(MemoryAddr {
+                            addr: i.to_string(),
+                            val_type: "",
+                            value: "".to_owned(),
+                        })
+                    } else {
+                        None
+                    }
                 } else {
                     None
                 }
@@ -215,9 +226,11 @@ fn pretty_print(p: &Primitive) -> (&'static str, String) {
 }
 
 /// A stack where values can be pushed/popped.
-#[derive(Debug, Eq, PartialEq, Default)]
+#[derive(Debug, Eq, PartialEq, Default, Clone)]
 pub struct Stack<T> {
-    inner: Vec<T>,
+    // TODO: should not be pub
+    #[doc(hidden)]
+    pub inner: Vec<T>,
 }
 
 impl<T> Stack<T> {
@@ -236,6 +249,8 @@ impl<T> Stack<T> {
 }
 
 impl Stack<Vec<Primitive>> {
+    /// Remove a value from the top of the stack, and return it.
+    /// If it's a single primitive long, return Ok, otherwise error.
     pub fn pop_single(&mut self) -> Result<Primitive, ExecutionError> {
         let mut slice = self.pop()?;
         let prim = slice

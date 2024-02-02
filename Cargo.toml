@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
     "execution-plan",
+    "execution-plan-debugger",
     "execution-plan-macros",
     "execution-plan-traits",
     "modeling-cmds",
