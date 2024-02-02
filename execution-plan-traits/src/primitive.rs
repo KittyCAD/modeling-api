@@ -30,13 +30,13 @@ impl std::fmt::Debug for Primitive {
             Primitive::String(s) => write!(f, r#""{s}""#),
             Primitive::NumericValue(NumericPrimitive::Float(x)) => x.fmt(f),
             Primitive::NumericValue(NumericPrimitive::Integer(x)) => x.fmt(f),
-            Primitive::NumericValue(NumericPrimitive::UInteger(x)) => write!(f, "u{x}"),
+            Primitive::NumericValue(NumericPrimitive::UInteger(x)) => write!(f, "{x} (uint)"),
             Primitive::Uuid(u) => write!(f, "{u}"),
-            Primitive::Bytes(_) => write!(f, "binary"),
+            Primitive::Bytes(_) => write!(f, "Binary"),
             Primitive::Bool(b) => write!(f, "{b}"),
-            Primitive::ListHeader(ListHeader { count, size }) => write!(f, "List (count {count}, size {size}"),
+            Primitive::ListHeader(ListHeader { count, size }) => write!(f, "List header (count {count}, size {size})"),
             Primitive::ObjectHeader(ObjectHeader { properties, size }) => {
-                write!(f, "Object (props {properties:?}, size {size}")
+                write!(f, "Object header (props {properties:?}, size {size})")
             }
             Primitive::Nil => write!(f, "Nil"),
         }
