@@ -1,3 +1,6 @@
+//! Events can be logged during execution.
+//! Used in the visual debugger.
+
 /// Something that happened during execution.
 /// Meant for debugging by a human.
 #[derive(Debug, Clone)]
@@ -9,15 +12,19 @@ pub struct Event {
 }
 
 /// How important the event is.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq)]
 pub enum Severity {
+    /// Info
     Info,
+    /// Debug
+    Debug,
 }
 
 impl std::fmt::Display for Severity {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
             Severity::Info => "Info",
+            Severity::Debug => "Debug",
         };
         write!(f, "{s}")
     }

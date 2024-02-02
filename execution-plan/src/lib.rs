@@ -6,8 +6,7 @@
 //! You can think of it as a domain-specific language for making KittyCAD API calls and using
 //! the results to make other API calls.
 
-pub use events::Event;
-use events::EventWriter;
+use events::{Event, EventWriter};
 use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
@@ -23,7 +22,7 @@ pub use self::instruction::Instruction;
 
 mod address;
 mod arithmetic;
-mod events;
+pub mod events;
 mod instruction;
 mod memory;
 #[cfg(test)]

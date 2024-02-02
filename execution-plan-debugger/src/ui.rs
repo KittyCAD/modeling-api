@@ -1,10 +1,13 @@
-use kittycad_execution_plan::{BinaryArithmetic, Event, ExecutionState, Instruction};
+use kittycad_execution_plan::{
+    events::{Event, Severity},
+    BinaryArithmetic, ExecutionState, Instruction,
+};
 use kittycad_execution_plan_traits::Primitive;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize as _},
     text::Text,
-    widgets::{Block, Borders, Cell, Paragraph, Row, Table},
+    widgets::{Block, Borders, Cell, Padding, Paragraph, Row, Table},
     Frame,
 };
 
@@ -56,18 +59,20 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let history_block = Block::default()
         .borders(Borders::ALL)
         .style(Style::default())
+        .padding(Padding::vertical(1))
         .title("History");
     let history_view = make_history_view(history_block, ctx);
 
     let event_block = Block::default()
         .borders(Borders::ALL)
         .style(Style::default())
+        .padding(Padding::vertical(1))
         .title("Events");
     let events = match state.active_instruction() {
         HistorySelected::Instruction(i) => &ctx.history[i].events,
         _ => [].as_slice(),
     };
-    let event_view = make_events_view(event_block, &events);
+    let event_view = make_events_view(event_block, events);
 
     // Render the main memory view.
     let num_memory_rows = ctx
@@ -90,6 +95,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
             let block = Block::default()
                 .borders(Borders::ALL)
                 .style(Style::default())
+                .padding(Padding::vertical(1))
                 .title("Address Memory");
             Some(make_memory_view(block, mem, num_memory_rows))
         }
@@ -103,6 +109,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
             let block = Block::default()
                 .borders(Borders::ALL)
                 .style(Style::default())
+                .padding(Padding::vertical(1))
                 .title("Stack Memory");
             Some(make_stack_view(block, &mem.stack))
         }
@@ -148,19 +155,29 @@ fn make_stack_view<'a>(block: Block<'a>, stack: &kittycad_execution_plan::Stack<
 }
 
 fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> Table<'a> {
-    let rows = events
-        .iter()
-        .cloned()
-        .enumerate()
-        .map(|(i, event)| Row::new(vec![i.to_string(), event.severity.to_string(), event.text]));
+    let rows = events.iter().cloned().enumerate().map(|(i, event)| {
+        let color = match event.severity {
+            Severity::Info => Color::default(),
+            Severity::Debug => Color::DarkGray,
+        };
+        Row::new(vec![
+            // Event number
+            Cell::from(i.to_string()),
+            // Severity
+            // Cell::from(event.severity.to_string()),
+            Cell::new(Text::styled(event.severity.to_string(), Style::default().fg(color))),
+            // Text
+            Cell::new(Text::styled(event.text.to_string(), Style::default().fg(color))),
+        ])
+    });
 
     Table::new(
         rows,
         [
             // Event number
-            Constraint::Length(4),
+            Constraint::Length(3),
             // Event severity
-            Constraint::Length(5),
+            Constraint::Length(6),
             // Message
             Constraint::Max(50),
         ],

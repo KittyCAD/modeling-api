@@ -59,7 +59,7 @@ macro_rules! arithmetic_body {
     ($arith:ident, $mem:ident, $method:ident, $events:ident) => {{
         $events.push(crate::events::Event {
             text: "Evaluating left operand".to_owned(),
-            severity: crate::events::Severity::Info,
+            severity: crate::events::Severity::Debug,
         });
         let l = $arith.operand0.eval($mem)?.clone();
         $events.push(crate::events::Event {
@@ -68,7 +68,7 @@ macro_rules! arithmetic_body {
         });
         $events.push(crate::events::Event {
             text: "Evaluating right operand".to_owned(),
-            severity: crate::events::Severity::Info,
+            severity: crate::events::Severity::Debug,
         });
         let r = $arith.operand1.eval($mem)?.clone();
         $events.push(crate::events::Event {
