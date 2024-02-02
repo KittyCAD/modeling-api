@@ -109,7 +109,6 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
 
 fn make_stack_view<'a>(block: Block<'a>, stack: &kittycad_execution_plan::Stack<Vec<Primitive>>) -> Table<'a> {
     let rows = stack
-        .inner
         .iter()
         .enumerate()
         .map(|(depth, val)| Row::new(vec![depth.to_string(), format!("{val:?}")]));
@@ -164,6 +163,7 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
             ExecutionState {
                 mem: _,
                 active_instruction,
+                events: _,
             },
         )| {
             let instruction = &ctx.plan[*active_instruction];

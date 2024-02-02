@@ -228,9 +228,7 @@ fn pretty_print(p: &Primitive) -> (&'static str, String) {
 /// A stack where values can be pushed/popped.
 #[derive(Debug, Eq, PartialEq, Default, Clone)]
 pub struct Stack<T> {
-    // TODO: should not be pub
-    #[doc(hidden)]
-    pub inner: Vec<T>,
+    inner: Vec<T>,
 }
 
 impl<T> Stack<T> {
@@ -245,6 +243,10 @@ impl<T> Stack<T> {
     /// Is the stack empty?
     pub fn is_empty(&self) -> bool {
         self.inner.is_empty()
+    }
+    /// Iterate over the stack, from top to bottom.
+    pub fn iter(&self) -> impl Iterator<Item = &T> {
+        self.inner.iter().rev()
     }
 }
 

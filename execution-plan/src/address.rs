@@ -7,7 +7,7 @@ pub struct Address(pub(crate) usize);
 
 impl fmt::Debug for Address {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Addr({})", self.0)
+        write!(f, "Addr{}", self.0)
     }
 }
 

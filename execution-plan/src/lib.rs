@@ -6,6 +6,7 @@
 //! You can think of it as a domain-specific language for making KittyCAD API calls and using
 //! the results to make other API calls.
 
+use events::{Event, EventWriter};
 use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
@@ -21,6 +22,7 @@ pub use self::instruction::Instruction;
 
 mod address;
 mod arithmetic;
+mod events;
 mod instruction;
 mod memory;
 #[cfg(test)]
@@ -136,8 +138,9 @@ impl Operand {
 
 /// Execute the plan.
 pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Option<ModelingSession>) -> Result<()> {
+    let mut events = EventWriter::default();
     for instruction in plan.into_iter() {
-        instruction.execute(mem, session.as_mut()).await?;
+        instruction.execute(mem, session.as_mut(), &mut events).await?;
     }
     Ok(())
 }
@@ -148,6 +151,8 @@ pub struct ExecutionState {
     pub mem: Memory,
     /// Which instruction was executed? Index into the Vec<Instruction> for the plan.
     pub active_instruction: usize,
+    /// Which events occurred during execution of this instruction?
+    pub events: Vec<Event>,
 }
 
 /// Execute the plan, returning the state at every moment of execution.
@@ -157,11 +162,13 @@ pub async fn execute_time_travel(
     mut session: Option<ModelingSession>,
 ) -> (Vec<ExecutionState>, Result<()>) {
     let mut out = Vec::new();
+    let mut events = EventWriter::default();
     for (active_instruction, instruction) in plan.into_iter().enumerate() {
-        let res = instruction.execute(mem, session.as_mut()).await;
+        let res = instruction.execute(mem, session.as_mut(), &mut events).await;
         out.push(ExecutionState {
             mem: mem.clone(),
             active_instruction,
+            events: events.drain(),
         });
         if res.is_err() {
             return (out, res);
