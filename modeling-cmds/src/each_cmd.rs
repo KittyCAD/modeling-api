@@ -404,7 +404,7 @@ pub struct Solid3dFilletEdge {
     pub object_id: Uuid,
     /// Which edge you want to fillet.
     pub edge_id: Uuid,
-    /// The radius of the fillet.
+    /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
     pub radius: f64,
 }
 
