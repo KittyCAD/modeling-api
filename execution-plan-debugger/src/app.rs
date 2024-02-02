@@ -18,11 +18,18 @@ pub struct State {
     pub num_rows: usize,
 }
 
+pub enum HistorySelected {
+    Start,
+    Instruction(usize),
+    Finish,
+}
+
 impl State {
-    pub fn active_instruction(&self) -> Option<usize> {
-        match self.instruction_table_state.selected() {
-            Some(i) if i > 0 => Some(i - 1),
-            _ => None,
+    pub fn active_instruction(&self) -> HistorySelected {
+        match self.instruction_table_state.selected().unwrap() {
+            0 => HistorySelected::Start,
+            x if x == self.num_rows - 1 => HistorySelected::Finish,
+            other => HistorySelected::Instruction(other - 1),
         }
     }
 }
@@ -38,7 +45,9 @@ pub fn run(ctx: Context) -> anyhow::Result<()> {
     instruction_table_state.select(Some(0));
     let mut state = State {
         instruction_table_state,
-        num_rows: ctx.history.len() + 1,
+        // 1 extra row for start (before any instructions),
+        // and 1 extra row for the finish result (err/ok).
+        num_rows: ctx.history.len() + 2,
     };
 
     loop {

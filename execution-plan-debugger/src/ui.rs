@@ -3,36 +3,51 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize as _},
     text::Text,
-    widgets::{Block, Borders, Paragraph, Row, Table},
+    widgets::{Block, Borders, Cell, Paragraph, Row, Table},
     Frame,
 };
 
-use crate::app::{Context, State};
+use crate::app::{Context, HistorySelected, State};
 
 pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Length(3), Constraint::Min(1), Constraint::Length(3)])
+        .constraints([
+            // Header
+            Constraint::Length(3),
+            // Body
+            Constraint::Min(1),
+            // Footer
+            Constraint::Length(3),
+        ])
         .split(f.size());
     let body_chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
+        .constraints([
+            // Left half of body, for history/instructions.
+            Constraint::Percentage(50),
+            // Right half of body, for memory.
+            Constraint::Percentage(50),
+        ])
         .split(chunks[1]);
     let mem_chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
+        .constraints([
+            // Top left, for main memory
+            Constraint::Percentage(50),
+            // Bottom left, for stack memory
+            Constraint::Percentage(50),
+        ])
         .split(body_chunks[1]);
 
     let title = Paragraph::new(Text::styled("Execution Plan Replay", Style::default().fg(Color::Green)))
         .block(Block::default().borders(Borders::ALL).style(Style::default()));
 
-    // TODO: replace this with a table, with columns for the instruction type,
-    // operands, etc.
-    let instruction_block = Block::default()
+    let history_block = Block::default()
         .borders(Borders::ALL)
         .style(Style::default())
-        .title("Instructions");
-    let instruction_view = make_instruction_view(instruction_block, ctx);
+        .title("History");
+    let history_view = make_history_view(history_block, ctx);
 
     // Render the main memory view.
     let max_mem = ctx
@@ -48,10 +63,8 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
         })
         .max();
 
-    let active_instruction = state.active_instruction();
-
-    let main_mem_view = match active_instruction {
-        Some(active_instruction) => {
+    let main_mem_view = match state.active_instruction() {
+        HistorySelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
             let block = Block::default()
                 .borders(Borders::ALL)
@@ -63,8 +76,8 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     };
 
     // Render the stack view.
-    let stack_mem_view = match active_instruction {
-        Some(active_instruction) => {
+    let stack_mem_view = match state.active_instruction() {
+        HistorySelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
             let block = Block::default()
                 .borders(Borders::ALL)
@@ -79,7 +92,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
         _ => None,
     };
 
-    f.render_stateful_widget(instruction_view, body_chunks[0], &mut state.instruction_table_state);
+    f.render_stateful_widget(history_view, body_chunks[0], &mut state.instruction_table_state);
     f.render_widget(title, chunks[0]);
     if let Some(view) = main_mem_view {
         f.render_widget(view, mem_chunks[0]);
@@ -89,14 +102,12 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     }
 }
 
-fn make_instruction_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
-    let widths = [
-        Constraint::Percentage(10),
-        Constraint::Percentage(20),
-        Constraint::Percentage(70),
-    ];
-    let mut rows = Vec::with_capacity(ctx.history.len() + 1);
-    rows.push(Row::new(vec!["Start".to_owned()]));
+fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
+    let mut rows = Vec::with_capacity(ctx.history.len() + 2);
+    rows.push(Row::new(vec![
+        Cell::new("0"),
+        Cell::new(Text::styled("Start", Style::default().fg(Color::Green))),
+    ]));
     rows.extend(ctx.history.iter().enumerate().map(
         |(
             i,
@@ -125,18 +136,39 @@ fn make_instruction_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
                 Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
                 Instruction::StackPop { destination } => ("StackPop", format!("{destination:?}")),
             };
-            Row::new(vec![i.to_string(), instr_type.to_owned(), operands])
+            Row::new(vec![(i + 1).to_string(), instr_type.to_owned(), operands])
         },
     ));
-    Table::new(rows, widths)
-        .column_spacing(1)
-        .header(
-            Row::new(vec!["#", "Type", "Operands"])
-                .style(Style::new().bold())
-                .bottom_margin(1),
-        )
-        // Styles the selected row
-        .highlight_style(Style::new().reversed())
-        .highlight_symbol(">>")
-        .block(block)
+    rows.push(Row::new(vec![
+        Cell::new((ctx.history.len() + 1).to_string()),
+        match &ctx.result {
+            Ok(_) => Cell::new(Text::styled("Finished", Style::default().fg(Color::Green))),
+            Err(_e) => Cell::new(Text::styled("Error", Style::default().fg(Color::Red))),
+        },
+        match &ctx.result {
+            Ok(_) => Cell::new(Text::styled("", Style::default().fg(Color::Green))),
+            Err(e) => Cell::new(Text::styled(e.to_string(), Style::default().fg(Color::Red))),
+        },
+    ]));
+    Table::new(
+        rows,
+        [
+            // Instruction number
+            Constraint::Percentage(10),
+            // Instruction type
+            Constraint::Percentage(20),
+            // Instruction operands
+            Constraint::Percentage(70),
+        ],
+    )
+    .column_spacing(1)
+    .header(
+        Row::new(vec!["#", "Type", "Operands"])
+            .style(Style::new().bold())
+            .bottom_margin(1),
+    )
+    // Styles the selected row
+    .highlight_style(Style::new().reversed())
+    .highlight_symbol(">>")
+    .block(block)
 }
