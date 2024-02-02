@@ -11,6 +11,12 @@ impl fmt::Debug for Address {
     }
 }
 
+impl fmt::Display for Address {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
 impl Address {
     /// First memory address available.
     pub const ZERO: Self = Self(0);
@@ -63,12 +69,6 @@ impl std::ops::Sub for Address {
 
     fn sub(self, rhs: Self) -> Self::Output {
         self.0 - rhs.0
-    }
-}
-
-impl fmt::Display for Address {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.0.fmt(f)
     }
 }
 

@@ -115,6 +115,8 @@
         }
     },
     {
-        "StackPop": {}
+        "StackPop": {
+            "destination": 10
+        }
     }
 ]

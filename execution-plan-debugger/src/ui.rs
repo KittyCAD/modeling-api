@@ -269,7 +269,13 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
                     destination,
                 } => ("UnaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
                 Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
-                Instruction::StackPop { destination } => ("StackPop", format!("{destination:?}")),
+                Instruction::StackPop { destination } => (
+                    "StackPop",
+                    match destination {
+                        Some(dst) => format!("Into: {dst:?}"),
+                        None => "Discard".to_owned(),
+                    },
+                ),
             };
             let height = operands.chars().filter(|ch| ch == &'\n').count() + 1;
             Row::new(vec![(i + 1).to_string(), instr_type.to_owned(), operands])
