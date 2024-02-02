@@ -90,6 +90,12 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
         _ => None,
     };
 
+    let footer = Paragraph::new(Text::styled(
+        "Use up/down or left/right to scroll through the execution of your program",
+        Style::default().fg(Color::Green),
+    ))
+    .block(Block::default().borders(Borders::ALL).style(Style::default()));
+
     f.render_stateful_widget(history_view, body_chunks[0], &mut state.instruction_table_state);
     f.render_widget(title, chunks[0]);
     if let Some(view) = main_mem_view {
@@ -98,6 +104,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     if let Some(view) = stack_mem_view {
         f.render_widget(view, mem_chunks[1]);
     }
+    f.render_widget(footer, chunks[2]);
 }
 
 fn make_stack_view<'a>(block: Block<'a>, stack: &kittycad_execution_plan::Stack<Vec<Primitive>>) -> Table<'a> {
