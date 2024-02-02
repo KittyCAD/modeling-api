@@ -89,5 +89,8 @@
                 "String": "sixty-six"
             }
         }
+    },
+    {
+        "StackPop": {}
     }
 ]
