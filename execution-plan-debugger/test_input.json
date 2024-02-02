@@ -21,6 +21,11 @@
         }
     },
     {
+        "StackPush": {
+            "data": [{"String": "foo"}]
+        }
+    },
+    {
         "SetPrimitive": {
             "address": 2,
             "value": {
@@ -53,6 +58,9 @@
                 }
             }
         }
+    },
+    {
+        "StackPop": {}
     },
     {
         "SetPrimitive": {
