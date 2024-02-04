@@ -11,6 +11,13 @@ pub struct Event {
     pub severity: Severity,
 }
 
+impl Event {
+    /// New event, with other fields set to their default.
+    pub fn new(text: String, severity: Severity) -> Self {
+        Self { text, severity }
+    }
+}
+
 /// How important the event is.
 #[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq)]
 pub enum Severity {

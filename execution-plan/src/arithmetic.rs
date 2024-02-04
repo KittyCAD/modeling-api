@@ -57,24 +57,24 @@ impl UnaryArithmetic {
 
 macro_rules! arithmetic_body {
     ($arith:ident, $mem:ident, $method:ident, $events:ident) => {{
-        $events.push(crate::events::Event {
-            text: "Evaluating left operand".to_owned(),
-            severity: crate::events::Severity::Debug,
-        });
+        $events.push(crate::events::Event::new(
+            "Evaluating left operand".to_owned(),
+            crate::events::Severity::Debug,
+        ));
         let l = $arith.operand0.eval($mem)?.clone();
-        $events.push(crate::events::Event {
-            text: format!("Left operand is {l:?}"),
-            severity: crate::events::Severity::Info,
-        });
-        $events.push(crate::events::Event {
-            text: "Evaluating right operand".to_owned(),
-            severity: crate::events::Severity::Debug,
-        });
+        $events.push(crate::events::Event::new(
+            format!("Left operand is {l:?}"),
+            crate::events::Severity::Info,
+        ));
+        $events.push(crate::events::Event::new(
+            "Evaluating right operand".to_owned(),
+            crate::events::Severity::Debug,
+        ));
         let r = $arith.operand1.eval($mem)?.clone();
-        $events.push(crate::events::Event {
-            text: format!("Right operand is {r:?}"),
-            severity: crate::events::Severity::Info,
-        });
+        $events.push(crate::events::Event::new(
+            format!("Right operand is {r:?}"),
+            crate::events::Severity::Info,
+        ));
         match (l, r) {
             // If both operands are numeric, then do the arithmetic operation.
             (Primitive::NumericValue(x), Primitive::NumericValue(y)) => {
@@ -106,10 +106,10 @@ macro_rules! arithmetic_body {
                     }
                 };
                 let prim = Primitive::NumericValue(num);
-                $events.push(crate::events::Event {
-                    text: format!("Output is {prim:?}"),
-                    severity: crate::events::Severity::Info,
-                });
+                $events.push(crate::events::Event::new(
+                    format!("Output is {prim:?}"),
+                    crate::events::Severity::Info,
+                ));
                 Ok(prim)
             }
             // This operation can only be done on numeric types.
