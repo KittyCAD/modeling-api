@@ -30,6 +30,8 @@ impl Event {
 /// How important the event is.
 #[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq)]
 pub enum Severity {
+    /// Error
+    Error,
     /// Info
     Info,
     /// Debug
@@ -39,6 +41,7 @@ pub enum Severity {
 impl std::fmt::Display for Severity {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
+            Severity::Error => "Error",
             Severity::Info => "Info",
             Severity::Debug => "Debug",
         };

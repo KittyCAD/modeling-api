@@ -8,7 +8,6 @@ const REFRESH_RATE: Duration = Duration::from_millis(250);
 /// Probably immutable, given by the parent.
 pub struct Context {
     pub history: Vec<kittycad_execution_plan::ExecutionState>,
-    pub result: Result<(), kittycad_execution_plan::ExecutionError>,
     pub plan: Vec<Instruction>,
 }
 

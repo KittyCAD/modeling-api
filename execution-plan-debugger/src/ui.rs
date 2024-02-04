@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use kittycad_execution_plan::{
     events::{Event, Severity},
@@ -58,12 +58,25 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let title = Paragraph::new(Text::styled("Execution Plan Replay", Style::default().fg(Color::Green)))
         .block(Block::default().borders(Borders::ALL).style(Style::default()));
 
+    let instructions_with_errors: HashSet<_> = ctx
+        .history
+        .iter()
+        .enumerate()
+        .filter_map(|(i, st)| {
+            if st.events.iter().any(|evt| evt.severity == Severity::Error) {
+                Some(i)
+            } else {
+                None
+            }
+        })
+        .collect();
+
     let history_block = Block::default()
         .borders(Borders::ALL)
         .style(Style::default())
         .padding(Padding::vertical(1))
         .title("History");
-    let history_view = make_history_view(history_block, ctx);
+    let history_view = make_history_view(history_block, ctx, &instructions_with_errors);
 
     let event_block = Block::default()
         .borders(Borders::ALL)
@@ -149,6 +162,7 @@ fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashM
     let mut addr_colors = HashMap::new();
     let rows = events.iter().cloned().enumerate().map(|(i, event)| {
         let text_color = match event.severity {
+            Severity::Error => Color::Red,
             Severity::Info => Color::default(),
             Severity::Debug => Color::DarkGray,
         };
@@ -247,12 +261,9 @@ fn make_memory_view<'a>(
     .block(block)
 }
 
-fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
+fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &HashSet<usize>) -> Table<'a> {
     let mut rows = Vec::with_capacity(ctx.history.len() + 2);
-    rows.push(Row::new(vec![
-        Cell::new("0"),
-        Cell::new(Text::styled("Start", Style::default().fg(Color::Green))),
-    ]));
+    rows.push(Row::new(vec![Cell::new("0"), Cell::new("Start")]).style(Style::default().fg(Color::Green)));
     rows.extend(ctx.history.iter().enumerate().map(
         |(
             i,
@@ -314,20 +325,23 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context) -> Table<'a> {
                 ),
             };
             let height = operands.chars().filter(|ch| ch == &'\n').count() + 1;
-            Row::new(vec![(i + 1).to_string(), instr_type.to_owned(), operands])
-                .height(height.try_into().expect("height of cell must fit into u16"))
+            let style = Style::default().fg(if instrs_with_errors.contains(&i) {
+                Color::Red
+            } else {
+                Color::default()
+            });
+            Row::new(vec![
+                Cell::new((i + 1).to_string()),
+                Cell::new(instr_type),
+                Cell::new(operands),
+            ])
+            .style(style)
+            .height(height.try_into().expect("height of cell must fit into u16"))
         },
     ));
     rows.push(Row::new(vec![
         Cell::new((ctx.history.len() + 1).to_string()),
-        match &ctx.result {
-            Ok(_) => Cell::new(Text::styled("Finished", Style::default().fg(Color::Green))),
-            Err(_e) => Cell::new(Text::styled("Error", Style::default().fg(Color::Red))),
-        },
-        match &ctx.result {
-            Ok(_) => Cell::new(Text::styled("", Style::default().fg(Color::Green))),
-            Err(e) => Cell::new(Text::styled(e.to_string(), Style::default().fg(Color::Red))),
-        },
+        Cell::new(Text::from("Terminated")),
     ]));
     Table::new(
         rows,
