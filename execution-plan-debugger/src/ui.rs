@@ -90,32 +90,31 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let (event_view, addr_colors) = make_events_view(event_block, events);
 
     // Render the main memory view.
+    let main_mem_block = Block::default()
+        .borders(Borders::ALL)
+        .style(Style::default())
+        .padding(Padding::vertical(1))
+        .title("Address Memory");
     let main_mem_view = match state.active_instruction() {
         HistorySelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
-            let block = Block::default()
-                .borders(Borders::ALL)
-                .style(Style::default())
-                .padding(Padding::vertical(1))
-                .title("Address Memory");
-            Some(make_memory_view(block, mem, addr_colors))
-            // Some(make_memory_view(block, mem, num_memory_rows, addr_colors))
+            make_memory_view(main_mem_block, mem, addr_colors)
         }
-        _ => None,
+        _ => Table::new(Vec::<Row>::new(), Vec::<Constraint>::new()).block(main_mem_block),
     };
 
     // Render the stack view.
+    let stack_view_block = Block::default()
+        .borders(Borders::ALL)
+        .style(Style::default())
+        .padding(Padding::vertical(1))
+        .title("Stack Memory");
     let stack_mem_view = match state.active_instruction() {
         HistorySelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
-            let block = Block::default()
-                .borders(Borders::ALL)
-                .style(Style::default())
-                .padding(Padding::vertical(1))
-                .title("Stack Memory");
-            Some(make_stack_view(block, &mem.stack))
+            make_stack_view(stack_view_block, &mem.stack)
         }
-        _ => None,
+        _ => Table::new(Vec::<Row>::new(), Vec::<Constraint>::new()).block(stack_view_block),
     };
 
     let footer = Paragraph::new(Text::styled(
@@ -127,12 +126,8 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     f.render_stateful_widget(history_view, left_chunks[0], &mut state.instruction_table_state);
     f.render_widget(event_view, left_chunks[1]);
     f.render_widget(title, chunks[0]);
-    if let Some(view) = main_mem_view {
-        f.render_widget(view, right_chunks[0]);
-    }
-    if let Some(view) = stack_mem_view {
-        f.render_widget(view, right_chunks[1]);
-    }
+    f.render_widget(main_mem_view, right_chunks[0]);
+    f.render_widget(stack_mem_view, right_chunks[1]);
     f.render_widget(footer, chunks[2]);
 }
 
