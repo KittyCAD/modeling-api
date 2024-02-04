@@ -1,6 +1,8 @@
 //! Events can be logged during execution.
 //! Used in the visual debugger.
 
+use crate::Address;
+
 /// Something that happened during execution.
 /// Meant for debugging by a human.
 #[derive(Debug, Clone)]
@@ -9,12 +11,19 @@ pub struct Event {
     pub text: String,
     /// How important the event was.
     pub severity: Severity,
+    /// This event might be about a particular address.
+    /// Debuggers might want to visualize this.
+    pub related_address: Option<Address>,
 }
 
 impl Event {
     /// New event, with other fields set to their default.
     pub fn new(text: String, severity: Severity) -> Self {
-        Self { text, severity }
+        Self {
+            text,
+            severity,
+            related_address: None,
+        }
     }
 }
 
