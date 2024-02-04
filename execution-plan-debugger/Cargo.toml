@@ -1,0 +1,23 @@
+[package]
+name = "kittycad-execution-plan-debugger"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/KittyCAD/modeling-api"
+rust-version = "1.73"
+description = "Debugger for KittyCAD execution plans"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1"
+crossterm = "0.27.0"
+kittycad-execution-plan = { path = "../execution-plan" }
+kittycad-execution-plan-traits = "0.1.8"
+kittycad-modeling-cmds = { path = "../modeling-cmds" }
+kittycad-modeling-session = { path = "../modeling-session" }
+ratatui = { version = "0.25.0", features = ["all-widgets"] }
+serde_json = "1.0"
+tokio = { version = "1.35.0", features = ["rt", "macros"] }
+
+[lints]
+workspace = true
+

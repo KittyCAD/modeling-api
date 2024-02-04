@@ -1,7 +1,7 @@
 use std::env;
 
 use insta::assert_snapshot;
-use kittycad_execution_plan_traits::{Primitive, Value};
+use kittycad_execution_plan_traits::{ListHeader, ObjectHeader, Primitive, Value};
 use kittycad_modeling_cmds::shared::{PathSegment, Point3d, Point4d};
 use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
@@ -226,7 +226,7 @@ async fn get_element_of_array() {
     )
     .await
     .unwrap();
-    assert_snapshot!("set_array_memory", mem.debug_table());
+    assert_snapshot!("set_array_memory", mem.debug_table(None));
 
     // The last instruction put the 4D point (element 1) on the stack.
     // Check it's there.
@@ -325,7 +325,7 @@ async fn api_call_draw_cube() {
     .map(line_segment);
     let segment_addrs = segments.map(|segment| static_data.push(segment));
     let mut mem = static_data.finish();
-    assert_snapshot!("cube_memory_before", mem.debug_table());
+    assert_snapshot!("cube_memory_before", mem.debug_table(None));
 
     // Run the plan!
     execute(
@@ -395,7 +395,7 @@ async fn api_call_draw_cube() {
     .unwrap();
 
     // Program executed successfully!
-    assert_snapshot!("cube_memory_after", mem.debug_table());
+    assert_snapshot!("cube_memory_after", mem.debug_table(None));
 
     // The image output was set to addr 99.
     // Outputs are two addresses long, addr 99 will store the data format (TAKE_SNAPSHOT)
