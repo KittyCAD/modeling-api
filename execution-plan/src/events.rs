@@ -1,6 +1,8 @@
 //! Events can be logged during execution.
 //! Used in the visual debugger.
 
+use crate::Address;
+
 /// Something that happened during execution.
 /// Meant for debugging by a human.
 #[derive(Debug, Clone)]
@@ -9,11 +11,27 @@ pub struct Event {
     pub text: String,
     /// How important the event was.
     pub severity: Severity,
+    /// This event might be about a particular address.
+    /// Debuggers might want to visualize this.
+    pub related_address: Option<Address>,
+}
+
+impl Event {
+    /// New event, with other fields set to their default.
+    pub fn new(text: String, severity: Severity) -> Self {
+        Self {
+            text,
+            severity,
+            related_address: None,
+        }
+    }
 }
 
 /// How important the event is.
 #[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq)]
 pub enum Severity {
+    /// Error
+    Error,
     /// Info
     Info,
     /// Debug
@@ -23,6 +41,7 @@ pub enum Severity {
 impl std::fmt::Display for Severity {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
+            Severity::Error => "Error",
             Severity::Info => "Info",
             Severity::Debug => "Debug",
         };

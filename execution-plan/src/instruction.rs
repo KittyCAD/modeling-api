@@ -120,7 +120,14 @@ impl Instruction {
             } => {
                 let out = arithmetic.calculate(mem, events)?;
                 match destination {
-                    Destination::Address(addr) => mem.set(addr, out),
+                    Destination::Address(addr) => {
+                        events.push(Event {
+                            text: format!("Writing output to address {addr}"),
+                            severity: crate::events::Severity::Info,
+                            related_address: Some(addr),
+                        });
+                        mem.set(addr, out);
+                    }
                     Destination::StackPush => mem.stack.push(vec![out]),
                 };
             }
@@ -200,12 +207,14 @@ impl Instruction {
                 events.push(Event {
                     text: format!("Reading size of element from {curr}"),
                     severity: crate::events::Severity::Info,
+                    related_address: Some(curr),
                 });
                 let size_of_element: usize = mem.get_primitive(&curr)?;
                 let addr_of_element = curr + 1;
                 events.push(Event {
                     text: format!("Element begins at {addr_of_element} and has length {size_of_element}"),
                     severity: crate::events::Severity::Info,
+                    related_address: Some(addr_of_element),
                 });
                 let element = mem.get_slice(addr_of_element, size_of_element)?;
                 mem.stack.push(element);
@@ -247,12 +256,14 @@ impl Instruction {
                 events.push(Event {
                     text: format!("Reading size of property from {curr}"),
                     severity: crate::events::Severity::Info,
+                    related_address: Some(curr),
                 });
                 let size_of_element: usize = mem.get_size(&curr)?;
                 let addr_of_element = curr + 1;
                 events.push(Event {
                     text: format!("Property begins at {addr_of_element} and has length {size_of_element}"),
                     severity: crate::events::Severity::Info,
+                    related_address: Some(addr_of_element),
                 });
                 let element = mem.get_slice(addr_of_element, size_of_element)?;
                 mem.stack.push(element);

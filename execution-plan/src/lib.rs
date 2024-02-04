@@ -160,21 +160,27 @@ pub async fn execute_time_travel(
     mem: &mut Memory,
     plan: Vec<Instruction>,
     mut session: Option<ModelingSession>,
-) -> (Vec<ExecutionState>, Result<()>) {
+) -> Vec<ExecutionState> {
     let mut out = Vec::new();
     let mut events = EventWriter::default();
     for (active_instruction, instruction) in plan.into_iter().enumerate() {
         let res = instruction.execute(mem, session.as_mut(), &mut events).await;
-        out.push(ExecutionState {
+        if let Err(e) = res {
+            events.push(Event {
+                text: e.to_string(),
+                severity: events::Severity::Error,
+                related_address: None,
+            })
+        }
+        let state = ExecutionState {
             mem: mem.clone(),
             active_instruction,
             events: events.drain(),
-        });
-        if res.is_err() {
-            return (out, res);
-        }
+        };
+
+        out.push(state);
     }
-    (out, Ok(()))
+    out
 }
 
 type Result<T> = std::result::Result<T, ExecutionError>;

@@ -8,7 +8,6 @@ const REFRESH_RATE: Duration = Duration::from_millis(250);
 /// Probably immutable, given by the parent.
 pub struct Context {
     pub history: Vec<kittycad_execution_plan::ExecutionState>,
-    pub result: Result<(), kittycad_execution_plan::ExecutionError>,
     pub plan: Vec<Instruction>,
 }
 
@@ -21,14 +20,12 @@ pub struct State {
 pub enum HistorySelected {
     Start,
     Instruction(usize),
-    Finish,
 }
 
 impl State {
     pub fn active_instruction(&self) -> HistorySelected {
         match self.instruction_table_state.selected().unwrap() {
             0 => HistorySelected::Start,
-            x if x == self.num_rows - 1 => HistorySelected::Finish,
             other => HistorySelected::Instruction(other - 1),
         }
     }
@@ -47,7 +44,7 @@ pub fn run(ctx: Context) -> anyhow::Result<()> {
         instruction_table_state,
         // 1 extra row for start (before any instructions),
         // and 1 extra row for the finish result (err/ok).
-        num_rows: ctx.history.len() + 2,
+        num_rows: ctx.history.len() + 1,
     };
 
     loop {
