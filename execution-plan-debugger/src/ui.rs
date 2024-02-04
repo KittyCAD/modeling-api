@@ -1,6 +1,8 @@
+use std::collections::HashMap;
+
 use kittycad_execution_plan::{
     events::{Event, Severity},
-    BinaryArithmetic, ExecutionState, Instruction,
+    Address, BinaryArithmetic, ExecutionState, Instruction,
 };
 use kittycad_execution_plan_traits::Primitive;
 use ratatui::{
@@ -72,7 +74,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
         HistorySelected::Instruction(i) => &ctx.history[i].events,
         _ => [].as_slice(),
     };
-    let event_view = make_events_view(event_block, events);
+    let (event_view, addr_colors) = make_events_view(event_block, events);
 
     // Render the main memory view.
     let num_memory_rows = ctx
@@ -97,7 +99,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
                 .style(Style::default())
                 .padding(Padding::vertical(1))
                 .title("Address Memory");
-            Some(make_memory_view(block, mem, num_memory_rows))
+            Some(make_memory_view(block, mem, num_memory_rows, addr_colors))
         }
         _ => None,
     };
@@ -154,40 +156,71 @@ fn make_stack_view<'a>(block: Block<'a>, stack: &kittycad_execution_plan::Stack<
     .block(block)
 }
 
-fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> Table<'a> {
+const HIGHLIGHT_COLORS: [Color; 5] = [Color::Green, Color::Cyan, Color::Magenta, Color::Yellow, Color::Blue];
+
+fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashMap<Address, Color>) {
+    let mut addr_colors = HashMap::new();
     let rows = events.iter().cloned().enumerate().map(|(i, event)| {
-        let color = match event.severity {
+        let text_color = match event.severity {
             Severity::Info => Color::default(),
             Severity::Debug => Color::DarkGray,
+        };
+        let highlight_color = match event.related_address {
+            Some(addr) => {
+                let color_num = addr_colors.len();
+                addr_colors.insert(addr, HIGHLIGHT_COLORS[color_num]);
+                HIGHLIGHT_COLORS[color_num]
+            }
+            None => Color::default(),
         };
         Row::new(vec![
             // Event number
             Cell::from(i.to_string()),
             // Severity
             // Cell::from(event.severity.to_string()),
-            Cell::new(Text::styled(event.severity.to_string(), Style::default().fg(color))),
+            Cell::new(Text::styled(
+                event.severity.to_string(),
+                Style::default().fg(text_color),
+            )),
+            // Related address
+            Cell::new(Text::styled(
+                if let Some(addr) = event.related_address {
+                    addr.to_string()
+                } else {
+                    "-".to_owned()
+                },
+                Style::default().fg(highlight_color),
+            )),
             // Text
-            Cell::new(Text::styled(event.text.to_string(), Style::default().fg(color))),
+            Cell::new(Text::styled(event.text.to_string(), Style::default().fg(text_color))),
         ])
     });
 
-    Table::new(
+    let tbl = Table::new(
         rows,
         [
             // Event number
             Constraint::Length(3),
             // Event severity
             Constraint::Length(6),
+            // Address
+            Constraint::Length(12),
             // Message
             Constraint::Max(50),
         ],
     )
     .column_spacing(1)
-    .header(Row::new(vec!["#", "Level", "Msg"]).style(Style::new().bold()))
-    .block(block)
+    .header(Row::new(vec!["#", "Level", "Related Addr", "Msg"]).style(Style::new().bold()))
+    .block(block);
+    (tbl, addr_colors)
 }
 
-fn make_memory_view<'a>(block: Block<'a>, mem: &kittycad_execution_plan::Memory, num_rows: usize) -> Table<'a> {
+fn make_memory_view<'a>(
+    block: Block<'a>,
+    mem: &kittycad_execution_plan::Memory,
+    num_rows: usize,
+    addr_colors: HashMap<Address, Color>,
+) -> Table<'a> {
     let rows = mem
         .addresses
         .iter()
@@ -195,7 +228,10 @@ fn make_memory_view<'a>(block: Block<'a>, mem: &kittycad_execution_plan::Memory,
         .enumerate()
         .filter_map(|(addr, val)| val.map(|val| (addr, val)))
         .take(num_rows)
-        .map(|(addr, val)| Row::new(vec![addr.to_string(), format!("{val:?}")]));
+        .map(|(addr, val)| {
+            Row::new(vec![addr.to_string(), format!("{val:?}")])
+                .style(Style::default().fg(addr_colors.get(&(Address::ZERO + addr)).copied().unwrap_or_default()))
+        });
 
     Table::new(
         rows,

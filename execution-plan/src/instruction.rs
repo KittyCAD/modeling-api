@@ -120,7 +120,14 @@ impl Instruction {
             } => {
                 let out = arithmetic.calculate(mem, events)?;
                 match destination {
-                    Destination::Address(addr) => mem.set(addr, out),
+                    Destination::Address(addr) => {
+                        events.push(Event {
+                            text: format!("writing output to address {addr}"),
+                            severity: crate::events::Severity::Info,
+                            related_address: Some(addr),
+                        });
+                        mem.set(addr, out);
+                    }
                     Destination::StackPush => mem.stack.push(vec![out]),
                 };
             }
