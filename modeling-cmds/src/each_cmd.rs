@@ -195,7 +195,7 @@ pub struct EntityGetDistance {
 pub struct EntityLinearPattern {
     /// ID of the entity being copied.
     pub entity_id: Uuid,
-    /// Axis along which to make the copites
+    /// Axis along which to make the copies
     pub axis: Point3d<f64>,
     /// Number of repetitions to make.
     pub num_repetitions: u32,
