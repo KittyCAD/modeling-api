@@ -62,19 +62,25 @@ macro_rules! arithmetic_body {
             crate::events::Severity::Debug,
         ));
         let l = $arith.operand0.eval($mem)?.clone();
-        $events.push(crate::events::Event::new(
-            format!("Left operand is {l:?}"),
-            crate::events::Severity::Info,
-        ));
+        $events.push({
+            let mut evt = crate::events::Event::new(format!("Left operand is {l:?}"), crate::events::Severity::Info);
+            if let Operand::Reference(a) = $arith.operand0 {
+                evt.related_address = Some(a);
+            }
+            evt
+        });
         $events.push(crate::events::Event::new(
             "Evaluating right operand".to_owned(),
             crate::events::Severity::Debug,
         ));
         let r = $arith.operand1.eval($mem)?.clone();
-        $events.push(crate::events::Event::new(
-            format!("Right operand is {r:?}"),
-            crate::events::Severity::Info,
-        ));
+        $events.push({
+            let mut evt = crate::events::Event::new(format!("Right operand is {r:?}"), crate::events::Severity::Info);
+            if let Operand::Reference(a) = $arith.operand1 {
+                evt.related_address = Some(a);
+            }
+            evt
+        });
         match (l, r) {
             // If both operands are numeric, then do the arithmetic operation.
             (Primitive::NumericValue(x), Primitive::NumericValue(y)) => {
