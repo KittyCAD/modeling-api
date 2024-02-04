@@ -4,7 +4,7 @@ use kittycad_execution_plan::{
     events::{Event, Severity},
     Address, BinaryArithmetic, ExecutionState, Instruction,
 };
-use kittycad_execution_plan_traits::Primitive;
+use kittycad_execution_plan_traits::{Primitive, ReadMemory};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize as _},
@@ -77,20 +77,6 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let (event_view, addr_colors) = make_events_view(event_block, events);
 
     // Render the main memory view.
-    let num_memory_rows = ctx
-        .history
-        .iter()
-        .filter_map(|exec_st| {
-            exec_st
-                .mem
-                .addresses
-                .iter()
-                .enumerate()
-                .find_map(|(i, mem)| if mem.is_none() { Some(i) } else { None })
-        })
-        .max()
-        .unwrap();
-
     let main_mem_view = match state.active_instruction() {
         HistorySelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
@@ -99,7 +85,8 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
                 .style(Style::default())
                 .padding(Padding::vertical(1))
                 .title("Address Memory");
-            Some(make_memory_view(block, mem, num_memory_rows, addr_colors))
+            Some(make_memory_view(block, mem, addr_colors))
+            // Some(make_memory_view(block, mem, num_memory_rows, addr_colors))
         }
         _ => None,
     };
@@ -218,19 +205,32 @@ fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashM
 fn make_memory_view<'a>(
     block: Block<'a>,
     mem: &kittycad_execution_plan::Memory,
-    num_rows: usize,
+    // num_rows: usize,
     addr_colors: HashMap<Address, Color>,
 ) -> Table<'a> {
+    // After a certain address, all following addresses will be empty.
+    // Only show addresses before that point.
+    let num_rows = (0..(mem.addresses.len()))
+        .rev()
+        .find(|addr| mem.get(&(Address::ZERO + *addr)).is_some())
+        .map(|x| x + 1)
+        .unwrap_or(mem.addresses.len());
     let rows = mem
         .addresses
         .iter()
         .cloned()
         .enumerate()
-        .filter_map(|(addr, val)| val.map(|val| (addr, val)))
         .take(num_rows)
         .map(|(addr, val)| {
-            Row::new(vec![addr.to_string(), format!("{val:?}")])
-                .style(Style::default().fg(addr_colors.get(&(Address::ZERO + addr)).copied().unwrap_or_default()))
+            Row::new(vec![
+                addr.to_string(),
+                if let Some(val) = val {
+                    format!("{val:?}")
+                } else {
+                    ".".to_owned()
+                },
+            ])
+            .style(Style::default().fg(addr_colors.get(&(Address::ZERO + addr)).copied().unwrap_or_default()))
         });
 
     Table::new(

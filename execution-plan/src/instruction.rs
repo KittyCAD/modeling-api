@@ -122,7 +122,7 @@ impl Instruction {
                 match destination {
                     Destination::Address(addr) => {
                         events.push(Event {
-                            text: format!("writing output to address {addr}"),
+                            text: format!("Writing output to address {addr}"),
                             severity: crate::events::Severity::Info,
                             related_address: Some(addr),
                         });
