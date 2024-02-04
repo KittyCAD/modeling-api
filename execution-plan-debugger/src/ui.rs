@@ -339,10 +339,6 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
             .height(height.try_into().expect("height of cell must fit into u16"))
         },
     ));
-    rows.push(Row::new(vec![
-        Cell::new((ctx.history.len() + 1).to_string()),
-        Cell::new(Text::from("Terminated")),
-    ]));
     Table::new(
         rows,
         [
