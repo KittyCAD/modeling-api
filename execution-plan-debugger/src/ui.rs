@@ -328,13 +328,9 @@ fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
             "SetValue",
             format!("Write {value_parts:?} starting at address {address}"),
         ),
-        Instruction::GetElement { start, index } => (
-            "GetElement",
-            format!("Find element #{index:?}\nof array at address {start}"),
-        ),
-        Instruction::GetProperty { start, property } => (
+        Instruction::AddrOfMember { start, member } => (
             "GetProperty",
-            format!("Find property '{property:?}'\nof object at address {start}"),
+            format!("Find member '{member:?}'\nof object at address {start}"),
         ),
         Instruction::SetList { start, elements } => (
             "SetList",
