@@ -248,6 +248,10 @@ impl<T> Stack<T> {
     pub fn iter(&self) -> impl Iterator<Item = &T> {
         self.inner.iter().rev()
     }
+    /// How many items are currently in the stack?
+    pub fn len(&self) -> usize {
+        self.inner.len()
+    }
 }
 
 impl Stack<Vec<Primitive>> {
