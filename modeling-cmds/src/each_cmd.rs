@@ -195,7 +195,7 @@ pub struct EntityGetDistance {
 pub struct EntityLinearPattern {
     /// ID of the entity being copied.
     pub entity_id: Uuid,
-    /// Axis along which to make the copites
+    /// Axis along which to make the copies
     pub axis: Point3d<f64>,
     /// Number of repetitions to make.
     pub num_repetitions: u32,
@@ -395,6 +395,17 @@ pub struct Solid3dGetPrevAdjacentEdge {
     pub edge_id: Uuid,
     /// Which face is used to figure out the opposite edge?
     pub face_id: Uuid,
+}
+
+/// Fillets the given edge with the specified radius.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct Solid3dFilletEdge {
+    /// Which object is being filletted.
+    pub object_id: Uuid,
+    /// Which edge you want to fillet.
+    pub edge_id: Uuid,
+    /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
+    pub radius: f64,
 }
 
 /// Send object to front or back.

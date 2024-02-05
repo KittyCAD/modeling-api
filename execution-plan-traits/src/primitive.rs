@@ -4,7 +4,7 @@ use uuid::Uuid;
 use crate::{impl_value_on_primitive_ish, MemoryError, Value};
 
 /// A value stored in KCEP program memory.
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Clone, Serialize, Deserialize)]
 pub enum Primitive {
     /// UTF-8 text
     String(String),
@@ -22,6 +22,25 @@ pub enum Primitive {
     ObjectHeader(ObjectHeader),
     /// An optional value which was not given.
     Nil,
+}
+
+impl std::fmt::Debug for Primitive {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Primitive::String(s) => write!(f, r#""{s}""#),
+            Primitive::NumericValue(NumericPrimitive::Float(x)) => x.fmt(f),
+            Primitive::NumericValue(NumericPrimitive::Integer(x)) => x.fmt(f),
+            Primitive::NumericValue(NumericPrimitive::UInteger(x)) => write!(f, "{x} (uint)"),
+            Primitive::Uuid(u) => write!(f, "{u}"),
+            Primitive::Bytes(_) => write!(f, "Binary"),
+            Primitive::Bool(b) => write!(f, "{b}"),
+            Primitive::ListHeader(ListHeader { count, size }) => write!(f, "List header (count {count}, size {size})"),
+            Primitive::ObjectHeader(ObjectHeader { properties, size }) => {
+                write!(f, "Object header (props {properties:?}, size {size})")
+            }
+            Primitive::Nil => write!(f, "Nil"),
+        }
+    }
 }
 
 /// List metadata.
