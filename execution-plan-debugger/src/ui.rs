@@ -250,8 +250,10 @@ fn make_memory_view<'a>(
 }
 
 fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &HashSet<usize>) -> Table<'a> {
-    let mut rows = Vec::with_capacity(ctx.history.len() + 2);
+    let mut rows = Vec::with_capacity(ctx.plan.len() + 1);
+    // Start row
     rows.push(Row::new(vec![Cell::new("0"), Cell::new("Start")]).style(Style::default().fg(Color::Green)));
+    // One row per executed instruction
     rows.extend(ctx.history.iter().enumerate().map(
         |(
             i,
@@ -279,20 +281,23 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
             .height(height.try_into().expect("height of cell must fit into u16"))
         },
     ));
-    // Add instructions that weren't executed
+    // One row per remaining (unexecuted) instructions.
+    let n = ctx.history.len();
     rows.extend((ctx.last_instruction..ctx.plan.len()).map(|i| {
         let instruction = &ctx.plan[i];
         let (instr_type, operands) = describe_instruction(instruction);
         let height = operands.chars().filter(|ch| ch == &'\n').count() + 1;
         let style = Style::default().fg(Color::DarkGray);
         Row::new(vec![
-            Cell::new(i.to_string()),
+            Cell::new(((i - ctx.last_instruction) + 1 + n).to_string()),
             Cell::new(instr_type),
             Cell::new(operands),
         ])
         .style(style)
         .height(height.try_into().expect("height of cell must fit into u16"))
     }));
+
+    // Combine all rows into the table.
     Table::new(
         rows,
         [
