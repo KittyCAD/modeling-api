@@ -2,7 +2,7 @@
 name = "kittycad-execution-plan-macros"
 version = "0.1.2"
 edition = "2021"
-repository = "https://github.com/KittyCAD/execution-plan"
+repository = "https://github.com/KittyCAD/modeling-api"
 rust-version = "1.73"
 description = "Macros for working with KittyCAD execution plans"
 authors = ["Adam Chalmers"]
