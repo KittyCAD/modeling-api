@@ -172,10 +172,10 @@ impl BinaryArithmetic {
                 arithmetic_body!(self, mem, div, events)
             }
             BinaryOperation::Mod => {
-                arithmetic_body!(self, mem, rem)
+                arithmetic_body!(self, mem, rem, events)
             }
             BinaryOperation::Pow => {
-                arithmetic_body!(self, mem, power)
+                arithmetic_body!(self, mem, power, events)
             }
         }
     }
