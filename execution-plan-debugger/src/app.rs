@@ -77,6 +77,8 @@ fn main_loop(
                         Some(x) if *x > 0 => *x -= 1,
                         _ => {}
                     },
+                    Ok(KeyPress::Start) => state.instruction_table_state.select(Some(0)),
+                    Ok(KeyPress::End) => state.instruction_table_state.select(Some(state.num_rows - 1)),
                     Ok(KeyPress::Forwards) => match state.instruction_table_state.selected_mut() {
                         Some(x) if *x < state.num_rows - 1 => *x += 1,
                         _ => {}
@@ -93,6 +95,8 @@ fn main_loop(
 enum KeyPress {
     Backwards,
     Forwards,
+    Start,
+    End,
     Quit,
 }
 
@@ -106,6 +110,8 @@ impl TryFrom<crossterm::event::KeyCode> for KeyPress {
             Char('a' | 'h' | 'w' | 'k') | KeyCode::Up | KeyCode::Left => Self::Backwards,
             Char('d' | 'l' | 's' | 'j') | KeyCode::Down | KeyCode::Right => Self::Forwards,
             Char('q') | KeyCode::Esc => Self::Quit,
+            Char('G') | KeyCode::End => Self::End,
+            KeyCode::Home => Self::Start,
             _ => return Err(()),
         };
         Ok(key)

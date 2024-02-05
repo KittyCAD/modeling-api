@@ -3,11 +3,9 @@
     "SetPrimitive": {
       "address": 0,
       "value": {
-        "ObjectHeader": {
-          "properties": [
-            "a"
-          ],
-          "size": 3
+        "ListHeader": {
+          "count": 3,
+          "size": 6
         }
       }
     }
@@ -15,19 +13,6 @@
   {
     "SetPrimitive": {
       "address": 1,
-      "value": {
-        "ObjectHeader": {
-          "properties": [
-            "b"
-          ],
-          "size": 2
-        }
-      }
-    }
-  },
-  {
-    "SetPrimitive": {
-      "address": 2,
       "value": {
         "NumericValue": {
           "UInteger": 1
@@ -37,15 +22,7 @@
   },
   {
     "SetPrimitive": {
-      "address": 3,
-      "value": {
-        "Bool": true
-      }
-    }
-  },
-  {
-    "SetPrimitive": {
-      "address": 4,
+      "address": 2,
       "value": {
         "String": "a"
       }
@@ -53,36 +30,101 @@
   },
   {
     "SetPrimitive": {
-      "address": 5,
+      "address": 3,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 4,
       "value": {
         "String": "b"
       }
     }
   },
   {
-    "GetProperty": {
-      "start": 0,
-      "property": {
-        "Reference": 4
+    "SetPrimitive": {
+      "address": 5,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
       }
     }
   },
   {
-    "StackPop": {
-      "destination": 6
-    }
-  },
-  {
-    "GetProperty": {
-      "start": 6,
-      "property": {
-        "Reference": 5
+    "SetPrimitive": {
+      "address": 6,
+      "value": {
+        "String": "c"
       }
     }
   },
   {
-    "StackPop": {
-      "destination": 7
+    "SetPrimitive": {
+      "address": 7,
+      "value": {
+        "NumericValue": {
+          "Integer": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 8,
+      "value": {
+        "NumericValue": {
+          "Integer": 1
+        }
+      }
+    }
+  },
+  {
+    "BinaryArithmetic": {
+      "arithmetic": {
+        "operation": "Add",
+        "operand0": {
+          "Reference": 7
+        },
+        "operand1": {
+          "Reference": 8
+        }
+      },
+      "destination": {
+        "Address": 9
+      }
+    }
+  },
+  {
+    "AddrOfMember": {
+      "start": {
+        "Literal": {
+          "NumericValue": {
+            "UInteger": 0
+          }
+        }
+      },
+      "member": {
+        "Reference": 9
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": "StackPop",
+      "destination": {
+        "Literal": {
+          "NumericValue": {
+            "UInteger": 10
+          }
+        }
+      },
+      "num_primitives": 1
     }
   }
 ]

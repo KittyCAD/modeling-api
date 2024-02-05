@@ -30,7 +30,7 @@ pub enum Instruction {
     /// Assumes the object/list is formatted according to [`Instruction::SetList`] documentation.
     AddrOfMember {
         /// Starting address of the array/object.
-        start: Address,
+        start: Operand,
         /// Element index or property name.
         member: Operand,
     },
@@ -78,6 +78,15 @@ pub enum Instruction {
         /// If Some, the value popped will be stored at that address.
         /// If None, the value won't be stored anywhere.
         destination: Option<Address>,
+    },
+    /// Copy data.
+    Copy {
+        /// Start copying from this address.
+        source: Operand,
+        /// Start copying into this address.
+        destination: Operand,
+        /// How many addresses should be copied?
+        num_primitives: usize,
     },
 }
 
@@ -169,20 +178,57 @@ impl Instruction {
                 });
 
                 // Read the structure.
-                let structure = mem
-                    .get(&start)
-                    .cloned()
-                    .ok_or(ExecutionError::MemoryEmpty { addr: start })?;
                 events.push(Event {
-                    text: format!("Looking up property of '{structure:?}'"),
+                    text: format!("Resolving start address {start:?}"),
                     severity: Severity::Debug,
-                    related_address: Some(start),
+                    related_address: None,
                 });
+                let start_address = match start {
+                    Operand::Literal(Primitive::NumericValue(NumericPrimitive::UInteger(a))) => Address(a),
+                    Operand::Literal(other) => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "usize",
+                            actual: format!("{other:?}"),
+                        }))
+                    }
+                    Operand::Reference(addr) => {
+                        let a: usize = mem.get_primitive(&addr)?;
+                        Address(a)
+                    }
+                    Operand::StackPop => {
+                        let data = mem.stack.pop_single()?;
+                        let a: usize = data.try_into()?;
+                        Address(a)
+                    }
+                };
+                events.push(Event {
+                    text: "Resolved start address".to_owned(),
+                    severity: Severity::Debug,
+                    related_address: Some(start_address),
+                });
+                let structure = mem
+                    .get(&start_address)
+                    .cloned()
+                    .ok_or(ExecutionError::MemoryEmpty { addr: start_address })?;
 
                 // Look up the member in this structure. What number member is it?
                 let (index, member_display) = match structure {
                     // Structure is an array
                     Primitive::ListHeader(ListHeader { count, size: _ }) => match member_primitive {
+                        Primitive::NumericValue(NumericPrimitive::Integer(i)) if i >= 0 => {
+                            let i = i as usize;
+                            // Bounds check
+                            if i < count {
+                                events.push(Event {
+                                    text: format!("Property is index {i}"),
+                                    severity: Severity::Info,
+                                    related_address: None,
+                                });
+                                (i, i.to_string())
+                            } else {
+                                return Err(ExecutionError::ListIndexOutOfBounds { count, index: i });
+                            }
+                        }
                         Primitive::NumericValue(NumericPrimitive::UInteger(i)) => {
                             // Bounds check
                             if i < count {
@@ -217,7 +263,7 @@ impl Instruction {
                             } else {
                                 return Err(ExecutionError::UndefinedProperty {
                                     property: s,
-                                    address: start,
+                                    address: start_address,
                                 });
                             }
                         }
@@ -237,7 +283,7 @@ impl Instruction {
                 };
 
                 // Find the address of the given member.
-                let mut curr = start + 1;
+                let mut curr = start_address + 1;
                 for _ in 0..index {
                     let size_of_element: usize = match mem.get(&curr).ok_or(MemoryError::MemoryWrongSize)? {
                         Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
@@ -257,7 +303,12 @@ impl Instruction {
                     severity: crate::events::Severity::Info,
                     related_address: Some(curr),
                 });
-                mem.stack.push(vec![curr.0.into()]);
+                let to_push = match mem.get(&curr).ok_or(ExecutionError::MemoryEmpty { addr: curr })? {
+                    Primitive::ListHeader(_) => curr,
+                    Primitive::ObjectHeader(_) => curr,
+                    _ => curr + 1,
+                };
+                mem.stack.push(vec![to_push.0.into()]);
             }
             Instruction::StackPush { data } => {
                 mem.stack.push(data);
@@ -267,6 +318,36 @@ impl Instruction {
                 let Some(destination) = destination else { return Ok(()) };
                 for (i, data_part) in data.into_iter().enumerate() {
                     mem.set(destination + i, data_part);
+                }
+            }
+            Instruction::Copy {
+                source,
+                destination,
+                num_primitives,
+            } => {
+                let src_addr = match source.eval(mem)? {
+                    Primitive::NumericValue(NumericPrimitive::UInteger(u)) => Address(u),
+                    other => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "uint",
+                            actual: format!("{other:?}"),
+                        }))
+                    }
+                };
+                let dst_addr = match destination.eval(mem)? {
+                    Primitive::NumericValue(NumericPrimitive::UInteger(u)) => Address(u),
+                    other => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "uint",
+                            actual: format!("{other:?}"),
+                        }))
+                    }
+                };
+                for i in 0..num_primitives {
+                    let src = src_addr + i;
+                    let dst = dst_addr + i;
+                    let val = mem.get(&src).ok_or(ExecutionError::MemoryEmpty { addr: src })?;
+                    mem.set(dst, val.clone());
                 }
             }
         }

@@ -195,7 +195,7 @@ fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashM
             // Address
             Constraint::Length(12),
             // Message
-            Constraint::Max(50),
+            Constraint::Percentage(100),
         ],
     )
     .column_spacing(1)
@@ -283,7 +283,7 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
     ));
     // One row per remaining (unexecuted) instructions.
     let n = ctx.history.len();
-    rows.extend((ctx.last_instruction..ctx.plan.len()).map(|i| {
+    rows.extend((ctx.last_instruction..ctx.plan.len() - 1).map(|i| {
         let instruction = &ctx.plan[i];
         let (instr_type, operands) = describe_instruction(instruction);
         let height = operands.chars().filter(|ch| ch == &'\n').count() + 1;
@@ -329,8 +329,8 @@ fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
             format!("Write {value_parts:?} starting at address {address}"),
         ),
         Instruction::AddrOfMember { start, member } => (
-            "GetProperty",
-            format!("Find member '{member:?}'\nof object at address {start}"),
+            "AddrOfMember",
+            format!("Find member '{member:?}'\nof object at address {start:?}"),
         ),
         Instruction::SetList { start, elements } => (
             "SetList",
@@ -362,6 +362,14 @@ fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
                 Some(dst) => format!("Into: {dst:?}"),
                 None => "Discard".to_owned(),
             },
+        ),
+        Instruction::Copy {
+            source,
+            destination,
+            num_primitives,
+        } => (
+            "Copy",
+            format!("{num_primitives} prims from {source:?} to {destination:?}"),
         ),
     }
 }
