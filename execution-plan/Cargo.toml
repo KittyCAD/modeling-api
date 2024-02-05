@@ -2,7 +2,7 @@
 name = "kittycad-execution-plan"
 version = "0.1.0"
 edition = "2021"
-repository = "https://github.com/KittyCAD/execution-plan"
+repository = "https://github.com/KittyCAD/modeling-api"
 rust-version = "1.73"
 description = "A DSL for composing KittyCAD API queries"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
