@@ -155,21 +155,28 @@ pub struct ExecutionState {
 }
 
 /// Execute the plan, returning the state at every moment of execution.
+/// Also return the index of the final instruction executed.
+/// This will be the last instruction if execution succeeded, but it might be earlier if
+/// execution had an error and quit.
 pub async fn execute_time_travel(
     mem: &mut Memory,
     plan: Vec<Instruction>,
     mut session: Option<ModelingSession>,
-) -> Vec<ExecutionState> {
+) -> (Vec<ExecutionState>, usize) {
     let mut out = Vec::new();
     let mut events = EventWriter::default();
+    let n = plan.len();
     for (active_instruction, instruction) in plan.into_iter().enumerate() {
         let res = instruction.execute(mem, session.as_mut(), &mut events).await;
+
+        let mut crashed = false;
         if let Err(e) = res {
             events.push(Event {
                 text: e.to_string(),
                 severity: events::Severity::Error,
                 related_address: None,
-            })
+            });
+            crashed = true;
         }
         let state = ExecutionState {
             mem: mem.clone(),
@@ -178,8 +185,11 @@ pub async fn execute_time_travel(
         };
 
         out.push(state);
+        if crashed {
+            return (out, active_instruction);
+        }
     }
-    out
+    (out, n - 1)
 }
 
 type Result<T> = std::result::Result<T, ExecutionError>;

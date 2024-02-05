@@ -263,55 +263,7 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
         )| {
             let instruction = &ctx.plan[*active_instruction];
 
-            let (instr_type, operands) = match instruction {
-                Instruction::ApiRequest(_) => ("API request", "".to_owned()),
-                Instruction::SetPrimitive { address, value } => {
-                    ("SetPrimitive", format!("Set addr {address} to {value:?}"))
-                }
-                Instruction::SetValue { address, value_parts } => (
-                    "SetValue",
-                    format!("Write {value_parts:?} starting at address {address}"),
-                ),
-                Instruction::GetElement { start, index } => (
-                    "GetElement",
-                    format!("Find element #{index:?}\nof array at address {start}"),
-                ),
-                Instruction::GetProperty { start, property } => (
-                    "GetProperty",
-                    format!("Find property '{property:?}'\nof object at address {start}"),
-                ),
-                Instruction::SetList { start, elements } => (
-                    "SetList",
-                    format!("Create list at {start:?}\nwith elements {elements:?}"),
-                ),
-                Instruction::BinaryArithmetic {
-                    arithmetic,
-                    destination,
-                } => {
-                    let BinaryArithmetic {
-                        operation,
-                        operand0,
-                        operand1,
-                    } = arithmetic;
-                    let arith_description = format!("{operand0:?} {operation} {operand1:?}");
-                    (
-                        "BinaryArithmetic",
-                        format!("Set {destination:?}\nto {arith_description}"),
-                    )
-                }
-                Instruction::UnaryArithmetic {
-                    arithmetic,
-                    destination,
-                } => ("UnaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
-                Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
-                Instruction::StackPop { destination } => (
-                    "StackPop",
-                    match destination {
-                        Some(dst) => format!("Into: {dst:?}"),
-                        None => "Discard".to_owned(),
-                    },
-                ),
-            };
+            let (instr_type, operands) = describe_instruction(instruction);
             let height = operands.chars().filter(|ch| ch == &'\n').count() + 1;
             let style = Style::default().fg(if instrs_with_errors.contains(&i) {
                 Color::Red
@@ -327,6 +279,20 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
             .height(height.try_into().expect("height of cell must fit into u16"))
         },
     ));
+    // Add instructions that weren't executed
+    rows.extend((ctx.last_instruction..ctx.plan.len()).map(|i| {
+        let instruction = &ctx.plan[i];
+        let (instr_type, operands) = describe_instruction(instruction);
+        let height = operands.chars().filter(|ch| ch == &'\n').count() + 1;
+        let style = Style::default().fg(Color::DarkGray);
+        Row::new(vec![
+            Cell::new(i.to_string()),
+            Cell::new(instr_type),
+            Cell::new(operands),
+        ])
+        .style(style)
+        .height(height.try_into().expect("height of cell must fit into u16"))
+    }));
     Table::new(
         rows,
         [
@@ -346,4 +312,55 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
     .highlight_style(Style::new().reversed())
     .highlight_symbol(">>")
     .block(block)
+}
+
+/// Display the instruction type and the operands, in a human-readable, friendly way.
+fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
+    match instruction {
+        Instruction::ApiRequest(_) => ("API request", "".to_owned()),
+        Instruction::SetPrimitive { address, value } => ("SetPrimitive", format!("Set addr {address} to {value:?}")),
+        Instruction::SetValue { address, value_parts } => (
+            "SetValue",
+            format!("Write {value_parts:?} starting at address {address}"),
+        ),
+        Instruction::GetElement { start, index } => (
+            "GetElement",
+            format!("Find element #{index:?}\nof array at address {start}"),
+        ),
+        Instruction::GetProperty { start, property } => (
+            "GetProperty",
+            format!("Find property '{property:?}'\nof object at address {start}"),
+        ),
+        Instruction::SetList { start, elements } => (
+            "SetList",
+            format!("Create list at {start:?}\nwith elements {elements:?}"),
+        ),
+        Instruction::BinaryArithmetic {
+            arithmetic,
+            destination,
+        } => {
+            let BinaryArithmetic {
+                operation,
+                operand0,
+                operand1,
+            } = arithmetic;
+            let arith_description = format!("{operand0:?} {operation} {operand1:?}");
+            (
+                "BinaryArithmetic",
+                format!("Set {destination:?}\nto {arith_description}"),
+            )
+        }
+        Instruction::UnaryArithmetic {
+            arithmetic,
+            destination,
+        } => ("UnaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
+        Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
+        Instruction::StackPop { destination } => (
+            "StackPop",
+            match destination {
+                Some(dst) => format!("Into: {dst:?}"),
+                None => "Discard".to_owned(),
+            },
+        ),
+    }
 }

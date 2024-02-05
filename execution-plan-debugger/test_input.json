@@ -1,118 +1,88 @@
 [
-    {
-        "SetPrimitive": {
-            "address": 0,
-            "value": {
-                "ListHeader": {
-                    "count": 2,
-                    "size": 7
-                }
-            }
+  {
+    "SetPrimitive": {
+      "address": 0,
+      "value": {
+        "ObjectHeader": {
+          "properties": [
+            "a"
+          ],
+          "size": 3
         }
-    },
-    {
-        "SetPrimitive": {
-            "address": 1,
-            "value": {
-                "NumericValue": {
-                    "UInteger": 1
-                }
-            }
-        }
-    },
-    {
-        "StackPush": {
-            "data": [
-                {
-                    "String": "foo"
-                }
-            ]
-        }
-    },
-    {
-        "SetPrimitive": {
-            "address": 2,
-            "value": {
-                "NumericValue": {
-                    "Integer": 44
-                }
-            }
-        }
-    },
-    {
-        "SetPrimitive": {
-            "address": 3,
-            "value": {
-                "ObjectHeader": {
-                    "properties": [
-                        "a",
-                        "b"
-                    ],
-                    "size": 4
-                }
-            }
-        }
-    },
-    {
-        "SetPrimitive": {
-            "address": 4,
-            "value": {
-                "NumericValue": {
-                    "UInteger": 1
-                }
-            }
-        }
-    },
-    {
-        "BinaryArithmetic": {
-            "destination": {
-                "Address": 8
-            },
-            "arithmetic": {
-                "operation": "Add",
-                "operand0": {
-                    "Reference": 4
-                },
-                "operand1": {
-                    "Reference": 1 
-                }
-            }
-        }
-    },
-    {
-        "StackPop": {}
-    },
-    {
-        "SetPrimitive": {
-            "address": 5,
-            "value": {
-                "NumericValue": {
-                    "Integer": 55
-                }
-            }
-        }
-    },
-    {
-        "SetPrimitive": {
-            "address": 6,
-            "value": {
-                "NumericValue": {
-                    "UInteger": 1
-                }
-            }
-        }
-    },
-    {
-        "SetPrimitive": {
-            "address": 7,
-            "value": {
-                "String": "sixty-six"
-            }
-        }
-    },
-    {
-        "StackPop": {
-            "destination": 10
-        }
+      }
     }
+  },
+  {
+    "SetPrimitive": {
+      "address": 1,
+      "value": {
+        "ObjectHeader": {
+          "properties": [
+            "b"
+          ],
+          "size": 2
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 2,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 3,
+      "value": {
+        "Bool": true
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 4,
+      "value": {
+        "String": "a"
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 5,
+      "value": {
+        "String": "b"
+      }
+    }
+  },
+  {
+    "GetProperty": {
+      "start": 0,
+      "property": {
+        "Reference": 4
+      }
+    }
+  },
+  {
+    "StackPop": {
+      "destination": 6
+    }
+  },
+  {
+    "GetProperty": {
+      "start": 6,
+      "property": {
+        "Reference": 5
+      }
+    }
+  },
+  {
+    "StackPop": {
+      "destination": 7
+    }
+  }
 ]

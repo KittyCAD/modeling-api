@@ -2,7 +2,7 @@ use kittycad_execution_plan_traits::{ListHeader, MemoryError, NumericPrimitive, 
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    events::{Event, EventWriter},
+    events::{Event, EventWriter, Severity},
     Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, Memory, Operand, Result, UnaryArithmetic,
 };
 
@@ -222,9 +222,15 @@ impl Instruction {
             Instruction::GetProperty { start, property } => {
                 // Resolve the index.
                 let property_primitive: Primitive = match property {
-                    // Any numeric literal will do, as long as it's >= 0.
                     Operand::Literal(p) => p,
-                    Operand::Reference(addr) => mem.get(&addr).ok_or(ExecutionError::MemoryEmpty { addr })?.clone(),
+                    Operand::Reference(addr) => {
+                        events.push(Event {
+                            text: "Reading property from memory".to_owned(),
+                            severity: Severity::Info,
+                            related_address: Some(addr),
+                        });
+                        mem.get(&addr).ok_or(ExecutionError::MemoryEmpty { addr })?.clone()
+                    }
                     Operand::StackPop => mem.stack.pop_single()?,
                 };
                 let property = match property_primitive {
@@ -236,6 +242,11 @@ impl Instruction {
                         }))
                     }
                 };
+                events.push(Event {
+                    text: format!(r#"Property is "{property}""#),
+                    severity: Severity::Info,
+                    related_address: None,
+                });
 
                 // Check size of the list.
                 let ObjectHeader { properties, size: _ }: ObjectHeader = mem.get_primitive(&start)?;
@@ -244,7 +255,7 @@ impl Instruction {
                         .iter()
                         .position(|prop| prop == &property)
                         .ok_or(ExecutionError::UndefinedProperty {
-                            property,
+                            property: property.clone(),
                             address: start,
                         })?;
                 // Find the given element
@@ -254,7 +265,7 @@ impl Instruction {
                     curr += size_of_element + 1;
                 }
                 events.push(Event {
-                    text: format!("Reading size of property from {curr}"),
+                    text: format!(r#"Reading size of property "{property}" from {curr}"#),
                     severity: crate::events::Severity::Info,
                     related_address: Some(curr),
                 });
