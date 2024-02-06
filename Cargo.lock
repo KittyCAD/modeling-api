@@ -1625,9 +1625,9 @@ dependencies = [
 
 [[package]]
 name = "kittycad-execution-plan-macros"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "03e86c3ddefd89be816db24186c3e2fbd427675198f4d64b6d244dd2c1a3bae3"
+checksum = "a625265ffe39d62bdbb4f7ce39010bc8a5bb7eee273826e8effef3f5f69b45f3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1636,7 +1636,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-execution-plan-macros"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "insta",
@@ -1682,7 +1682,7 @@ dependencies = [
  "enum-iterator-derive",
  "euler",
  "http 0.2.11",
- "kittycad-execution-plan-macros 0.1.2",
+ "kittycad-execution-plan-macros 0.1.3",
  "kittycad-execution-plan-traits 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "measurements",
