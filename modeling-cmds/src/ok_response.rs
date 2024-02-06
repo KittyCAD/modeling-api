@@ -56,6 +56,7 @@ build_enum! {
     Density,
     SurfaceArea,
     CenterOfMass,
+    Solid3dGetExtrusionFaceInfo,
     GetSketchModePlane
 }
 
@@ -74,6 +75,12 @@ impl From<output::CurveGetEndPoints> for OkModelingCmdResponse {
 impl From<output::PlaneIntersectAndProject> for OkModelingCmdResponse {
     fn from(x: output::PlaneIntersectAndProject) -> Self {
         Self::PlaneIntersectAndProject(x)
+    }
+}
+
+impl From<output::Solid3dGetExtrusionFaceInfo> for OkModelingCmdResponse {
+    fn from(x: output::Solid3dGetExtrusionFaceInfo) -> Self {
+        Self::Solid3dGetExtrusionFaceInfo(x)
     }
 }
 

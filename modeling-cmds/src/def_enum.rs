@@ -177,6 +177,8 @@ pub enum ModelingCmd {
     DefaultCameraSetOrthographic(DefaultCameraSetOrthographic),
     /// Use perspective projection.
     DefaultCameraSetPerspective(DefaultCameraSetPerspective),
+    /// Get a concise description of all of an extrusion's faces
+    Solid3dGetExtrusionFaceInfo(Solid3dGetExtrusionFaceInfo),
 }
 
 impl ModelingCmd {

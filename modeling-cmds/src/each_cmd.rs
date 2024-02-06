@@ -790,6 +790,15 @@ pub struct DefaultCameraSetPerspective {
     pub parameters: Option<PerspectiveCameraParameters>,
 }
 
+/// Get a concise description of all of an extrusion's faces.
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+pub struct Solid3dGetExtrusionFaceInfo {
+    /// The Solid3d object whose extrusion is being queried.
+    pub object_id: Uuid,
+    /// Any edge that lies on the extrusion base path.
+    pub edge_id: Uuid,
+}
+
 /// Mike says this usually looks nice.
 fn default_animation_seconds() -> f32 {
     0.4

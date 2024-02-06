@@ -7,7 +7,7 @@ use uuid::Uuid;
 use crate::{
     base64::Base64Data,
     id::ModelingCmdId,
-    shared::{CurveType, EntityType, ExportFile, PathCommand, Point2d, Point3d},
+    shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d},
     traits::ModelingCmdOutput,
     units,
 };
@@ -271,6 +271,18 @@ pub struct EntityCircularPattern {
     pub entity_ids: Vec<Uuid>,
 }
 
+/// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
+#[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
+pub struct Solid3dGetExtrusionFaceInfo {
+    /// Path component (curve) uuid
+    pub curve_uuid: Option<Uuid>,
+
+    /// Face uuid
+    pub face_uuid: Option<Uuid>,
+
+    /// Whether or not this extrusion face is a top/bottom cap face or not (note that these will not have associated curve ids)
+    pub cap: ExtrusionFaceCapType,
+}
 
 impl ModelingCmdOutput for Export {}
 impl ModelingCmdOutput for SelectWithPoint {}
@@ -306,3 +318,4 @@ impl ModelingCmdOutput for SurfaceArea {}
 impl ModelingCmdOutput for CenterOfMass {}
 impl ModelingCmdOutput for GetSketchModePlane {}
 impl ModelingCmdOutput for () {}
+impl ModelingCmdOutput for Solid3dGetExtrusionFaceInfo {}
