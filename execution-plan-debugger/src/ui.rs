@@ -195,7 +195,7 @@ fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashM
             // Address
             Constraint::Length(12),
             // Message
-            Constraint::Max(50),
+            Constraint::Percentage(100),
         ],
     )
     .column_spacing(1)
@@ -250,8 +250,10 @@ fn make_memory_view<'a>(
 }
 
 fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &HashSet<usize>) -> Table<'a> {
-    let mut rows = Vec::with_capacity(ctx.history.len() + 2);
+    let mut rows = Vec::with_capacity(ctx.plan.len() + 1);
+    // Start row
     rows.push(Row::new(vec![Cell::new("0"), Cell::new("Start")]).style(Style::default().fg(Color::Green)));
+    // One row per executed instruction
     rows.extend(ctx.history.iter().enumerate().map(
         |(
             i,
@@ -263,55 +265,7 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
         )| {
             let instruction = &ctx.plan[*active_instruction];
 
-            let (instr_type, operands) = match instruction {
-                Instruction::ApiRequest(_) => ("API request", "".to_owned()),
-                Instruction::SetPrimitive { address, value } => {
-                    ("SetPrimitive", format!("Set addr {address} to {value:?}"))
-                }
-                Instruction::SetValue { address, value_parts } => (
-                    "SetValue",
-                    format!("Write {value_parts:?} starting at address {address}"),
-                ),
-                Instruction::GetElement { start, index } => (
-                    "GetElement",
-                    format!("Find element #{index:?}\nof array at address {start}"),
-                ),
-                Instruction::GetProperty { start, property } => (
-                    "GetProperty",
-                    format!("Find property '{property:?}'\nof object at address {start}"),
-                ),
-                Instruction::SetList { start, elements } => (
-                    "SetList",
-                    format!("Create list at {start:?}\nwith elements {elements:?}"),
-                ),
-                Instruction::BinaryArithmetic {
-                    arithmetic,
-                    destination,
-                } => {
-                    let BinaryArithmetic {
-                        operation,
-                        operand0,
-                        operand1,
-                    } = arithmetic;
-                    let arith_description = format!("{operand0:?} {operation} {operand1:?}");
-                    (
-                        "BinaryArithmetic",
-                        format!("Set {destination:?}\nto {arith_description}"),
-                    )
-                }
-                Instruction::UnaryArithmetic {
-                    arithmetic,
-                    destination,
-                } => ("UnaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
-                Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
-                Instruction::StackPop { destination } => (
-                    "StackPop",
-                    match destination {
-                        Some(dst) => format!("Into: {dst:?}"),
-                        None => "Discard".to_owned(),
-                    },
-                ),
-            };
+            let (instr_type, operands) = describe_instruction(instruction);
             let height = operands.chars().filter(|ch| ch == &'\n').count() + 1;
             let style = Style::default().fg(if instrs_with_errors.contains(&i) {
                 Color::Red
@@ -327,6 +281,23 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
             .height(height.try_into().expect("height of cell must fit into u16"))
         },
     ));
+    // One row per remaining (unexecuted) instructions.
+    let n = ctx.history.len();
+    rows.extend((ctx.last_instruction..ctx.plan.len() - 1).map(|i| {
+        let instruction = &ctx.plan[i + 1];
+        let (instr_type, operands) = describe_instruction(instruction);
+        let height = operands.chars().filter(|ch| ch == &'\n').count() + 1;
+        let style = Style::default().fg(Color::DarkGray);
+        Row::new(vec![
+            Cell::new(((i - ctx.last_instruction) + 1 + n).to_string()),
+            Cell::new(instr_type),
+            Cell::new(operands),
+        ])
+        .style(style)
+        .height(height.try_into().expect("height of cell must fit into u16"))
+    }));
+
+    // Combine all rows into the table.
     Table::new(
         rows,
         [
@@ -346,4 +317,59 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
     .highlight_style(Style::new().reversed())
     .highlight_symbol(">>")
     .block(block)
+}
+
+/// Display the instruction type and the operands, in a human-readable, friendly way.
+fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
+    match instruction {
+        Instruction::ApiRequest(_) => ("API request", "".to_owned()),
+        Instruction::SetPrimitive { address, value } => ("SetPrimitive", format!("Set addr {address} to {value:?}")),
+        Instruction::SetValue { address, value_parts } => (
+            "SetValue",
+            format!("Write {value_parts:?} starting at address {address}"),
+        ),
+        Instruction::AddrOfMember { start, member } => (
+            "AddrOfMember",
+            format!("Find member '{member:?}'\nof object at address {start:?}"),
+        ),
+        Instruction::SetList { start, elements } => (
+            "SetList",
+            format!("Create list at {start:?}\nwith elements {elements:?}"),
+        ),
+        Instruction::BinaryArithmetic {
+            arithmetic,
+            destination,
+        } => {
+            let BinaryArithmetic {
+                operation,
+                operand0,
+                operand1,
+            } = arithmetic;
+            let arith_description = format!("{operand0:?} {operation} {operand1:?}");
+            (
+                "BinaryArithmetic",
+                format!("Set {destination:?}\nto {arith_description}"),
+            )
+        }
+        Instruction::UnaryArithmetic {
+            arithmetic,
+            destination,
+        } => ("UnaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
+        Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
+        Instruction::StackPop { destination } => (
+            "StackPop",
+            match destination {
+                Some(dst) => format!("Into: {dst:?}"),
+                None => "Discard".to_owned(),
+            },
+        ),
+        Instruction::Copy {
+            source,
+            destination,
+            num_primitives,
+        } => (
+            "Copy",
+            format!("{num_primitives:?} prims from {source:?} to {destination:?}"),
+        ),
+    }
 }

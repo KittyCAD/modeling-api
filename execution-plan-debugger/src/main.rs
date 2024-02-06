@@ -22,8 +22,13 @@ async fn inner_main() -> Result<()> {
     let plan = get_instrs()?;
     let mut mem = kittycad_execution_plan::Memory::default();
     let session = None;
-    let history = kittycad_execution_plan::execute_time_travel(&mut mem, plan.clone(), session).await;
-    app::run(app::Context { history, plan })
+    let (history, last_instruction) =
+        kittycad_execution_plan::execute_time_travel(&mut mem, plan.clone(), session).await;
+    app::run(app::Context {
+        last_instruction,
+        history,
+        plan,
+    })
 }
 
 fn get_instrs() -> Result<Vec<Instruction>> {

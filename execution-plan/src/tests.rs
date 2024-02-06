@@ -217,9 +217,9 @@ async fn get_element_of_array() {
                 start: START_DATA_AT.into(),
                 elements: list,
             },
-            Instruction::GetElement {
-                start: 10.into(),
-                index: Operand::Literal(Primitive::from(1usize)),
+            Instruction::AddrOfMember {
+                start: Operand::Literal(Primitive::Address(Address::ZERO + 10)),
+                member: Operand::Literal(Primitive::from(1usize)),
             },
         ],
         None,
@@ -231,7 +231,7 @@ async fn get_element_of_array() {
     // The last instruction put the 4D point (element 1) on the stack.
     // Check it's there.
     let actual = mem.stack.pop().unwrap();
-    assert_eq!(actual, point_4d.into_parts());
+    assert_eq!(actual, vec![(Address::ZERO + 15).into()]);
 
     // The memory should start with a list header.
     let ListHeader { count: _, size } = mem.get_primitive(&(Address::ZERO + START_DATA_AT)).unwrap();
@@ -264,11 +264,12 @@ async fn get_key_of_object() {
     smem.push(Primitive::from(4usize));
     smem.push(point_4d);
     let mut mem = smem.finish();
+    println!("{}", mem.debug_table(None));
     execute(
         &mut mem,
-        vec![Instruction::GetProperty {
-            start,
-            property: Operand::Literal("second".to_owned().into()),
+        vec![Instruction::AddrOfMember {
+            start: Operand::Literal(Primitive::Address(start)),
+            member: Operand::Literal("second".to_owned().into()),
         }],
         None,
     )
@@ -278,7 +279,7 @@ async fn get_key_of_object() {
     // The last instruction put the 4D point (element 1) on the stack.
     // Check it's there.
     let actual = mem.stack.pop().unwrap();
-    assert_eq!(actual, point_4d.into_parts());
+    assert_eq!(actual, vec![(Address::ZERO + 5).into()]);
     assert!(mem.get(&(Address::ZERO + size)).is_some());
     assert!(mem.get(&(Address::ZERO + size + 1)).is_none());
 }
