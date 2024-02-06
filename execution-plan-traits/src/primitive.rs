@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::{impl_value_on_primitive_ish, MemoryError, Value};
+use crate::{impl_value_on_primitive_ish, Address, MemoryError, Value};
 
 /// A value stored in KCEP program memory.
 #[derive(PartialEq, Clone, Serialize, Deserialize)]
@@ -23,7 +23,7 @@ pub enum Primitive {
     /// An optional value which was not given.
     Nil,
     /// Address in KCEP memory.
-    Address(crate::Address),
+    Address(Address),
 }
 
 impl std::fmt::Debug for Primitive {
@@ -116,6 +116,12 @@ impl From<ObjectHeader> for Primitive {
     }
 }
 
+impl From<Address> for Primitive {
+    fn from(value: Address) -> Self {
+        Self::Address(value)
+    }
+}
+
 impl TryFrom<Primitive> for String {
     type Error = MemoryError;
 
@@ -193,6 +199,21 @@ impl TryFrom<Primitive> for bool {
         } else {
             Err(MemoryError::MemoryWrongType {
                 expected: "bool",
+                actual: format!("{value:?}"),
+            })
+        }
+    }
+}
+
+impl TryFrom<Primitive> for Address {
+    type Error = MemoryError;
+
+    fn try_from(value: Primitive) -> Result<Self, Self::Error> {
+        if let Primitive::Address(x) = value {
+            Ok(x)
+        } else {
+            Err(MemoryError::MemoryWrongType {
+                expected: "address",
                 actual: format!("{value:?}"),
             })
         }
