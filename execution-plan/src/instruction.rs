@@ -81,11 +81,10 @@ pub enum Instruction {
     },
     /// Copy data from a range of addresses, into another range of addresses.
     /// The first address in the source range is the length (how many addresses to copy).
-    /// If that address is a uint, that uint is the length.
-    /// If that address is a List/Object header, the `size` field is the length.
+    /// If that address contains a uint, that uint is the length.
+    /// If that address contains a List/Object header, the `size` field is the length.
     /// Source range is evaluated before destination range (this is only relevant if both source
     /// and destination come from the stack).
-    ///
     CopyLen {
         /// Start copying from this address.
         source_range: Operand,
