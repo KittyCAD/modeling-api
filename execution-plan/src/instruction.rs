@@ -79,14 +79,18 @@ pub enum Instruction {
         /// If None, the value won't be stored anywhere.
         destination: Option<Address>,
     },
-    /// Copy data.
-    Copy {
+    /// Copy data from a range of addresses, into another range of addresses.
+    /// The first address in the source range is the length (how many addresses to copy).
+    /// If that address is a uint, that uint is the length.
+    /// If that address is a List/Object header, the `size` field is the length.
+    /// Source range is evaluated before destination range (this is only relevant if both source
+    /// and destination come from the stack).
+    ///
+    CopyLen {
         /// Start copying from this address.
-        source: Operand,
+        source_range: Operand,
         /// Start copying into this address.
-        destination: Operand,
-        /// How many addresses should be copied?
-        num_primitives: Operand,
+        destination_range: Operand,
     },
 }
 
@@ -299,6 +303,9 @@ impl Instruction {
                     severity: crate::events::Severity::Info,
                     related_address: Some(curr),
                 });
+                // Push the member onto the stack.
+                // This first address will be its length.
+                // The length is followed by that many addresses worth of data.
                 mem.stack.push(vec![Primitive::Address(curr)]);
             }
             Instruction::StackPush { data } => {
@@ -311,12 +318,11 @@ impl Instruction {
                     mem.set(destination + i, data_part);
                 }
             }
-            Instruction::Copy {
-                source,
-                destination,
-                num_primitives,
+            Instruction::CopyLen {
+                source_range,
+                destination_range,
             } => {
-                let src_addr = match source.eval(mem)? {
+                let src_addr = match source_range.eval(mem)? {
                     Primitive::Address(a) => a,
                     other => {
                         return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
@@ -325,7 +331,7 @@ impl Instruction {
                         }))
                     }
                 };
-                let dst_addr = match destination.eval(mem)? {
+                let dst_addr = match destination_range.eval(mem)? {
                     Primitive::Address(a) => a,
                     other => {
                         return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
@@ -334,7 +340,11 @@ impl Instruction {
                         }))
                     }
                 };
-                let n = match num_primitives.eval(mem)? {
+
+                let len = match mem
+                    .get(&src_addr)
+                    .ok_or(ExecutionError::MemoryEmpty { addr: src_addr })?
+                {
                     Primitive::NumericValue(NumericPrimitive::UInteger(n)) => n,
                     Primitive::ObjectHeader(ObjectHeader { size, .. }) => size,
                     Primitive::ListHeader(ListHeader { size, .. }) => size,
@@ -345,8 +355,8 @@ impl Instruction {
                         }))
                     }
                 };
-                for i in 0..n {
-                    let src = src_addr + i;
+                for i in 0..*len {
+                    let src = src_addr + i + 1;
                     let dst = dst_addr + i;
                     let val = mem.get(&src).ok_or(ExecutionError::MemoryEmpty { addr: src })?;
                     mem.set(dst, val.clone());

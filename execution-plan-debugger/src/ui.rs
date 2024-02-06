@@ -363,13 +363,9 @@ fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
                 None => "Discard".to_owned(),
             },
         ),
-        Instruction::Copy {
-            source,
-            destination,
-            num_primitives,
-        } => (
-            "Copy",
-            format!("{num_primitives:?} prims from {source:?} to {destination:?}"),
-        ),
+        Instruction::CopyLen {
+            source_range,
+            destination_range,
+        } => ("Copy", format!("copy from {source_range:?} to {destination_range:?}")),
     }
 }
