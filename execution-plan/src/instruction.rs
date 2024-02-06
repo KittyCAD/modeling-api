@@ -303,12 +303,8 @@ impl Instruction {
                     severity: crate::events::Severity::Info,
                     related_address: Some(curr),
                 });
-                let to_push = match mem.get(&curr).ok_or(ExecutionError::MemoryEmpty { addr: curr })? {
-                    Primitive::ListHeader(_) => curr,
-                    Primitive::ObjectHeader(_) => curr,
-                    _ => curr + 1,
-                };
-                mem.stack.push(vec![to_push.0.into()]);
+                // TODO: make this an address type
+                mem.stack.push(vec![curr.0.into()]);
             }
             Instruction::StackPush { data } => {
                 mem.stack.push(data);

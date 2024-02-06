@@ -218,7 +218,7 @@ async fn get_element_of_array() {
                 elements: list,
             },
             Instruction::AddrOfMember {
-                start: 10.into(),
+                start: Operand::Literal(10usize.into()),
                 member: Operand::Literal(Primitive::from(1usize)),
             },
         ],
@@ -264,10 +264,11 @@ async fn get_key_of_object() {
     smem.push(Primitive::from(4usize));
     smem.push(point_4d);
     let mut mem = smem.finish();
+    println!("{}", mem.debug_table(None));
     execute(
         &mut mem,
         vec![Instruction::AddrOfMember {
-            start,
+            start: Operand::Literal(start.0.into()),
             member: Operand::Literal("second".to_owned().into()),
         }],
         None,
