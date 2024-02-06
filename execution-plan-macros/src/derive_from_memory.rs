@@ -40,7 +40,7 @@ fn impl_on_struct_no_fields(span: Span, name: proc_macro2::Ident, generics: syn:
             fn from_memory<I, M>(_fields: &mut I, _mem: &M) -> Result<Self, ::kittycad_execution_plan_traits::MemoryError>
             where
                 M: ::kittycad_execution_plan_traits::ReadMemory,
-                I: Iterator<Item = M::Address>
+                I: Iterator<Item = ::kittycad_execution_plain_traits::Address>
             {
 
                 Ok(Self {})
@@ -102,7 +102,7 @@ fn impl_on_struct_named_fields(
             fn from_memory<I, M>(fields: &mut I, mem: &M) -> Result<Self, ::kittycad_execution_plan_traits::MemoryError>
             where
                 M: ::kittycad_execution_plan_traits::ReadMemory,
-                I: Iterator<Item = M::Address>
+                I: Iterator<Item = ::kittycad_execution_plain_traits::Address>
             {
                 #(#read_each_field)*
                 Ok(Self {
