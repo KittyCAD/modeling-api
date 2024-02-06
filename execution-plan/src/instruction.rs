@@ -86,7 +86,7 @@ pub enum Instruction {
         /// Start copying into this address.
         destination: Operand,
         /// How many addresses should be copied?
-        num_primitives: usize,
+        num_primitives: Operand,
     },
 }
 
@@ -184,21 +184,17 @@ impl Instruction {
                     related_address: None,
                 });
                 let start_address = match start {
-                    Operand::Literal(Primitive::NumericValue(NumericPrimitive::UInteger(a))) => Address(a),
+                    Operand::Literal(Primitive::Address(a)) => a,
                     Operand::Literal(other) => {
                         return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                            expected: "usize",
+                            expected: "address",
                             actual: format!("{other:?}"),
                         }))
                     }
-                    Operand::Reference(addr) => {
-                        let a: usize = mem.get_primitive(&addr)?;
-                        Address(a)
-                    }
+                    Operand::Reference(addr) => mem.get_primitive(&addr)?,
                     Operand::StackPop => {
                         let data = mem.stack.pop_single()?;
-                        let a: usize = data.try_into()?;
-                        Address(a)
+                        data.try_into()?
                     }
                 };
                 events.push(Event {
@@ -303,8 +299,7 @@ impl Instruction {
                     severity: crate::events::Severity::Info,
                     related_address: Some(curr),
                 });
-                // TODO: make this an address type
-                mem.stack.push(vec![curr.0.into()]);
+                mem.stack.push(vec![Primitive::Address(curr)]);
             }
             Instruction::StackPush { data } => {
                 mem.stack.push(data);
@@ -322,24 +317,35 @@ impl Instruction {
                 num_primitives,
             } => {
                 let src_addr = match source.eval(mem)? {
-                    Primitive::NumericValue(NumericPrimitive::UInteger(u)) => Address(u),
+                    Primitive::Address(a) => a,
                     other => {
                         return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                            expected: "uint",
+                            expected: "address",
                             actual: format!("{other:?}"),
                         }))
                     }
                 };
                 let dst_addr = match destination.eval(mem)? {
-                    Primitive::NumericValue(NumericPrimitive::UInteger(u)) => Address(u),
+                    Primitive::Address(a) => a,
                     other => {
                         return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                            expected: "uint",
+                            expected: "address",
                             actual: format!("{other:?}"),
                         }))
                     }
                 };
-                for i in 0..num_primitives {
+                let n = match num_primitives.eval(mem)? {
+                    Primitive::NumericValue(NumericPrimitive::UInteger(n)) => n,
+                    Primitive::ObjectHeader(ObjectHeader { size, .. }) => size,
+                    Primitive::ListHeader(ListHeader { size, .. }) => size,
+                    other => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "uint or obj/list header",
+                            actual: format!("{other:?}"),
+                        }))
+                    }
+                };
+                for i in 0..n {
                     let src = src_addr + i;
                     let dst = dst_addr + i;
                     let val = mem.get(&src).ok_or(ExecutionError::MemoryEmpty { addr: src })?;

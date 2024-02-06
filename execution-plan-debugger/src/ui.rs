@@ -284,7 +284,7 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
     // One row per remaining (unexecuted) instructions.
     let n = ctx.history.len();
     rows.extend((ctx.last_instruction..ctx.plan.len() - 1).map(|i| {
-        let instruction = &ctx.plan[i];
+        let instruction = &ctx.plan[i + 1];
         let (instr_type, operands) = describe_instruction(instruction);
         let height = operands.chars().filter(|ch| ch == &'\n').count() + 1;
         let style = Style::default().fg(Color::DarkGray);
@@ -369,7 +369,7 @@ fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
             num_primitives,
         } => (
             "Copy",
-            format!("{num_primitives} prims from {source:?} to {destination:?}"),
+            format!("{num_primitives:?} prims from {source:?} to {destination:?}"),
         ),
     }
 }
