@@ -279,8 +279,8 @@ async fn get_key_of_object() {
     // Check it's there.
     let actual = mem.stack.pop().unwrap();
     assert_eq!(actual, point_4d.into_parts());
-    assert!(mem.get(&Address(size)).is_some());
-    assert!(mem.get(&Address(size + 1)).is_none());
+    assert!(mem.get(&(Address::ZERO + size)).is_some());
+    assert!(mem.get(&(Address::ZERO + size + 1)).is_none());
 }
 
 #[tokio::test]

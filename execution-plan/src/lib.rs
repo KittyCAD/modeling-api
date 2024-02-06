@@ -7,20 +7,19 @@
 //! the results to make other API calls.
 
 use events::{Event, EventWriter};
+use kittycad_execution_plan_traits::Address;
 use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, Stack, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
 
-pub use self::address::Address;
 pub use self::arithmetic::{
     operator::{BinaryOperation, Operation, UnaryOperation},
     BinaryArithmetic, UnaryArithmetic,
 };
 pub use self::instruction::Instruction;
 
-mod address;
 mod arithmetic;
 pub mod events;
 mod instruction;
