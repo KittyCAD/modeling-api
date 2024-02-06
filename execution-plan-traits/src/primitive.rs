@@ -22,6 +22,8 @@ pub enum Primitive {
     ObjectHeader(ObjectHeader),
     /// An optional value which was not given.
     Nil,
+    /// Address in KCEP memory.
+    Address(crate::Address),
 }
 
 impl std::fmt::Debug for Primitive {
@@ -39,6 +41,7 @@ impl std::fmt::Debug for Primitive {
                 write!(f, "Object header (props {properties:?}, size {size})")
             }
             Primitive::Nil => write!(f, "Nil"),
+            Primitive::Address(a) => write!(f, "Addr({})", a.0),
         }
     }
 }

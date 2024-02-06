@@ -1,10 +1,12 @@
 //! Traits and types used for KittyCAD Execution Plans.
 
+pub use self::address::Address;
 pub use self::primitive::{ListHeader, NumericPrimitive, ObjectHeader, Primitive};
 
+mod address;
+mod containers;
 #[macro_use]
 mod primitive;
-mod containers;
 
 /// Types that can be written to or read from KCEP program memory, in one contiguous block.
 /// If they require multiple memory addresses, they will be laid out
@@ -25,17 +27,15 @@ pub trait FromMemory: Sized {
     fn from_memory<I, M>(fields: &mut I, mem: &M) -> Result<Self, MemoryError>
     where
         M: ReadMemory,
-        I: Iterator<Item = M::Address>;
+        I: Iterator<Item = Address>;
 }
 
 /// Memory that a KittyCAD Execution Plan can read from.
 pub trait ReadMemory {
-    /// How the memory is indexed.
-    type Address;
     /// Get a value from the given address.
-    fn get(&self, addr: &Self::Address) -> Option<&Primitive>;
+    fn get(&self, addr: &Address) -> Option<&Primitive>;
     /// Get a value from the given starting address. Value might require multiple addresses.
-    fn get_composite<T: Value>(&self, start: Self::Address) -> std::result::Result<T, MemoryError>;
+    fn get_composite<T: Value>(&self, start: Address) -> std::result::Result<T, MemoryError>;
 }
 
 /// Errors that could occur when reading a type from KittyCAD Execution Plan program memory.
