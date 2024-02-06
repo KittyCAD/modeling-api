@@ -2,9 +2,9 @@ use std::collections::{HashMap, HashSet};
 
 use kittycad_execution_plan::{
     events::{Event, Severity},
-    Address, BinaryArithmetic, ExecutionState, Instruction,
+    BinaryArithmetic, ExecutionState, Instruction,
 };
-use kittycad_execution_plan_traits::{Primitive, ReadMemory};
+use kittycad_execution_plan_traits::{Address, Primitive, ReadMemory};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize as _},
