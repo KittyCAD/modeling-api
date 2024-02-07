@@ -281,13 +281,14 @@ pub struct Solid3dGetExtrusionFaceInfo {
 /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct ExtrusionFaceInfo {
-    /// Path component (curve) uuid
-    pub curve_uuid: Option<Uuid>,
+    /// Path component (curve) UUID.
+    pub curve_id: Option<Uuid>,
 
-    /// Face uuid
-    pub face_uuid: Option<Uuid>,
+    /// Face uuid.
+    pub face_id: Option<Uuid>,
 
-    /// Whether or not this extrusion face is a top/bottom cap face or not (note that these will not have associated curve ids)
+    /// Whether or not this extrusion face is a top/bottom cap face or not.
+    /// Note that top/bottom cap faces will not have associated curve IDs.
     pub cap: ExtrusionFaceCapType,
 }
 
