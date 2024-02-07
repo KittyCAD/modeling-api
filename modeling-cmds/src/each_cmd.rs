@@ -104,6 +104,33 @@ pub struct DefaultCameraLookAt {
     pub center: Point3d,
     /// Which way is "up", from the camera's point of view.
     pub up: Point3d,
+    /// Logical timestamp. The client should increment this
+    /// with every event in the current mouse drag. That way, if the
+    /// events are being sent over an unordered channel, the API
+    /// can ignore the older events.
+    pub sequence: Option<u32>,
+}
+
+/// Change what the default camera is looking at.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct DefaultCameraPerspectiveSettings {
+    /// Where the camera is positioned
+    pub vantage: Point3d,
+    /// What the camera is looking at. Center of the camera's field of vision
+    pub center: Point3d,
+    /// Which way is "up", from the camera's point of view.
+    pub up: Point3d,
+    /// The field of view angle in the y direction, in degrees.
+    pub fov_y: f32,
+    /// The distance to the near clipping plane.
+    pub z_near: f32,
+    /// The distance to the far clipping plane.
+    pub z_far: f32,
+    /// Logical timestamp. The client should increment this
+    /// with every event in the current mouse drag. That way, if the
+    /// events are being sent over an unordered channel, the API
+    /// can ignore the older events.
+    pub sequence: Option<u32>,
 }
 
 /// Adjust zoom of the default camera.

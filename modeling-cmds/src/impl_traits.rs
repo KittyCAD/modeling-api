@@ -38,6 +38,7 @@ impl_variant_empty!(CameraDragMove);
 impl_variant_empty!(CameraDragEnd);
 impl_variant_empty!(EnableSketchMode);
 impl_variant_empty!(DefaultCameraLookAt);
+impl_variant_empty!(DefaultCameraPerspectiveSettings);
 impl_variant_empty!(DefaultCameraZoom);
 impl_variant_empty!(DefaultCameraEnableSketchMode);
 impl_variant_empty!(DefaultCameraDisableSketchMode);
