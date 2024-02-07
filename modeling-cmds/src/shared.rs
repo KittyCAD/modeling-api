@@ -689,7 +689,8 @@ impl_string_enum_sql! {GlobalAxis}
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
+#[repr(u8)]
 pub enum ExtrusionFaceCapType {
     /// Uncapped.
     None,
