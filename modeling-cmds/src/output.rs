@@ -275,12 +275,12 @@ pub struct EntityCircularPattern {
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct Solid3dGetExtrusionFaceInfo {
     /// Details of each face.
-    pub faces: Vec<FaceInfo>,
+    pub faces: Vec<ExtrusionFaceInfo>,
 }
 
 /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
-pub struct FaceInfo {
+pub struct ExtrusionFaceInfo {
     /// Path component (curve) uuid
     pub curve_uuid: Option<Uuid>,
 
