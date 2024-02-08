@@ -279,8 +279,8 @@ async fn modulo_and_power_with_reference() {
     // (-2.5)^-4.2 = NaN
     let mut mem = Memory::default();
     execute(&mut mem, plan, None).await.expect("failed to execute plan");
-    // TODO: This test is failing because "  left: Some(NaN) right: Some(NaN)"
-    // assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&f32::NAN.into()));
+    // let result = f32::try_from(mem.get(&(Address::ZERO + 1)).unwrap());
+    // assert!(result.is_nan());
     
     // Modulo with two negative integers
     let plan = vec![
