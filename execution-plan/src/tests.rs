@@ -215,7 +215,7 @@ async fn modulo_and_power_with_reference() {
     execute(&mut mem, plan, None).await.expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&10u32.into()));
 
-    // Pow with a positive integer and a positive float   
+    // Pow with a positive integer and a positive float
     let plan = vec![
         // Memory addr 0 contains 2.5
         Instruction::SetPrimitive {
@@ -279,9 +279,9 @@ async fn modulo_and_power_with_reference() {
     // (-2.5)^-4.2 = NaN
     let mut mem = Memory::default();
     execute(&mut mem, plan, None).await.expect("failed to execute plan");
-    // let result = f32::try_from(mem.get(&(Address::ZERO + 1)).unwrap());
-    // assert!(result.is_nan());
-    
+    let result: f32 = mem.get_primitive(&(Address::ZERO + 1)).unwrap();
+    assert!(result.is_nan());
+
     // Modulo with two negative integers
     let plan = vec![
         // Memory addr 0 contains -450
