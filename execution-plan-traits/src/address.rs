@@ -3,7 +3,8 @@ use std::fmt;
 
 /// An address in KCEP's program memory.
 #[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub struct Address(pub(crate) usize);
+// TODO: shouldn't be `pub` but we need an Address variant for Primitive.
+pub struct Address(pub usize);
 
 impl fmt::Debug for Address {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

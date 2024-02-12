@@ -2,7 +2,7 @@ use kittycad_execution_plan_traits::{ListHeader, MemoryError, NumericPrimitive, 
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    events::{Event, EventWriter},
+    events::{Event, EventWriter, Severity},
     Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, Memory, Operand, Result, UnaryArithmetic,
 };
 
@@ -25,23 +25,14 @@ pub enum Instruction {
         /// What values to put into memory.
         value_parts: Vec<Primitive>,
     },
-    /// Get the element at `index` of the list which begins at `start` into the `destination`.
-    /// Push it onto the stack (does not include the element length header).
-    /// Assumes the list is formatted according to [`Instruction::SetList`] documentation.
-    GetElement {
-        /// Starting address of the list
-        start: Address,
-        /// Element number
-        index: Operand,
-    },
-    /// Get the element at `index` of the list which begins at `start` into the `destination`.
-    /// Push it onto the stack (does not include the element length header).
-    /// Objects are laid out like lists, but with different header.
-    GetProperty {
-        /// Starting address of the object.
-        start: Address,
-        /// Which property to retrieve
-        property: Operand,
+    /// Find an element/property of an array/object.
+    /// Push the element/property's address onto the stack.
+    /// Assumes the object/list is formatted according to [`Instruction::SetList`] documentation.
+    AddrOfMember {
+        /// Starting address of the array/object.
+        start: Operand,
+        /// Element index or property name.
+        member: Operand,
     },
     /// Set a list of elements into memory.
     /// # Format
@@ -87,6 +78,18 @@ pub enum Instruction {
         /// If Some, the value popped will be stored at that address.
         /// If None, the value won't be stored anywhere.
         destination: Option<Address>,
+    },
+    /// Copy data from a range of addresses, into another range of addresses.
+    /// The first address in the source range is the length (how many addresses to copy).
+    /// If that address contains a uint, that uint is the length.
+    /// If that address contains a List/Object header, the `size` field is the length.
+    /// Source range is evaluated before destination range (this is only relevant if both source
+    /// and destination come from the stack).
+    CopyLen {
+        /// Start copying from this address.
+        source_range: Operand,
+        /// Start copying into this address.
+        destination_range: Operand,
     },
 }
 
@@ -164,32 +167,122 @@ impl Instruction {
                     }),
                 );
             }
-            Instruction::GetElement { start, index } => {
-                // Resolve the index.
-                let index_primitive: Primitive = match index {
-                    // Any numeric literal will do, as long as it's >= 0.
+            Instruction::AddrOfMember { start, member } => {
+                // Read the member.
+                let member_primitive: Primitive = match member {
                     Operand::Literal(p) => p,
                     Operand::Reference(addr) => mem.get(&addr).ok_or(ExecutionError::MemoryEmpty { addr })?.clone(),
                     Operand::StackPop => mem.stack.pop_single()?,
                 };
-                let index = match index_primitive {
-                    Primitive::NumericValue(NumericPrimitive::UInteger(i)) => i,
-                    Primitive::NumericValue(NumericPrimitive::Integer(i)) if i >= 0 => i.try_into().unwrap(),
-                    other => {
+                events.push(Event {
+                    text: format!("Property is '{member_primitive:?}'"),
+                    severity: Severity::Debug,
+                    related_address: None,
+                });
+
+                // Read the structure.
+                events.push(Event {
+                    text: format!("Resolving start address {start:?}"),
+                    severity: Severity::Debug,
+                    related_address: None,
+                });
+                let start_address = match start {
+                    Operand::Literal(Primitive::Address(a)) => a,
+                    Operand::Literal(other) => {
                         return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                            expected: "non-negative integer",
+                            expected: "address",
                             actual: format!("{other:?}"),
+                        }))
+                    }
+                    Operand::Reference(addr) => mem.get_primitive(&addr)?,
+                    Operand::StackPop => {
+                        let data = mem.stack.pop_single()?;
+                        data.try_into()?
+                    }
+                };
+                events.push(Event {
+                    text: "Resolved start address".to_owned(),
+                    severity: Severity::Debug,
+                    related_address: Some(start_address),
+                });
+                let structure = mem
+                    .get(&start_address)
+                    .cloned()
+                    .ok_or(ExecutionError::MemoryEmpty { addr: start_address })?;
+
+                // Look up the member in this structure. What number member is it?
+                let (index, member_display) = match structure {
+                    // Structure is an array
+                    Primitive::ListHeader(ListHeader { count, size: _ }) => match member_primitive {
+                        Primitive::NumericValue(NumericPrimitive::Integer(i)) if i >= 0 => {
+                            let i = i as usize;
+                            // Bounds check
+                            if i < count {
+                                events.push(Event {
+                                    text: format!("Property is index {i}"),
+                                    severity: Severity::Info,
+                                    related_address: None,
+                                });
+                                (i, i.to_string())
+                            } else {
+                                return Err(ExecutionError::ListIndexOutOfBounds { count, index: i });
+                            }
+                        }
+                        Primitive::NumericValue(NumericPrimitive::UInteger(i)) => {
+                            // Bounds check
+                            if i < count {
+                                events.push(Event {
+                                    text: format!("Property is index {i}"),
+                                    severity: Severity::Info,
+                                    related_address: None,
+                                });
+                                (i, i.to_string())
+                            } else {
+                                return Err(ExecutionError::ListIndexOutOfBounds { count, index: i });
+                            }
+                        }
+                        other_index => {
+                            return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                                expected: "uint",
+                                actual: format!("{other_index:?}"),
+                            }));
+                        }
+                    },
+                    // Structure is an object
+                    Primitive::ObjectHeader(ObjectHeader { properties, size: _ }) => match member_primitive {
+                        Primitive::String(s) => {
+                            // Property check
+                            if let Some(i) = properties.iter().position(|prop| prop == &s) {
+                                events.push(Event {
+                                    text: format!("Property is index {i}"),
+                                    severity: Severity::Info,
+                                    related_address: None,
+                                });
+                                (i, s.clone())
+                            } else {
+                                return Err(ExecutionError::UndefinedProperty {
+                                    property: s,
+                                    address: start_address,
+                                });
+                            }
+                        }
+                        other_index => {
+                            return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                                expected: "uint",
+                                actual: format!("{other_index:?}"),
+                            }))
+                        }
+                    },
+                    other_structure => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "list or object header",
+                            actual: format!("{other_structure:?}"),
                         }))
                     }
                 };
 
-                // Check size of the list.
-                let ListHeader { count, size: _ }: ListHeader = mem.get_primitive(&start)?;
-                if index >= count {
-                    return Err(ExecutionError::ListIndexOutOfBounds { count, index });
-                }
-                // Find the given element
-                let mut curr = start + 1;
+                // Find the address of the given member.
+                let mut curr = start_address + 1;
                 for _ in 0..index {
                     let size_of_element: usize = match mem.get(&curr).ok_or(MemoryError::MemoryWrongSize)? {
                         Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
@@ -205,68 +298,14 @@ impl Instruction {
                     curr += size_of_element + 1;
                 }
                 events.push(Event {
-                    text: format!("Reading size of element from {curr}"),
+                    text: format!("Member '{member_display}' begins at addr {curr}"),
                     severity: crate::events::Severity::Info,
                     related_address: Some(curr),
                 });
-                let size_of_element: usize = mem.get_primitive(&curr)?;
-                let addr_of_element = curr + 1;
-                events.push(Event {
-                    text: format!("Element begins at {addr_of_element} and has length {size_of_element}"),
-                    severity: crate::events::Severity::Info,
-                    related_address: Some(addr_of_element),
-                });
-                let element = mem.get_slice(addr_of_element, size_of_element)?;
-                mem.stack.push(element);
-            }
-            Instruction::GetProperty { start, property } => {
-                // Resolve the index.
-                let property_primitive: Primitive = match property {
-                    // Any numeric literal will do, as long as it's >= 0.
-                    Operand::Literal(p) => p,
-                    Operand::Reference(addr) => mem.get(&addr).ok_or(ExecutionError::MemoryEmpty { addr })?.clone(),
-                    Operand::StackPop => mem.stack.pop_single()?,
-                };
-                let property = match property_primitive {
-                    Primitive::String(p) => p,
-                    other => {
-                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
-                            expected: "String",
-                            actual: format!("{other:?}"),
-                        }))
-                    }
-                };
-
-                // Check size of the list.
-                let ObjectHeader { properties, size: _ }: ObjectHeader = mem.get_primitive(&start)?;
-                let index =
-                    properties
-                        .iter()
-                        .position(|prop| prop == &property)
-                        .ok_or(ExecutionError::UndefinedProperty {
-                            property,
-                            address: start,
-                        })?;
-                // Find the given element
-                let mut curr = start + 1;
-                for _ in 0..index {
-                    let size_of_element = mem.get_size(&curr)?;
-                    curr += size_of_element + 1;
-                }
-                events.push(Event {
-                    text: format!("Reading size of property from {curr}"),
-                    severity: crate::events::Severity::Info,
-                    related_address: Some(curr),
-                });
-                let size_of_element: usize = mem.get_size(&curr)?;
-                let addr_of_element = curr + 1;
-                events.push(Event {
-                    text: format!("Property begins at {addr_of_element} and has length {size_of_element}"),
-                    severity: crate::events::Severity::Info,
-                    related_address: Some(addr_of_element),
-                });
-                let element = mem.get_slice(addr_of_element, size_of_element)?;
-                mem.stack.push(element);
+                // Push the member onto the stack.
+                // This first address will be its length.
+                // The length is followed by that many addresses worth of data.
+                mem.stack.push(vec![Primitive::Address(curr)]);
             }
             Instruction::StackPush { data } => {
                 mem.stack.push(data);
@@ -276,6 +315,50 @@ impl Instruction {
                 let Some(destination) = destination else { return Ok(()) };
                 for (i, data_part) in data.into_iter().enumerate() {
                     mem.set(destination + i, data_part);
+                }
+            }
+            Instruction::CopyLen {
+                source_range,
+                destination_range,
+            } => {
+                let src_addr = match source_range.eval(mem)? {
+                    Primitive::Address(a) => a,
+                    other => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "address",
+                            actual: format!("{other:?}"),
+                        }))
+                    }
+                };
+                let dst_addr = match destination_range.eval(mem)? {
+                    Primitive::Address(a) => a,
+                    other => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "address",
+                            actual: format!("{other:?}"),
+                        }))
+                    }
+                };
+
+                let len = match mem
+                    .get(&src_addr)
+                    .ok_or(ExecutionError::MemoryEmpty { addr: src_addr })?
+                {
+                    Primitive::NumericValue(NumericPrimitive::UInteger(n)) => n,
+                    Primitive::ObjectHeader(ObjectHeader { size, .. }) => size,
+                    Primitive::ListHeader(ListHeader { size, .. }) => size,
+                    other => {
+                        return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                            expected: "uint or obj/list header",
+                            actual: format!("{other:?}"),
+                        }))
+                    }
+                };
+                for i in 0..*len {
+                    let src = src_addr + i + 1;
+                    let dst = dst_addr + i;
+                    let val = mem.get(&src).ok_or(ExecutionError::MemoryEmpty { addr: src })?;
+                    mem.set(dst, val.clone());
                 }
             }
         }

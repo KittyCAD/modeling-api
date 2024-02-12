@@ -353,9 +353,9 @@ async fn get_element_of_array() {
                 start: START_DATA_AT.into(),
                 elements: list,
             },
-            Instruction::GetElement {
-                start: 10.into(),
-                index: Operand::Literal(Primitive::from(1usize)),
+            Instruction::AddrOfMember {
+                start: Operand::Literal(Primitive::Address(Address::ZERO + 10)),
+                member: Operand::Literal(Primitive::from(1usize)),
             },
         ],
         None,
@@ -367,13 +367,64 @@ async fn get_element_of_array() {
     // The last instruction put the 4D point (element 1) on the stack.
     // Check it's there.
     let actual = mem.stack.pop().unwrap();
-    assert_eq!(actual, point_4d.into_parts());
+    assert_eq!(actual, vec![(Address::ZERO + 15).into()]);
 
     // The memory should start with a list header.
     let ListHeader { count: _, size } = mem.get_primitive(&(Address::ZERO + START_DATA_AT)).unwrap();
     // Check the edge of `size`.
     assert!(mem.get(&(Address::ZERO + START_DATA_AT + size)).is_some());
     assert!(mem.get(&(Address::ZERO + START_DATA_AT + size + 1)).is_none());
+}
+
+#[tokio::test]
+async fn copy_len() {
+    // Initialize memory with a single object:
+    // { first: <3d point>, second: <4d point> }
+    let mut smem = StaticMemoryInitializer::default();
+    let size_of_object = 9;
+    smem.push(Primitive::from(ObjectHeader {
+        properties: vec!["first".to_owned(), "second".to_owned()],
+        size: size_of_object,
+    }));
+    smem.push(Primitive::from(3usize));
+    smem.push(Point3d {
+        x: 12.0f64,
+        y: 13.0,
+        z: 14.0,
+    });
+    smem.push(Primitive::from(4usize));
+    smem.push(Point4d {
+        x: 20.0f64,
+        y: 21.0,
+        z: 22.0,
+        w: 23.0,
+    });
+    let mut mem = smem.finish();
+
+    // Addr 5 is a property of the object at addr 0.
+    // Its key is "second" and its value is a Point4d.
+    // The property is preceded by its length (4) because that's just how KCEP stores objects.
+    // Push that address onto the stack.
+    let start_of_second_property = Address::ZERO + 5;
+    mem.stack.push(vec![(start_of_second_property).into()]);
+
+    // Copy the value at addr 5 into addr 100.
+    let copied_into = Address::ZERO + 100;
+    execute(
+        &mut mem,
+        vec![Instruction::CopyLen {
+            source_range: Operand::StackPop,
+            destination_range: Operand::Literal(Primitive::Address(copied_into)),
+        }],
+        None,
+    )
+    .await
+    .unwrap();
+
+    // Assert that the property was properly copied into the destination.
+    assert_eq!(mem.get(&copied_into), mem.get(&(start_of_second_property + 1)));
+    assert_eq!(mem.get(&(copied_into + 1)), mem.get(&(start_of_second_property + 2)));
+    assert_eq!(mem.get(&(copied_into + 2)), mem.get(&(start_of_second_property + 3)));
 }
 
 #[tokio::test]
@@ -402,9 +453,9 @@ async fn get_key_of_object() {
     let mut mem = smem.finish();
     execute(
         &mut mem,
-        vec![Instruction::GetProperty {
-            start,
-            property: Operand::Literal("second".to_owned().into()),
+        vec![Instruction::AddrOfMember {
+            start: Operand::Literal(Primitive::Address(start)),
+            member: Operand::Literal("second".to_owned().into()),
         }],
         None,
     )
@@ -414,9 +465,7 @@ async fn get_key_of_object() {
     // The last instruction put the 4D point (element 1) on the stack.
     // Check it's there.
     let actual = mem.stack.pop().unwrap();
-    assert_eq!(actual, point_4d.into_parts());
-    assert!(mem.get(&Address(size)).is_some());
-    assert!(mem.get(&Address(size + 1)).is_none());
+    assert_eq!(actual, vec![(Address::ZERO + 5).into()]);
 }
 
 #[tokio::test]

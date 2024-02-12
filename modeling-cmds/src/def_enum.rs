@@ -26,6 +26,8 @@ pub enum ModelingCmd {
     CameraDragEnd(CameraDragEnd),
     /// Change what the default camera is looking at.
     DefaultCameraLookAt(DefaultCameraLookAt),
+    /// Change all perspective camera settings
+    DefaultCameraPerspectiveSettings(DefaultCameraPerspectiveSettings),
     /// Adjust zoom of the default camera.
     DefaultCameraZoom(DefaultCameraZoom),
     /// Enable sketch mode, where users can sketch 2D geometry.
@@ -177,6 +179,8 @@ pub enum ModelingCmd {
     DefaultCameraSetOrthographic(DefaultCameraSetOrthographic),
     /// Use perspective projection.
     DefaultCameraSetPerspective(DefaultCameraSetPerspective),
+    /// Get a concise description of all of an extrusion's faces
+    Solid3dGetExtrusionFaceInfo(Solid3dGetExtrusionFaceInfo),
 }
 
 impl ModelingCmd {

@@ -653,7 +653,7 @@ pub struct PerspectiveCameraParameters {
     pub z_far: f32,
 }
 
-/// An enum that contains the three global axes.
+/// The global axes.
 #[derive(
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
@@ -669,6 +669,37 @@ pub enum GlobalAxis {
     Z,
 }
 impl_string_enum_sql! {GlobalAxis}
+
+/// Possible types of faces which can be extruded from a 3D solid.
+#[derive(
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
+)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
+#[serde(rename_all = "snake_case")]
+#[repr(u8)]
+pub enum ExtrusionFaceCapType {
+    /// Uncapped.
+    None,
+    /// Capped on top.
+    Top,
+    /// Capped below.
+    Bottom,
+}
+impl_string_enum_sql! {ExtrusionFaceCapType}
 
 // Enum: Connect Rust Enums to Cpp
 // add our native c++ names for our cxx::ExternType implementation
@@ -693,6 +724,7 @@ impl_extern_type! {
     PathCommand = "Enums::_PathCommand"
     PathComponentConstraintBound = "Enums::_PathComponentConstraintBound"
     PathComponentConstraintType = "Enums::_PathComponentConstraintType"
+    ExtrusionFaceCapType  = "Enums::_ExtrusionFaceCapType"
 
     // Utils
     EngineErrorCode = "Enums::_ErrorCode"

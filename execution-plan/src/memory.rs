@@ -56,24 +56,23 @@ impl Default for Memory {
 }
 
 impl kittycad_execution_plan_traits::ReadMemory for Memory {
-    type Address = crate::Address;
-
     /// Get a value from KCEP's program memory.
-    fn get(&self, Address(addr): &Address) -> Option<&Primitive> {
-        self.addresses[*addr].as_ref()
+    fn get(&self, address: &Address) -> Option<&Primitive> {
+        self.addresses[inner(*address)].as_ref()
     }
 
     /// Get a value value (i.e. a value which takes up multiple addresses in memory).
     /// Its parts are stored in consecutive memory addresses starting at `start`.
     fn get_composite<T: Value>(&self, start: Address) -> std::result::Result<T, MemoryError> {
-        let mut values = self.addresses.iter().skip(start.0).cloned();
+        let mut values = self.addresses.iter().skip(inner(start)).cloned();
         T::from_parts(&mut values)
     }
 }
 
 impl Memory {
     /// Store a value in KCEP's program memory.
-    pub fn set(&mut self, Address(addr): Address, value: Primitive) {
+    pub fn set(&mut self, address: Address, value: Primitive) {
+        let addr = address - Address::ZERO;
         // If isn't big enough for this value, double the size of memory until it is.
         while addr > self.addresses.len() {
             self.addresses.extend(vec![None; self.addresses.len()]);
@@ -86,8 +85,9 @@ impl Memory {
     /// Returns how many memory addresses the data took up.
     pub fn set_composite<T: Value>(&mut self, start: Address, composite_value: T) -> usize {
         let parts = composite_value.into_parts().into_iter();
+
         let mut total_addrs = 0;
-        for (value, addr) in parts.zip(start.0..) {
+        for (value, addr) in parts.zip(start - Address::ZERO..) {
             self.addresses[addr] = Some(value);
             total_addrs += 1;
         }
@@ -131,12 +131,16 @@ impl Memory {
 
     /// Get a range of addresses, starting at `start` and continuing for `len` more.
     pub fn get_slice(&self, start: Address, len: usize) -> Result<Vec<Primitive>, ExecutionError> {
-        let slice = &self.addresses[start.0..start.0 + len];
+        let slice = &self.addresses[inner(start)..inner(start) + len];
         let x = slice
             .iter()
             .cloned()
             .enumerate()
-            .map(|(addr, prim)| prim.ok_or(ExecutionError::MemoryEmpty { addr: Address(addr) }))
+            .map(|(addr, prim)| {
+                prim.ok_or(ExecutionError::MemoryEmpty {
+                    addr: Address::ZERO + addr,
+                })
+            })
             .collect::<Result<Vec<_>, _>>()?;
         Ok(x)
     }
@@ -222,7 +226,12 @@ fn pretty_print(p: &Primitive) -> (&'static str, String) {
             format!("keys {}, {size} primitives", properties.clone().join(",")),
         ),
         Primitive::Nil => ("Nil", String::new()),
+        Primitive::Address(a) => ("Address", a.to_string()),
     }
+}
+
+fn inner(a: Address) -> usize {
+    a - Address::ZERO
 }
 
 /// A stack where values can be pushed/popped.
