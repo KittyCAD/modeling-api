@@ -522,6 +522,7 @@ pub struct MouseClick {
 }
 
 /// Enable sketch mode on the given plane.
+/// If you want to sketch on a face, use `enable_sketch_mode` instead.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct SketchModeEnable {
     /// Sketch on this plane.
@@ -564,6 +565,8 @@ pub struct EnableSketchMode {
     pub ortho: bool,
     /// Should we animate or snap for the camera transition?
     pub animated: bool,
+    /// Should the camera move at all?
+    pub adjust_camera: bool,
 }
 
 /// Get type of the given curve.
