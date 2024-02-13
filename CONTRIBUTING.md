@@ -13,6 +13,10 @@
 In this example we'll use the modeling-cmds crate and release version 0.1.15, but you can follow
 the same procedure for any of the crates in this repo, and any version.
 
+You should **only ever bump the patch** e.g. go from 0.1.22 to 0.1.23 -- otherwise you'll need to open PRs to KittyCAD's format and engine repos to explicitly bump them to 0.2.
+
+We do *not* consider adding a new variant to `enum ModelingCmd` to be a breaking change.
+
 - `git checkout -b release/modeling-cmds/0.1.15`
 - Edit `modeling-cmds/Cargo.toml` and update the `version` field
 - `git add --all && git commit -m "Release modeling commands 0.1.15" && git push`
