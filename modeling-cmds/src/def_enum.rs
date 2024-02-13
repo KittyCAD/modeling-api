@@ -94,6 +94,12 @@ pub enum ModelingCmd {
     Solid3dGetPrevAdjacentEdge(Solid3dGetPrevAdjacentEdge),
     /// Fillets the specified edge with the given radius.
     Solid3dFilletEdge(Solid3dFilletEdge),
+    /// Determines whether a brep face is planar and returns its surface-local planar axes if so
+    FaceIsPlanar(FaceIsPlanar),
+    /// Determines a position on a brep face evaluated by paramaters u,v
+    FaceGetPosition(FaceGetPosition),
+    /// Determines the gradient (dFdu, dFdv) + normal vector on a brep face evaluated by paramaters u,v
+    FaceGetGradient(FaceGetGradient),
     /// Sends object to front or back.
     SendObject(SendObject),
     /// Set opacity of the entity.
