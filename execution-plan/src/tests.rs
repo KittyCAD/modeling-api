@@ -192,6 +192,142 @@ async fn add_to_composite_value() {
 }
 
 #[tokio::test]
+async fn modulo_and_power_with_reference() {
+    // Modulo with two positive integers
+    let plan = vec![
+        // Memory addr 0 contains 450
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: 450u32.into(),
+        },
+        // Take (address 0) % 20
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Mod,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal(20u32.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // 450 % 20 = 10
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&10u32.into()));
+
+    // Pow with a positive integer and a positive float
+    let plan = vec![
+        // Memory addr 0 contains 2.5
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: 2.5f32.into(),
+        },
+        // Take (address 0) ^ 2
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Pow,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal(2u32.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // 2.5^2 = 6.25
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&6.25f32.into()));
+
+    // Modulo with two positive floats
+    let plan = vec![
+        // Memory addr 0 contains 12.5
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: 12.5f32.into(),
+        },
+        // Take (address 0) % 2.25
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Mod,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal(2.25f32.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // 12.5 % 2.25 = 1.25
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&1.25f32.into()));
+
+    // Pow with a two negative floats
+    let plan = vec![
+        // Memory addr 0 contains -2.5
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: (-2.5f32).into(),
+        },
+        // Take (address 0) ^ -4.2
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Pow,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal((-4.2f32).into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // (-2.5)^-4.2 = NaN
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    let result: f32 = mem.get_primitive(&(Address::ZERO + 1)).unwrap();
+    assert!(result.is_nan());
+
+    // Modulo with two negative integers
+    let plan = vec![
+        // Memory addr 0 contains -450
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: (-450i64).into(),
+        },
+        // Take (address 0) % -20
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Mod,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal((-20i64).into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // -450 % -20 = -10
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&(-10i64).into()));
+
+    // Modulo with a negative integer and a positive integer
+    let plan = vec![
+        // Memory addr 0 contains -450
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: (-450i64).into(),
+        },
+        // Take (address 0) % 20
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Mod,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal(20u32.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // -450 % 20 = -10
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&(-10i64).into()));
+}
+
+#[tokio::test]
 async fn get_element_of_array() {
     let mut mem = Memory::default();
     const START_DATA_AT: usize = 10;
