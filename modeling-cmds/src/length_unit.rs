@@ -35,11 +35,11 @@ impl Point3d<LengthUnit> {
 
 impl Point3d<f64> {
     /// Convert the point from millimeters.
-    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point3d<f64> {
+    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point3d<LengthUnit> {
         Point3d {
-            x: crate::units::UnitLength::Millimeters.convert_to(to, self.x),
-            y: crate::units::UnitLength::Millimeters.convert_to(to, self.y),
-            z: crate::units::UnitLength::Millimeters.convert_to(to, self.z),
+            x: crate::units::UnitLength::Millimeters.convert_to(to, self.x).into(),
+            y: crate::units::UnitLength::Millimeters.convert_to(to, self.y).into(),
+            z: crate::units::UnitLength::Millimeters.convert_to(to, self.z).into(),
         }
     }
 }
@@ -56,10 +56,10 @@ impl Point2d<LengthUnit> {
 
 impl Point2d<f64> {
     /// Convert the point from millimeters.
-    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point2d<f64> {
+    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point2d<LengthUnit> {
         Point2d {
-            x: crate::units::UnitLength::Millimeters.convert_to(to, self.x),
-            y: crate::units::UnitLength::Millimeters.convert_to(to, self.y),
+            x: crate::units::UnitLength::Millimeters.convert_to(to, self.x).into(),
+            y: crate::units::UnitLength::Millimeters.convert_to(to, self.y).into(),
         }
     }
 }
@@ -78,12 +78,12 @@ impl Point4d<LengthUnit> {
 
 impl Point4d<f64> {
     /// Convert the point from millimeters.
-    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point4d<f64> {
+    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point4d<LengthUnit> {
         Point4d {
-            x: crate::units::UnitLength::Millimeters.convert_to(to, self.x),
-            y: crate::units::UnitLength::Millimeters.convert_to(to, self.y),
-            z: crate::units::UnitLength::Millimeters.convert_to(to, self.z),
-            w: crate::units::UnitLength::Millimeters.convert_to(to, self.w),
+            x: crate::units::UnitLength::Millimeters.convert_to(to, self.x).into(),
+            y: crate::units::UnitLength::Millimeters.convert_to(to, self.y).into(),
+            z: crate::units::UnitLength::Millimeters.convert_to(to, self.z).into(),
+            w: crate::units::UnitLength::Millimeters.convert_to(to, self.w).into(),
         }
     }
 }
