@@ -538,6 +538,8 @@ pub struct SketchModeEnable {
 }
 
 /// Disable sketch mode.
+/// If you are sketching on a face, be sure to not disable sketch mode until you have extruded.
+/// Otherwise, your object will not be fused with the face.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct SketchModeDisable;
 
