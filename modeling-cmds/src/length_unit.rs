@@ -31,13 +31,15 @@ impl Point3d<LengthUnit> {
             z: self.z.to_millimeters(from),
         }
     }
+}
 
+impl Point3d<f64> {
     /// Convert the point from millimeters.
     pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point3d<f64> {
         Point3d {
-            x: self.x.from_millimeters(to),
-            y: self.y.from_millimeters(to),
-            z: self.z.from_millimeters(to),
+            x: crate::units::UnitLength::Millimeters.convert_to(to, self.x),
+            y: crate::units::UnitLength::Millimeters.convert_to(to, self.y),
+            z: crate::units::UnitLength::Millimeters.convert_to(to, self.z),
         }
     }
 }
@@ -50,12 +52,14 @@ impl Point2d<LengthUnit> {
             y: self.y.to_millimeters(from),
         }
     }
+}
 
+impl Point2d<f64> {
     /// Convert the point from millimeters.
     pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point2d<f64> {
         Point2d {
-            x: self.x.from_millimeters(to),
-            y: self.y.from_millimeters(to),
+            x: crate::units::UnitLength::Millimeters.convert_to(to, self.x),
+            y: crate::units::UnitLength::Millimeters.convert_to(to, self.y),
         }
     }
 }
@@ -70,14 +74,16 @@ impl Point4d<LengthUnit> {
             w: self.w.to_millimeters(from),
         }
     }
+}
 
+impl Point4d<f64> {
     /// Convert the point from millimeters.
     pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point4d<f64> {
         Point4d {
-            x: self.x.from_millimeters(to),
-            y: self.y.from_millimeters(to),
-            z: self.z.from_millimeters(to),
-            w: self.w.from_millimeters(to),
+            x: crate::units::UnitLength::Millimeters.convert_to(to, self.x),
+            y: crate::units::UnitLength::Millimeters.convert_to(to, self.y),
+            z: crate::units::UnitLength::Millimeters.convert_to(to, self.z),
+            w: crate::units::UnitLength::Millimeters.convert_to(to, self.w),
         }
     }
 }
