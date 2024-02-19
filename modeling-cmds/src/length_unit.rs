@@ -24,3 +24,49 @@ impl schemars::JsonSchema for LengthUnit {
         <f64>::json_schema(gen)
     }
 }
+
+impl From<f64> for LengthUnit {
+    fn from(value: f64) -> Self {
+        LengthUnit(value)
+    }
+}
+
+impl std::ops::Neg for LengthUnit {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        LengthUnit(-self.0)
+    }
+}
+
+impl std::ops::Add for LengthUnit {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        LengthUnit(self.0 + rhs.0)
+    }
+}
+
+impl std::ops::Sub for LengthUnit {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        LengthUnit(self.0 - rhs.0)
+    }
+}
+
+impl std::ops::Mul<f64> for LengthUnit {
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        LengthUnit(self.0 * rhs)
+    }
+}
+
+impl std::ops::Div<f64> for LengthUnit {
+    type Output = Self;
+
+    fn div(self, rhs: f64) -> Self::Output {
+        LengthUnit(self.0 / rhs)
+    }
+}

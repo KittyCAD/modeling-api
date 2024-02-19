@@ -2,7 +2,10 @@ use std::env;
 
 use insta::assert_snapshot;
 use kittycad_execution_plan_traits::{ListHeader, ObjectHeader, Primitive, Value};
-use kittycad_modeling_cmds::shared::{PathSegment, Point3d, Point4d};
+use kittycad_modeling_cmds::{
+    length_unit::LengthUnit,
+    shared::{PathSegment, Point3d, Point4d},
+};
 use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
 
@@ -472,7 +475,7 @@ async fn get_key_of_object() {
 async fn api_call_draw_cube() {
     let client = test_client().await;
 
-    const CUBE_WIDTH: f64 = 20.0;
+    const CUBE_WIDTH: LengthUnit = LengthUnit(20.0);
 
     // Define primitives, load them into memory.
     let mut static_data = StaticMemoryInitializer::default();
@@ -483,12 +486,12 @@ async fn api_call_draw_cube() {
     let img_format_addr = static_data.push(Primitive::from("Png".to_owned()));
     let output_addr = Address::ZERO + 99;
     let starting_point = Point3d {
-        x: -CUBE_WIDTH.into(),
-        y: -CUBE_WIDTH.into(),
-        z: -CUBE_WIDTH.into(),
+        x: -CUBE_WIDTH,
+        y: -CUBE_WIDTH,
+        z: -CUBE_WIDTH,
     };
     let starting_point_addr = static_data.push(starting_point);
-    let line_segment = |end: Point3d<f64>| PathSegment::Line { end, relative: false };
+    let line_segment = |end: Point3d<LengthUnit>| PathSegment::Line { end, relative: false };
     let segments = [
         Point3d {
             x: CUBE_WIDTH,
