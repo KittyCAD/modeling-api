@@ -388,8 +388,8 @@ pub struct Solid3dGetAllOppositeEdges {
     pub object_id: Uuid,
     /// Which edge you want the opposites of.
     pub edge_id: Uuid,
-    /// If given, ohnly faces parallel to this vector will be considered.
-    pub along_vector: Option<Point3d<LengthUnit>>,
+    /// If given, only faces parallel to this vector will be considered.
+    pub along_vector: Option<Point3d<f64>>,
 }
 
 /// Gets the edge opposite the given edge, along the given face.
