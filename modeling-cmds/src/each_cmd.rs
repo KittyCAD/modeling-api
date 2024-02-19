@@ -721,6 +721,14 @@ pub struct ImportFile {
     pub data: Vec<u8>,
 }
 
+/// Set the units of the scene.
+/// For all following commands, the units will be interpreted as the given units.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct SetSceneUnits {
+    /// The unit to interpret the scene as.
+    pub unit: units::UnitLength,
+}
+
 /// Get the mass of entities in the scene or the default scene.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct Mass {
