@@ -3,6 +3,8 @@
 use kittycad_execution_plan_macros::ExecutionPlanValue;
 use serde::{Deserialize, Serialize};
 
+use crate::shared::{Point2d, Point3d, Point4d};
+
 /// A length unit is wrapper around an f64 that represents a length in some unit.
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Serialize, Deserialize, ExecutionPlanValue)]
 pub struct LengthUnit(pub f64);
@@ -17,6 +19,66 @@ impl LengthUnit {
     /// Get the value from millimeters to the length unit.
     pub fn from_millimeters(&self, to: crate::units::UnitLength) -> f64 {
         crate::units::UnitLength::Millimeters.convert_to(to, self.0)
+    }
+}
+
+impl Point3d<LengthUnit> {
+    /// Convert the point to millimeters.
+    pub fn to_millimeters(&self, from: crate::units::UnitLength) -> Point3d<f64> {
+        Point3d {
+            x: self.x.to_millimeters(from),
+            y: self.y.to_millimeters(from),
+            z: self.z.to_millimeters(from),
+        }
+    }
+
+    /// Convert the point from millimeters.
+    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point3d<f64> {
+        Point3d {
+            x: self.x.from_millimeters(to),
+            y: self.y.from_millimeters(to),
+            z: self.z.from_millimeters(to),
+        }
+    }
+}
+
+impl Point2d<LengthUnit> {
+    /// Convert the point to millimeters.
+    pub fn to_millimeters(&self, from: crate::units::UnitLength) -> Point2d<f64> {
+        Point2d {
+            x: self.x.to_millimeters(from),
+            y: self.y.to_millimeters(from),
+        }
+    }
+
+    /// Convert the point from millimeters.
+    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point2d<f64> {
+        Point2d {
+            x: self.x.from_millimeters(to),
+            y: self.y.from_millimeters(to),
+        }
+    }
+}
+
+impl Point4d<LengthUnit> {
+    /// Convert the point to millimeters.
+    pub fn to_millimeters(&self, from: crate::units::UnitLength) -> Point4d<f64> {
+        Point4d {
+            x: self.x.to_millimeters(from),
+            y: self.y.to_millimeters(from),
+            z: self.z.to_millimeters(from),
+            w: self.w.to_millimeters(from),
+        }
+    }
+
+    /// Convert the point from millimeters.
+    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point4d<f64> {
+        Point4d {
+            x: self.x.from_millimeters(to),
+            y: self.y.from_millimeters(to),
+            z: self.z.from_millimeters(to),
+            w: self.w.from_millimeters(to),
+        }
     }
 }
 
