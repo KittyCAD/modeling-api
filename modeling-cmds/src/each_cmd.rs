@@ -534,7 +534,7 @@ pub struct SketchModeEnable {
     pub animated: bool,
     /// Disable the camera entirely for sketch mode and sketch on a plane (this would be the normal
     /// of that plane).
-    pub disable_camera_with_plane: Option<Point3d<LengthUnit>>,
+    pub disable_camera_with_plane: Option<Point3d<f64>>,
 }
 
 /// Disable sketch mode.
