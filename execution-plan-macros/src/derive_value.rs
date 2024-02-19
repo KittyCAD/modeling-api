@@ -295,12 +295,7 @@ fn impl_value_on_struct(
             .iter()
             .filter_map(|field| field.ident.as_ref().map(|ident| (ident.clone(), field.span())))
             .collect(),
-        Fields::Unnamed(ref fields) => fields
-            .unnamed
-            .iter()
-            .enumerate()
-            .map(|(i, field)| (Ident::new(&format!("field{}", i), field.span()), field.span()))
-            .collect(),
+        Fields::Unnamed(ref fields) => return impl_value_on_unnamed_struct(name, fields, generics),
         Fields::Unit => {
             return quote_spanned! {span =>
                 compile_error!("Value cannot be implemented on a struct with no fields")
@@ -351,6 +346,73 @@ fn impl_value_on_struct(
                 Ok(Self {
                 #(#instantiate_each_field)*
                 })
+            }
+        }
+    }
+}
+
+fn impl_value_on_unnamed_struct(
+    name: proc_macro2::Ident,
+    fields: &syn::FieldsUnnamed,
+    generics: syn::Generics,
+) -> proc_macro2::TokenStream {
+    // We're going to construct some fragments of Rust source code, which will get used in the
+    // final generated code this function returns.
+
+    // For every field in the struct, this macro will:
+    // - In the `into_parts`, extend the Vec of parts with that field, turned into parts.
+    // - In the `from_parts`, instantiate a Self with a field from that part.
+    // Step one is to get a list of all named fields in the struct (and their spans):
+    let field_names: Vec<_> = fields
+        .unnamed
+        .iter()
+        .enumerate()
+        .map(|(i, field)| (syn::Index::from(i), field.span()))
+        .collect();
+
+    // Now we can construct those `into_parts` and `from_parts` fragments.
+    // We take some care to use the span of each `syn::Field` as
+    // the span of the corresponding `into_parts()` and `from_parts()`
+    // calls. This way if one of the field types does not
+    // implement `Value` then the compiler's error message
+    // underlines which field it is.
+    let extend_per_field = field_names.iter().map(|(index, span)| {
+        quote_spanned! {*span=>
+            parts.extend(self.#index.into_parts());
+        }
+    });
+    let instantiate_each_field = field_names.iter().map(|(_, span)| {
+        quote_spanned! {*span=>
+            kittycad_execution_plan_traits::Value::from_parts(values)?,
+        }
+    });
+
+    // Handle generics in the original struct.
+    // Firstly, if the original struct has defaults on its generics, e.g. Point2d<T = f32>,
+    // don't include those defaults in this macro's output, because the compiler
+    // complains it's unnecessary and will soon be a compile error.
+    let generics_without_defaults = remove_generics_defaults(generics.clone());
+    let where_clause = generics.where_clause;
+
+    // Final return value: the generated Rust code to implement the trait.
+    // This uses the fragments above, interpolating them into the final outputted code.
+    quote! {
+        impl #generics_without_defaults kittycad_execution_plan_traits::Value for #name #generics_without_defaults
+        #where_clause
+        {
+            fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
+                let mut parts = Vec::new();
+                #(#extend_per_field)*
+                parts
+            }
+
+            fn from_parts<I>(values: &mut I) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+            where
+                I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
+            {
+                Ok(Self (
+                #(#instantiate_each_field)*
+                ))
             }
         }
     }
