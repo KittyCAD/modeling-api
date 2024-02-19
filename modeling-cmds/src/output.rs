@@ -184,7 +184,7 @@ pub struct CurveGetEndPoints {
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct PlaneIntersectAndProject {
     /// Corresponding coordinates of given window coordinates, intersected on given plane.
-    pub plane_coordinates: Option<Point2d<LengthUnit>>,
+    pub plane_coordinates: Option<Point2d<f64>>,
 }
 
 /// Data from importing the files
@@ -243,11 +243,11 @@ pub struct CenterOfMass {
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct GetSketchModePlane {
     /// The x axis.
-    pub x_axis: Point3d<LengthUnit>,
+    pub x_axis: Point3d<f64>,
     /// The y axis.
-    pub y_axis: Point3d<LengthUnit>,
+    pub y_axis: Point3d<f64>,
     /// The z axis (normal).
-    pub z_axis: Point3d<LengthUnit>,
+    pub z_axis: Point3d<f64>,
 }
 
 /// The response from the `EntitiesGetDistance` command.

@@ -473,9 +473,9 @@ pub struct MakePlane {
     /// Origin of the plane
     pub origin: Point3d<LengthUnit>,
     /// What should the plane's X axis be?
-    pub x_axis: Point3d<LengthUnit>,
+    pub x_axis: Point3d<f64>,
     /// What should the plane's Y axis be?
-    pub y_axis: Point3d<LengthUnit>,
+    pub y_axis: Point3d<f64>,
     /// What should the plane's span/extent?
     /// When rendered visually, this is both the
     /// width and height along X and Y axis respectively.
