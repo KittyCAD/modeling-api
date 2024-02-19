@@ -483,9 +483,9 @@ async fn api_call_draw_cube() {
     let img_format_addr = static_data.push(Primitive::from("Png".to_owned()));
     let output_addr = Address::ZERO + 99;
     let starting_point = Point3d {
-        x: -CUBE_WIDTH,
-        y: -CUBE_WIDTH,
-        z: -CUBE_WIDTH,
+        x: -CUBE_WIDTH.into(),
+        y: -CUBE_WIDTH.into(),
+        z: -CUBE_WIDTH.into(),
     };
     let starting_point_addr = static_data.push(starting_point);
     let line_segment = |end: Point3d<f64>| PathSegment::Line { end, relative: false };
