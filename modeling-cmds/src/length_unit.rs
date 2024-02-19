@@ -71,7 +71,7 @@ impl Point4d<LengthUnit> {
             x: self.x.to_millimeters(from),
             y: self.y.to_millimeters(from),
             z: self.z.to_millimeters(from),
-            w: self.w.to_millimeters(from),
+            w: self.w.0,
         }
     }
 }
@@ -83,7 +83,7 @@ impl Point4d<f64> {
             x: crate::units::UnitLength::Millimeters.convert_to(to, self.x).into(),
             y: crate::units::UnitLength::Millimeters.convert_to(to, self.y).into(),
             z: crate::units::UnitLength::Millimeters.convert_to(to, self.z).into(),
-            w: crate::units::UnitLength::Millimeters.convert_to(to, self.w).into(),
+            w: LengthUnit(self.w),
         }
     }
 }
