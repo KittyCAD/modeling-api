@@ -308,7 +308,6 @@ fn impl_value_on_struct(
         }
     };
 
-    println!("field_names: {:#?}", field_names);
     // Now we can construct those `into_parts` and `from_parts` fragments.
     // We take some care to use the span of each `syn::Field` as
     // the span of the corresponding `into_parts()` and `from_parts()`
