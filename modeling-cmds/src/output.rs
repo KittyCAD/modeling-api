@@ -184,7 +184,7 @@ pub struct CurveGetEndPoints {
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct PlaneIntersectAndProject {
     /// Corresponding coordinates of given window coordinates, intersected on given plane.
-    pub plane_coordinates: Option<Point2d<f64>>,
+    pub plane_coordinates: Option<Point2d<LengthUnit>>,
 }
 
 /// Data from importing the files
