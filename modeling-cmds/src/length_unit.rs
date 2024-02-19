@@ -11,7 +11,12 @@ impl LengthUnit {
     /// Get the value of the length unit in millimeters.
     /// This is how we convert for the engine.
     pub fn to_millimeters(&self, from: crate::units::UnitLength) -> f64 {
-        from.as_measurement(self.0).as_millimeters()
+        from.convert_to(crate::units::UnitLength::Millimeters, self.0)
+    }
+
+    /// Get the value from millimeters to the length unit.
+    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> f64 {
+        crate::units::UnitLength::Millimeters.convert_to(to, self.0)
     }
 }
 
