@@ -282,12 +282,6 @@ fn impl_value_on_struct(
     data: syn::DataStruct,
     generics: syn::Generics,
 ) -> proc_macro2::TokenStream {
-    let Fields::Named(ref fields) = data.fields else {
-        return quote_spanned! {span =>
-            compile_error!("Value cannot be implemented on a struct with unnamed fields")
-        };
-    };
-
     // We're going to construct some fragments of Rust source code, which will get used in the
     // final generated code this function returns.
 
@@ -295,11 +289,26 @@ fn impl_value_on_struct(
     // - In the `into_parts`, extend the Vec of parts with that field, turned into parts.
     // - In the `from_parts`, instantiate a Self with a field from that part.
     // Step one is to get a list of all named fields in the struct (and their spans):
-    let field_names: Vec<_> = fields
-        .named
-        .iter()
-        .filter_map(|field| field.ident.as_ref().map(|ident| (ident, field.span())))
-        .collect();
+    let field_names: Vec<_> = match data.fields {
+        Fields::Named(ref fields) => fields
+            .named
+            .iter()
+            .filter_map(|field| field.ident.as_ref().map(|ident| (ident.clone(), field.span())))
+            .collect(),
+        Fields::Unnamed(ref fields) => fields
+            .unnamed
+            .iter()
+            .enumerate()
+            .map(|(i, field)| (Ident::new(&format!("field{}", i), field.span()), field.span()))
+            .collect(),
+        Fields::Unit => {
+            return quote_spanned! {span =>
+                compile_error!("Value cannot be implemented on a struct with no fields")
+            }
+        }
+    };
+
+    println!("field_names: {:#?}", field_names);
     // Now we can construct those `into_parts` and `from_parts` fragments.
     // We take some care to use the span of each `syn::Field` as
     // the span of the corresponding `into_parts()` and `from_parts()`
@@ -390,6 +399,17 @@ mod tests {
                 point: Point3d<f64>,
                 tag: Option<String>,
             }
+        };
+        let input: DeriveInput = syn::parse2(input).unwrap();
+        let out = impl_derive_value(input);
+        let formatted = get_text_fmt(&out).unwrap();
+        insta::assert_snapshot!(formatted);
+    }
+
+    #[test]
+    fn test_struct_wrapper() {
+        let input = quote! {
+            struct Unit(pub f64);
         };
         let input: DeriveInput = syn::parse2(input).unwrap();
         let out = impl_derive_value(input);

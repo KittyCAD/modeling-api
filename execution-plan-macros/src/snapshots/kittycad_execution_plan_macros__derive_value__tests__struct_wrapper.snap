@@ -1,0 +1,21 @@
+---
+source: execution-plan-macros/src/derive_value.rs
+expression: formatted
+---
+impl kittycad_execution_plan_traits::Value for Unit {
+    fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
+        let mut parts = Vec::new();
+        parts.extend(self.field0.into_parts());
+        parts
+    }
+
+    fn from_parts<I>(values: &mut I) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+    where
+        I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
+    {
+        Ok(Self {
+            field0: kittycad_execution_plan_traits::Value::from_parts(values)?,
+        })
+    }
+}
+
