@@ -30,6 +30,7 @@ euler = "0.4.1"
 http = "0.2.9"
 kittycad-execution-plan-macros = { workspace = true }
 kittycad-execution-plan-traits = { workspace = true }
+kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
 measurements = "0.11.0"
 parse-display = "0.8.2"

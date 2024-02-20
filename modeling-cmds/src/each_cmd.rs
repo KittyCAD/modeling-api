@@ -2,10 +2,11 @@ use std::collections::HashSet;
 
 use kittycad_execution_plan_macros::{ExecutionPlanFromMemory, ExecutionPlanValue};
 use parse_display_derive::{Display, FromStr};
-// //! Types for parameters to Modeling API commands.
+use kittycad_modeling_cmds_macros::ModelingCmdVariantEmpty;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+use crate::{self as kittycad_modeling_cmds};
 
 use crate::{
     format::OutputFormat,
@@ -44,7 +45,7 @@ pub struct ExtendPath {
 }
 
 /// Command for extruding a solid.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
 pub struct Extrude {
     /// Which sketch to extrude.
     /// Must be a closed 2D solid.
@@ -725,7 +726,7 @@ pub struct ImportFile {
 
 /// Set the units of the scene.
 /// For all following commands, the units will be interpreted as the given units.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct SetSceneUnits {
     /// Which units the scene uses.
     pub unit: units::UnitLength,

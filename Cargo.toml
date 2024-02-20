@@ -6,6 +6,7 @@ members = [
     "execution-plan-macros",
     "execution-plan-traits",
     "modeling-cmds",
+    "modeling-cmds-macros",
     "modeling-session",
     "unit-conversion-derive",
 ]
