@@ -6,7 +6,7 @@ use proc_macro::TokenStream;
 use syn::DeriveInput;
 
 /// This will derive the trait `ModelingCmdVariant` from the `kittycad-modeling-cmds` crate.
-/// Its associated type will be ().
+/// Its associated type `output` will be ().
 #[proc_macro_derive(ModelingCmdVariantEmpty)]
 pub fn derive_modeling_cmd_output_empty(input: TokenStream) -> TokenStream {
     // Parse the input into a stream of Rust syntax tokens.
@@ -16,4 +16,13 @@ pub fn derive_modeling_cmd_output_empty(input: TokenStream) -> TokenStream {
     // It's idiomatic to make your proc macros a thin wrapper around an "impl" function, because it
     // simplifies unit testing. This is recommended in The Rust Book.
     TokenStream::from(derive_modeling_cmd_output::impl_empty(input))
+}
+
+/// This will derive the trait `ModelingCmdVariant` from the `kittycad-modeling-cmds` crate.
+/// Its associated type `output` will be the corresponding modeling command output type.
+#[proc_macro_derive(ModelingCmdVariant)]
+pub fn derive_modeling_cmd_output_nonempty(input: TokenStream) -> TokenStream {
+    // For comments, see `derive_modeling_cmd_output_empty`.
+    let input: DeriveInput = syn::parse2(input.into()).unwrap();
+    TokenStream::from(derive_modeling_cmd_output::impl_nonempty(input))
 }

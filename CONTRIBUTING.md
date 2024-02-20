@@ -6,7 +6,9 @@
    - In `output.rs`, add a `struct MyNewCommand` following the existing examples.
    - Then scroll to the end of the file and `impl ModelingCmdOutput for MyNewCommand {}`
    - In `ok_response.rs` add your new type to the `build_enum!` macro.
- - In `impl_traits.rs` follow the examples to implement `ModelingCmdVariant` for your type `MyNewCommand` using either the `impl_variant_output!` or the `impl_variant_empty!` macro. If your command responds with data, use the former. If your command has no response, use the latter.
+   - Derive `ModelingCmdVariant` on your struct in `def_enum.rs`.
+ - Otherwise, if it doesn't respond with data:
+   - Derive `ModelingCmdVariantEmpty` on your struct in `def_enum.rs`.
 
 # Releasing a crate
 

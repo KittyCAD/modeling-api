@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use kittycad_execution_plan_macros::{ExecutionPlanFromMemory, ExecutionPlanValue};
 use parse_display_derive::{Display, FromStr};
-use kittycad_modeling_cmds_macros::ModelingCmdVariantEmpty;
+use kittycad_modeling_cmds_macros::{ModelingCmdVariant, ModelingCmdVariantEmpty};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -168,7 +168,7 @@ pub struct DefaultCameraEnableSketchMode {
 pub struct DefaultCameraDisableSketchMode;
 
 /// Export the scene to a file.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct Export {
     /// IDs of the entities to be exported. If this is empty, then all entities are exported.
     pub entity_ids: Vec<Uuid>,
@@ -179,21 +179,21 @@ pub struct Export {
 }
 
 /// What is this entity's parent?
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct EntityGetParentId {
     /// ID of the entity being queried.
     pub entity_id: Uuid,
 }
 
 /// How many children does the entity have?
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct EntityGetNumChildren {
     /// ID of the entity being queried.
     pub entity_id: Uuid,
 }
 
 /// What is the UUID of this entity's n-th child?
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct EntityGetChildUuid {
     /// ID of the entity being queried.
     pub entity_id: Uuid,
@@ -202,14 +202,14 @@ pub struct EntityGetChildUuid {
 }
 
 /// What are all UUIDs of this entity's children?
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct EntityGetAllChildUuids {
     /// ID of the entity being queried.
     pub entity_id: Uuid,
 }
 
 /// What is the distance between these two entities?
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct EntityGetDistance {
     /// ID of the first entity being queried.
     pub entity_id1: Uuid,
@@ -220,7 +220,7 @@ pub struct EntityGetDistance {
 }
 
 /// Create a linear pattern using this entity (currently only valid for 3D solids).
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct EntityLinearPattern {
     /// ID of the entity being copied.
     pub entity_id: Uuid,
@@ -232,7 +232,7 @@ pub struct EntityLinearPattern {
     pub spacing: LengthUnit,
 }
 /// Create a circular pattern using this entity (currently only valid for 3D solids).
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct EntityCircularPattern {
     /// ID of the entity being copied.
     pub entity_id: Uuid,
@@ -257,7 +257,7 @@ pub struct EditModeEnter {
 
 /// Modifies the selection by simulating a "mouse click" at the given x,y window coordinate
 /// Returns ID of whatever was selected.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct SelectWithPoint {
     /// Where in the window was selected
     pub selected_at_window: Point2d,
@@ -288,7 +288,7 @@ pub struct SelectReplace {
 
 /// Changes the current highlighted entity to whichever one is at the given window coordinate.
 /// If there's no entity at this location, clears the highlight.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct HighlightSetEntity {
     /// Coordinates of the window being clicked
     pub selected_at_window: Point2d,
@@ -300,7 +300,7 @@ pub struct HighlightSetEntity {
 }
 
 /// Changes the current highlighted entity to these entities.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct HighlightSetEntities {
     /// Highlight these entities.
     pub entities: Vec<Uuid>,
@@ -358,14 +358,14 @@ pub struct ObjectSetMaterialParamsPbr {
     pub ambient_occlusion: f32,
 }
 /// What type of entity is this?
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct GetEntityType {
     /// ID of the entity being queried.
     pub entity_id: Uuid,
 }
 
 /// Gets all faces which use the given edge.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct Solid3dGetAllEdgeFaces {
     /// Which object is being queried.
     pub object_id: Uuid,
@@ -383,7 +383,7 @@ pub struct Solid2dAddHole {
 }
 
 /// Gets all edges which are opposite the given edge, across all possible faces.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct Solid3dGetAllOppositeEdges {
     /// Which object is being queried.
     pub object_id: Uuid,
@@ -394,7 +394,7 @@ pub struct Solid3dGetAllOppositeEdges {
 }
 
 /// Gets the edge opposite the given edge, along the given face.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct Solid3dGetOppositeEdge {
     /// Which object is being queried.
     pub object_id: Uuid,
@@ -405,7 +405,7 @@ pub struct Solid3dGetOppositeEdge {
 }
 
 /// Gets the next adjacent edge for the given edge, along the given face.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct Solid3dGetNextAdjacentEdge {
     /// Which object is being queried.
     pub object_id: Uuid,
@@ -416,7 +416,7 @@ pub struct Solid3dGetNextAdjacentEdge {
 }
 
 /// Gets the previous adjacent edge for the given edge, along the given face.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct Solid3dGetPrevAdjacentEdge {
     /// Which object is being queried.
     pub object_id: Uuid,
@@ -517,7 +517,7 @@ pub struct MouseMove {
 
 /// Send a mouse click event
 /// Updates modified/selected entities.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct MouseClick {
     /// Where the mouse is
     pub window: Point2d,
@@ -545,7 +545,7 @@ pub struct SketchModeEnable {
 pub struct SketchModeDisable;
 
 /// Get the plane for sketch mode.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct GetSketchModePlane;
 
 /// Get the plane for sketch mode.
@@ -574,14 +574,14 @@ pub struct EnableSketchMode {
 }
 
 /// Get type of the given curve.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct CurveGetType {
     /// Which curve to query.
     pub curve_id: Uuid,
 }
 
 /// Get control points of the given curve.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct CurveGetControlPoints {
     /// Which curve to query.
     pub curve_id: Uuid,
@@ -599,7 +599,7 @@ pub enum ImageFormat {
 }
 
 /// Take a snapshot of the current view.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
 pub struct TakeSnapshot {
     /// What image format to return.
     pub format: ImageFormat,
@@ -616,14 +616,14 @@ pub struct MakeAxesGizmo {
 }
 
 /// Query the given path.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct PathGetInfo {
     /// Which path to query
     pub path_id: Uuid,
 }
 
 /// Obtain curve ids for vertex ids
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct PathGetCurveUuidsForVertices {
     /// Which path to query
     pub path_id: Uuid,
@@ -633,7 +633,7 @@ pub struct PathGetCurveUuidsForVertices {
 }
 
 /// Obtain vertex ids for a path
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct PathGetVertexUuids {
     /// Which path to query
     pub path_id: Uuid,
@@ -674,7 +674,7 @@ pub struct RemoveSceneObjects {
 
 /// Utility method. Performs both a ray cast and projection to plane-local coordinates.
 /// Returns the plane coordinates for the given window coordinates.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct PlaneIntersectAndProject {
     /// The plane you're intersecting against.
     pub plane_id: Uuid,
@@ -683,7 +683,7 @@ pub struct PlaneIntersectAndProject {
 }
 
 /// Find the start and end of a curve.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct CurveGetEndPoints {
     /// ID of the curve being queried.
     pub curve_id: Uuid,
@@ -701,7 +701,7 @@ pub struct ReconfigureStream {
 }
 
 /// Import files to the current model.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct ImportFiles {
     /// Files to import.
     pub files: Vec<ImportFile>,
@@ -733,7 +733,7 @@ pub struct SetSceneUnits {
 }
 
 /// Get the mass of entities in the scene or the default scene.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct Mass {
     /// IDs of the entities to get the mass of. If this is empty, then the default scene is included in
     /// the mass.
@@ -749,7 +749,7 @@ pub struct Mass {
 }
 
 /// Get the density of entities in the scene or the default scene.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct Density {
     /// IDs of the entities to get the density of. If this is empty, then the default scene is included in
     /// the density.
@@ -765,7 +765,7 @@ pub struct Density {
 }
 
 /// Get the volume of entities in the scene or the default scene.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct Volume {
     /// IDs of the entities to get the volume of. If this is empty, then the default scene is included in
     /// the volume.
@@ -777,7 +777,7 @@ pub struct Volume {
 }
 
 /// Get the center of mass of entities in the scene or the default scene.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct CenterOfMass {
     /// IDs of the entities to get the center of mass of. If this is empty, then the default scene is included in
     /// the center of mass.
@@ -789,7 +789,7 @@ pub struct CenterOfMass {
 }
 
 /// Get the surface area of entities in the scene or the default scene.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
 pub struct SurfaceArea {
     /// IDs of the entities to get the surface area of. If this is empty, then the default scene is included in
     /// the surface area.
