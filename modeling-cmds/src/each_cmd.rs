@@ -21,11 +21,11 @@ use crate::{
 };
 
 /// Start a new path.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
 pub struct StartPath;
 
 /// Move the path's "pen".
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
 pub struct MovePathPen {
     /// The ID of the command which created the path.
     pub path: ModelingCmdId,
@@ -35,7 +35,7 @@ pub struct MovePathPen {
 
 /// Extend a path by adding a new segment which starts at the path's "pen".
 /// If no "pen" location has been set before (via `MovePen`), then the pen is at the origin.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
 pub struct ExtendPath {
     /// The ID of the command which created the path.
     pub path: ModelingCmdId,
@@ -59,14 +59,14 @@ pub struct Extrude {
 }
 
 /// Closes a path, converting it to a 2D solid.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
 pub struct ClosePath {
     /// Which path to close.
     pub path_id: Uuid,
 }
 
 /// Camera drag started.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct CameraDragStart {
     /// The type of camera drag interaction.
     pub interaction: CameraDragInteractionType,
@@ -75,7 +75,7 @@ pub struct CameraDragStart {
 }
 
 /// Camera drag continued.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct CameraDragMove {
     /// The type of camera drag interaction.
     pub interaction: CameraDragInteractionType,
@@ -89,7 +89,7 @@ pub struct CameraDragMove {
 }
 
 /// Camera drag ended
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct CameraDragEnd {
     /// The type of camera drag interaction.
     pub interaction: CameraDragInteractionType,
@@ -98,7 +98,7 @@ pub struct CameraDragEnd {
 }
 
 /// Change what the default camera is looking at.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct DefaultCameraLookAt {
     /// Where the camera is positioned
     pub vantage: Point3d,
@@ -114,7 +114,7 @@ pub struct DefaultCameraLookAt {
 }
 
 /// Change what the default camera is looking at.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct DefaultCameraPerspectiveSettings {
     /// Where the camera is positioned
     pub vantage: Point3d,
@@ -136,7 +136,7 @@ pub struct DefaultCameraPerspectiveSettings {
 }
 
 /// Adjust zoom of the default camera.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct DefaultCameraZoom {
     /// Move the camera forward along the vector it's looking at,
     /// by this magnitudedefaultCameraZoom.
@@ -146,7 +146,7 @@ pub struct DefaultCameraZoom {
 
 /// Enable sketch mode, where users can sketch 2D geometry.
 /// Users choose a plane to sketch on.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct DefaultCameraEnableSketchMode {
     /// What's the origin of the sketching plane?
     pub origin: Point3d,
@@ -164,7 +164,7 @@ pub struct DefaultCameraEnableSketchMode {
 }
 
 /// Disable sketch mode, from the default camera.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct DefaultCameraDisableSketchMode;
 
 /// Export the scene to a file.
@@ -249,7 +249,7 @@ pub struct EntityCircularPattern {
 }
 
 /// Enter edit mode
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct EditModeEnter {
     /// The edit target
     pub target: Uuid,
@@ -266,21 +266,21 @@ pub struct SelectWithPoint {
 }
 
 /// Adds one or more entities (by UUID) to the selection.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct SelectAdd {
     /// Which entities to select
     pub entities: Vec<Uuid>,
 }
 
 /// Removes one or more entities (by UUID) from the selection.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct SelectRemove {
     /// Which entities to unselect
     pub entities: Vec<Uuid>,
 }
 
 /// Replaces current selection with these entities (by UUID).
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct SelectReplace {
     /// Which entities to select
     pub entities: Vec<Uuid>,
@@ -307,7 +307,7 @@ pub struct HighlightSetEntities {
 }
 
 /// Create a new annotation
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct NewAnnotation {
     /// What should the annotation contain?
     pub options: AnnotationOptions,
@@ -318,7 +318,7 @@ pub struct NewAnnotation {
 }
 
 /// Update an annotation
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct UpdateAnnotation {
     /// Which annotation to update
     pub annotation_id: Uuid,
@@ -328,7 +328,7 @@ pub struct UpdateAnnotation {
 }
 
 /// Hide or show an object
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct ObjectVisible {
     /// Which object to change
     pub object_id: Uuid,
@@ -337,14 +337,14 @@ pub struct ObjectVisible {
 }
 
 /// Bring an object to the front of the scene
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct ObjectBringToFront {
     /// Which object to change
     pub object_id: Uuid,
 }
 
 /// Set the material properties of an object
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct ObjectSetMaterialParamsPbr {
     /// Which object to change
     pub object_id: Uuid,
@@ -374,7 +374,7 @@ pub struct Solid3dGetAllEdgeFaces {
 }
 
 /// Add a hole to a Solid2d object before extruding it.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct Solid2dAddHole {
     /// Which object to add the hole to.
     pub object_id: Uuid,
@@ -427,7 +427,7 @@ pub struct Solid3dGetPrevAdjacentEdge {
 }
 
 /// Fillets the given edge with the specified radius.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct Solid3dFilletEdge {
     /// Which object is being filletted.
     pub object_id: Uuid,
@@ -438,7 +438,7 @@ pub struct Solid3dFilletEdge {
 }
 
 /// Send object to front or back.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct SendObject {
     /// Which object is being changed.
     pub object_id: Uuid,
@@ -446,7 +446,7 @@ pub struct SendObject {
     pub front: bool,
 }
 /// Set opacity of the entity.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct EntitySetOpacity {
     /// Which entity is being changed.
     pub entity_id: Uuid,
@@ -457,7 +457,7 @@ pub struct EntitySetOpacity {
 }
 
 /// Fade entity in or out.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct EntityFade {
     /// Which entity is being changed.
     pub entity_id: Uuid,
@@ -469,7 +469,7 @@ pub struct EntityFade {
 }
 
 /// Make a new plane
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct MakePlane {
     /// Origin of the plane
     pub origin: Point3d<LengthUnit>,
@@ -488,7 +488,7 @@ pub struct MakePlane {
 }
 
 /// Set the color of a plane.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct PlaneSetColor {
     /// Which plane is being changed.
     pub plane_id: Uuid,
@@ -497,14 +497,14 @@ pub struct PlaneSetColor {
 }
 
 /// Set the current tool.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct SetTool {
     /// What tool should be active.
     pub tool: SceneToolType,
 }
 
 /// Send a mouse move event
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct MouseMove {
     /// Where the mouse is
     pub window: Point2d,
@@ -525,7 +525,7 @@ pub struct MouseClick {
 
 /// Enable sketch mode on the given plane.
 /// If you want to sketch on a face, use `enable_sketch_mode` instead.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct SketchModeEnable {
     /// Sketch on this plane.
     pub plane_id: Uuid,
@@ -541,7 +541,7 @@ pub struct SketchModeEnable {
 /// Disable sketch mode.
 /// If you are sketching on a face, be sure to not disable sketch mode until you have extruded.
 /// Otherwise, your object will not be fused with the face.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct SketchModeDisable;
 
 /// Get the plane for sketch mode.
@@ -549,7 +549,7 @@ pub struct SketchModeDisable;
 pub struct GetSketchModePlane;
 
 /// Get the plane for sketch mode.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct CurveSetConstraint {
     /// Which curve to constrain.
     pub object_id: Uuid,
@@ -560,7 +560,7 @@ pub struct CurveSetConstraint {
 }
 
 /// Sketch on some entity (e.g. a plane, a face).
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct EnableSketchMode {
     /// Which entity to sketch on.
     pub entity_id: Uuid,
@@ -606,7 +606,7 @@ pub struct TakeSnapshot {
 }
 
 /// Add a gizmo showing the axes.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct MakeAxesGizmo {
     /// If true, axes gizmo will be placed in the corner of the screen.
     /// If false, it will be placed at the origin of the scene.
@@ -640,14 +640,14 @@ pub struct PathGetVertexUuids {
 }
 
 /// Start dragging the mouse.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct HandleMouseDragStart {
     /// The mouse position.
     pub window: Point2d,
 }
 
 /// Continue dragging the mouse.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct HandleMouseDragMove {
     /// The mouse position.
     pub window: Point2d,
@@ -659,14 +659,14 @@ pub struct HandleMouseDragMove {
 }
 
 /// Stop dragging the mouse.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct HandleMouseDragEnd {
     /// The mouse position.
     pub window: Point2d,
 }
 
 /// Remove scene objects.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct RemoveSceneObjects {
     /// Objects to remove.
     pub object_ids: HashSet<Uuid>,
@@ -690,7 +690,7 @@ pub struct CurveGetEndPoints {
 }
 
 /// Reconfigure the stream.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
 pub struct ReconfigureStream {
     /// Width of the stream.
     pub width: u32,
@@ -801,20 +801,20 @@ pub struct SurfaceArea {
 }
 
 /// Focus the default camera upon an object in the scene.
-#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
 pub struct DefaultCameraFocusOn {
     /// UUID of object to focus on.
     pub uuid: Uuid,
 }
 /// When you select some entity with the current tool, what should happen to the entity?
-#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
 pub struct SetSelectionType {
     /// What type of selection should occur when you select something?
     pub selection_type: SceneSelectionType,
 }
 
 /// What kind of entities can be selected?
-#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
 pub struct SetSelectionFilter {
     /// If vector is empty, clear all filters.
     /// If vector is non-empty, only the given entity types will be selectable.
@@ -822,11 +822,11 @@ pub struct SetSelectionFilter {
 }
 
 /// Use orthographic projection.
-#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
 pub struct DefaultCameraSetOrthographic;
 
 /// Use perspective projection.
-#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
 pub struct DefaultCameraSetPerspective {
     /// If this is not given, use the same parameters as last time the perspective camera was used.
     pub parameters: Option<PerspectiveCameraParameters>,
