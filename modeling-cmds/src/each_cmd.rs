@@ -727,7 +727,7 @@ pub struct ImportFile {
 /// For all following commands, the units will be interpreted as the given units.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct SetSceneUnits {
-    /// The unit to interpret the scene as.
+    /// Which units the scene uses.
     pub unit: units::UnitLength,
 }
 
