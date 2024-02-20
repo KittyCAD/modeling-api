@@ -854,6 +854,18 @@ pub mod each_cmd {
         /// Any edge that lies on the extrusion base path.
         pub edge_id: Uuid,
     }
+
+    /// Exit edit mode
+    #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+    pub struct EditModeExit;
+
+    /// Clear the selection
+    #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+    pub struct SelectClear;
+
+    /// Find all IDs of selected entities
+    #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory)]
+    pub struct SelectGet;
 }
 );
 
