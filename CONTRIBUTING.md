@@ -1,7 +1,6 @@
 # Adding a new modeling command
 
- - In `each_cmd.rs` add your new `struct MyNewCommand` with one field for each parameter the command has.
- - In `def_enum.rs` add a new variant of `ModelingCmd` with your type, e.g. `MyNewCommand(MyNewCommand)`.
+ - In `def_enum.rs`, under the `mod each_cmd`, add your new `struct MyNewCommand` with one field for each parameter the command has.
  - If your command responds with data:
    - In `output.rs`, add a `struct MyNewCommand` following the existing examples.
    - Then scroll to the end of the file and `impl ModelingCmdOutput for MyNewCommand {}`
