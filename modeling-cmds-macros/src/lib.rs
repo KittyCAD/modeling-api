@@ -1,4 +1,4 @@
-//! Proc-macros for implementing execution-plan traits.
+//! Proc-macros for implementing kittycad-modeling-cmds traits.
 
 mod derive_modeling_cmd_output;
 

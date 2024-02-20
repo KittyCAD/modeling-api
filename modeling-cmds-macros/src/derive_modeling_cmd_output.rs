@@ -6,8 +6,9 @@ use syn::{spanned::Spanned, DeriveInput};
 pub(crate) fn impl_empty(input: DeriveInput) -> TokenStream {
     // Where in the input source code is this type defined?
     let span = input.span();
-    // Name of type that is deriving Value
+    // Name of type that is deriving the trait.
     let name = input.ident;
+    // Delegate to a macro that can generate code for this specific type.
     match input.data {
         syn::Data::Struct(_) => impl_empty_on_struct(name),
         syn::Data::Enum(_) => quote_spanned! {span =>
