@@ -148,7 +148,7 @@ pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Opti
 pub struct ExecutionState {
     /// State of memory after executing the instruction
     pub mem: Memory,
-    /// Which instruction was executed? Index into the Vec<Instruction> for the plan.
+    /// Which instruction was executed? Index into the `Vec<Instruction>` for the plan.
     pub active_instruction: usize,
     /// Which events occurred during execution of this instruction?
     pub events: Vec<Event>,
