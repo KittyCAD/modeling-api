@@ -1661,7 +1661,7 @@ dependencies = [
  "euler",
  "http 0.2.11",
  "kittycad-execution-plan-macros",
- "kittycad-execution-plan-traits 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "kittycad-execution-plan-traits",
  "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "measurements",
  "parse-display",
