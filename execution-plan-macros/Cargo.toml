@@ -21,6 +21,6 @@ proc-macro = true
 [dev-dependencies]
 anyhow = "1.0.75"
 insta = "1.34.0"
-kittycad-execution-plan-traits = "0.1.10"
+kittycad-execution-plan-traits = { workspace = true }
 regex = "1.10.2"
 rustfmt-wrapper = "0.2.1"
