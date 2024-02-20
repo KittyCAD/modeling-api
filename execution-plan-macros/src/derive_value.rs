@@ -351,7 +351,7 @@ fn impl_value_on_struct(
     }
 }
 
-fn impl_value_on_unnamed_struct(
+fn impl_value_on_struct_unnamed_fields(
     name: proc_macro2::Ident,
     fields: &syn::FieldsUnnamed,
     generics: syn::Generics,
