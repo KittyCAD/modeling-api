@@ -33,5 +33,5 @@ expression: mem.debug_table(None)
 │ 25   │ Float    │ -20                                  │
 │ 26   │ Bool     │ false                                │
 │ 99   │ String   │ TakeSnapshot                         │
-│ 100  │ Bytes    │ length 129068                        │
+│ 100  │ Bytes    │                                      │
 └──────┴──────────┴──────────────────────────────────────┘
