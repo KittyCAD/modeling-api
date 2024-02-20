@@ -295,7 +295,7 @@ fn impl_value_on_struct(
             .iter()
             .filter_map(|field| field.ident.as_ref().map(|ident| (ident.clone(), field.span())))
             .collect(),
-        Fields::Unnamed(ref fields) => return impl_value_on_unnamed_struct(name, fields, generics),
+        Fields::Unnamed(ref fields) => return impl_value_on_struct_unnamed_fields(name, fields, generics),
         Fields::Unit => {
             return quote_spanned! {span =>
                 compile_error!("Value cannot be implemented on a struct with no fields")
