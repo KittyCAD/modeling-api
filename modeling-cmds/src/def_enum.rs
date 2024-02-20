@@ -65,6 +65,9 @@ pub enum ModelingCmd {
     SelectReplace(SelectReplace),
     /// Find all IDs of selected entities
     SelectGet,
+    /// Set the units of the scene.
+    /// For all following commands, the units will be interpreted as the given units.
+    SetSceneUnits(SetSceneUnits),
     /// Changes the current highlighted entity to whichever one is at the given window coordinate.
     /// If there's no entity at this location, clears the highlight.
     HighlightSetEntity(HighlightSetEntity),

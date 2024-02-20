@@ -1,4 +1,5 @@
 //! Output from Modeling API commands.
+
 use kittycad_execution_plan_macros::ExecutionPlanValue;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -7,6 +8,7 @@ use uuid::Uuid;
 use crate::{
     base64::Base64Data,
     id::ModelingCmdId,
+    length_unit::LengthUnit,
     shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d},
     traits::ModelingCmdOutput,
     units,
@@ -173,16 +175,16 @@ pub struct PathGetVertexUuids {
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct CurveGetEndPoints {
     /// Start
-    pub start: Point3d<f64>,
+    pub start: Point3d<LengthUnit>,
     /// End
-    pub end: Point3d<f64>,
+    pub end: Point3d<LengthUnit>,
 }
 
 /// Corresponding coordinates of given window coordinates, intersected on given plane.
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct PlaneIntersectAndProject {
     /// Corresponding coordinates of given window coordinates, intersected on given plane.
-    pub plane_coordinates: Option<Point2d<f64>>,
+    pub plane_coordinates: Option<Point2d<LengthUnit>>,
 }
 
 /// Data from importing the files
@@ -252,9 +254,9 @@ pub struct GetSketchModePlane {
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct EntityGetDistance {
     /// The minimum distance between the input entities.
-    pub min_distance: f64,
+    pub min_distance: LengthUnit,
     /// The maximum distance between the input entities.
-    pub max_distance: f64,
+    pub max_distance: LengthUnit,
 }
 
 /// The response from the `EntityLinearPattern` command.

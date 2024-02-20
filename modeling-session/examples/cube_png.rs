@@ -7,6 +7,7 @@ use color_eyre::{
 };
 use kittycad_modeling_cmds::{
     id::ModelingCmdId,
+    length_unit::LengthUnit,
     ok_response::OkModelingCmdResponse,
     shared::{PathSegment, Point3d},
     ClosePath, ExtendPath, Extrude, MovePathPen, StartPath, TakeSnapshot,
@@ -14,7 +15,7 @@ use kittycad_modeling_cmds::{
 use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
 
-const CUBE_WIDTH: f64 = 10.0;
+const CUBE_WIDTH: LengthUnit = LengthUnit(10.0);
 
 #[tokio::main]
 async fn main() -> Result<()> {

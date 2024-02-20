@@ -10,6 +10,7 @@ use uuid::Uuid;
 use crate::{
     format::OutputFormat,
     id::ModelingCmdId,
+    length_unit::LengthUnit,
     shared::{
         AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
         PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters, Point2d,
@@ -28,7 +29,7 @@ pub struct MovePathPen {
     /// The ID of the command which created the path.
     pub path: ModelingCmdId,
     /// Where the path's pen should be.
-    pub to: Point3d<f64>,
+    pub to: Point3d<LengthUnit>,
 }
 
 /// Extend a path by adding a new segment which starts at the path's "pen".
@@ -49,7 +50,7 @@ pub struct Extrude {
     /// Must be a closed 2D solid.
     pub target: ModelingCmdId,
     /// How far off the plane to extrude
-    pub distance: f64,
+    pub distance: LengthUnit,
     /// Whether to cap the extrusion with a face, or not.
     /// If true, the resulting solid will be closed on all sides, like a dice.
     /// If false, it will be open on one side, like a drinking glass.
@@ -227,7 +228,7 @@ pub struct EntityLinearPattern {
     /// Number of repetitions to make.
     pub num_repetitions: u32,
     /// Spacing between repetitions.
-    pub spacing: f64,
+    pub spacing: LengthUnit,
 }
 /// Create a circular pattern using this entity (currently only valid for 3D solids).
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -237,7 +238,7 @@ pub struct EntityCircularPattern {
     /// Axis around which to make the copies
     pub axis: Point3d<f64>,
     /// Point around which to make the copies
-    pub center: Point3d<f64>,
+    pub center: Point3d<LengthUnit>,
     /// Number of repetitions to make.
     pub num_repetitions: u32,
     /// Arc angle (in degrees) to place repetitions along.
@@ -387,7 +388,7 @@ pub struct Solid3dGetAllOppositeEdges {
     pub object_id: Uuid,
     /// Which edge you want the opposites of.
     pub edge_id: Uuid,
-    /// If given, ohnly faces parallel to this vector will be considered.
+    /// If given, only faces parallel to this vector will be considered.
     pub along_vector: Option<Point3d<f64>>,
 }
 
@@ -432,7 +433,7 @@ pub struct Solid3dFilletEdge {
     /// Which edge you want to fillet.
     pub edge_id: Uuid,
     /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
-    pub radius: f64,
+    pub radius: LengthUnit,
 }
 
 /// Send object to front or back.
@@ -470,7 +471,7 @@ pub struct EntityFade {
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct MakePlane {
     /// Origin of the plane
-    pub origin: Point3d<f64>,
+    pub origin: Point3d<LengthUnit>,
     /// What should the plane's X axis be?
     pub x_axis: Point3d<f64>,
     /// What should the plane's Y axis be?
@@ -478,7 +479,7 @@ pub struct MakePlane {
     /// What should the plane's span/extent?
     /// When rendered visually, this is both the
     /// width and height along X and Y axis respectively.
-    pub size: f64,
+    pub size: LengthUnit,
     /// If true, any existing drawables within the obj will be replaced (the object will be reset)
     pub clobber: bool,
     /// If true, the plane will be created but hidden initially.
@@ -537,6 +538,8 @@ pub struct SketchModeEnable {
 }
 
 /// Disable sketch mode.
+/// If you are sketching on a face, be sure to not disable sketch mode until you have extruded.
+/// Otherwise, your object will not be fused with the face.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct SketchModeDisable;
 
@@ -718,6 +721,14 @@ pub struct ImportFile {
         deserialize_with = "serde_bytes::deserialize"
     )]
     pub data: Vec<u8>,
+}
+
+/// Set the units of the scene.
+/// For all following commands, the units will be interpreted as the given units.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct SetSceneUnits {
+    /// Which units the scene uses.
+    pub unit: units::UnitLength,
 }
 
 /// Get the mass of entities in the scene or the default scene.
