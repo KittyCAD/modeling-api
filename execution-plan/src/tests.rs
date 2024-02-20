@@ -475,7 +475,7 @@ async fn get_key_of_object() {
 async fn api_call_draw_cube() {
     let client = test_client().await;
 
-    const CUBE_WIDTH: LengthUnit = LengthUnit(20.0);
+    const CUBE_WIDTH: LengthUnit = LengthUnit(200.0);
 
     // Define primitives, load them into memory.
     let mut static_data = StaticMemoryInitializer::default();

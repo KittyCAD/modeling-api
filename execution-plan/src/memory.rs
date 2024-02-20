@@ -216,7 +216,7 @@ fn pretty_print(p: &Primitive) -> (&'static str, String) {
         Primitive::NumericValue(NumericPrimitive::UInteger(v)) => ("Uint", v.to_string()),
         Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Int", v.to_string()),
         Primitive::Uuid(v) => ("Uuid", v.to_string()),
-        Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
+        Primitive::Bytes(_) => ("Bytes", String::new()),
         Primitive::Bool(v) => ("Bool", v.to_string()),
         Primitive::ListHeader(ListHeader { count, size }) => {
             ("List header", format!("{count} elements, {size} primitives"))
