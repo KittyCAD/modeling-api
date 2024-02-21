@@ -157,7 +157,7 @@ impl BinaryArithmetic {
     /// Calculate the the arithmetic equation.
     /// May read values from the given memory.
     pub fn calculate(self, mem: &mut Memory, events: &mut EventWriter) -> Result<Primitive, ExecutionError> {
-        use std::ops::{Add, Div, Mul, Sub, Rem};
+        use std::ops::{Add, Div, Mul, Rem, Sub};
         match self.operation {
             BinaryOperation::Add => {
                 arithmetic_body!(self, mem, add, events)
