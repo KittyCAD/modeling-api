@@ -5,8 +5,6 @@ pub mod base64;
 pub mod coord;
 /// The modeling command enum with each specific modeling command.
 mod def_enum;
-/// Definition of each modeling command.
-pub mod each_cmd;
 /// Import and export types.
 pub mod format;
 /// Modeling command IDs, used to associated requests and responses.
@@ -14,8 +12,8 @@ pub mod format;
 pub mod id;
 #[cfg(feature = "cxx")]
 pub mod impl_extern_type;
-mod impl_traits;
 mod kcep_primitive;
+pub mod length_unit;
 /// When a modeling command is successful, these responses could be returned.
 pub mod ok_response;
 /// Output of each modeling command.

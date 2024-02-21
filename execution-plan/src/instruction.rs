@@ -38,6 +38,7 @@ pub enum Instruction {
     /// # Format
     /// Lists have this format (each line represents a memory address starting at `start`):
     ///
+    /// ```nocode
     /// <number of elements>
     /// <n = size of element 0>
     /// <element 0, address 0>
@@ -47,6 +48,7 @@ pub enum Instruction {
     /// <element 1, address 0>
     /// <...>
     /// <element 1, address n>
+    /// ```
     /// etc etc for each element.
     SetList {
         /// List will start at this element.

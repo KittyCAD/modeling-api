@@ -6,6 +6,7 @@ members = [
     "execution-plan-macros",
     "execution-plan-traits",
     "modeling-cmds",
+    "modeling-cmds-macros",
     "modeling-session",
     "unit-conversion-derive",
 ]
@@ -15,3 +16,12 @@ missing_docs = "deny"
 
 [workspace.lints.clippy]
 dbg_macro = "deny"
+
+[workspace.dependencies]
+kittycad = { version = "0.2.44", features = ["requests"] }
+kittycad-execution-plan = { path = "execution-plan" }
+kittycad-execution-plan-macros = { path = "execution-plan-macros", version = "0.1.5" }
+kittycad-execution-plan-traits = { path = "execution-plan-traits", version = "0.1.10" }
+kittycad-modeling-cmds = { path = "modeling-cmds", version = "0.1.19" }
+kittycad-modeling-cmds-macros = { path = "modeling-cmds-macros" }
+kittycad-modeling-session = { path = "modeling-session" }
