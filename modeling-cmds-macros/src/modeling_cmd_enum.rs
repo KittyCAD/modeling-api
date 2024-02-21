@@ -8,13 +8,12 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
     // Parse all items from the module, to discover which enum variants should exist.
     // Also, find the doc for each enum variant.
     let (variants, docs): (Vec<_>, Vec<_>) = input
-        .clone()
         .content
-        .into_iter()
+        .iter()
         .next()
         .unwrap()
         .1
-        .into_iter()
+        .iter()
         .filter_map(|item| {
             // All modeling commands are public structs.
             let syn::Item::Struct(item) = item else {
@@ -27,8 +26,8 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
             // Copy the struct's docstring. That'll become the docstring for the enum variant.
             let doc: Vec<String> = item
                 .attrs
-                .into_iter()
-                .filter_map(|attr| match attr.meta {
+                .iter()
+                .filter_map(|attr| match &attr.meta {
                     syn::Meta::NameValue(syn::MetaNameValue { path, value, .. }) => {
                         if !path.is_ident("doc") {
                             return None;
@@ -43,7 +42,7 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
                 })
                 .collect();
             let doc: String = doc.join("\n");
-            Some((item.ident, doc))
+            Some((&item.ident, doc))
         })
         .unzip();
 
