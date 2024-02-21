@@ -16,8 +16,6 @@ mod kcep_primitive;
 pub mod length_unit;
 /// When a modeling command is successful, these responses could be returned.
 pub mod ok_response;
-/// Output of each modeling command.
-pub mod output;
 /// Types that are shared between various modeling commands, like Point3d.
 pub mod shared;
 /// The modeling command trait that each modeling command implements.
@@ -29,4 +27,5 @@ pub mod units;
 pub mod websocket;
 
 pub use def_enum::*;
+pub use ok_response::output;
 pub use traits::*;

@@ -35,7 +35,11 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
                             return None;
                         }
                         // Extract the attribute's value (the docstring's contents).
-                        let syn::Expr::Lit(syn::ExprLit{lit: syn::Lit::Str(value), ..}) = value else {
+                        let syn::Expr::Lit(syn::ExprLit {
+                            lit: syn::Lit::Str(value),
+                            ..
+                        }) = value
+                        else {
                             return None;
                         };
                         let doc = value.value().trim().to_owned();
@@ -43,7 +47,8 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
                     }
                     _ => None,
                 })
-                .collect::<Vec<_>>().join("\n");
+                .collect::<Vec<_>>()
+                .join("\n");
             Some((&item.ident, doc))
         })
         .unzip();
