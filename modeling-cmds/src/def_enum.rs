@@ -723,7 +723,7 @@ pub mod each_cmd {
         pub format: crate::format::InputFormat,
     }
 
-    /// File to import into the current model
+    /// File to import into the current model.
     /// If you are sending binary data for a file, be sure to send the WebSocketRequest as
     /// binary/bson, not text/json.
     #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]

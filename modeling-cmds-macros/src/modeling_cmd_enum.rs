@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use quote::{quote, quote_spanned};
+use quote::quote_spanned;
 use syn::{spanned::Spanned, ItemMod};
 
 pub(crate) fn generate(input: ItemMod) -> TokenStream {
@@ -30,11 +30,14 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
                 .into_iter()
                 .filter_map(|attr| match attr.meta {
                     syn::Meta::NameValue(syn::MetaNameValue { path, value, .. }) => {
-                        if path.is_ident("doc") {
-                            Some(quote! {#value}.to_string())
-                        } else {
-                            None
+                        if !path.is_ident("doc") {
+                            return None;
                         }
+                        let syn::Expr::Lit(syn::ExprLit{lit: syn::Lit::Str(doc), ..}) = value else {
+                            return None;
+                        };
+                        let doc = doc.value().trim().to_owned();
+                        Some(doc)
                     }
                     _ => None,
                 })
