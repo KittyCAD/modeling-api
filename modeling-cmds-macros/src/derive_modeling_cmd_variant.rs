@@ -2,7 +2,6 @@ use proc_macro2::{TokenStream};
 use quote::{quote, quote_spanned};
 use syn::{spanned::Spanned, DeriveInput};
 
-
 pub(crate) fn impl_empty(input: DeriveInput) -> TokenStream {
     // Where in the input source code is this type defined?
     let span = input.span();

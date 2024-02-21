@@ -2,6 +2,7 @@
 
 mod derive_modeling_cmd_variant;
 mod modeling_cmd_enum;
+mod modeling_cmd_output;
 
 use proc_macro::TokenStream;
 use syn::{ItemMod, DeriveInput};
@@ -33,4 +34,12 @@ pub fn derive_modeling_cmd_variant_nonempty(input: TokenStream) -> TokenStream {
 pub fn define_modeling_cmd_enum(item: TokenStream) -> TokenStream {
     let input: ItemMod = syn::parse2(item.into()).unwrap();
     TokenStream::from(modeling_cmd_enum::generate(input))
+}
+
+/// Derives `ModelingCmdOutput`.
+#[proc_macro_derive(ModelingCmdOutput)]
+pub fn derive_modeling_cmd_output(input: TokenStream) -> TokenStream {
+    // For comments, see `derive_modeling_cmd_output_empty`.
+    let input: DeriveInput = syn::parse2(input.into()).unwrap();
+    TokenStream::from(modeling_cmd_output::derive(input))
 }
