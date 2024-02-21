@@ -458,7 +458,7 @@ pub mod each_cmd {
         pub object_id: Uuid,
     }
 
-    /// Determines a position on a brep face evaluated by paramaters u,v
+    /// Determines a position on a brep face evaluated by parameters u,v
     #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
     pub struct FaceGetPosition {
         /// Which face is being queried.
@@ -468,7 +468,7 @@ pub mod each_cmd {
         pub uv: Point2d<f64>,
     }
 
-    /// Determines the gradient (dFdu, dFdv) + normal vector on a brep face evaluated by paramaters u,v
+    /// Determines the gradient (dFdu, dFdv) + normal vector on a brep face evaluated by parameters u,v
     #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
     pub struct FaceGetGradient {
         /// Which face is being queried.
