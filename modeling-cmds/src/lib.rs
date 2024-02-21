@@ -5,8 +5,6 @@ pub mod base64;
 pub mod coord;
 /// The modeling command enum with each specific modeling command.
 mod def_enum;
-/// Definition of each modeling command.
-pub mod each_cmd;
 /// Import and export types.
 pub mod format;
 /// Modeling command IDs, used to associated requests and responses.
