@@ -24,24 +24,26 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
             };
 
             // Copy the struct's docstring. That'll become the docstring for the enum variant.
-            let doc: Vec<String> = item
+            let doc = item
                 .attrs
                 .iter()
                 .filter_map(|attr| match &attr.meta {
                     syn::Meta::NameValue(syn::MetaNameValue { path, value, .. }) => {
+                        // The attribute should look like #[doc = "..."].
+                        // The attribute's key must be "doc".
                         if !path.is_ident("doc") {
                             return None;
                         }
-                        let syn::Expr::Lit(syn::ExprLit{lit: syn::Lit::Str(doc), ..}) = value else {
+                        // Extract the attribute's value (the docstring's contents).
+                        let syn::Expr::Lit(syn::ExprLit{lit: syn::Lit::Str(value), ..}) = value else {
                             return None;
                         };
-                        let doc = doc.value().trim().to_owned();
+                        let doc = value.value().trim().to_owned();
                         Some(doc)
                     }
                     _ => None,
                 })
-                .collect();
-            let doc: String = doc.join("\n");
+                .collect::<Vec<_>>().join("\n");
             Some((&item.ident, doc))
         })
         .unzip();
