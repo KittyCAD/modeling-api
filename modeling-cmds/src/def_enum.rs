@@ -718,24 +718,9 @@ pub mod each_cmd {
     #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
     pub struct ImportFiles {
         /// Files to import.
-        pub files: Vec<ImportFile>,
+        pub files: Vec<super::ImportFile>,
         /// Input file format.
         pub format: crate::format::InputFormat,
-    }
-
-    /// File to import into the current model.
-    /// If you are sending binary data for a file, be sure to send the WebSocketRequest as
-    /// binary/bson, not text/json.
-    #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-    pub struct ImportFile {
-        /// The file's full path, including file extension.
-        pub path: String,
-        /// The raw bytes of the file
-        #[serde(
-            serialize_with = "serde_bytes::serialize",
-            deserialize_with = "serde_bytes::deserialize"
-        )]
-        pub data: Vec<u8>,
     }
 
     /// Set the units of the scene.
@@ -889,4 +874,19 @@ impl ModelingCmd {
                 | SetTool(_)
         )
     }
+}
+
+/// File to import into the current model.
+/// If you are sending binary data for a file, be sure to send the WebSocketRequest as
+/// binary/bson, not text/json.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct ImportFile {
+    /// The file's full path, including file extension.
+    pub path: String,
+    /// The raw bytes of the file
+    #[serde(
+        serialize_with = "serde_bytes::serialize",
+        deserialize_with = "serde_bytes::deserialize"
+    )]
+    pub data: Vec<u8>,
 }
