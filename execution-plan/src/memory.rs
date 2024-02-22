@@ -67,6 +67,14 @@ impl kittycad_execution_plan_traits::ReadMemory for Memory {
         let mut values = self.addresses.iter().skip(inner(start)).cloned();
         T::from_parts(&mut values)
     }
+
+    fn stack_pop(&mut self) -> std::result::Result<Vec<Primitive>, MemoryError> {
+        self.stack.pop()
+    }
+
+    fn stack_peek(&self) -> std::result::Result<&Vec<Primitive>, MemoryError> {
+        self.stack.peek()
+    }
 }
 
 impl Memory {
@@ -248,6 +256,10 @@ impl<T> Stack<T> {
     /// Remove a value from the top of the stack, and return it.
     pub fn pop(&mut self) -> Result<T, MemoryError> {
         self.inner.pop().ok_or(MemoryError::StackEmpty)
+    }
+    /// Return the value from the top of the stack.
+    pub fn peek(&self) -> Result<&T, MemoryError> {
+        self.inner.last().ok_or(MemoryError::StackEmpty)
     }
     /// Is the stack empty?
     pub fn is_empty(&self) -> bool {
