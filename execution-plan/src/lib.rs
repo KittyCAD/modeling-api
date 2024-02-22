@@ -9,7 +9,7 @@
 use events::{Event, EventWriter};
 use kittycad_execution_plan_traits::Address;
 use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
-use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
+use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId, ModelingCmdEndpoint as Endpoint};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, Stack, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
@@ -50,23 +50,6 @@ pub struct ApiRequest {
     pub cmd_id: ModelingCmdId,
 }
 
-/// A KittyCAD modeling command.
-#[derive(Serialize, Deserialize, parse_display_derive::Display, Debug, PartialEq, Clone, Copy)]
-pub enum Endpoint {
-    #[allow(missing_docs)]
-    StartPath,
-    #[allow(missing_docs)]
-    MovePathPen,
-    #[allow(missing_docs)]
-    ExtendPath,
-    #[allow(missing_docs)]
-    ClosePath,
-    #[allow(missing_docs)]
-    Extrude,
-    #[allow(missing_docs)]
-    TakeSnapshot,
-}
-
 impl ApiRequest {
     async fn execute(self, session: &mut ModelingSession, mem: &mut Memory) -> Result<()> {
         let Self {
@@ -101,6 +84,7 @@ impl ApiRequest {
                 let cmd = each_cmd::TakeSnapshot::from_memory(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
+            other => panic!("Haven't implemented endpoint {other:?} yet"),
         };
         // Write out to memory.
         if let Some(output_address) = store_response {
