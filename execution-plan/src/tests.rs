@@ -2,7 +2,9 @@ use std::env;
 
 use insta::assert_snapshot;
 use kittycad_execution_plan_traits::{ListHeader, ObjectHeader, Primitive, Value};
+use kittycad_modeling_cmds::ModelingCmdEndpoint as Endpoint;
 use kittycad_modeling_cmds::{
+    id::ModelingCmdId,
     length_unit::LengthUnit,
     shared::{PathSegment, Point3d, Point4d},
 };
