@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 pub use self::each_cmd::*;
 use crate::{self as kittycad_modeling_cmds};
 
-define_modeling_cmd_enum!(
+define_modeling_cmd_enum! {
     pub mod each_cmd {
         use std::collections::HashSet;
 
@@ -876,7 +876,7 @@ define_modeling_cmd_enum!(
         #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct SelectGet;
     }
-);
+}
 
 impl ModelingCmd {
     /// Is this command safe to run in an engine batch?
