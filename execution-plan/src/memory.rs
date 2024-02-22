@@ -246,8 +246,8 @@ impl<T> Stack<T> {
         self.inner.push(t);
     }
     /// Remove a value from the top of the stack, and return it.
-    pub fn pop(&mut self) -> Result<T, ExecutionError> {
-        self.inner.pop().ok_or(ExecutionError::StackEmpty)
+    pub fn pop(&mut self) -> Result<T, MemoryError> {
+        self.inner.pop().ok_or(MemoryError::StackEmpty)
     }
     /// Is the stack empty?
     pub fn is_empty(&self) -> bool {

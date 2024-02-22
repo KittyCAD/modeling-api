@@ -61,6 +61,9 @@ pub enum MemoryError {
         /// The actual enum tag found in memory.
         actual: String,
     },
+    /// Stack is empty
+    #[error("Stack is empty")]
+    StackEmpty,
 }
 
 /// Macro to generate an `impl Value` for the given type `$subject`.
