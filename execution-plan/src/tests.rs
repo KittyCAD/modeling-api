@@ -1,8 +1,11 @@
 use std::env;
 
 use insta::assert_snapshot;
-use kittycad_execution_plan_traits::{Primitive, Value};
-use kittycad_modeling_cmds::shared::{PathSegment, Point3d, Point4d};
+use kittycad_execution_plan_traits::{ListHeader, ObjectHeader, Primitive, Value};
+use kittycad_modeling_cmds::{
+    length_unit::LengthUnit,
+    shared::{PathSegment, Point3d, Point4d},
+};
 use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
 
@@ -192,6 +195,142 @@ async fn add_to_composite_value() {
 }
 
 #[tokio::test]
+async fn modulo_and_power_with_reference() {
+    // Modulo with two positive integers
+    let plan = vec![
+        // Memory addr 0 contains 450
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: 450u32.into(),
+        },
+        // Take (address 0) % 20
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Mod,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal(20u32.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // 450 % 20 = 10
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&10u32.into()));
+
+    // Pow with a positive integer and a positive float
+    let plan = vec![
+        // Memory addr 0 contains 2.5
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: 2.5f32.into(),
+        },
+        // Take (address 0) ^ 2
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Pow,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal(2u32.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // 2.5^2 = 6.25
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&6.25f32.into()));
+
+    // Modulo with two positive floats
+    let plan = vec![
+        // Memory addr 0 contains 12.5
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: 12.5f32.into(),
+        },
+        // Take (address 0) % 2.25
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Mod,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal(2.25f32.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // 12.5 % 2.25 = 1.25
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&1.25f32.into()));
+
+    // Pow with a two negative floats
+    let plan = vec![
+        // Memory addr 0 contains -2.5
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: (-2.5f32).into(),
+        },
+        // Take (address 0) ^ -4.2
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Pow,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal((-4.2f32).into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // (-2.5)^-4.2 = NaN
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    let result: f32 = mem.get_primitive(&(Address::ZERO + 1)).unwrap();
+    assert!(result.is_nan());
+
+    // Modulo with two negative integers
+    let plan = vec![
+        // Memory addr 0 contains -450
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: (-450i64).into(),
+        },
+        // Take (address 0) % -20
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Mod,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal((-20i64).into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // -450 % -20 = -10
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&(-10i64).into()));
+
+    // Modulo with a negative integer and a positive integer
+    let plan = vec![
+        // Memory addr 0 contains -450
+        Instruction::SetPrimitive {
+            address: Address::ZERO,
+            value: (-450i64).into(),
+        },
+        // Take (address 0) % 20
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Mod,
+                operand0: Operand::Reference(Address::ZERO),
+                operand1: Operand::Literal(20u32.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        },
+    ];
+    // -450 % 20 = -10
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&(-10i64).into()));
+}
+
+#[tokio::test]
 async fn get_element_of_array() {
     let mut mem = Memory::default();
     const START_DATA_AT: usize = 10;
@@ -217,27 +356,78 @@ async fn get_element_of_array() {
                 start: START_DATA_AT.into(),
                 elements: list,
             },
-            Instruction::GetElement {
-                start: 10.into(),
-                index: Operand::Literal(Primitive::from(1usize)),
+            Instruction::AddrOfMember {
+                start: Operand::Literal(Primitive::Address(Address::ZERO + 10)),
+                member: Operand::Literal(Primitive::from(1usize)),
             },
         ],
         None,
     )
     .await
     .unwrap();
-    assert_snapshot!("set_array_memory", mem.debug_table());
+    assert_snapshot!("set_array_memory", mem.debug_table(None));
 
     // The last instruction put the 4D point (element 1) on the stack.
     // Check it's there.
     let actual = mem.stack.pop().unwrap();
-    assert_eq!(actual, point_4d.into_parts());
+    assert_eq!(actual, vec![(Address::ZERO + 15).into()]);
 
     // The memory should start with a list header.
     let ListHeader { count: _, size } = mem.get_primitive(&(Address::ZERO + START_DATA_AT)).unwrap();
     // Check the edge of `size`.
     assert!(mem.get(&(Address::ZERO + START_DATA_AT + size)).is_some());
     assert!(mem.get(&(Address::ZERO + START_DATA_AT + size + 1)).is_none());
+}
+
+#[tokio::test]
+async fn copy_len() {
+    // Initialize memory with a single object:
+    // { first: <3d point>, second: <4d point> }
+    let mut smem = StaticMemoryInitializer::default();
+    let size_of_object = 9;
+    smem.push(Primitive::from(ObjectHeader {
+        properties: vec!["first".to_owned(), "second".to_owned()],
+        size: size_of_object,
+    }));
+    smem.push(Primitive::from(3usize));
+    smem.push(Point3d {
+        x: 12.0f64,
+        y: 13.0,
+        z: 14.0,
+    });
+    smem.push(Primitive::from(4usize));
+    smem.push(Point4d {
+        x: 20.0f64,
+        y: 21.0,
+        z: 22.0,
+        w: 23.0,
+    });
+    let mut mem = smem.finish();
+
+    // Addr 5 is a property of the object at addr 0.
+    // Its key is "second" and its value is a Point4d.
+    // The property is preceded by its length (4) because that's just how KCEP stores objects.
+    // Push that address onto the stack.
+    let start_of_second_property = Address::ZERO + 5;
+    mem.stack.push(vec![(start_of_second_property).into()]);
+
+    // Copy the value at addr 5 into addr 100.
+    let copied_into = Address::ZERO + 100;
+    execute(
+        &mut mem,
+        vec![Instruction::CopyLen {
+            source_range: Operand::StackPop,
+            destination_range: Operand::Literal(Primitive::Address(copied_into)),
+        }],
+        None,
+    )
+    .await
+    .unwrap();
+
+    // Assert that the property was properly copied into the destination.
+    assert_eq!(mem.get(&copied_into), mem.get(&(start_of_second_property + 1)));
+    assert_eq!(mem.get(&(copied_into + 1)), mem.get(&(start_of_second_property + 2)));
+    assert_eq!(mem.get(&(copied_into + 2)), mem.get(&(start_of_second_property + 3)));
 }
 
 #[tokio::test]
@@ -266,9 +456,9 @@ async fn get_key_of_object() {
     let mut mem = smem.finish();
     execute(
         &mut mem,
-        vec![Instruction::GetProperty {
-            start,
-            property: Operand::Literal("second".to_owned().into()),
+        vec![Instruction::AddrOfMember {
+            start: Operand::Literal(Primitive::Address(start)),
+            member: Operand::Literal("second".to_owned().into()),
         }],
         None,
     )
@@ -278,16 +468,14 @@ async fn get_key_of_object() {
     // The last instruction put the 4D point (element 1) on the stack.
     // Check it's there.
     let actual = mem.stack.pop().unwrap();
-    assert_eq!(actual, point_4d.into_parts());
-    assert!(mem.get(&Address(size)).is_some());
-    assert!(mem.get(&Address(size + 1)).is_none());
+    assert_eq!(actual, vec![(Address::ZERO + 5).into()]);
 }
 
 #[tokio::test]
 async fn api_call_draw_cube() {
     let client = test_client().await;
 
-    const CUBE_WIDTH: f64 = 20.0;
+    const CUBE_WIDTH: LengthUnit = LengthUnit(200.0);
 
     // Define primitives, load them into memory.
     let mut static_data = StaticMemoryInitializer::default();
@@ -303,7 +491,7 @@ async fn api_call_draw_cube() {
         z: -CUBE_WIDTH,
     };
     let starting_point_addr = static_data.push(starting_point);
-    let line_segment = |end: Point3d<f64>| PathSegment::Line { end, relative: false };
+    let line_segment = |end: Point3d<LengthUnit>| PathSegment::Line { end, relative: false };
     let segments = [
         Point3d {
             x: CUBE_WIDTH,
@@ -325,7 +513,7 @@ async fn api_call_draw_cube() {
     .map(line_segment);
     let segment_addrs = segments.map(|segment| static_data.push(segment));
     let mut mem = static_data.finish();
-    assert_snapshot!("cube_memory_before", mem.debug_table());
+    assert_snapshot!("cube_memory_before", mem.debug_table(None));
 
     // Run the plan!
     execute(
@@ -395,7 +583,7 @@ async fn api_call_draw_cube() {
     .unwrap();
 
     // Program executed successfully!
-    assert_snapshot!("cube_memory_after", mem.debug_table());
+    assert_snapshot!("cube_memory_after", mem.debug_table(None));
 
     // The image output was set to addr 99.
     // Outputs are two addresses long, addr 99 will store the data format (TAKE_SNAPSHOT)

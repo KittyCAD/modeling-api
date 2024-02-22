@@ -2,12 +2,19 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// An address in KCEP's program memory.
-#[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-pub struct Address(pub(crate) usize);
+#[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+// TODO: shouldn't be `pub` but we need an Address variant for Primitive.
+pub struct Address(pub usize);
 
 impl fmt::Debug for Address {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Addr({})", self.0)
+        write!(f, "Addr{}", self.0)
+    }
+}
+
+impl fmt::Display for Address {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
     }
 }
 
@@ -63,12 +70,6 @@ impl std::ops::Sub for Address {
 
     fn sub(self, rhs: Self) -> Self::Output {
         self.0 - rhs.0
-    }
-}
-
-impl fmt::Display for Address {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.0.fmt(f)
     }
 }
 

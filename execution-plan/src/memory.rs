@@ -37,10 +37,11 @@ impl StaticMemoryInitializer {
 }
 
 /// KCEP's program memory. A flat, linear list of values.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(test, derive(PartialEq))]
 pub struct Memory {
-    addresses: Vec<Option<Primitive>>,
+    /// Each address of memory.
+    pub addresses: Vec<Option<Primitive>>,
     /// A stack where temporary values can be pushed or popped.
     pub stack: Stack<Vec<Primitive>>,
 }
@@ -55,24 +56,23 @@ impl Default for Memory {
 }
 
 impl kittycad_execution_plan_traits::ReadMemory for Memory {
-    type Address = crate::Address;
-
     /// Get a value from KCEP's program memory.
-    fn get(&self, Address(addr): &Address) -> Option<&Primitive> {
-        self.addresses[*addr].as_ref()
+    fn get(&self, address: &Address) -> Option<&Primitive> {
+        self.addresses[inner(*address)].as_ref()
     }
 
     /// Get a value value (i.e. a value which takes up multiple addresses in memory).
     /// Its parts are stored in consecutive memory addresses starting at `start`.
     fn get_composite<T: Value>(&self, start: Address) -> std::result::Result<T, MemoryError> {
-        let mut values = self.addresses.iter().skip(start.0).cloned();
+        let mut values = self.addresses.iter().skip(inner(start)).cloned();
         T::from_parts(&mut values)
     }
 }
 
 impl Memory {
     /// Store a value in KCEP's program memory.
-    pub fn set(&mut self, Address(addr): Address, value: Primitive) {
+    pub fn set(&mut self, address: Address, value: Primitive) {
+        let addr = address - Address::ZERO;
         // If isn't big enough for this value, double the size of memory until it is.
         while addr > self.addresses.len() {
             self.addresses.extend(vec![None; self.addresses.len()]);
@@ -85,8 +85,9 @@ impl Memory {
     /// Returns how many memory addresses the data took up.
     pub fn set_composite<T: Value>(&mut self, start: Address, composite_value: T) -> usize {
         let parts = composite_value.into_parts().into_iter();
+
         let mut total_addrs = 0;
-        for (value, addr) in parts.zip(start.0..) {
+        for (value, addr) in parts.zip(start - Address::ZERO..) {
             self.addresses[addr] = Some(value);
             total_addrs += 1;
         }
@@ -110,43 +111,70 @@ impl Memory {
         primitive.try_into().map_err(ExecutionError::MemoryError)
     }
 
+    /// Look for either a usize or an object/list header at the given address.
+    /// Return that usize, or the `size` field of the header.
+    pub fn get_size(&self, addr: &Address) -> Result<usize, ExecutionError> {
+        let primitive = self.get(addr).ok_or(ExecutionError::MemoryEmpty { addr: *addr })?;
+        let size = match primitive {
+            Primitive::NumericValue(NumericPrimitive::UInteger(size)) => *size,
+            Primitive::ListHeader(ListHeader { count: _, size }) => *size,
+            Primitive::ObjectHeader(ObjectHeader { properties: _, size }) => *size,
+            other => {
+                return Err(ExecutionError::MemoryError(MemoryError::MemoryWrongType {
+                    expected: "ObjectHeader, ListHeader, or usize",
+                    actual: format!("{other:?}"),
+                }))
+            }
+        };
+        Ok(size)
+    }
+
     /// Get a range of addresses, starting at `start` and continuing for `len` more.
     pub fn get_slice(&self, start: Address, len: usize) -> Result<Vec<Primitive>, ExecutionError> {
-        let slice = &self.addresses[start.0..start.0 + len];
+        let slice = &self.addresses[inner(start)..inner(start) + len];
         let x = slice
             .iter()
             .cloned()
             .enumerate()
-            .map(|(addr, prim)| prim.ok_or(ExecutionError::MemoryEmpty { addr: Address(addr) }))
+            .map(|(addr, prim)| {
+                prim.ok_or(ExecutionError::MemoryEmpty {
+                    addr: Address::ZERO + addr,
+                })
+            })
             .collect::<Result<Vec<_>, _>>()?;
         Ok(x)
     }
 
+    /// Return a nicely-formatted table of stack.
+    #[must_use]
+    pub fn debug_table_stack(&self) -> String {
+        #[derive(tabled::Tabled)]
+        struct StackLevel {
+            depth: usize,
+            value: String,
+        }
+
+        let table_data: Vec<_> = self
+            .stack
+            .inner
+            .iter()
+            .enumerate()
+            .map(|(depth, slice)| StackLevel {
+                depth,
+                value: format!("{slice:?}"),
+            })
+            .collect();
+        tabled::Table::new(table_data)
+            .with(tabled::settings::Style::sharp())
+            .to_string()
+    }
+
     /// Return a nicely-formatted table of memory.
     #[must_use]
-    pub fn debug_table(&self) -> String {
-        fn pretty_print(p: &Primitive) -> (&'static str, String) {
-            match p {
-                Primitive::String(v) => ("String", v.to_owned()),
-                Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
-                Primitive::NumericValue(NumericPrimitive::UInteger(v)) => ("Uint", v.to_string()),
-                Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Int", v.to_string()),
-                Primitive::Uuid(v) => ("Uuid", v.to_string()),
-                Primitive::Bytes(v) => ("Bytes", format!("length {}", v.len())),
-                Primitive::Bool(v) => ("Bool", v.to_string()),
-                Primitive::ListHeader(ListHeader { count, size }) => {
-                    ("List header", format!("{count} elements, {size} primitives"))
-                }
-                Primitive::ObjectHeader(ObjectHeader { properties, size }) => (
-                    "Object header",
-                    format!("keys {}, {size} primitives", properties.clone().join(",")),
-                ),
-                Primitive::Nil => ("Nil", String::new()),
-            }
-        }
+    pub fn debug_table(&self, up_to: Option<usize>) -> String {
         #[derive(tabled::Tabled)]
         struct MemoryAddr {
-            index: usize,
+            addr: String,
             val_type: &'static str,
             value: String,
         }
@@ -156,10 +184,20 @@ impl Memory {
                 if let Some(val) = val {
                     let (val_type, value) = pretty_print(val);
                     Some(MemoryAddr {
-                        index: i,
+                        addr: i.to_string(),
                         val_type,
                         value,
                     })
+                } else if let Some(up_to) = up_to {
+                    if i <= up_to {
+                        Some(MemoryAddr {
+                            addr: i.to_string(),
+                            val_type: "",
+                            value: "".to_owned(),
+                        })
+                    } else {
+                        None
+                    }
                 } else {
                     None
                 }
@@ -171,8 +209,33 @@ impl Memory {
     }
 }
 
+fn pretty_print(p: &Primitive) -> (&'static str, String) {
+    match p {
+        Primitive::String(v) => ("String", v.to_owned()),
+        Primitive::NumericValue(NumericPrimitive::Float(v)) => ("Float", v.to_string()),
+        Primitive::NumericValue(NumericPrimitive::UInteger(v)) => ("Uint", v.to_string()),
+        Primitive::NumericValue(NumericPrimitive::Integer(v)) => ("Int", v.to_string()),
+        Primitive::Uuid(v) => ("Uuid", v.to_string()),
+        Primitive::Bytes(_) => ("Bytes", String::new()),
+        Primitive::Bool(v) => ("Bool", v.to_string()),
+        Primitive::ListHeader(ListHeader { count, size }) => {
+            ("List header", format!("{count} elements, {size} primitives"))
+        }
+        Primitive::ObjectHeader(ObjectHeader { properties, size }) => (
+            "Object header",
+            format!("keys {}, {size} primitives", properties.clone().join(",")),
+        ),
+        Primitive::Nil => ("Nil", String::new()),
+        Primitive::Address(a) => ("Address", a.to_string()),
+    }
+}
+
+fn inner(a: Address) -> usize {
+    a - Address::ZERO
+}
+
 /// A stack where values can be pushed/popped.
-#[derive(Debug, Eq, PartialEq, Default)]
+#[derive(Debug, Eq, PartialEq, Default, Clone)]
 pub struct Stack<T> {
     inner: Vec<T>,
 }
@@ -190,9 +253,19 @@ impl<T> Stack<T> {
     pub fn is_empty(&self) -> bool {
         self.inner.is_empty()
     }
+    /// Iterate over the stack, from top to bottom.
+    pub fn iter(&self) -> impl Iterator<Item = &T> {
+        self.inner.iter().rev()
+    }
+    /// How many items are currently in the stack?
+    pub fn len(&self) -> usize {
+        self.inner.len()
+    }
 }
 
 impl Stack<Vec<Primitive>> {
+    /// Remove a value from the top of the stack, and return it.
+    /// If it's a single primitive long, return Ok, otherwise error.
     pub fn pop_single(&mut self) -> Result<Primitive, ExecutionError> {
         let mut slice = self.pop()?;
         let prim = slice

@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
-use crate::units::UnitAngle;
+use crate::{length_unit::LengthUnit, units::UnitAngle};
 
 // A helper macro for allowing enums of only strings to be saved to the database.
 macro_rules! impl_string_enum_sql {
@@ -212,16 +212,16 @@ pub enum PathSegment {
     /// Goes from the current path "pen" to the given endpoint.
     Line {
         /// End point of the line.
-        end: Point3d<f64>,
+        end: Point3d<LengthUnit>,
         ///Whether or not this line is a relative offset
         relative: bool,
     },
     /// A circular arc segment.
     Arc {
         /// Center of the circle
-        center: Point2d<f64>,
+        center: Point2d<LengthUnit>,
         /// Radius of the circle
-        radius: f64,
+        radius: LengthUnit,
         /// Start of the arc along circle's perimeter.
         start: Angle,
         /// End of the arc along circle's perimeter.
@@ -234,11 +234,11 @@ pub enum PathSegment {
     /// given point.
     Bezier {
         /// First control point.
-        control1: Point3d<f64>,
+        control1: Point3d<LengthUnit>,
         /// Second control point.
-        control2: Point3d<f64>,
+        control2: Point3d<LengthUnit>,
         /// Final control point.
-        end: Point3d<f64>,
+        end: Point3d<LengthUnit>,
         ///Whether or not this bezier is a relative offset
         relative: bool,
     },
@@ -246,7 +246,7 @@ pub enum PathSegment {
     TangentialArc {
         /// Radius of the arc.
         /// Not to be confused with Raiders of the Lost Ark.
-        radius: f64,
+        radius: LengthUnit,
         /// Offset of the arc.
         offset: Angle,
     },
@@ -255,7 +255,7 @@ pub enum PathSegment {
         /// Where the arc should end.
         /// Must lie in the same plane as the current path pen position.
         /// Must not be colinear with current path pen position.
-        to: Point3d<f64>,
+        to: Point3d<LengthUnit>,
         /// 0 will be interpreted as none/null.
         angle_snap_increment: Option<Angle>,
     },
@@ -653,7 +653,7 @@ pub struct PerspectiveCameraParameters {
     pub z_far: f32,
 }
 
-/// An enum that contains the three global axes.
+/// The global axes.
 #[derive(
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
@@ -669,6 +669,37 @@ pub enum GlobalAxis {
     Z,
 }
 impl_string_enum_sql! {GlobalAxis}
+
+/// Possible types of faces which can be extruded from a 3D solid.
+#[derive(
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
+)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
+#[serde(rename_all = "snake_case")]
+#[repr(u8)]
+pub enum ExtrusionFaceCapType {
+    /// Uncapped.
+    None,
+    /// Capped on top.
+    Top,
+    /// Capped below.
+    Bottom,
+}
+impl_string_enum_sql! {ExtrusionFaceCapType}
 
 // Enum: Connect Rust Enums to Cpp
 // add our native c++ names for our cxx::ExternType implementation
@@ -693,6 +724,7 @@ impl_extern_type! {
     PathCommand = "Enums::_PathCommand"
     PathComponentConstraintBound = "Enums::_PathComponentConstraintBound"
     PathComponentConstraintType = "Enums::_PathComponentConstraintType"
+    ExtrusionFaceCapType  = "Enums::_ExtrusionFaceCapType"
 
     // Utils
     EngineErrorCode = "Enums::_ErrorCode"
