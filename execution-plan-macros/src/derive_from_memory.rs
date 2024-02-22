@@ -42,10 +42,10 @@ fn impl_on_struct_no_fields(
         impl #generics_without_defaults #root::FromMemory for #name #generics_without_defaults
         #where_clause
         {
-            fn from_memory<I, M>(_fields: &mut I, _mem: &M) -> Result<Self, #root::MemoryError>
+            fn from_memory<I, M>(_fields: &mut I, _mem: &mut M) -> Result<Self, #root::MemoryError>
             where
                 M: #root::ReadMemory,
-                I: Iterator<Item = #root::Address>
+                I: Iterator<Item = #root::InMemory>
             {
 
                 Ok(Self {})
@@ -83,7 +83,33 @@ fn impl_on_struct_named_fields(
         quote_spanned! {*span=>
             let #ident = fields.next()
                 .ok_or(#root::MemoryError::MemoryWrongSize)
-                .and_then(|a| mem.get_composite(a))?;
+                .and_then(|a| match a {
+                    #root::InMemory::Address(a) => mem.get_composite(a),
+                    #root::InMemory::StackPop => {
+                        let mut data = mem.stack_pop()?;
+                        let fst = data.pop().ok_or(#root::MemoryError::StackNotPrimitive{actual_length: 0})?;
+                        let a = match fst {
+                            #root::Primitive::Address(a) => a,
+                            other => return Err(#root::MemoryError::MemoryWrongType{expected: "address", actual: format!("{other:?}")}),
+                        };
+                        if !data.is_empty() {
+                            return Err(#root::MemoryError::StackNotPrimitive{actual_length: data.len()+1});
+                        }
+                        mem.get_composite(a)
+                    }
+                    #root::InMemory::StackPeek => {
+                        let mut data = mem.stack_peek()?.clone();
+                        let fst = data.pop().ok_or(#root::MemoryError::StackNotPrimitive{actual_length: 0})?;
+                        let a = match fst {
+                            #root::Primitive::Address(a) => a,
+                            other => return Err(#root::MemoryError::MemoryWrongType{expected: "address", actual: format!("{other:?}")}),
+                        };
+                        if !data.is_empty() {
+                            return Err(#root::MemoryError::StackNotPrimitive{actual_length: data.len()+1});
+                        }
+                        mem.get_composite(a)
+                      }
+                })?;
         }
     });
     let instantiate_each_field = field_names.iter().map(|(ident, span)| {
@@ -105,10 +131,10 @@ fn impl_on_struct_named_fields(
         impl #generics_without_defaults #root::FromMemory for #name #generics_without_defaults
         #where_clause
         {
-            fn from_memory<I, M>(fields: &mut I, mem: &M) -> Result<Self, #root::MemoryError>
+            fn from_memory<I, M>(fields: &mut I, mem: &mut M) -> Result<Self, #root::MemoryError>
             where
                 M: #root::ReadMemory,
-                I: Iterator<Item = #root::Address>
+                I: Iterator<Item = #root::InMemory>
             {
                 #(#read_each_field)*
                 Ok(Self {

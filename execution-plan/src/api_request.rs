@@ -2,7 +2,7 @@
 
 use crate::memory::Memory;
 use crate::Result;
-use kittycad_execution_plan_traits::{Address, FromMemory};
+use kittycad_execution_plan_traits::{Address, FromMemory, InMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId, ModelingCmdEndpoint as Endpoint};
 use kittycad_modeling_session::Session as ModelingSession;
 use serde::{Deserialize, Serialize};
@@ -16,7 +16,7 @@ pub struct ApiRequest {
     /// If none, the response will be ignored.
     pub store_response: Option<Address>,
     /// Look up each parameter at this address.
-    pub arguments: Vec<Address>,
+    pub arguments: Vec<InMemory>,
     /// The ID of this command.
     pub cmd_id: ModelingCmdId,
 }
