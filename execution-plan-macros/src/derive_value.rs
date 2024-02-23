@@ -4,7 +4,7 @@ use syn::{spanned::Spanned, DataEnum, DeriveInput, Fields, Ident};
 
 use crate::helpers::remove_generics_defaults;
 
-pub(crate) fn impl_derive_value(input: DeriveInput) -> TokenStream2 {
+pub(crate) fn impl_derive_value(input: DeriveInput, root: &TokenStream2) -> TokenStream2 {
     // Where in the input source code is this type defined?
     let span = input.span();
     // Name of type that is deriving Value
@@ -12,8 +12,8 @@ pub(crate) fn impl_derive_value(input: DeriveInput) -> TokenStream2 {
     // Any generics defined on the type deriving Value.
     let generics = input.generics;
     match input.data {
-        syn::Data::Struct(data) => impl_value_on_struct(span, name, data, generics),
-        syn::Data::Enum(data) => impl_value_on_enum(name, data, generics),
+        syn::Data::Struct(data) => impl_value_on_struct(span, name, data, generics, root),
+        syn::Data::Enum(data) => impl_value_on_enum(name, data, generics, root),
         syn::Data::Union(_) => quote_spanned! {span =>
             compile_error!("Value cannot be implemented on a union type")
         },
@@ -24,10 +24,11 @@ fn impl_value_on_enum(
     name: proc_macro2::Ident,
     data: syn::DataEnum,
     generics: syn::Generics,
+    root: &TokenStream2,
 ) -> proc_macro2::TokenStream {
     // First build fragments of the AST, then we'll combine them into a final output below.
     // Build the arms of the `match` statements we'll use below.
-    let into_parts_match_each_variant = into_parts_match_arms(&data, &name);
+    let into_parts_match_each_variant = into_parts_match_arms(&data, &name, root);
     let from_parts_match_each_variant = from_parts_match_arms(&data);
     let generics_without_defaults = remove_generics_defaults(generics.clone());
     let where_clause = generics.where_clause;
@@ -35,23 +36,23 @@ fn impl_value_on_enum(
     // Final return value: the generated Rust code to implement the trait.
     // This uses the fragments above, interpolating them into the final outputted code.
     quote! {
-        impl #generics_without_defaults kittycad_execution_plan_traits::Value for #name #generics_without_defaults
+        impl #generics_without_defaults #root::Value for #name #generics_without_defaults
         #where_clause
         {
-            fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
+            fn into_parts(self) -> Vec<#root::Primitive> {
                 match self {
                     #(#into_parts_match_each_variant)*
                 }
             }
 
-            fn from_parts<I>(values: &mut I) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+            fn from_parts<I>(values: &mut I) -> Result<Self, #root::MemoryError>
             where
-                I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
+                I: Iterator<Item = Option<#root::Primitive>>,
             {
                 let variant_name = String::from_parts(values)?;
                 match variant_name.as_str() {
                     #(#from_parts_match_each_variant)*
-                    other => Err(kittycad_execution_plan_traits::MemoryError::InvalidEnumVariant{
+                    other => Err(#root::MemoryError::InvalidEnumVariant{
                         expected_type: stringify!(#name).to_owned(),
                         actual: other.to_owned(),
                     })
@@ -182,7 +183,7 @@ fn unbox(ty: syn::Type) -> Option<syn::Type> {
 // Used in `into_parts()`
 // This generates one match arm for each variant of the enum on which `trait Value` is being derived.
 // Each match arm will call `into_parts()` recursively on each field of the enum variant.
-fn into_parts_match_arms(data: &DataEnum, name: &proc_macro2::Ident) -> Vec<TokenStream2> {
+fn into_parts_match_arms(data: &DataEnum, name: &proc_macro2::Ident, root: &TokenStream2) -> Vec<TokenStream2> {
     data.variants
         .iter()
         .map(|variant| {
@@ -204,7 +205,7 @@ fn into_parts_match_arms(data: &DataEnum, name: &proc_macro2::Ident) -> Vec<Toke
                         quote_spanned! {expr.span()=>
                             let mut parts = Vec::new();
                             let tag = stringify!(#variant_name).to_owned();
-                            parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
+                            parts.push(#root::Primitive::from(tag));
                             #(parts.extend(#field_idents.into_parts());)*
                             parts
                         },
@@ -233,7 +234,7 @@ fn into_parts_match_arms(data: &DataEnum, name: &proc_macro2::Ident) -> Vec<Toke
                         quote_spanned! {expr.span() =>
                             let mut parts = Vec::new();
                             let tag = stringify!(#variant_name).to_owned();
-                            parts.push(kittycad_execution_plan_traits::Primitive::from(tag));
+                            parts.push(#root::Primitive::from(tag));
                             #(parts.extend(#placeholder_field_idents.into_parts());)*
                             parts
                         },
@@ -251,7 +252,7 @@ fn into_parts_match_arms(data: &DataEnum, name: &proc_macro2::Ident) -> Vec<Toke
                     },
                     quote_spanned! {variant.span()=>
                         let tag = stringify!(#variant_name).to_owned();
-                        let part = kittycad_execution_plan_traits::Primitive::from(tag);
+                        let part = #root::Primitive::from(tag);
                         vec![part]
                     },
                 ),
@@ -281,6 +282,7 @@ fn impl_value_on_struct(
     name: proc_macro2::Ident,
     data: syn::DataStruct,
     generics: syn::Generics,
+    root: &TokenStream2,
 ) -> proc_macro2::TokenStream {
     // We're going to construct some fragments of Rust source code, which will get used in the
     // final generated code this function returns.
@@ -295,7 +297,7 @@ fn impl_value_on_struct(
             .iter()
             .filter_map(|field| field.ident.as_ref().map(|ident| (ident.clone(), field.span())))
             .collect(),
-        Fields::Unnamed(ref fields) => return impl_value_on_struct_unnamed_fields(name, fields, generics),
+        Fields::Unnamed(ref fields) => return impl_value_on_struct_unnamed_fields(name, fields, generics, root),
         Fields::Unit => {
             return quote_spanned! {span =>
                 compile_error!("Value cannot be implemented on a struct with no fields")
@@ -316,7 +318,7 @@ fn impl_value_on_struct(
     });
     let instantiate_each_field = field_names.iter().map(|(ident, span)| {
         quote_spanned! {*span=>
-            #ident: kittycad_execution_plan_traits::Value::from_parts(values)?,
+            #ident: #root::Value::from_parts(values)?,
         }
     });
 
@@ -330,18 +332,18 @@ fn impl_value_on_struct(
     // Final return value: the generated Rust code to implement the trait.
     // This uses the fragments above, interpolating them into the final outputted code.
     quote! {
-        impl #generics_without_defaults kittycad_execution_plan_traits::Value for #name #generics_without_defaults
+        impl #generics_without_defaults #root::Value for #name #generics_without_defaults
         #where_clause
         {
-            fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
+            fn into_parts(self) -> Vec<#root::Primitive> {
                 let mut parts = Vec::new();
                 #(#extend_per_field)*
                 parts
             }
 
-            fn from_parts<I>(values: &mut I) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+            fn from_parts<I>(values: &mut I) -> Result<Self, #root::MemoryError>
             where
-                I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
+                I: Iterator<Item = Option<#root::Primitive>>,
             {
                 Ok(Self {
                 #(#instantiate_each_field)*
@@ -355,6 +357,7 @@ fn impl_value_on_struct_unnamed_fields(
     name: proc_macro2::Ident,
     fields: &syn::FieldsUnnamed,
     generics: syn::Generics,
+    root: &TokenStream2,
 ) -> proc_macro2::TokenStream {
     // We're going to construct some fragments of Rust source code, which will get used in the
     // final generated code this function returns.
@@ -383,7 +386,7 @@ fn impl_value_on_struct_unnamed_fields(
     });
     let instantiate_each_field = field_names.iter().map(|(_, span)| {
         quote_spanned! {*span=>
-            kittycad_execution_plan_traits::Value::from_parts(values)?,
+            #root::Value::from_parts(values)?,
         }
     });
 
@@ -397,18 +400,18 @@ fn impl_value_on_struct_unnamed_fields(
     // Final return value: the generated Rust code to implement the trait.
     // This uses the fragments above, interpolating them into the final outputted code.
     quote! {
-        impl #generics_without_defaults kittycad_execution_plan_traits::Value for #name #generics_without_defaults
+        impl #generics_without_defaults #root::Value for #name #generics_without_defaults
         #where_clause
         {
-            fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
+            fn into_parts(self) -> Vec<#root::Primitive> {
                 let mut parts = Vec::new();
                 #(#extend_per_field)*
                 parts
             }
 
-            fn from_parts<I>(values: &mut I) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+            fn from_parts<I>(values: &mut I) -> Result<Self, #root::MemoryError>
             where
-                I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
+                I: Iterator<Item = Option<#root::Primitive>>,
             {
                 Ok(Self (
                 #(#instantiate_each_field)*
@@ -435,7 +438,7 @@ mod tests {
             }
         };
         let input: DeriveInput = syn::parse2(input).unwrap();
-        let out = impl_derive_value(input);
+        let out = impl_derive_value(input, &quote! {::kittycad_execution_plan_traits});
         let formatted = get_text_fmt(&out).unwrap();
         insta::assert_snapshot!(formatted);
     }
@@ -448,7 +451,7 @@ mod tests {
             }
         };
         let input: DeriveInput = syn::parse2(input).unwrap();
-        let out = impl_derive_value(input);
+        let out = impl_derive_value(input, &quote! {::kittycad_execution_plan_traits});
         let formatted = get_text_fmt(&out).unwrap();
         insta::assert_snapshot!(formatted);
     }
@@ -462,7 +465,7 @@ mod tests {
             }
         };
         let input: DeriveInput = syn::parse2(input).unwrap();
-        let out = impl_derive_value(input);
+        let out = impl_derive_value(input, &quote! {::kittycad_execution_plan_traits});
         let formatted = get_text_fmt(&out).unwrap();
         insta::assert_snapshot!(formatted);
     }
@@ -473,7 +476,7 @@ mod tests {
             struct Unit(pub f64);
         };
         let input: DeriveInput = syn::parse2(input).unwrap();
-        let out = impl_derive_value(input);
+        let out = impl_derive_value(input, &quote! {::kittycad_execution_plan_traits});
         let formatted = get_text_fmt(&out).unwrap();
         insta::assert_snapshot!(formatted);
     }

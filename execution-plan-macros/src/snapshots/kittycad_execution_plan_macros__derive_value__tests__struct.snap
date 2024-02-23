@@ -2,21 +2,21 @@
 source: execution-plan-macros/src/derive_value.rs
 expression: formatted
 ---
-impl kittycad_execution_plan_traits::Value for Line {
-    fn into_parts(self) -> Vec<kittycad_execution_plan_traits::Primitive> {
+impl ::kittycad_execution_plan_traits::Value for Line {
+    fn into_parts(self) -> Vec<::kittycad_execution_plan_traits::Primitive> {
         let mut parts = Vec::new();
         parts.extend(self.point.into_parts());
         parts.extend(self.tag.into_parts());
         parts
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, kittycad_execution_plan_traits::MemoryError>
+    fn from_parts<I>(values: &mut I) -> Result<Self, ::kittycad_execution_plan_traits::MemoryError>
     where
-        I: Iterator<Item = Option<kittycad_execution_plan_traits::Primitive>>,
+        I: Iterator<Item = Option<::kittycad_execution_plan_traits::Primitive>>,
     {
         Ok(Self {
-            point: kittycad_execution_plan_traits::Value::from_parts(values)?,
-            tag: kittycad_execution_plan_traits::Value::from_parts(values)?,
+            point: ::kittycad_execution_plan_traits::Value::from_parts(values)?,
+            tag: ::kittycad_execution_plan_traits::Value::from_parts(values)?,
         })
     }
 }
