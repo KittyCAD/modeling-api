@@ -165,9 +165,6 @@ pub enum ExecutionError {
         /// Index which user attempted to access.
         index: usize,
     },
-    /// Tried to pop from empty stack.
-    #[error("tried to pop from empty stack")]
-    StackEmpty,
     /// Could not make API call because no KittyCAD API client was provided
     #[error("could not make API call because no KittyCAD API client was provided")]
     NoApiClient,

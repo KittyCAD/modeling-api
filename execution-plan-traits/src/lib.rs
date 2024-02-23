@@ -35,7 +35,11 @@ pub trait ReadMemory {
     /// Get a value from the given address.
     fn get(&self, addr: &Address) -> Option<&Primitive>;
     /// Get a value from the given starting address. Value might require multiple addresses.
-    fn get_composite<T: Value>(&self, start: Address) -> std::result::Result<T, MemoryError>;
+    fn get_composite<T: Value>(&self, start: Address) -> Result<T, MemoryError>;
+    /// Remove the value on top of the stack, return it.
+    fn stack_pop(&mut self) -> Result<Vec<Primitive>, MemoryError>;
+    /// Return the value on top of the stack.
+    fn stack_peek(&self) -> Result<&Vec<Primitive>, MemoryError>;
 }
 
 /// Errors that could occur when reading a type from KittyCAD Execution Plan program memory.
@@ -61,6 +65,9 @@ pub enum MemoryError {
         /// The actual enum tag found in memory.
         actual: String,
     },
+    /// Stack is empty
+    #[error("Stack is empty")]
+    StackEmpty,
 }
 
 /// Macro to generate an `impl Value` for the given type `$subject`.
