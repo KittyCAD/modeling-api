@@ -459,6 +459,8 @@ define_modeling_cmd_enum! {
             pub edge_id: Uuid,
             /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
             pub radius: LengthUnit,
+            /// The maximum acceptable surface gap computed between the filleted surfaces. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
         }
 
         /// Send object to front or back.
