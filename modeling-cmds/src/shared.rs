@@ -40,7 +40,7 @@ macro_rules! impl_string_enum_sql {
 }
 
 /// Options for annotations
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 #[serde(rename_all = "snake_case")]
 pub struct AnnotationOptions {
     /// Text displayed on the annotation
@@ -56,7 +56,7 @@ pub struct AnnotationOptions {
 }
 
 /// Options for annotation text
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 #[serde(rename_all = "snake_case")]
 pub struct AnnotationLineEndOptions {
     /// How to style the start of the annotation line.
@@ -66,7 +66,7 @@ pub struct AnnotationLineEndOptions {
 }
 
 /// Options for annotation text
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 #[serde(rename_all = "snake_case")]
 pub struct AnnotationTextOptions {
     /// Alignment along the X axis
@@ -82,7 +82,7 @@ pub struct AnnotationTextOptions {
 /// The type of distance
 /// Distances can vary depending on
 /// the objects used as input.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum DistanceType {
     /// Euclidean Distance.
@@ -110,7 +110,20 @@ pub struct Color {
 /// Horizontal Text alignment
 #[allow(missing_docs)]
 #[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
@@ -126,7 +139,20 @@ impl_string_enum_sql! {AnnotationTextAlignmentX}
 /// Vertical Text alignment
 #[allow(missing_docs)]
 #[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
@@ -159,7 +185,20 @@ where
 /// Annotation line end type
 #[allow(missing_docs)]
 #[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
@@ -173,7 +212,20 @@ impl_string_enum_sql! {AnnotationLineEnd}
 
 /// The type of annotation
 #[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
@@ -189,7 +241,20 @@ impl_string_enum_sql! {AnnotationType}
 
 /// The type of camera drag interaction.
 #[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
@@ -368,7 +433,20 @@ impl_string_enum_sql! {SceneSelectionType}
 /// The type of scene's active tool
 #[allow(missing_docs)]
 #[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
@@ -402,6 +480,7 @@ impl_string_enum_sql! {SceneToolType}
     Ord,
     PartialOrd,
     Default,
+    ExecutionPlanValue,
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
@@ -432,6 +511,7 @@ impl_string_enum_sql! {PathComponentConstraintBound}
     Ord,
     PartialOrd,
     Default,
+    ExecutionPlanValue,
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
@@ -655,7 +735,20 @@ pub struct PerspectiveCameraParameters {
 
 /// The global axes.
 #[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
 )]
 #[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
 #[cfg_attr(feature = "diesel", diesel(sql_type = Text))]

@@ -56,6 +56,10 @@ impl ApiRequest {
                 let cmd = each_cmd::TakeSnapshot::from_memory(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
+            Endpoint::MakePlane => {
+                let cmd = each_cmd::MakePlane::from_memory(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
             other => panic!("Haven't implemented endpoint {other:?} yet"),
         };
         // Write out to memory.
