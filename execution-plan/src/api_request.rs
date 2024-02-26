@@ -22,6 +22,7 @@ pub struct ApiRequest {
 }
 
 impl ApiRequest {
+    /// Execute this API request.
     pub async fn execute(self, session: &mut ModelingSession, mem: &mut Memory) -> Result<()> {
         let Self {
             endpoint,
