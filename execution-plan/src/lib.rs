@@ -20,7 +20,7 @@ pub use self::arithmetic::{
 };
 pub use self::instruction::Instruction;
 
-mod api_request;
+pub mod api_request;
 mod arithmetic;
 pub mod events;
 mod instruction;
