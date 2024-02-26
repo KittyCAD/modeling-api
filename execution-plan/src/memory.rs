@@ -280,13 +280,11 @@ impl Stack<Vec<Primitive>> {
     /// If it's a single primitive long, return Ok, otherwise error.
     pub fn pop_single(&mut self) -> Result<Primitive, ExecutionError> {
         let mut slice = self.pop()?;
-        let prim = slice
-            .pop()
-            .ok_or(ExecutionError::StackNotPrimitive { actual_length: 0 })?;
+        let prim = slice.pop().ok_or(MemoryError::StackNotPrimitive { actual_length: 0 })?;
         if !slice.is_empty() {
-            return Err(ExecutionError::StackNotPrimitive {
+            return Err(ExecutionError::MemoryError(MemoryError::StackNotPrimitive {
                 actual_length: slice.len() + 1,
-            });
+            }));
         }
         Ok(prim)
     }

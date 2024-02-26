@@ -1,7 +1,7 @@
 use std::env;
 
 use insta::assert_snapshot;
-use kittycad_execution_plan_traits::{ListHeader, ObjectHeader, Primitive, Value};
+use kittycad_execution_plan_traits::{InMemory, ListHeader, ObjectHeader, Primitive, Value};
 use kittycad_modeling_cmds::ModelingCmdEndpoint as Endpoint;
 use kittycad_modeling_cmds::{
     id::ModelingCmdId,
@@ -532,50 +532,50 @@ async fn api_call_draw_cube() {
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::MovePathPen,
                 store_response: None,
-                arguments: vec![path_id_addr, starting_point_addr],
+                arguments: vec![InMemory::Address(path_id_addr), InMemory::Address(starting_point_addr)],
                 cmd_id: new_id(),
             }),
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ExtendPath,
                 store_response: None,
-                arguments: vec![path_id_addr, segment_addrs[0]],
+                arguments: vec![path_id_addr.into(), segment_addrs[0].into()],
                 cmd_id: new_id(),
             }),
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ExtendPath,
                 store_response: None,
-                arguments: vec![path_id_addr, segment_addrs[1]],
+                arguments: vec![path_id_addr.into(), segment_addrs[1].into()],
                 cmd_id: new_id(),
             }),
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ExtendPath,
                 store_response: None,
-                arguments: vec![path_id_addr, segment_addrs[2]],
+                arguments: vec![path_id_addr.into(), segment_addrs[2].into()],
                 cmd_id: new_id(),
             }),
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ExtendPath,
                 store_response: None,
-                arguments: vec![path_id_addr, segment_addrs[3]],
+                arguments: vec![path_id_addr.into(), segment_addrs[3].into()],
                 cmd_id: new_id(),
             }),
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ClosePath,
                 store_response: None,
-                arguments: vec![path_id_addr],
+                arguments: vec![path_id_addr.into()],
                 cmd_id: new_id(),
             }),
             // Turn square into cube
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::Extrude,
                 store_response: None,
-                arguments: vec![path_id_addr, cube_height_addr, cap_addr],
+                arguments: vec![path_id_addr.into(), cube_height_addr.into(), cap_addr.into()],
                 cmd_id: new_id(),
             }),
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::TakeSnapshot,
                 store_response: Some(output_addr),
-                arguments: vec![img_format_addr],
+                arguments: vec![img_format_addr.into()],
                 cmd_id: new_id(),
             }),
         ],

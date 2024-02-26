@@ -124,13 +124,6 @@ type Result<T> = std::result::Result<T, ExecutionError>;
 /// Errors that could occur when executing a KittyCAD execution plan.
 #[derive(Debug, thiserror::Error)]
 pub enum ExecutionError {
-    /// Stack should have contained a single primitive but it had a composite value instead.
-    #[error("Expected stack to contain a single primitive, but it had a slice of length {actual_length}")]
-    StackNotPrimitive {
-        /// The actual size of the data that was popped off the stack
-        /// Expected to be 1, but it was something else.
-        actual_length: usize,
-    },
     /// Memory address was not set.
     #[error("Memory address {addr} was not set")]
     MemoryEmpty {
