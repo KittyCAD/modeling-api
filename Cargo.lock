@@ -1682,7 +1682,6 @@ version = "0.1.1"
 dependencies = [
  "anyhow",
  "insta",
- "kittycad-modeling-cmds",
  "proc-macro2",
  "quote",
  "regex",

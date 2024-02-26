@@ -116,3 +116,19 @@ where
         T::from_parts(values).map(Box::new)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_name() {
+        let h: HashSet<uuid::Uuid> = HashSet::new();
+        fn assert_set_of_uuid_impls_value<T>(_t: T)
+        where
+            T: Value,
+        {
+        }
+        assert_set_of_uuid_impls_value(h)
+    }
+}
