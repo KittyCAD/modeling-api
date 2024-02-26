@@ -57,7 +57,9 @@ impl ApiRequest {
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::MakePlane => {
+                eprintln!("Making plane...");
                 let cmd = each_cmd::MakePlane::from_memory(&mut arguments, mem)?;
+                eprintln!("Running...");
                 session.run_command(cmd_id, cmd).await?
             }
             other => panic!("Haven't implemented endpoint {other:?} yet"),

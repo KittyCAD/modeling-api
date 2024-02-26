@@ -86,28 +86,12 @@ fn impl_on_struct_named_fields(
                 .and_then(|a| match a {
                     #root::InMemory::Address(a) => mem.get_composite(a),
                     #root::InMemory::StackPop => {
-                        let mut data = mem.stack_pop()?;
-                        let fst = data.pop().ok_or(#root::MemoryError::StackNotPrimitive{actual_length: 0})?;
-                        let a = match fst {
-                            #root::Primitive::Address(a) => a,
-                            other => return Err(#root::MemoryError::MemoryWrongType{expected: "address", actual: format!("{other:?}")}),
-                        };
-                        if !data.is_empty() {
-                            return Err(#root::MemoryError::StackNotPrimitive{actual_length: data.len()+1});
-                        }
-                        mem.get_composite(a)
+                        let data = mem.stack_pop()?;
+                        #root::Value::from_parts(&mut data.iter().cloned().map(Some))
                     }
                     #root::InMemory::StackPeek => {
-                        let mut data = mem.stack_peek()?.clone();
-                        let fst = data.pop().ok_or(#root::MemoryError::StackNotPrimitive{actual_length: 0})?;
-                        let a = match fst {
-                            #root::Primitive::Address(a) => a,
-                            other => return Err(#root::MemoryError::MemoryWrongType{expected: "address", actual: format!("{other:?}")}),
-                        };
-                        if !data.is_empty() {
-                            return Err(#root::MemoryError::StackNotPrimitive{actual_length: data.len()+1});
-                        }
-                        mem.get_composite(a)
+                        let data = mem.stack_pop()?;
+                        #root::Value::from_parts(&mut data.iter().cloned().map(Some))
                       }
                 })?;
         }
