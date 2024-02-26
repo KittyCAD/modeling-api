@@ -216,7 +216,7 @@ fn make_memory_view<'a>(
         .rev()
         .find(|addr| mem.get(&(Address::ZERO + *addr)).is_some())
         .map(|x| x + 1)
-        .unwrap_or(mem.addresses.len());
+        .unwrap_or(10);
     let rows = mem
         .addresses
         .iter()
