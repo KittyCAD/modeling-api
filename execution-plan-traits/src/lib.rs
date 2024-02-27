@@ -62,11 +62,10 @@ pub trait ReadMemory {
 }
 
 /// Errors that could occur when reading a type from KittyCAD Execution Plan program memory.
-#[derive(Debug, thiserror::Error, Default)]
+#[derive(Debug, thiserror::Error)]
 pub enum MemoryError {
     /// Something went wrong
-    #[error("Something went wrong")]
-    #[default]
+    #[error("Memory was wrong size")]
     MemoryWrongSize,
     /// Type error, memory contained the wrong type.
     #[error("Tried to read a '{expected}' from KCEP program memory, found an '{actual}' instead")]
