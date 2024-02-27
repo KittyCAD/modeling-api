@@ -320,20 +320,22 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
 }
 
 /// Display the instruction type and the operands, in a human-readable, friendly way.
-fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
+fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static, str>, String) {
     match instruction {
-        Instruction::ApiRequest(_) => ("API request", "".to_owned()),
-        Instruction::SetPrimitive { address, value } => ("SetPrimitive", format!("Set addr {address} to {value:?}")),
+        Instruction::ApiRequest(req) => (format!("API {}", req.endpoint).into(), format!("{:?}", req.arguments)),
+        Instruction::SetPrimitive { address, value } => {
+            ("SetPrimitive".into(), format!("Set addr {address} to {value:?}"))
+        }
         Instruction::SetValue { address, value_parts } => (
-            "SetValue",
+            "SetValue".into(),
             format!("Write {value_parts:?} starting at address {address}"),
         ),
         Instruction::AddrOfMember { start, member } => (
-            "AddrOfMember",
+            "AddrOfMember".into(),
             format!("Find member '{member:?}'\nof object at address {start:?}"),
         ),
         Instruction::SetList { start, elements } => (
-            "SetList",
+            "SetList".into(),
             format!("Create list at {start:?}\nwith elements {elements:?}"),
         ),
         Instruction::BinaryArithmetic {
@@ -347,17 +349,20 @@ fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
             } = arithmetic;
             let arith_description = format!("{operand0:?} {operation} {operand1:?}");
             (
-                "BinaryArithmetic",
+                "BinaryArithmetic".into(),
                 format!("Set {destination:?}\nto {arith_description}"),
             )
         }
         Instruction::UnaryArithmetic {
             arithmetic,
             destination,
-        } => ("UnaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
-        Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
+        } => (
+            "UnaryArithmetic".into(),
+            format!("Set {destination:?}\nto {arithmetic:?}"),
+        ),
+        Instruction::StackPush { data } => ("StackPush".into(), format!("{data:?}")),
         Instruction::StackPop { destination } => (
-            "StackPop",
+            "StackPop".into(),
             match destination {
                 Some(dst) => format!("Into: {dst:?}"),
                 None => "Discard".to_owned(),
@@ -366,6 +371,9 @@ fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
         Instruction::CopyLen {
             source_range,
             destination_range,
-        } => ("Copy", format!("copy from {source_range:?} to {destination_range:?}")),
+        } => (
+            "Copy".into(),
+            format!("copy from {source_range:?} to {destination_range:?}"),
+        ),
     }
 }
