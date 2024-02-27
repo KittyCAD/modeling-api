@@ -721,6 +721,49 @@ impl From<EngineErrorCode> for http::StatusCode {
 
 impl_string_enum_sql! {FileImportFormat}
 
+/// Camera settings including position, center, fov etc
+#[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
+pub struct CameraSettings {
+    ///Camera position (vantage)
+    pub pos: Point3d,
+
+    ///Camera's look-at center (center-pos gives viewing vector)
+    pub center: Point3d,
+
+    ///Camera's world-space up vector
+    pub up: Point3d,
+
+    ///Camera's field-of-view angle (if ortho is false)
+    pub fov_y: Option<f32>,
+
+    ///The camera's ortho scale (derived from viewing distance if ortho is true)
+    pub ortho_scale: Option<f32>,
+
+    ///Whether or not the camera is in ortho mode
+    pub ortho: bool,
+}
+
+impl From<CameraSettings> for crate::output::DefaultCameraZoom {
+    fn from(settings: CameraSettings) -> Self {
+        Self { settings }
+    }
+}
+impl From<CameraSettings> for crate::output::CameraDragMove {
+    fn from(settings: CameraSettings) -> Self {
+        Self { settings }
+    }
+}
+impl From<CameraSettings> for crate::output::CameraDragEnd {
+    fn from(settings: CameraSettings) -> Self {
+        Self { settings }
+    }
+}
+impl From<CameraSettings> for crate::output::DefaultCameraGetSettings {
+    fn from(settings: CameraSettings) -> Self {
+        Self { settings }
+    }
+}
+
 /// Defines a perspective view.
 #[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd, ExecutionPlanValue)]
 #[serde(rename_all = "snake_case")]
