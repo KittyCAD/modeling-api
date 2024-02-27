@@ -81,6 +81,13 @@ pub enum Instruction {
         /// If None, the value won't be stored anywhere.
         destination: Option<Address>,
     },
+    /// Copy from one address to the other.
+    Copy {
+        /// Copy from here.
+        source: Address,
+        /// Copy to here.
+        destination: Address,
+    },
     /// Copy data from a range of addresses, into another range of addresses.
     /// The first address in the source range is the length (how many addresses to copy).
     /// If that address contains a uint, that uint is the length.
@@ -113,6 +120,15 @@ impl Instruction {
             }
             Instruction::SetPrimitive { address, value } => {
                 mem.set(address, value);
+            }
+            Instruction::Copy { source, destination } => {
+                // Read the value
+                let value = mem
+                    .get(&source)
+                    .cloned()
+                    .ok_or(ExecutionError::MemoryEmpty { addr: source })?;
+                // Write the value
+                mem.set(destination, value);
             }
             Instruction::SetValue { address, value_parts } => {
                 value_parts.into_iter().enumerate().for_each(|(i, part)| {
