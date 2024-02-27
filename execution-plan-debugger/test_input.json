@@ -4,8 +4,8 @@
       "address": 0,
       "value": {
         "ListHeader": {
-          "count": 3,
-          "size": 6
+          "count": 2,
+          "size": 4
         }
       }
     }
@@ -24,7 +24,9 @@
     "SetPrimitive": {
       "address": 2,
       "value": {
-        "String": "a"
+        "NumericValue": {
+          "Float": 22.0
+        }
       }
     }
   },
@@ -42,26 +44,22 @@
     "SetPrimitive": {
       "address": 4,
       "value": {
-        "String": "b"
-      }
-    }
-  },
-  {
-    "SetPrimitive": {
-      "address": 5,
-      "value": {
         "NumericValue": {
-          "UInteger": 1
+          "Float": 33.0
         }
       }
     }
   },
   {
-    "SetPrimitive": {
-      "address": 6,
-      "value": {
-        "String": "c"
-      }
+    "Copy": {
+      "source": 2,
+      "destination": 5
+    }
+  },
+  {
+    "Copy": {
+      "source": 4,
+      "destination": 6
     }
   },
   {
@@ -69,62 +67,418 @@
       "address": 7,
       "value": {
         "NumericValue": {
-          "Integer": 1
+          "Float": 0.0
         }
       }
     }
   },
   {
-    "SetPrimitive": {
-      "address": 8,
-      "value": {
-        "NumericValue": {
-          "Integer": 1
-        }
-      }
-    }
-  },
-  {
-    "BinaryArithmetic": {
-      "arithmetic": {
-        "operation": "Add",
-        "operand0": {
-          "Reference": 7
+    "StackPush": {
+      "data": [
+        {
+          "String": "Some"
         },
-        "operand1": {
-          "Reference": 8
+        {
+          "Bool": true
         }
-      },
-      "destination": {
-        "Address": 9
-      }
+      ]
     }
   },
   {
-    "AddrOfMember": {
-      "start": {
-        "Literal": {
+    "StackPush": {
+      "data": [
+        {
+          "Bool": false
+        }
+      ]
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "NumericValue": {
+            "Float": 60.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 1.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "NumericValue": {
+            "Float": 1.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "MakePlane",
+      "store_response": null,
+      "arguments": [
+        "StackPop",
+        "StackPop",
+        "StackPop",
+        "StackPop",
+        "StackPop",
+        "StackPop"
+      ],
+      "cmd_id": "b37a0632-98e6-46a2-bd62-6c744a6f4269"
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "String": "Some"
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 1.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "Bool": false
+        }
+      ]
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "Bool": false
+        }
+      ]
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "Uuid": "b37a0632-98e6-46a2-bd62-6c744a6f4269"
+        }
+      ]
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "SketchModeEnable",
+      "store_response": null,
+      "arguments": [
+        "StackPop",
+        "StackPop",
+        "StackPop",
+        "StackPop"
+      ],
+      "cmd_id": "7a7f1be8-213a-4c12-97b0-b767dc1fa4b8"
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "StartPath",
+      "store_response": null,
+      "arguments": [],
+      "cmd_id": "d5da360d-0048-45fd-a3af-032e9f344b1b"
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "Uuid": "d5da360d-0048-45fd-a3af-032e9f344b1b"
+        }
+      ]
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "MovePathPen",
+      "store_response": null,
+      "arguments": [
+        "StackPop",
+        {
+          "Address": 5
+        }
+      ],
+      "cmd_id": "bc10557e-57d4-4993-ba05-3d05334dcd14"
+    }
+  },
+  {
+    "SetValue": {
+      "address": 7,
+      "value_parts": [
+        {
+          "Uuid": "d5da360d-0048-45fd-a3af-032e9f344b1b"
+        },
+        {
+          "String": "Plane"
+        },
+        {
+          "Uuid": "b37a0632-98e6-46a2-bd62-6c744a6f4269"
+        },
+        {
+          "String": "XY"
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 1.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 1.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 1.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 1.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 1.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 1.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 1.0
+          }
+        },
+        {
+          "String": "Some"
+        },
+        {
+          "Uuid": "b37a0632-98e6-46a2-bd62-6c744a6f4269"
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        },
+        {
+          "String": ""
+        },
+        {
           "NumericValue": {
             "UInteger": 0
           }
         }
-      },
-      "member": {
-        "Reference": 9
-      }
+      ]
     }
   },
   {
     "Copy": {
-      "source": "StackPop",
-      "destination": {
-        "Literal": {
-          "NumericValue": {
-            "UInteger": 10
-          }
-        }
-      },
-      "num_primitives": 1
+      "source": 5,
+      "destination": 43
+    }
+  },
+  {
+    "Copy": {
+      "source": 5,
+      "destination": 45
     }
   }
 ]

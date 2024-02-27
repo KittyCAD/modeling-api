@@ -144,7 +144,7 @@ fn make_stack_view<'a>(block: Block<'a>, stack: &kittycad_execution_plan::Stack<
     .block(block)
 }
 
-const HIGHLIGHT_COLORS: [Color; 5] = [Color::Green, Color::Cyan, Color::Magenta, Color::Yellow, Color::Blue];
+const HIGHLIGHT_COLORS: [Color; 5] = [Color::Green, Color::Magenta, Color::Yellow, Color::Blue, Color::Cyan];
 
 fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashMap<Address, Color>) {
     let mut addr_colors = HashMap::new();
@@ -326,10 +326,7 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
         Instruction::SetPrimitive { address, value } => {
             ("SetPrimitive".into(), format!("Set addr {address} to {value:?}"))
         }
-        Instruction::Copy {source, destination} => (
-            "Copy".into(),
-            format!("From {source} to {destination}"),
-        ),
+        Instruction::Copy { source, destination } => ("Copy".into(), format!("From {source} to {destination}")),
         Instruction::SetValue { address, value_parts } => (
             "SetValue".into(),
             format!("Write {value_parts:?} starting at address {address}"),
@@ -339,7 +336,7 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
             format!("Find member '{member:?}'\nof object at address {start:?}"),
         ),
         Instruction::SetList { start, elements } => (
-            "SetList".into(),
+            "SetList234".into(),
             format!("Create list at {start:?}\nwith elements {elements:?}"),
         ),
         Instruction::BinaryArithmetic {

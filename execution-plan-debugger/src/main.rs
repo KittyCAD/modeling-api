@@ -33,7 +33,7 @@ async fn inner_main() -> Result<()> {
 }
 
 async fn client() -> Result<Session> {
-    let Ok(kittycad_api_token) = env::var("KITTYCAD_API_TOKEN")else {
+    let Ok(kittycad_api_token) = env::var("KITTYCAD_API_TOKEN") else {
         anyhow::bail!("You must set $KITTYCAD_API_TOKEN")
     };
     let kittycad_api_client = kittycad::Client::new(kittycad_api_token);
