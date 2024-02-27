@@ -16,6 +16,23 @@ pub struct Context {
 pub struct State {
     pub instruction_table_state: TableState,
     pub num_rows: usize,
+    pub pane: Pane,
+}
+
+#[derive(Default, Clone, Copy)]
+pub enum Pane {
+    #[default]
+    History,
+    Addresses,
+}
+
+impl Pane {
+    pub fn next(self) -> Self {
+        match self {
+            Pane::History => Self::Addresses,
+            Pane::Addresses => Self::History,
+        }
+    }
 }
 
 pub enum HistorySelected {
@@ -46,6 +63,7 @@ pub fn run(ctx: Context) -> anyhow::Result<()> {
         // 1 extra row for start (before any instructions),
         // and 1 extra row for the finish result (err/ok).
         num_rows: ctx.history.len() + 1,
+        pane: Pane::default(),
     };
 
     loop {
@@ -73,6 +91,7 @@ fn main_loop(
         if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
             if key.kind == crossterm::event::KeyEventKind::Press {
                 match KeyPress::try_from(key.code) {
+                    Ok(KeyPress::PaneForward) => state.pane = state.pane.next(),
                     Ok(KeyPress::Backwards) => match state.instruction_table_state.selected_mut() {
                         Some(x) if *x > 0 => *x -= 1,
                         _ => {}
@@ -98,6 +117,7 @@ enum KeyPress {
     Start,
     End,
     Quit,
+    PaneForward,
 }
 
 impl TryFrom<crossterm::event::KeyCode> for KeyPress {
@@ -111,6 +131,7 @@ impl TryFrom<crossterm::event::KeyCode> for KeyPress {
             Char('d' | 'l' | 's' | 'j') | KeyCode::Down | KeyCode::Right => Self::Forwards,
             Char('q') | KeyCode::Esc => Self::Quit,
             Char('G') | KeyCode::End => Self::End,
+            KeyCode::Tab => Self::PaneForward,
             KeyCode::Home => Self::Start,
             _ => return Err(()),
         };
