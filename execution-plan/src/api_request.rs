@@ -1,7 +1,8 @@
 //! Instruction for running KittyCAD API requests.
 
-use crate::memory::Memory;
+use crate::events::{Event, Severity};
 use crate::Result;
+use crate::{events::EventWriter, memory::Memory};
 use kittycad_execution_plan_traits::{Address, FromMemory, InMemory};
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId, ModelingCmdEndpoint as Endpoint};
 use kittycad_modeling_session::Session as ModelingSession;
@@ -23,7 +24,12 @@ pub struct ApiRequest {
 
 impl ApiRequest {
     /// Execute this API request.
-    pub async fn execute(self, session: &mut ModelingSession, mem: &mut Memory) -> Result<()> {
+    pub async fn execute(
+        self,
+        session: &mut ModelingSession,
+        mem: &mut Memory,
+        events: &mut EventWriter,
+    ) -> Result<()> {
         let Self {
             endpoint,
             store_response,
@@ -31,6 +37,11 @@ impl ApiRequest {
             cmd_id,
         } = self;
         let mut arguments = arguments.into_iter();
+        events.push(Event {
+            text: "Running command".to_owned(),
+            severity: Severity::Debug,
+            related_address: Default::default(),
+        });
         let output = match endpoint {
             Endpoint::StartPath => {
                 let cmd = each_cmd::StartPath::from_memory(&mut arguments, mem)?;
@@ -57,15 +68,26 @@ impl ApiRequest {
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::MakePlane => {
-                eprintln!("Making plane...");
                 let cmd = each_cmd::MakePlane::from_memory(&mut arguments, mem)?;
-                eprintln!("Running...");
+                session.run_command(cmd_id, cmd).await?
+            }
+            Endpoint::EnableSketchMode => {
+                let cmd = each_cmd::EnableSketchMode::from_memory(&mut arguments, mem)?;
+                session.run_command(cmd_id, cmd).await?
+            }
+            Endpoint::SketchModeEnable => {
+                let cmd = each_cmd::SketchModeEnable::from_memory(&mut arguments, mem)?;
                 session.run_command(cmd_id, cmd).await?
             }
             other => panic!("Haven't implemented endpoint {other:?} yet"),
         };
         // Write out to memory.
         if let Some(output_address) = store_response {
+            events.push(Event {
+                text: "Storing response".to_owned(),
+                severity: Severity::Info,
+                related_address: Some(output_address),
+            });
             mem.set_composite(output_address, output);
         }
         Ok(())

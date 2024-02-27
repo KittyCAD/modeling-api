@@ -1614,6 +1614,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "crossterm",
+ "kittycad",
  "kittycad-execution-plan",
  "kittycad-execution-plan-traits",
  "kittycad-modeling-cmds",
