@@ -99,7 +99,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Camera drag continued.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct CameraDragMove {
             /// The type of camera drag interaction.
             pub interaction: CameraDragInteractionType,
@@ -113,13 +113,17 @@ define_modeling_cmd_enum! {
         }
 
         /// Camera drag ended
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct CameraDragEnd {
             /// The type of camera drag interaction.
             pub interaction: CameraDragInteractionType,
             /// The final mouse position.
             pub window: Point2d,
         }
+
+        /// Gets the default camera's camera settings
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
+        pub struct DefaultCameraGetSettings;
 
         /// Change what the default camera is looking at.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
@@ -160,7 +164,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Adjust zoom of the default camera.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct DefaultCameraZoom {
             /// Move the camera forward along the vector it's looking at,
             /// by this magnitudedefaultCameraZoom.
