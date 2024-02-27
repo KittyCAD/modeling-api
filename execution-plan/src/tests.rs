@@ -492,7 +492,6 @@ async fn api_call_draw_cube() {
         y: -CUBE_WIDTH,
         z: -CUBE_WIDTH,
     };
-    let starting_point_addr = static_data.push(starting_point);
     let line_segment = |end: Point3d<LengthUnit>| PathSegment::Line { end, relative: false };
     let segments = [
         Point3d {
@@ -521,6 +520,9 @@ async fn api_call_draw_cube() {
     execute(
         &mut mem,
         vec![
+            Instruction::StackPush {
+                data: starting_point.into_parts(),
+            },
             // Start the path.
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::StartPath,
@@ -532,7 +534,7 @@ async fn api_call_draw_cube() {
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::MovePathPen,
                 store_response: None,
-                arguments: vec![InMemory::Address(path_id_addr), InMemory::Address(starting_point_addr)],
+                arguments: vec![InMemory::Address(path_id_addr), InMemory::StackPop],
                 cmd_id: new_id(),
             }),
             Instruction::ApiRequest(ApiRequest {
