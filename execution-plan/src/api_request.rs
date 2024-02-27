@@ -38,45 +38,66 @@ impl ApiRequest {
         } = self;
         let mut arguments = arguments.into_iter();
         events.push(Event {
-            text: "Running command".to_owned(),
+            text: "Reading parameters".to_owned(),
             severity: Severity::Debug,
             related_address: Default::default(),
         });
+        let mut log_req = || {
+            events.push(Event {
+                text: "Parameters read".to_owned(),
+                severity: Severity::Debug,
+                related_address: Default::default(),
+            });
+            events.push(Event {
+                text: "Sending request".to_owned(),
+                severity: Severity::Info,
+                related_address: Default::default(),
+            });
+        };
         let output = match endpoint {
             Endpoint::StartPath => {
                 let cmd = each_cmd::StartPath::from_memory(&mut arguments, mem)?;
+                log_req();
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::MovePathPen => {
                 let cmd = each_cmd::MovePathPen::from_memory(&mut arguments, mem)?;
+                log_req();
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::ExtendPath => {
                 let cmd = each_cmd::ExtendPath::from_memory(&mut arguments, mem)?;
+                log_req();
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::ClosePath => {
                 let cmd = each_cmd::ClosePath::from_memory(&mut arguments, mem)?;
+                log_req();
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::Extrude => {
                 let cmd = each_cmd::Extrude::from_memory(&mut arguments, mem)?;
+                log_req();
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::TakeSnapshot => {
                 let cmd = each_cmd::TakeSnapshot::from_memory(&mut arguments, mem)?;
+                log_req();
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::MakePlane => {
                 let cmd = each_cmd::MakePlane::from_memory(&mut arguments, mem)?;
+                log_req();
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::EnableSketchMode => {
                 let cmd = each_cmd::EnableSketchMode::from_memory(&mut arguments, mem)?;
+                log_req();
                 session.run_command(cmd_id, cmd).await?
             }
             Endpoint::SketchModeEnable => {
                 let cmd = each_cmd::SketchModeEnable::from_memory(&mut arguments, mem)?;
+                log_req();
                 session.run_command(cmd_id, cmd).await?
             }
             other => panic!("Haven't implemented endpoint {other:?} yet"),
