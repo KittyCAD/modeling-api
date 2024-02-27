@@ -66,7 +66,7 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
             #variants(kittycad_modeling_cmds::each_cmd::#variants),
         )*}
         /// Each modeling command (no parameters or fields).
-        #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+        #[derive(Serialize, Deserialize, Debug, PartialEq, Clone, ::parse_display::Display)]
         pub enum ModelingCmdEndpoint{#(
             #[doc = #docs]
             #variants,
