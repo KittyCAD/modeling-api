@@ -60,7 +60,7 @@ impl TablePaneState {
 #[derive(Default, Clone, Copy, Eq, PartialEq)]
 pub enum Pane {
     #[default]
-    History,
+    Instructions,
     Addresses,
     // If you add a new enum variant, make sure to update the `fn next` below.
 }
@@ -68,22 +68,22 @@ pub enum Pane {
 impl Pane {
     pub fn next(self) -> Self {
         match self {
-            Pane::History => Self::Addresses,
-            Pane::Addresses => Self::History,
+            Pane::Instructions => Self::Addresses,
+            Pane::Addresses => Self::Instructions,
         }
     }
 }
 
-pub enum HistorySelected {
+pub enum InstructionSelected {
     Start,
     Instruction(usize),
 }
 
 impl State {
-    pub fn active_instruction(&self) -> HistorySelected {
+    pub fn active_instruction(&self) -> InstructionSelected {
         match self.instruction_pane.table.selected().unwrap() {
-            0 => HistorySelected::Start,
-            other => HistorySelected::Instruction(other - 1),
+            0 => InstructionSelected::Start,
+            other => InstructionSelected::Instruction(other - 1),
         }
     }
 }
@@ -140,19 +140,19 @@ fn main_loop(
                 match KeyPress::try_from(key.code) {
                     Ok(KeyPress::PaneNext) => state.active_pane = state.active_pane.next(),
                     Ok(KeyPress::Backwards) => match state.active_pane {
-                        Pane::History => state.instruction_pane.back(),
+                        Pane::Instructions => state.instruction_pane.back(),
                         Pane::Addresses => state.address_pane.back(),
                     },
                     Ok(KeyPress::Start) => match state.active_pane {
-                        Pane::History => state.instruction_pane.start(),
+                        Pane::Instructions => state.instruction_pane.start(),
                         Pane::Addresses => state.address_pane.start(),
                     },
                     Ok(KeyPress::End) => match state.active_pane {
-                        Pane::History => state.instruction_pane.end(),
+                        Pane::Instructions => state.instruction_pane.end(),
                         Pane::Addresses => state.address_pane.end(),
                     },
                     Ok(KeyPress::Forwards) => match state.active_pane {
-                        Pane::History => state.instruction_pane.forwards(),
+                        Pane::Instructions => state.instruction_pane.forwards(),
                         Pane::Addresses => state.address_pane.forwards(),
                     },
                     Ok(KeyPress::Quit) => return Ok(ControlFlow::Break(())),

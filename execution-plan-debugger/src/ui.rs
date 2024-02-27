@@ -13,7 +13,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::{Context, HistorySelected, Pane, State};
+use crate::app::{Context, InstructionSelected, Pane, State};
 
 pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     // Create all widgets.
@@ -44,12 +44,12 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
             })
     };
 
-    let history_block = basic_block("History", state.active_pane == Pane::History);
+    let history_block = basic_block("History", state.active_pane == Pane::Instructions);
     let history_view = make_history_view(history_block, ctx, &instructions_with_errors);
 
     let event_block = basic_block("Events", false);
     let events = match state.active_instruction() {
-        HistorySelected::Instruction(i) => &ctx.history[i].events,
+        InstructionSelected::Instruction(i) => &ctx.history[i].events,
         _ => [].as_slice(),
     };
     let (event_view, addr_colors) = make_events_view(event_block, events);
@@ -57,7 +57,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     // Render the main memory view.
     let main_mem_block = basic_block("Address Memory", state.active_pane == Pane::Addresses);
     let main_mem_view = match state.active_instruction() {
-        HistorySelected::Instruction(active_instruction) => {
+        InstructionSelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
             make_memory_view(main_mem_block, mem, addr_colors, ctx.address_size())
         }
@@ -67,7 +67,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     // Render the stack view.
     let stack_view_block = basic_block("Stack Memory", false);
     let stack_mem_view = match state.active_instruction() {
-        HistorySelected::Instruction(active_instruction) => {
+        InstructionSelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
             make_stack_view(stack_view_block, &mem.stack)
         }
