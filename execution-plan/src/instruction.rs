@@ -106,7 +106,7 @@ impl Instruction {
         match self {
             Instruction::ApiRequest(req) => {
                 if let Some(session) = session {
-                    req.execute(session, mem).await?;
+                    req.execute(session, mem, events).await?;
                 } else {
                     return Err(ExecutionError::NoApiClient);
                 }

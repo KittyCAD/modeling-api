@@ -10,6 +10,7 @@ description = "Debugger for KittyCAD execution plans"
 [dependencies]
 anyhow = "1"
 crossterm = "0.27.0"
+kittycad = { workspace = true }
 kittycad-execution-plan = { workspace = true }
 kittycad-execution-plan-traits = { workspace = true }
 kittycad-modeling-cmds = { workspace = true }
