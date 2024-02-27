@@ -9,16 +9,16 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize as _},
     text::Text,
-    widgets::{Block, Borders, Cell, Padding, Paragraph, Row, Table},
+    widgets::{Block, Cell, Padding, Paragraph, Row, Table},
     Frame,
 };
 
-use crate::app::{Context, HistorySelected, State};
+use crate::app::{Context, HistorySelected, Pane, State};
 
 pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     // Create all widgets.
-    let title = Paragraph::new(Text::styled("Execution Plan Replay", Style::default().fg(Color::Green)))
-        .block(Block::default().borders(Borders::ALL));
+    let title =
+        Paragraph::new(Text::styled("Execution Plan Replay", Style::default().fg(GREEN))).block(Block::bordered());
 
     let instructions_with_errors: HashSet<_> = ctx
         .history
@@ -33,17 +33,21 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
         })
         .collect();
 
-    let basic_block = |title: &'static str| {
-        Block::default()
-            .borders(Borders::ALL)
+    let basic_block = |title: &'static str, selected: bool| {
+        Block::bordered()
             .padding(Padding::vertical(1))
             .title(title)
+            .style(if selected {
+                Style::default().fg(HIGHLIGHT_COLORS[1])
+            } else {
+                Style::default()
+            })
     };
 
-    let history_block = basic_block("History");
+    let history_block = basic_block("History", state.active_pane == Pane::History);
     let history_view = make_history_view(history_block, ctx, &instructions_with_errors);
 
-    let event_block = basic_block("Events");
+    let event_block = basic_block("Events", false);
     let events = match state.active_instruction() {
         HistorySelected::Instruction(i) => &ctx.history[i].events,
         _ => [].as_slice(),
@@ -51,7 +55,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let (event_view, addr_colors) = make_events_view(event_block, events);
 
     // Render the main memory view.
-    let main_mem_block = basic_block("Address Memory");
+    let main_mem_block = basic_block("Address Memory", state.active_pane == Pane::Addresses);
     let main_mem_view = match state.active_instruction() {
         HistorySelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
@@ -61,7 +65,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     };
 
     // Render the stack view.
-    let stack_view_block = basic_block("Stack Memory");
+    let stack_view_block = basic_block("Stack Memory", false);
     let stack_mem_view = match state.active_instruction() {
         HistorySelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
@@ -71,10 +75,10 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     };
 
     let footer = Paragraph::new(Text::styled(
-        "Use up/down or left/right to scroll through the execution of your program",
-        Style::default().fg(Color::Green),
+        "Controls: Up/Down or Left/Right to scroll, Tab to change pane, Q/Esc to quit",
+        Style::default().fg(GREEN),
     ))
-    .block(Block::default().borders(Borders::ALL));
+    .block(Block::bordered());
 
     // Create areas for the widgets above to go into.
     let chunks = Layout::default()
@@ -116,7 +120,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
         ])
         .split(body_chunks[0]);
     // Put widgets into various areas.
-    f.render_stateful_widget(history_view, left_chunks[0], &mut state.instruction_table_state);
+    f.render_stateful_widget(history_view, left_chunks[0], &mut state.instruction_pane.table);
     f.render_widget(event_view, left_chunks[1]);
     f.render_widget(title, chunks[0]);
     f.render_widget(main_mem_view, right_chunks[0]);
@@ -144,7 +148,17 @@ fn make_stack_view<'a>(block: Block<'a>, stack: &kittycad_execution_plan::Stack<
     .block(block)
 }
 
-const HIGHLIGHT_COLORS: [Color; 5] = [Color::Green, Color::Magenta, Color::Yellow, Color::Blue, Color::Cyan];
+const GREEN: Color = Color::from_u32(0x4ec9b0);
+const HIGHLIGHT_COLORS: [Color; 8] = [
+    Color::from_u32(0xc586c0),
+    GREEN,
+    Color::from_u32(0xffd602),
+    Color::from_u32(0x569CD6),
+    Color::from_u32(0x646695),
+    Color::from_u32(0x6A9955),
+    Color::from_u32(0xD16969),
+    Color::from_u32(0xDCDCAA),
+];
 
 fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashMap<Address, Color>) {
     let mut addr_colors = HashMap::new();
@@ -252,7 +266,7 @@ fn make_memory_view<'a>(
 fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &HashSet<usize>) -> Table<'a> {
     let mut rows = Vec::with_capacity(ctx.plan.len() + 1);
     // Start row
-    rows.push(Row::new(vec![Cell::new("0"), Cell::new("Start")]).style(Style::default().fg(Color::Green)));
+    rows.push(Row::new(vec![Cell::new("0"), Cell::new("Start")]).style(Style::default().fg(GREEN)));
     // One row per executed instruction
     rows.extend(ctx.history.iter().enumerate().map(
         |(

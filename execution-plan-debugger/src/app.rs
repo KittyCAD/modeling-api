@@ -14,16 +14,21 @@ pub struct Context {
 
 /// Probably mutable
 pub struct State {
-    pub instruction_table_state: TableState,
-    pub num_rows: usize,
-    pub pane: Pane,
+    pub instruction_pane: TablePaneState,
+    pub active_pane: Pane,
 }
 
-#[derive(Default, Clone, Copy)]
+pub struct TablePaneState {
+    pub table: TableState,
+    num_rows: usize,
+}
+
+#[derive(Default, Clone, Copy, Eq, PartialEq)]
 pub enum Pane {
     #[default]
     History,
     Addresses,
+    // If you add a new enum variant, make sure to update the `fn next` below.
 }
 
 impl Pane {
@@ -42,7 +47,7 @@ pub enum HistorySelected {
 
 impl State {
     pub fn active_instruction(&self) -> HistorySelected {
-        match self.instruction_table_state.selected().unwrap() {
+        match self.instruction_pane.table.selected().unwrap() {
             0 => HistorySelected::Start,
             other => HistorySelected::Instruction(other - 1),
         }
@@ -59,11 +64,13 @@ pub fn run(ctx: Context) -> anyhow::Result<()> {
     let mut instruction_table_state = TableState::default();
     instruction_table_state.select(Some(0));
     let mut state = State {
-        instruction_table_state,
+        instruction_pane: TablePaneState {
+            table: instruction_table_state,
+            num_rows: ctx.history.len() + 1,
+        },
         // 1 extra row for start (before any instructions),
         // and 1 extra row for the finish result (err/ok).
-        num_rows: ctx.history.len() + 1,
-        pane: Pane::default(),
+        active_pane: Pane::default(),
     };
 
     loop {
@@ -91,15 +98,18 @@ fn main_loop(
         if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
             if key.kind == crossterm::event::KeyEventKind::Press {
                 match KeyPress::try_from(key.code) {
-                    Ok(KeyPress::PaneForward) => state.pane = state.pane.next(),
-                    Ok(KeyPress::Backwards) => match state.instruction_table_state.selected_mut() {
+                    Ok(KeyPress::PaneForward) => state.active_pane = state.active_pane.next(),
+                    Ok(KeyPress::Backwards) => match state.instruction_pane.table.selected_mut() {
                         Some(x) if *x > 0 => *x -= 1,
                         _ => {}
                     },
-                    Ok(KeyPress::Start) => state.instruction_table_state.select(Some(0)),
-                    Ok(KeyPress::End) => state.instruction_table_state.select(Some(state.num_rows - 1)),
-                    Ok(KeyPress::Forwards) => match state.instruction_table_state.selected_mut() {
-                        Some(x) if *x < state.num_rows - 1 => *x += 1,
+                    Ok(KeyPress::Start) => state.instruction_pane.table.select(Some(0)),
+                    Ok(KeyPress::End) => state
+                        .instruction_pane
+                        .table
+                        .select(Some(state.instruction_pane.num_rows - 1)),
+                    Ok(KeyPress::Forwards) => match state.instruction_pane.table.selected_mut() {
+                        Some(x) if *x < state.instruction_pane.num_rows - 1 => *x += 1,
                         _ => {}
                     },
                     Ok(KeyPress::Quit) => return Ok(ControlFlow::Break(())),
