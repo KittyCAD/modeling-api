@@ -123,11 +123,22 @@ impl Instruction {
             }
             Instruction::Copy { source, destination } => {
                 // Read the value
+                events.push(Event {
+                    text: "Reading value".to_owned(),
+                    severity: Severity::Debug,
+                    related_address: Some(source),
+                });
                 let value = mem
                     .get(&source)
                     .cloned()
                     .ok_or(ExecutionError::MemoryEmpty { addr: source })?;
+
                 // Write the value
+                events.push(Event {
+                    text: "Writing value".to_owned(),
+                    severity: Severity::Debug,
+                    related_address: Some(destination),
+                });
                 mem.set(destination, value);
             }
             Instruction::SetValue { address, value_parts } => {
