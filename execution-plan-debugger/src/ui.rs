@@ -4,7 +4,7 @@ use kittycad_execution_plan::{
     events::{Event, Severity},
     BinaryArithmetic, ExecutionState, Instruction,
 };
-use kittycad_execution_plan_traits::{Address, Primitive, ReadMemory};
+use kittycad_execution_plan_traits::{Address, Primitive};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize as _},
@@ -59,7 +59,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let main_mem_view = match state.active_instruction() {
         HistorySelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
-            make_memory_view(main_mem_block, mem, addr_colors)
+            make_memory_view(main_mem_block, mem, addr_colors, ctx.address_size())
         }
         _ => Table::new(Vec::<Row>::new(), Vec::<Constraint>::new()).block(main_mem_block),
     };
@@ -123,7 +123,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     f.render_stateful_widget(history_view, left_chunks[0], &mut state.instruction_pane.table);
     f.render_widget(event_view, left_chunks[1]);
     f.render_widget(title, chunks[0]);
-    f.render_widget(main_mem_view, right_chunks[0]);
+    f.render_stateful_widget(main_mem_view, right_chunks[0], &mut state.address_pane.table);
     f.render_widget(stack_mem_view, right_chunks[1]);
     f.render_widget(footer, chunks[2]);
 }
@@ -223,14 +223,10 @@ fn make_memory_view<'a>(
     mem: &kittycad_execution_plan::Memory,
     // num_rows: usize,
     addr_colors: HashMap<Address, Color>,
+    num_rows: usize,
 ) -> Table<'a> {
     // After a certain address, all following addresses will be empty.
     // Only show addresses before that point.
-    let num_rows = (0..(mem.addresses.len()))
-        .rev()
-        .find(|addr| mem.get(&(Address::ZERO + *addr)).is_some())
-        .map(|x| x + 1)
-        .unwrap_or(10);
     let rows = mem
         .addresses
         .iter()
@@ -260,6 +256,8 @@ fn make_memory_view<'a>(
     )
     .column_spacing(1)
     .header(Row::new(vec!["Address", "Value"]).style(Style::new().bold()))
+    .highlight_style(Style::new().reversed())
+    .highlight_symbol(">>")
     .block(block)
 }
 

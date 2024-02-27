@@ -215,6 +215,15 @@ impl Memory {
             .with(tabled::settings::Style::sharp())
             .to_string()
     }
+
+    /// Get the address of the last non-empty address.
+    /// If none, then all addresses are empty.
+    #[must_use]
+    pub fn last_nonempty_address(&self) -> Option<usize> {
+        self.iter()
+            .filter_map(|(i, v)| if v.is_some() { Some(i) } else { None })
+            .last()
+    }
 }
 
 fn pretty_print(p: &Primitive) -> (&'static str, String) {
