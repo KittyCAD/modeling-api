@@ -44,8 +44,8 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
             })
     };
 
-    let history_block = basic_block("History", state.active_pane == Pane::Instructions);
-    let history_view = make_history_view(history_block, ctx, &instructions_with_errors);
+    let instruction_block = basic_block("Instructions", state.active_pane == Pane::Instructions);
+    let instruction_view = make_instruction_view(instruction_block, ctx, &instructions_with_errors);
 
     let event_block = basic_block("Events", false);
     let events = match state.active_instruction() {
@@ -54,17 +54,17 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     };
     let (event_view, addr_colors) = make_events_view(event_block, events);
 
-    // Render the main memory view.
-    let main_mem_block = basic_block("Address Memory", state.active_pane == Pane::Addresses);
-    let main_mem_view = match state.active_instruction() {
+    // Render the addressable memory view.
+    let address_block = basic_block("Address Memory", state.active_pane == Pane::Addresses);
+    let address_view = match state.active_instruction() {
         InstructionSelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
-            make_memory_view(main_mem_block, mem, addr_colors, ctx.address_size())
+            make_address_view(address_block, mem, addr_colors, ctx.address_size())
         }
-        _ => Table::new(Vec::<Row>::new(), Vec::<Constraint>::new()).block(main_mem_block),
+        _ => Table::new(Vec::<Row>::new(), Vec::<Constraint>::new()).block(address_block),
     };
 
-    // Render the stack view.
+    // Render the stack memory view.
     let stack_view_block = basic_block("Stack Memory", false);
     let stack_mem_view = match state.active_instruction() {
         InstructionSelected::Instruction(active_instruction) => {
@@ -95,7 +95,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let body_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
-            // Left half of body, for history/instructions.
+            // Left half of body, for instructions.
             Constraint::Percentage(50),
             // Right half of body, for memory.
             Constraint::Percentage(50),
@@ -113,17 +113,17 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let left_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            // Top left, for history
+            // Top left, for instructions.
             Constraint::Percentage(75),
-            // Bottom left, for events
+            // Bottom left, for events.
             Constraint::Percentage(25),
         ])
         .split(body_chunks[0]);
     // Put widgets into various areas.
-    f.render_stateful_widget(history_view, left_chunks[0], &mut state.instruction_pane.table);
+    f.render_stateful_widget(instruction_view, left_chunks[0], &mut state.instruction_pane.table);
     f.render_widget(event_view, left_chunks[1]);
     f.render_widget(title, chunks[0]);
-    f.render_stateful_widget(main_mem_view, right_chunks[0], &mut state.address_pane.table);
+    f.render_stateful_widget(address_view, right_chunks[0], &mut state.address_pane.table);
     f.render_widget(stack_mem_view, right_chunks[1]);
     f.render_widget(footer, chunks[2]);
 }
@@ -218,7 +218,7 @@ fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashM
     (tbl, addr_colors)
 }
 
-fn make_memory_view<'a>(
+fn make_address_view<'a>(
     block: Block<'a>,
     mem: &kittycad_execution_plan::Memory,
     // num_rows: usize,
@@ -261,7 +261,7 @@ fn make_memory_view<'a>(
     .block(block)
 }
 
-fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &HashSet<usize>) -> Table<'a> {
+fn make_instruction_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &HashSet<usize>) -> Table<'a> {
     let mut rows = Vec::with_capacity(ctx.plan.len() + 1);
     // Start row
     rows.push(Row::new(vec![Cell::new("0"), Cell::new("Start")]).style(Style::default().fg(GREEN)));
