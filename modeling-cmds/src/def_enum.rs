@@ -468,14 +468,14 @@ define_modeling_cmd_enum! {
         }
 
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct FaceIsPlanar {
             /// Which face is being queried.
             pub object_id: Uuid,
         }
 
         /// Determines a position on a brep face evaluated by parameters u,v
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct FaceGetPosition {
             /// Which face is being queried.
             pub object_id: Uuid,
@@ -485,7 +485,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Determines the gradient (dFdu, dFdv) + normal vector on a brep face evaluated by parameters u,v
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct FaceGetGradient {
             /// Which face is being queried.
             pub object_id: Uuid,

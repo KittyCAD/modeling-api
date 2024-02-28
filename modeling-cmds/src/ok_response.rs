@@ -220,6 +220,39 @@ define_ok_modeling_cmd_response_enum! {
             pub end: Point3d<LengthUnit>,
         }
 
+        /// Surface-local planar axes (if available)
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct FaceIsPlanar {
+            /// plane's local x-axis
+            pub x_axis: Option<Point3d<f64>>,
+
+            /// plane's local y-axis
+            pub y_axis: Option<Point3d<f64>>,
+
+            /// plane's local z-axis (normal)
+            pub z_axis: Option<Point3d<f64>>,
+        }
+
+        /// The 3D position on the surface that was evaluated
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct FaceGetPosition {
+            /// The 3D position on the surface that was evaluated
+            pub pos: Point3d<f64>,
+        }
+
+        /// The gradient (dFdu, dFdv) + normal vector on a brep face
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct FaceGetGradient {
+            /// dFdu
+            pub df_du: Point3d<f64>,
+
+            /// dFdv
+            pub df_dv: Point3d<f64>,
+
+            /// Normal (||dFdu x dFdv||)
+            pub normal: Point3d<f64>,
+        }
+
         /// Corresponding coordinates of given window coordinates, intersected on given plane.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
         pub struct PlaneIntersectAndProject {
