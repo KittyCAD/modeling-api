@@ -148,6 +148,9 @@ pub enum OkWebSocketResponseData {
 
     /// Request a collection of metrics, to include WebRTC.
     MetricsRequest {},
+
+    /// Pong response to a Ping message.
+    Pong {},
 }
 
 /// Successful Websocket response.

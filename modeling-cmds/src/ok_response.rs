@@ -13,6 +13,7 @@ define_ok_modeling_cmd_response_enum! {
         use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
         use uuid::Uuid;
+        use crate::shared::CameraSettings;
 
         use crate::{self as kittycad_modeling_cmds};
         use crate::{
@@ -66,6 +67,36 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityGetAllChildUuids {
             /// The UUIDs of the child entities.
             pub entity_ids: Vec<Uuid>,
+        }
+
+        /// The response from the `CameraDragMove` command.
+        /// Note this is an "unreliable" channel message, so this data may need more data like a "sequence"
+        //  to work properly
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct CameraDragMove {
+            /// Camera settings
+            pub settings: CameraSettings
+        }
+
+        /// The response from the `CameraDragEnd` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct CameraDragEnd {
+            /// Camera settings
+            pub settings: CameraSettings
+        }
+
+        /// The response from the `DefaultCameraGetSettings` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct DefaultCameraGetSettings {
+            /// Camera settings
+            pub settings: CameraSettings
+        }
+
+        /// The response from the `DefaultCameraZoom` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct DefaultCameraZoom {
+            /// Camera settings
+            pub settings: CameraSettings
         }
 
         /// The response from the `SelectGet` command.

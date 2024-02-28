@@ -67,6 +67,14 @@ impl kittycad_execution_plan_traits::ReadMemory for Memory {
         let mut values = self.addresses.iter().skip(inner(start)).cloned();
         T::from_parts(&mut values)
     }
+
+    fn stack_pop(&mut self) -> std::result::Result<Vec<Primitive>, MemoryError> {
+        self.stack.pop()
+    }
+
+    fn stack_peek(&self) -> std::result::Result<&Vec<Primitive>, MemoryError> {
+        self.stack.peek()
+    }
 }
 
 impl Memory {
@@ -207,6 +215,15 @@ impl Memory {
             .with(tabled::settings::Style::sharp())
             .to_string()
     }
+
+    /// Get the address of the last non-empty address.
+    /// If none, then all addresses are empty.
+    #[must_use]
+    pub fn last_nonempty_address(&self) -> Option<usize> {
+        self.iter()
+            .filter_map(|(i, v)| if v.is_some() { Some(i) } else { None })
+            .last()
+    }
 }
 
 fn pretty_print(p: &Primitive) -> (&'static str, String) {
@@ -246,8 +263,12 @@ impl<T> Stack<T> {
         self.inner.push(t);
     }
     /// Remove a value from the top of the stack, and return it.
-    pub fn pop(&mut self) -> Result<T, ExecutionError> {
-        self.inner.pop().ok_or(ExecutionError::StackEmpty)
+    pub fn pop(&mut self) -> Result<T, MemoryError> {
+        self.inner.pop().ok_or(MemoryError::StackEmpty)
+    }
+    /// Return the value from the top of the stack.
+    pub fn peek(&self) -> Result<&T, MemoryError> {
+        self.inner.last().ok_or(MemoryError::StackEmpty)
     }
     /// Is the stack empty?
     pub fn is_empty(&self) -> bool {
@@ -268,13 +289,11 @@ impl Stack<Vec<Primitive>> {
     /// If it's a single primitive long, return Ok, otherwise error.
     pub fn pop_single(&mut self) -> Result<Primitive, ExecutionError> {
         let mut slice = self.pop()?;
-        let prim = slice
-            .pop()
-            .ok_or(ExecutionError::StackNotPrimitive { actual_length: 0 })?;
+        let prim = slice.pop().ok_or(MemoryError::StackNotPrimitive { actual_length: 0 })?;
         if !slice.is_empty() {
-            return Err(ExecutionError::StackNotPrimitive {
+            return Err(ExecutionError::MemoryError(MemoryError::StackNotPrimitive {
                 actual_length: slice.len() + 1,
-            });
+            }));
         }
         Ok(prim)
     }

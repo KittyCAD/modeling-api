@@ -10,11 +10,12 @@ description = "Debugger for KittyCAD execution plans"
 [dependencies]
 anyhow = "1"
 crossterm = "0.27.0"
+kittycad = { workspace = true }
 kittycad-execution-plan = { workspace = true }
 kittycad-execution-plan-traits = { workspace = true }
 kittycad-modeling-cmds = { workspace = true }
 kittycad-modeling-session = { workspace = true }
-ratatui = { version = "0.25.0", features = ["all-widgets"] }
+ratatui = { version = "0.26.1", features = ["all-widgets"] }
 serde_json = "1.0"
 tokio = { version = "1.35.0", features = ["rt", "macros"] }
 
