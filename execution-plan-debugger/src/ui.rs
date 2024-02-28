@@ -4,21 +4,21 @@ use kittycad_execution_plan::{
     events::{Event, Severity},
     BinaryArithmetic, ExecutionState, Instruction,
 };
-use kittycad_execution_plan_traits::{Address, Primitive, ReadMemory};
+use kittycad_execution_plan_traits::{Address, Primitive};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize as _},
     text::Text,
-    widgets::{Block, Borders, Cell, Padding, Paragraph, Row, Table},
+    widgets::{Block, Cell, Padding, Paragraph, Row, Table},
     Frame,
 };
 
-use crate::app::{Context, HistorySelected, State};
+use crate::app::{Context, InstructionSelected, Pane, State};
 
 pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     // Create all widgets.
-    let title = Paragraph::new(Text::styled("Execution Plan Replay", Style::default().fg(Color::Green)))
-        .block(Block::default().borders(Borders::ALL));
+    let title =
+        Paragraph::new(Text::styled("Execution Plan Replay", Style::default().fg(GREEN))).block(Block::bordered());
 
     let instructions_with_errors: HashSet<_> = ctx
         .history
@@ -33,37 +33,41 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
         })
         .collect();
 
-    let basic_block = |title: &'static str| {
-        Block::default()
-            .borders(Borders::ALL)
+    let basic_block = |title: &'static str, selected: bool| {
+        Block::bordered()
             .padding(Padding::vertical(1))
             .title(title)
+            .style(if selected {
+                Style::default().fg(HIGHLIGHT_COLORS[1])
+            } else {
+                Style::default()
+            })
     };
 
-    let history_block = basic_block("History");
-    let history_view = make_history_view(history_block, ctx, &instructions_with_errors);
+    let instruction_block = basic_block("Instructions", state.active_pane == Pane::Instructions);
+    let instruction_view = make_instruction_view(instruction_block, ctx, &instructions_with_errors);
 
-    let event_block = basic_block("Events");
+    let event_block = basic_block("Events", false);
     let events = match state.active_instruction() {
-        HistorySelected::Instruction(i) => &ctx.history[i].events,
+        InstructionSelected::Instruction(i) => &ctx.history[i].events,
         _ => [].as_slice(),
     };
     let (event_view, addr_colors) = make_events_view(event_block, events);
 
-    // Render the main memory view.
-    let main_mem_block = basic_block("Address Memory");
-    let main_mem_view = match state.active_instruction() {
-        HistorySelected::Instruction(active_instruction) => {
+    // Render the addressable memory view.
+    let address_block = basic_block("Address Memory", state.active_pane == Pane::Addresses);
+    let address_view = match state.active_instruction() {
+        InstructionSelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
-            make_memory_view(main_mem_block, mem, addr_colors)
+            make_address_view(address_block, mem, addr_colors, ctx.address_size())
         }
-        _ => Table::new(Vec::<Row>::new(), Vec::<Constraint>::new()).block(main_mem_block),
+        _ => Table::new(Vec::<Row>::new(), Vec::<Constraint>::new()).block(address_block),
     };
 
-    // Render the stack view.
-    let stack_view_block = basic_block("Stack Memory");
+    // Render the stack memory view.
+    let stack_view_block = basic_block("Stack Memory", false);
     let stack_mem_view = match state.active_instruction() {
-        HistorySelected::Instruction(active_instruction) => {
+        InstructionSelected::Instruction(active_instruction) => {
             let mem = &ctx.history[active_instruction].mem;
             make_stack_view(stack_view_block, &mem.stack)
         }
@@ -71,10 +75,10 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     };
 
     let footer = Paragraph::new(Text::styled(
-        "Use up/down or left/right to scroll through the execution of your program",
-        Style::default().fg(Color::Green),
+        "Controls: Up/Down or Left/Right to scroll, Tab to change pane, Q/Esc to quit",
+        Style::default().fg(GREEN),
     ))
-    .block(Block::default().borders(Borders::ALL));
+    .block(Block::bordered());
 
     // Create areas for the widgets above to go into.
     let chunks = Layout::default()
@@ -91,7 +95,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let body_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
-            // Left half of body, for history/instructions.
+            // Left half of body, for instructions.
             Constraint::Percentage(50),
             // Right half of body, for memory.
             Constraint::Percentage(50),
@@ -109,17 +113,17 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
     let left_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            // Top left, for history
+            // Top left, for instructions.
             Constraint::Percentage(75),
-            // Bottom left, for events
+            // Bottom left, for events.
             Constraint::Percentage(25),
         ])
         .split(body_chunks[0]);
     // Put widgets into various areas.
-    f.render_stateful_widget(history_view, left_chunks[0], &mut state.instruction_table_state);
+    f.render_stateful_widget(instruction_view, left_chunks[0], &mut state.instruction_pane.table);
     f.render_widget(event_view, left_chunks[1]);
     f.render_widget(title, chunks[0]);
-    f.render_widget(main_mem_view, right_chunks[0]);
+    f.render_stateful_widget(address_view, right_chunks[0], &mut state.address_pane.table);
     f.render_widget(stack_mem_view, right_chunks[1]);
     f.render_widget(footer, chunks[2]);
 }
@@ -144,7 +148,17 @@ fn make_stack_view<'a>(block: Block<'a>, stack: &kittycad_execution_plan::Stack<
     .block(block)
 }
 
-const HIGHLIGHT_COLORS: [Color; 5] = [Color::Green, Color::Cyan, Color::Magenta, Color::Yellow, Color::Blue];
+const GREEN: Color = Color::from_u32(0x4ec9b0);
+const HIGHLIGHT_COLORS: [Color; 8] = [
+    Color::from_u32(0xc586c0),
+    GREEN,
+    Color::from_u32(0xffd602),
+    Color::from_u32(0x569CD6),
+    Color::from_u32(0x646695),
+    Color::from_u32(0x6A9955),
+    Color::from_u32(0xD16969),
+    Color::from_u32(0xDCDCAA),
+];
 
 fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashMap<Address, Color>) {
     let mut addr_colors = HashMap::new();
@@ -204,19 +218,15 @@ fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashM
     (tbl, addr_colors)
 }
 
-fn make_memory_view<'a>(
+fn make_address_view<'a>(
     block: Block<'a>,
     mem: &kittycad_execution_plan::Memory,
     // num_rows: usize,
     addr_colors: HashMap<Address, Color>,
+    num_rows: usize,
 ) -> Table<'a> {
     // After a certain address, all following addresses will be empty.
     // Only show addresses before that point.
-    let num_rows = (0..(mem.addresses.len()))
-        .rev()
-        .find(|addr| mem.get(&(Address::ZERO + *addr)).is_some())
-        .map(|x| x + 1)
-        .unwrap_or(mem.addresses.len());
     let rows = mem
         .addresses
         .iter()
@@ -246,13 +256,15 @@ fn make_memory_view<'a>(
     )
     .column_spacing(1)
     .header(Row::new(vec!["Address", "Value"]).style(Style::new().bold()))
+    .highlight_style(Style::new().reversed())
+    .highlight_symbol(">>")
     .block(block)
 }
 
-fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &HashSet<usize>) -> Table<'a> {
+fn make_instruction_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &HashSet<usize>) -> Table<'a> {
     let mut rows = Vec::with_capacity(ctx.plan.len() + 1);
     // Start row
-    rows.push(Row::new(vec![Cell::new("0"), Cell::new("Start")]).style(Style::default().fg(Color::Green)));
+    rows.push(Row::new(vec![Cell::new("0"), Cell::new("Start")]).style(Style::default().fg(GREEN)));
     // One row per executed instruction
     rows.extend(ctx.history.iter().enumerate().map(
         |(
@@ -320,20 +332,23 @@ fn make_history_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors: &H
 }
 
 /// Display the instruction type and the operands, in a human-readable, friendly way.
-fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
+fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static, str>, String) {
     match instruction {
-        Instruction::ApiRequest(_) => ("API request", "".to_owned()),
-        Instruction::SetPrimitive { address, value } => ("SetPrimitive", format!("Set addr {address} to {value:?}")),
+        Instruction::ApiRequest(req) => (format!("API {}", req.endpoint).into(), format!("{:?}", req.arguments)),
+        Instruction::SetPrimitive { address, value } => {
+            ("SetPrimitive".into(), format!("Set addr {address} to {value:?}"))
+        }
+        Instruction::Copy { source, destination } => ("Copy".into(), format!("From {source} to {destination}")),
         Instruction::SetValue { address, value_parts } => (
-            "SetValue",
+            "SetValue".into(),
             format!("Write {value_parts:?} starting at address {address}"),
         ),
         Instruction::AddrOfMember { start, member } => (
-            "AddrOfMember",
+            "AddrOfMember".into(),
             format!("Find member '{member:?}'\nof object at address {start:?}"),
         ),
         Instruction::SetList { start, elements } => (
-            "SetList",
+            "SetList234".into(),
             format!("Create list at {start:?}\nwith elements {elements:?}"),
         ),
         Instruction::BinaryArithmetic {
@@ -347,17 +362,20 @@ fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
             } = arithmetic;
             let arith_description = format!("{operand0:?} {operation} {operand1:?}");
             (
-                "BinaryArithmetic",
+                "BinaryArithmetic".into(),
                 format!("Set {destination:?}\nto {arith_description}"),
             )
         }
         Instruction::UnaryArithmetic {
             arithmetic,
             destination,
-        } => ("UnaryArithmetic", format!("Set {destination:?}\nto {arithmetic:?}")),
-        Instruction::StackPush { data } => ("StackPush", format!("{data:?}")),
+        } => (
+            "UnaryArithmetic".into(),
+            format!("Set {destination:?}\nto {arithmetic:?}"),
+        ),
+        Instruction::StackPush { data } => ("StackPush".into(), format!("{data:?}")),
         Instruction::StackPop { destination } => (
-            "StackPop",
+            "StackPop".into(),
             match destination {
                 Some(dst) => format!("Into: {dst:?}"),
                 None => "Discard".to_owned(),
@@ -366,6 +384,9 @@ fn describe_instruction(instruction: &Instruction) -> (&'static str, String) {
         Instruction::CopyLen {
             source_range,
             destination_range,
-        } => ("Copy", format!("copy from {source_range:?} to {destination_range:?}")),
+        } => (
+            "Copy".into(),
+            format!("copy from {source_range:?} to {destination_range:?}"),
+        ),
     }
 }

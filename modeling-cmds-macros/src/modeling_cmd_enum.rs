@@ -35,7 +35,11 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
                             return None;
                         }
                         // Extract the attribute's value (the docstring's contents).
-                        let syn::Expr::Lit(syn::ExprLit{lit: syn::Lit::Str(value), ..}) = value else {
+                        let syn::Expr::Lit(syn::ExprLit {
+                            lit: syn::Lit::Str(value),
+                            ..
+                        }) = value
+                        else {
                             return None;
                         };
                         let doc = value.value().trim().to_owned();
@@ -43,7 +47,8 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
                     }
                     _ => None,
                 })
-                .collect::<Vec<_>>().join("\n");
+                .collect::<Vec<_>>()
+                .join("\n");
             Some((&item.ident, doc))
         })
         .unzip();
@@ -56,8 +61,24 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
         /// Commands that the KittyCAD engine can execute.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
         #[serde(rename_all = "snake_case", tag = "type")]
-        pub enum ModelingCmd {
-            #(#[doc = #docs] #variants(kittycad_modeling_cmds::each_cmd::#variants),)*
+        pub enum ModelingCmd {#(
+            #[doc = #docs]
+            #variants(kittycad_modeling_cmds::each_cmd::#variants),
+        )*}
+        /// Each modeling command (no parameters or fields).
+        #[derive(Serialize, Deserialize, Debug, PartialEq, Clone, ::parse_display::Display)]
+        pub enum ModelingCmdEndpoint{#(
+            #[doc = #docs]
+            #variants,
+        )*}
+        /// You can easily convert each modeling command with its fields,
+        /// into a modeling command without fields.
+        impl From<ModelingCmd> for ModelingCmdEndpoint {
+            fn from(v: ModelingCmd) -> Self {
+                match v {#(
+                    ModelingCmd::#variants(_) => Self::#variants,
+                )*}
+            }
         }
     }
 }

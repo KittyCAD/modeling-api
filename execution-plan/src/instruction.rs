@@ -81,6 +81,13 @@ pub enum Instruction {
         /// If None, the value won't be stored anywhere.
         destination: Option<Address>,
     },
+    /// Copy from one address to the other.
+    Copy {
+        /// Copy from here.
+        source: Address,
+        /// Copy to here.
+        destination: Address,
+    },
     /// Copy data from a range of addresses, into another range of addresses.
     /// The first address in the source range is the length (how many addresses to copy).
     /// If that address contains a uint, that uint is the length.
@@ -106,13 +113,33 @@ impl Instruction {
         match self {
             Instruction::ApiRequest(req) => {
                 if let Some(session) = session {
-                    req.execute(session, mem).await?;
+                    req.execute(session, mem, events).await?;
                 } else {
                     return Err(ExecutionError::NoApiClient);
                 }
             }
             Instruction::SetPrimitive { address, value } => {
                 mem.set(address, value);
+            }
+            Instruction::Copy { source, destination } => {
+                // Read the value
+                events.push(Event {
+                    text: "Reading value".to_owned(),
+                    severity: Severity::Debug,
+                    related_address: Some(source),
+                });
+                let value = mem
+                    .get(&source)
+                    .cloned()
+                    .ok_or(ExecutionError::MemoryEmpty { addr: source })?;
+
+                // Write the value
+                events.push(Event {
+                    text: "Writing value".to_owned(),
+                    severity: Severity::Debug,
+                    related_address: Some(destination),
+                });
+                mem.set(destination, value);
             }
             Instruction::SetValue { address, value_parts } => {
                 value_parts.into_iter().enumerate().for_each(|(i, part)| {

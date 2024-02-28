@@ -4,7 +4,7 @@ use syn::{spanned::Spanned, DeriveInput, Fields, FieldsNamed};
 
 use crate::helpers::remove_generics_defaults;
 
-pub(crate) fn impl_derive_from_memory(input: DeriveInput) -> TokenStream2 {
+pub(crate) fn impl_derive_from_memory(input: DeriveInput, root: &TokenStream2) -> TokenStream2 {
     // Where in the input source code is this type defined?
     let span = input.span();
     // Name of type that is deriving Value
@@ -13,9 +13,9 @@ pub(crate) fn impl_derive_from_memory(input: DeriveInput) -> TokenStream2 {
     let generics = input.generics;
     match input.data {
         syn::Data::Struct(data) => match data.fields {
-            Fields::Named(expr) => impl_on_struct_named_fields(span, name, expr, generics),
+            Fields::Named(expr) => impl_on_struct_named_fields(span, name, expr, generics, root),
             Fields::Unnamed(_) => todo!(),
-            Fields::Unit => impl_on_struct_no_fields(span, name, generics),
+            Fields::Unit => impl_on_struct_no_fields(span, name, generics, root),
         },
         _ => quote_spanned! {span =>
             compile_error!("Value cannot be implemented on an enum or union type")
@@ -23,7 +23,12 @@ pub(crate) fn impl_derive_from_memory(input: DeriveInput) -> TokenStream2 {
     }
 }
 
-fn impl_on_struct_no_fields(span: Span, name: proc_macro2::Ident, generics: syn::Generics) -> TokenStream2 {
+fn impl_on_struct_no_fields(
+    span: Span,
+    name: proc_macro2::Ident,
+    generics: syn::Generics,
+    root: &TokenStream2,
+) -> TokenStream2 {
     // Handle generics in the original struct.
     // Firstly, if the original struct has defaults on its generics, e.g. Point2d<T = f32>,
     // don't include those defaults in this macro's output, because the compiler
@@ -34,13 +39,13 @@ fn impl_on_struct_no_fields(span: Span, name: proc_macro2::Ident, generics: syn:
     // Final return value: the generated Rust code to implement the trait.
     // This uses the fragments above, interpolating them into the final outputted code.
     quote_spanned! {span=>
-        impl #generics_without_defaults ::kittycad_execution_plan_traits::FromMemory for #name #generics_without_defaults
+        impl #generics_without_defaults #root::FromMemory for #name #generics_without_defaults
         #where_clause
         {
-            fn from_memory<I, M>(_fields: &mut I, _mem: &M) -> Result<Self, ::kittycad_execution_plan_traits::MemoryError>
+            fn from_memory<I, M>(_fields: &mut I, _mem: &mut M) -> Result<Self, #root::MemoryError>
             where
-                M: ::kittycad_execution_plan_traits::ReadMemory,
-                I: Iterator<Item = ::kittycad_execution_plan_traits::Address>
+                M: #root::ReadMemory,
+                I: Iterator<Item = #root::InMemory>
             {
 
                 Ok(Self {})
@@ -54,6 +59,7 @@ fn impl_on_struct_named_fields(
     name: proc_macro2::Ident,
     fields: FieldsNamed,
     generics: syn::Generics,
+    root: &TokenStream2,
 ) -> TokenStream2 {
     // We're going to construct some fragments of Rust source code, which will get used in the
     // final generated code this function returns.
@@ -76,8 +82,18 @@ fn impl_on_struct_named_fields(
     let read_each_field = field_names.iter().map(|(ident, span)| {
         quote_spanned! {*span=>
             let #ident = fields.next()
-                .ok_or(::kittycad_execution_plan_traits::MemoryError::MemoryWrongSize)
-                .and_then(|a| mem.get_composite(a))?;
+                .ok_or(#root::MemoryError::MemoryWrongSize)
+                .and_then(|a| match a {
+                    #root::InMemory::Address(a) => mem.get_composite(a),
+                    #root::InMemory::StackPop => {
+                        let data = mem.stack_pop()?;
+                        #root::Value::from_parts(&mut data.iter().cloned().map(Some))
+                    }
+                    #root::InMemory::StackPeek => {
+                        let data = mem.stack_pop()?;
+                        #root::Value::from_parts(&mut data.iter().cloned().map(Some))
+                      }
+                })?;
         }
     });
     let instantiate_each_field = field_names.iter().map(|(ident, span)| {
@@ -96,13 +112,13 @@ fn impl_on_struct_named_fields(
     // Final return value: the generated Rust code to implement the trait.
     // This uses the fragments above, interpolating them into the final outputted code.
     quote_spanned! {span=>
-        impl #generics_without_defaults ::kittycad_execution_plan_traits::FromMemory for #name #generics_without_defaults
+        impl #generics_without_defaults #root::FromMemory for #name #generics_without_defaults
         #where_clause
         {
-            fn from_memory<I, M>(fields: &mut I, mem: &M) -> Result<Self, ::kittycad_execution_plan_traits::MemoryError>
+            fn from_memory<I, M>(fields: &mut I, mem: &mut M) -> Result<Self, #root::MemoryError>
             where
-                M: ::kittycad_execution_plan_traits::ReadMemory,
-                I: Iterator<Item = ::kittycad_execution_plan_traits::Address>
+                M: #root::ReadMemory,
+                I: Iterator<Item = #root::InMemory>
             {
                 #(#read_each_field)*
                 Ok(Self {

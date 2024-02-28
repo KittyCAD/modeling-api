@@ -8,18 +8,19 @@
 
 use events::{Event, EventWriter};
 use kittycad_execution_plan_traits::Address;
-use kittycad_execution_plan_traits::{FromMemory, MemoryError, Primitive, ReadMemory};
-use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId};
+use kittycad_execution_plan_traits::{MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, Stack, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
 
+use self::api_request::ApiRequest;
 pub use self::arithmetic::{
     operator::{BinaryOperation, Operation, UnaryOperation},
     BinaryArithmetic, UnaryArithmetic,
 };
 pub use self::instruction::Instruction;
 
+pub mod api_request;
 mod arithmetic;
 pub mod events;
 mod instruction;
@@ -34,80 +35,6 @@ pub enum Destination {
     Address(Address),
     /// Push onto the stack.
     StackPush,
-}
-
-/// Request sent to the KittyCAD API.
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-pub struct ApiRequest {
-    /// Which ModelingCmd to call.
-    pub endpoint: Endpoint,
-    /// Which address should the response be stored in?
-    /// If none, the response will be ignored.
-    pub store_response: Option<Address>,
-    /// Look up each parameter at this address.
-    pub arguments: Vec<Address>,
-    /// The ID of this command.
-    pub cmd_id: ModelingCmdId,
-}
-
-/// A KittyCAD modeling command.
-#[derive(Serialize, Deserialize, parse_display_derive::Display, Debug, PartialEq, Clone, Copy)]
-pub enum Endpoint {
-    #[allow(missing_docs)]
-    StartPath,
-    #[allow(missing_docs)]
-    MovePathPen,
-    #[allow(missing_docs)]
-    ExtendPath,
-    #[allow(missing_docs)]
-    ClosePath,
-    #[allow(missing_docs)]
-    Extrude,
-    #[allow(missing_docs)]
-    TakeSnapshot,
-}
-
-impl ApiRequest {
-    async fn execute(self, session: &mut ModelingSession, mem: &mut Memory) -> Result<()> {
-        let Self {
-            endpoint,
-            store_response,
-            arguments,
-            cmd_id,
-        } = self;
-        let mut arguments = arguments.into_iter();
-        let output = match endpoint {
-            Endpoint::StartPath => {
-                let cmd = each_cmd::StartPath::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-            Endpoint::MovePathPen => {
-                let cmd = each_cmd::MovePathPen::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-            Endpoint::ExtendPath => {
-                let cmd = each_cmd::ExtendPath::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-            Endpoint::ClosePath => {
-                let cmd = each_cmd::ClosePath::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-            Endpoint::Extrude => {
-                let cmd = each_cmd::Extrude::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-            Endpoint::TakeSnapshot => {
-                let cmd = each_cmd::TakeSnapshot::from_memory(&mut arguments, mem)?;
-                session.run_command(cmd_id, cmd).await?
-            }
-        };
-        // Write out to memory.
-        if let Some(output_address) = store_response {
-            mem.set_composite(output_address, output);
-        }
-        Ok(())
-    }
 }
 
 /// Argument to an operation.
@@ -197,13 +124,6 @@ type Result<T> = std::result::Result<T, ExecutionError>;
 /// Errors that could occur when executing a KittyCAD execution plan.
 #[derive(Debug, thiserror::Error)]
 pub enum ExecutionError {
-    /// Stack should have contained a single primitive but it had a composite value instead.
-    #[error("Expected stack to contain a single primitive, but it had a slice of length {actual_length}")]
-    StackNotPrimitive {
-        /// The actual size of the data that was popped off the stack
-        /// Expected to be 1, but it was something else.
-        actual_length: usize,
-    },
     /// Memory address was not set.
     #[error("Memory address {addr} was not set")]
     MemoryEmpty {
@@ -238,9 +158,6 @@ pub enum ExecutionError {
         /// Index which user attempted to access.
         index: usize,
     },
-    /// Tried to pop from empty stack.
-    #[error("tried to pop from empty stack")]
-    StackEmpty,
     /// Could not make API call because no KittyCAD API client was provided
     #[error("could not make API call because no KittyCAD API client was provided")]
     NoApiClient,

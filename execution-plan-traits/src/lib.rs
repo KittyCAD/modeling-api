@@ -3,6 +3,8 @@
 pub use self::address::Address;
 pub use self::primitive::{ListHeader, NumericPrimitive, ObjectHeader, Primitive};
 
+use serde::{Deserialize, Serialize};
+
 mod address;
 mod containers;
 #[macro_use]
@@ -24,10 +26,27 @@ pub trait Value: Sized {
 /// scattered across multiple places in the address space.
 pub trait FromMemory: Sized {
     /// Read this type from memory, getting each field of the type from a different memory address.
-    fn from_memory<I, M>(fields: &mut I, mem: &M) -> Result<Self, MemoryError>
+    fn from_memory<I, M>(fields: &mut I, mem: &mut M) -> Result<Self, MemoryError>
     where
         M: ReadMemory,
-        I: Iterator<Item = Address>;
+        I: Iterator<Item = InMemory>;
+}
+
+/// Where in memory a value is.
+#[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash, Debug)]
+pub enum InMemory {
+    /// At the given address.
+    Address(Address),
+    /// Top of stack. Pop the value after it's read.
+    StackPop,
+    /// Top of stack. Leave the value there after it's read.
+    StackPeek,
+}
+
+impl From<Address> for InMemory {
+    fn from(a: Address) -> Self {
+        Self::Address(a)
+    }
 }
 
 /// Memory that a KittyCAD Execution Plan can read from.
@@ -35,15 +54,18 @@ pub trait ReadMemory {
     /// Get a value from the given address.
     fn get(&self, addr: &Address) -> Option<&Primitive>;
     /// Get a value from the given starting address. Value might require multiple addresses.
-    fn get_composite<T: Value>(&self, start: Address) -> std::result::Result<T, MemoryError>;
+    fn get_composite<T: Value>(&self, start: Address) -> Result<T, MemoryError>;
+    /// Remove the value on top of the stack, return it.
+    fn stack_pop(&mut self) -> Result<Vec<Primitive>, MemoryError>;
+    /// Return the value on top of the stack.
+    fn stack_peek(&self) -> Result<&Vec<Primitive>, MemoryError>;
 }
 
 /// Errors that could occur when reading a type from KittyCAD Execution Plan program memory.
-#[derive(Debug, thiserror::Error, Default)]
+#[derive(Debug, thiserror::Error)]
 pub enum MemoryError {
     /// Something went wrong
-    #[error("Something went wrong")]
-    #[default]
+    #[error("Memory was wrong size")]
     MemoryWrongSize,
     /// Type error, memory contained the wrong type.
     #[error("Tried to read a '{expected}' from KCEP program memory, found an '{actual}' instead")]
@@ -60,6 +82,16 @@ pub enum MemoryError {
         expected_type: String,
         /// The actual enum tag found in memory.
         actual: String,
+    },
+    /// Stack is empty
+    #[error("Stack is empty")]
+    StackEmpty,
+    /// Stack should have contained a single primitive but it had a composite value instead.
+    #[error("Expected stack to contain a single primitive, but it had a slice of length {actual_length}")]
+    StackNotPrimitive {
+        /// The actual size of the data that was popped off the stack
+        /// Expected to be 1, but it was something else.
+        actual_length: usize,
     },
 }
 
