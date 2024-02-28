@@ -68,6 +68,16 @@ jobs:
           - name: cargo fmt
             run: cargo fmt
 
+    can-release:
+        name: Check modeling-cmds can release
+        runs-on: ubuntu-latest-8-cores
+        steps:
+          - uses: actions/checkout@v4
+          - name: Install Rust
+            uses: dtolnay/rust-toolchain@stable
+          - name: Dry-run a release of modeling-cmds
+            run: cargo publish -p kittycad-modeling-cmds --dry-run
+
     check-typos:
       runs-on: ubuntu-latest
       steps:
