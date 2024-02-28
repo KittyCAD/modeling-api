@@ -223,6 +223,9 @@ define_ok_modeling_cmd_response_enum! {
         /// Surface-local planar axes (if available)
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
         pub struct FaceIsPlanar {
+            /// plane's origin
+            pub origin: Option<Point3d<f64>>,
+
             /// plane's local x-axis
             pub x_axis: Option<Point3d<f64>>,
 
