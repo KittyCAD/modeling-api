@@ -378,6 +378,7 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
             format!("Set {destination:?}\nto {arithmetic:?}"),
         ),
         Instruction::StackPush { data } => ("StackPush".into(), format!("{data:?}")),
+        Instruction::StackExtend { data } => ("StackExtend".into(), format!("{data:?}")),
         Instruction::StackPop { destination } => (
             "StackPop".into(),
             match destination {
