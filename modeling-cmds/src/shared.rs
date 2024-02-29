@@ -182,6 +182,17 @@ where
     pub z: T,
 }
 
+impl<T> Point3d<T>
+where
+    kcep::Primitive: From<T>,
+    T: kcep::Value,
+{
+    /// Add the given `z` component to a 2D point to produce a 3D point.
+    pub fn from_2d(Point2d { x, y }: Point2d<T>, z: T) -> Self {
+        Self { x, y, z }
+    }
+}
+
 /// Annotation line end type
 #[allow(missing_docs)]
 #[derive(
@@ -364,6 +375,18 @@ where
     pub x: T,
     #[allow(missing_docs)]
     pub y: T,
+}
+
+impl<T> Point2d<T>
+where
+    kcep::Primitive: From<T>,
+    T: kcep::Value,
+{
+    /// Add the given `z` component to a 2D point to produce a 3D point.
+    pub fn with_z(self, z: T) -> Point3d<T> {
+        let Self { x, y } = self;
+        Point3d { x, y, z }
+    }
 }
 
 /// An angle, with a specific unit.
