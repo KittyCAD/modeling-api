@@ -40,18 +40,18 @@ impl ApiRequest {
         events.push(Event {
             text: "Reading parameters".to_owned(),
             severity: Severity::Debug,
-            related_address: Default::default(),
+            related_addresses: Default::default(),
         });
         let mut log_req = || {
             events.push(Event {
                 text: "Parameters read".to_owned(),
                 severity: Severity::Debug,
-                related_address: Default::default(),
+                related_addresses: Default::default(),
             });
             events.push(Event {
                 text: "Sending request".to_owned(),
                 severity: Severity::Info,
-                related_address: Default::default(),
+                related_addresses: Default::default(),
             });
         };
         let output = match endpoint {
@@ -107,7 +107,7 @@ impl ApiRequest {
             events.push(Event {
                 text: "Storing response".to_owned(),
                 severity: Severity::Info,
-                related_address: Some(output_address),
+                related_addresses: vec![output_address],
             });
             mem.set_composite(output_address, output);
         }

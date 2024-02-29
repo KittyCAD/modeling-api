@@ -101,7 +101,7 @@ pub async fn execute_time_travel(
             events.push(Event {
                 text: e.to_string(),
                 severity: events::Severity::Error,
-                related_address: None,
+                related_addresses: Vec::new(),
             });
             crashed = true;
         }

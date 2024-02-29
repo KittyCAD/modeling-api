@@ -132,7 +132,7 @@ impl Instruction {
                 events.push(Event {
                     text: "Reading value".to_owned(),
                     severity: Severity::Debug,
-                    related_address: Some(source),
+                    related_addresses: vec![source],
                 });
                 let value = mem
                     .get(&source)
@@ -143,7 +143,7 @@ impl Instruction {
                 events.push(Event {
                     text: "Writing value".to_owned(),
                     severity: Severity::Debug,
-                    related_address: Some(destination),
+                    related_addresses: vec![destination],
                 });
                 mem.set(destination, value);
             }
@@ -162,7 +162,7 @@ impl Instruction {
                         events.push(Event {
                             text: format!("Writing output to address {addr}"),
                             severity: crate::events::Severity::Info,
-                            related_address: Some(addr),
+                            related_addresses: vec![addr],
                         });
                         mem.set(addr, out);
                     }
@@ -212,14 +212,14 @@ impl Instruction {
                 events.push(Event {
                     text: format!("Property is '{member_primitive:?}'"),
                     severity: Severity::Debug,
-                    related_address: None,
+                    related_addresses: Vec::new(),
                 });
 
                 // Read the structure.
                 events.push(Event {
                     text: format!("Resolving start address {start:?}"),
                     severity: Severity::Debug,
-                    related_address: None,
+                    related_addresses: Vec::new(),
                 });
                 let start_address = match start {
                     Operand::Literal(Primitive::Address(a)) => a,
@@ -238,7 +238,7 @@ impl Instruction {
                 events.push(Event {
                     text: "Resolved start address".to_owned(),
                     severity: Severity::Debug,
-                    related_address: Some(start_address),
+                    related_addresses: vec![start_address],
                 });
                 let structure = mem
                     .get(&start_address)
@@ -256,7 +256,7 @@ impl Instruction {
                                 events.push(Event {
                                     text: format!("Property is index {i}"),
                                     severity: Severity::Info,
-                                    related_address: None,
+                                    related_addresses: Vec::new(),
                                 });
                                 (i, i.to_string())
                             } else {
@@ -269,7 +269,7 @@ impl Instruction {
                                 events.push(Event {
                                     text: format!("Property is index {i}"),
                                     severity: Severity::Info,
-                                    related_address: None,
+                                    related_addresses: Vec::new(),
                                 });
                                 (i, i.to_string())
                             } else {
@@ -291,7 +291,7 @@ impl Instruction {
                                 events.push(Event {
                                     text: format!("Property is index {i}"),
                                     severity: Severity::Info,
-                                    related_address: None,
+                                    related_addresses: Vec::new(),
                                 });
                                 (i, s.clone())
                             } else {
@@ -335,7 +335,7 @@ impl Instruction {
                 events.push(Event {
                     text: format!("Member '{member_display}' begins at addr {curr}"),
                     severity: crate::events::Severity::Info,
-                    related_address: Some(curr),
+                    related_addresses: vec![curr],
                 });
                 // Push the member onto the stack.
                 // This first address will be its length.
