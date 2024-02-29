@@ -433,6 +433,70 @@ async fn copy_len() {
 }
 
 #[tokio::test]
+async fn copy_onto_addresses() {
+    let mut mem = Memory::default();
+    execute(
+        &mut mem,
+        vec![
+            Instruction::SetPrimitive {
+                address: Address::ZERO + 3,
+                value: 1.0.into(),
+            },
+            Instruction::SetPrimitive {
+                address: Address::ZERO + 4,
+                value: 2.0.into(),
+            },
+            Instruction::SetPrimitive {
+                address: Address::ZERO + 5,
+                value: 3.0.into(),
+            },
+            Instruction::Copy {
+                source: Address::ZERO + 4,
+                length: 2,
+                destination: Destination::Address(Address::ZERO + 10),
+            },
+        ],
+        None,
+    )
+    .await
+    .unwrap();
+    assert_eq!(
+        mem.get_slice(Address::ZERO + 10, 2).unwrap(),
+        vec![2.0.into(), 3.0.into()]
+    );
+}
+#[tokio::test]
+async fn copy_onto_stack() {
+    let mut mem = Memory::default();
+    execute(
+        &mut mem,
+        vec![
+            Instruction::SetPrimitive {
+                address: Address::ZERO + 3,
+                value: 1.0.into(),
+            },
+            Instruction::SetPrimitive {
+                address: Address::ZERO + 4,
+                value: 2.0.into(),
+            },
+            Instruction::SetPrimitive {
+                address: Address::ZERO + 5,
+                value: 3.0.into(),
+            },
+            Instruction::Copy {
+                source: Address::ZERO + 4,
+                length: 2,
+                destination: Destination::StackPush,
+            },
+        ],
+        None,
+    )
+    .await
+    .unwrap();
+    assert_eq!(mem.stack.pop().unwrap(), vec![2.0.into(), 3.0.into()]);
+}
+
+#[tokio::test]
 async fn stack_extend() {
     let mut mem = Memory::default();
     execute(

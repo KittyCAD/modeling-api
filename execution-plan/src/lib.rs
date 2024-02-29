@@ -37,6 +37,15 @@ pub enum Destination {
     StackPush,
 }
 
+impl std::fmt::Display for Destination {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Destination::Address(a) => a.fmt(f),
+            Destination::StackPush => "Stack".fmt(f),
+        }
+    }
+}
+
 /// Argument to an operation.
 #[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub enum Operand {
