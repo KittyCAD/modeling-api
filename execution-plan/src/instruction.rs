@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     events::{Event, EventWriter, Severity},
-    Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, Memory, Operand, Result, UnaryArithmetic,
+    Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, FsRequest, Memory, Operand, Result, UnaryArithmetic,
 };
 
 /// One step of the execution plan.
@@ -11,6 +11,8 @@ use crate::{
 pub enum Instruction {
     /// Call the KittyCAD API.
     ApiRequest(ApiRequest),
+    /// Execute a file-system command.
+    FsRequest(FsRequest),
     /// Set a primitive to a memory address.
     SetPrimitive {
         /// Which memory address to set.
@@ -117,6 +119,9 @@ impl Instruction {
                 } else {
                     return Err(ExecutionError::NoApiClient);
                 }
+            }
+            Instruction::FsRequest(cmd) => {
+                cmd.execute(mem, events).await?;
             }
             Instruction::SetPrimitive { address, value } => {
                 mem.set(address, value);

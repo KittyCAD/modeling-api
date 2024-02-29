@@ -14,6 +14,7 @@ pub use memory::{Memory, Stack, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
 
 use self::api_request::ApiRequest;
+use self::fs_request::FsRequest;
 pub use self::arithmetic::{
     operator::{BinaryOperation, Operation, UnaryOperation},
     BinaryArithmetic, UnaryArithmetic,
@@ -21,6 +22,7 @@ pub use self::arithmetic::{
 pub use self::instruction::Instruction;
 
 pub mod api_request;
+pub mod fs_request;
 mod arithmetic;
 pub mod events;
 mod instruction;

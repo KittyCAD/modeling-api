@@ -34,6 +34,48 @@ impl Address {
         self.0 += size;
         old
     }
+
+    /// Returns an iterator to safely get the next available address.
+    /// Mutates self so subsequent calls to allocate() move the
+    /// "address counter" forward.
+    pub fn allocate(&mut self, n: usize) -> AddressIterator {
+      self.0 += n;
+      AddressIterator::new(self.0, self.0 + n, 1)
+    }
+}
+
+pub struct AddressIterator {
+  pos: usize,
+  end: usize,
+  step: usize
+}
+
+impl AddressIterator {
+  pub fn new(start: usize, end: usize, step: usize) -> Self {
+    if end > start {
+      panic!("end must not be further than start position");
+    }
+
+    if (step + start) > end {
+      panic!("step will exceed the end bounds");
+    }
+
+    AddressIterator { pos: start, end, step }
+  }
+}
+
+impl Iterator for AddressIterator {
+  type Item = Address;
+
+  fn next(&mut self) -> Option<Self::Item> {
+    if self.pos >= self.end {
+      None
+    } else {
+      let retval = self.pos;
+      self.pos += self.step;
+      Some(Address(retval))
+    }
+  }
 }
 
 /// Offset the address.
