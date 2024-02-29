@@ -81,6 +81,12 @@ pub enum Instruction {
         /// If None, the value won't be stored anywhere.
         destination: Option<Address>,
     },
+    /// Add the given primitives to whatever is on top of the stack.
+    /// If the stack is empty, runtime error.
+    StackExtend {
+        /// Extend whatever is on top of the stack with this new data.
+        data: Vec<Primitive>,
+    },
     /// Copy from one address to the other.
     Copy {
         /// Copy from here.
@@ -338,6 +344,11 @@ impl Instruction {
             }
             Instruction::StackPush { data } => {
                 mem.stack.push(data);
+            }
+            Instruction::StackExtend { data } => {
+                let mut prev = mem.stack.pop()?;
+                prev.extend(data);
+                mem.stack.push(prev);
             }
             Instruction::StackPop { destination } => {
                 let data = mem.stack.pop()?;

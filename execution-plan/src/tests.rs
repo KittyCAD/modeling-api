@@ -433,6 +433,26 @@ async fn copy_len() {
 }
 
 #[tokio::test]
+async fn stack_extend() {
+    let mut mem = Memory::default();
+    execute(
+        &mut mem,
+        vec![
+            Instruction::StackPush {
+                data: vec![Primitive::Nil],
+            },
+            Instruction::StackExtend {
+                data: vec![Primitive::Bool(true)],
+            },
+        ],
+        None,
+    )
+    .await
+    .unwrap();
+    assert_eq!(mem.stack.pop().unwrap(), vec![Primitive::Nil, Primitive::Bool(true)]);
+}
+
+#[tokio::test]
 async fn get_key_of_object() {
     let point_4d = Point4d {
         x: 20.0f64,
