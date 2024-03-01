@@ -20,6 +20,7 @@ impl Context {
             .filter_map(|hist| hist.mem.last_nonempty_address())
             .max()
             .unwrap_or_default()
+            + 1
     }
 }
 
@@ -137,26 +138,28 @@ fn main_loop(
     if crossterm::event::poll(REFRESH_RATE)? {
         if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
             if key.kind == crossterm::event::KeyEventKind::Press {
-                match KeyPress::try_from(key.code) {
-                    Ok(KeyPress::PaneNext) => state.active_pane = state.active_pane.next(),
-                    Ok(KeyPress::Backwards) => match state.active_pane {
+                let Some(event) = KeyPress::new(key) else {
+                    return Ok(ControlFlow::Continue(()));
+                };
+                match event {
+                    KeyPress::PaneNext => state.active_pane = state.active_pane.next(),
+                    KeyPress::Backwards => match state.active_pane {
                         Pane::Instructions => state.instruction_pane.back(),
                         Pane::Addresses => state.address_pane.back(),
                     },
-                    Ok(KeyPress::Start) => match state.active_pane {
+                    KeyPress::Start => match state.active_pane {
                         Pane::Instructions => state.instruction_pane.start(),
                         Pane::Addresses => state.address_pane.start(),
                     },
-                    Ok(KeyPress::End) => match state.active_pane {
+                    KeyPress::End => match state.active_pane {
                         Pane::Instructions => state.instruction_pane.end(),
                         Pane::Addresses => state.address_pane.end(),
                     },
-                    Ok(KeyPress::Forwards) => match state.active_pane {
+                    KeyPress::Forwards => match state.active_pane {
                         Pane::Instructions => state.instruction_pane.forwards(),
                         Pane::Addresses => state.address_pane.forwards(),
                     },
-                    Ok(KeyPress::Quit) => return Ok(ControlFlow::Break(())),
-                    Err(()) => {}
+                    KeyPress::Quit => return Ok(ControlFlow::Break(())),
                 }
             }
         }
@@ -173,21 +176,20 @@ enum KeyPress {
     PaneNext,
 }
 
-impl TryFrom<crossterm::event::KeyCode> for KeyPress {
-    type Error = ();
-
-    fn try_from(value: crossterm::event::KeyCode) -> Result<Self, Self::Error> {
+impl KeyPress {
+    pub fn new(event: crossterm::event::KeyEvent) -> Option<Self> {
         use crossterm::event::KeyCode;
         use crossterm::event::KeyCode::Char;
-        let key = match value {
+        let key = match event.code {
             Char('a' | 'h' | 'w' | 'k') | KeyCode::Up | KeyCode::Left => Self::Backwards,
             Char('d' | 'l' | 's' | 'j') | KeyCode::Down | KeyCode::Right => Self::Forwards,
             Char('q') | KeyCode::Esc => Self::Quit,
-            Char('G') | KeyCode::End => Self::End,
+            Char('G') | KeyCode::End | Char('$') => Self::End,
+            Char('^') => Self::Start,
             KeyCode::Tab => Self::PaneNext,
             KeyCode::Home => Self::Start,
-            _ => return Err(()),
+            _ => return None,
         };
-        Ok(key)
+        Some(key)
     }
 }

@@ -81,12 +81,20 @@ pub enum Instruction {
         /// If None, the value won't be stored anywhere.
         destination: Option<Address>,
     },
+    /// Add the given primitives to whatever is on top of the stack.
+    /// If the stack is empty, runtime error.
+    StackExtend {
+        /// Extend whatever is on top of the stack with this new data.
+        data: Vec<Primitive>,
+    },
     /// Copy from one address to the other.
     Copy {
         /// Copy from here.
         source: Address,
+        /// How many addresses to copy.
+        length: usize,
         /// Copy to here.
-        destination: Address,
+        destination: Destination,
     },
     /// Copy data from a range of addresses, into another range of addresses.
     /// The first address in the source range is the length (how many addresses to copy).
@@ -121,25 +129,38 @@ impl Instruction {
             Instruction::SetPrimitive { address, value } => {
                 mem.set(address, value);
             }
-            Instruction::Copy { source, destination } => {
+            Instruction::Copy {
+                source,
+                length,
+                destination,
+            } => {
+                let sources: Vec<_> = (0..length).map(|i| source + i).collect();
                 // Read the value
                 events.push(Event {
                     text: "Reading value".to_owned(),
                     severity: Severity::Debug,
-                    related_address: Some(source),
+                    related_addresses: sources.clone(),
                 });
-                let value = mem
-                    .get(&source)
-                    .cloned()
-                    .ok_or(ExecutionError::MemoryEmpty { addr: source })?;
 
-                // Write the value
-                events.push(Event {
-                    text: "Writing value".to_owned(),
-                    severity: Severity::Debug,
-                    related_address: Some(destination),
-                });
-                mem.set(destination, value);
+                let data = sources
+                    .iter()
+                    .map(|i| mem.get(i).cloned().ok_or(ExecutionError::MemoryEmpty { addr: source }))
+                    .collect::<Result<Vec<_>>>()?;
+                match destination {
+                    Destination::Address(dst) => {
+                        events.push(Event {
+                            text: "Writing value".to_owned(),
+                            severity: Severity::Debug,
+                            related_addresses: (0..length).map(|i| dst + i).collect(),
+                        });
+                        for (i, v) in data.into_iter().enumerate() {
+                            mem.set(dst + i, v);
+                        }
+                    }
+                    Destination::StackPush => {
+                        mem.stack.push(data);
+                    }
+                }
             }
             Instruction::SetValue { address, value_parts } => {
                 value_parts.into_iter().enumerate().for_each(|(i, part)| {
@@ -156,7 +177,7 @@ impl Instruction {
                         events.push(Event {
                             text: format!("Writing output to address {addr}"),
                             severity: crate::events::Severity::Info,
-                            related_address: Some(addr),
+                            related_addresses: vec![addr],
                         });
                         mem.set(addr, out);
                     }
@@ -206,14 +227,14 @@ impl Instruction {
                 events.push(Event {
                     text: format!("Property is '{member_primitive:?}'"),
                     severity: Severity::Debug,
-                    related_address: None,
+                    related_addresses: Vec::new(),
                 });
 
                 // Read the structure.
                 events.push(Event {
                     text: format!("Resolving start address {start:?}"),
                     severity: Severity::Debug,
-                    related_address: None,
+                    related_addresses: Vec::new(),
                 });
                 let start_address = match start {
                     Operand::Literal(Primitive::Address(a)) => a,
@@ -232,7 +253,7 @@ impl Instruction {
                 events.push(Event {
                     text: "Resolved start address".to_owned(),
                     severity: Severity::Debug,
-                    related_address: Some(start_address),
+                    related_addresses: vec![start_address],
                 });
                 let structure = mem
                     .get(&start_address)
@@ -250,7 +271,7 @@ impl Instruction {
                                 events.push(Event {
                                     text: format!("Property is index {i}"),
                                     severity: Severity::Info,
-                                    related_address: None,
+                                    related_addresses: Vec::new(),
                                 });
                                 (i, i.to_string())
                             } else {
@@ -263,7 +284,7 @@ impl Instruction {
                                 events.push(Event {
                                     text: format!("Property is index {i}"),
                                     severity: Severity::Info,
-                                    related_address: None,
+                                    related_addresses: Vec::new(),
                                 });
                                 (i, i.to_string())
                             } else {
@@ -285,7 +306,7 @@ impl Instruction {
                                 events.push(Event {
                                     text: format!("Property is index {i}"),
                                     severity: Severity::Info,
-                                    related_address: None,
+                                    related_addresses: Vec::new(),
                                 });
                                 (i, s.clone())
                             } else {
@@ -329,7 +350,7 @@ impl Instruction {
                 events.push(Event {
                     text: format!("Member '{member_display}' begins at addr {curr}"),
                     severity: crate::events::Severity::Info,
-                    related_address: Some(curr),
+                    related_addresses: vec![curr],
                 });
                 // Push the member onto the stack.
                 // This first address will be its length.
@@ -338,6 +359,11 @@ impl Instruction {
             }
             Instruction::StackPush { data } => {
                 mem.stack.push(data);
+            }
+            Instruction::StackExtend { data } => {
+                let mut prev = mem.stack.pop()?;
+                prev.extend(data);
+                mem.stack.push(prev);
             }
             Instruction::StackPop { destination } => {
                 let data = mem.stack.pop()?;

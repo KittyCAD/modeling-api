@@ -1,10 +1,10 @@
 use std::collections::{HashMap, HashSet};
 
-use kittycad_execution_plan::{
+use kittycad_execution_plan::{BinaryArithmetic, ExecutionState, Instruction};
+use kittycad_execution_plan_traits::{
     events::{Event, Severity},
-    BinaryArithmetic, ExecutionState, Instruction,
+    Address, Primitive,
 };
-use kittycad_execution_plan_traits::{Address, Primitive};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize as _},
@@ -38,7 +38,7 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
             .padding(Padding::vertical(1))
             .title(title)
             .style(if selected {
-                Style::default().fg(HIGHLIGHT_COLORS[1])
+                Style::default().fg(GREEN)
             } else {
                 Style::default()
             })
@@ -149,10 +149,11 @@ fn make_stack_view<'a>(block: Block<'a>, stack: &kittycad_execution_plan::Stack<
 }
 
 const GREEN: Color = Color::from_u32(0x4ec9b0);
-const HIGHLIGHT_COLORS: [Color; 8] = [
+const HIGHLIGHT_COLORS: [Color; 9] = [
+    Color::from_u32(0x007acc),
+    Color::from_u32(0xffd602),
     Color::from_u32(0xc586c0),
     GREEN,
-    Color::from_u32(0xffd602),
     Color::from_u32(0x569CD6),
     Color::from_u32(0x646695),
     Color::from_u32(0x6A9955),
@@ -168,13 +169,14 @@ fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashM
             Severity::Info => Color::default(),
             Severity::Debug => Color::DarkGray,
         };
-        let highlight_color = match event.related_address {
-            Some(addr) => {
-                let color_num = addr_colors.len();
-                addr_colors.insert(addr, HIGHLIGHT_COLORS[color_num]);
-                HIGHLIGHT_COLORS[color_num]
+        let highlight_color = if event.related_addresses.is_empty() {
+            Color::default()
+        } else {
+            let color_num = addr_colors.len();
+            for a in event.related_addresses.iter().copied() {
+                addr_colors.insert(a, HIGHLIGHT_COLORS[color_num]);
             }
-            None => Color::default(),
+            HIGHLIGHT_COLORS[color_num]
         };
         Row::new(vec![
             // Event number
@@ -187,10 +189,16 @@ fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashM
             )),
             // Related address
             Cell::new(Text::styled(
-                if let Some(addr) = event.related_address {
-                    addr.to_string()
-                } else {
+                if event.related_addresses.is_empty() {
                     "-".to_owned()
+                } else {
+                    event
+                        .related_addresses
+                        .iter()
+                        .map(|a| a.to_string())
+                        .collect::<Vec<_>>()
+                        .join(",")
+                        .to_string()
                 },
                 Style::default().fg(highlight_color),
             )),
@@ -221,7 +229,6 @@ fn make_events_view<'a>(block: Block<'a>, events: &[Event]) -> (Table<'a>, HashM
 fn make_address_view<'a>(
     block: Block<'a>,
     mem: &kittycad_execution_plan::Memory,
-    // num_rows: usize,
     addr_colors: HashMap<Address, Color>,
     num_rows: usize,
 ) -> Table<'a> {
@@ -242,7 +249,11 @@ fn make_address_view<'a>(
                     ".".to_owned()
                 },
             ])
-            .style(Style::default().fg(addr_colors.get(&(Address::ZERO + addr)).copied().unwrap_or_default()))
+            .style(
+                Style::default()
+                    .bold()
+                    .fg(addr_colors.get(&(Address::ZERO + addr)).copied().unwrap_or_default()),
+            )
         });
 
     Table::new(
@@ -338,7 +349,11 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
         Instruction::SetPrimitive { address, value } => {
             ("SetPrimitive".into(), format!("Set addr {address} to {value:?}"))
         }
-        Instruction::Copy { source, destination } => ("Copy".into(), format!("From {source} to {destination}")),
+        Instruction::Copy {
+            source,
+            destination,
+            length,
+        } => ("Copy".into(), format!("{length} from {source} to {destination}")),
         Instruction::SetValue { address, value_parts } => (
             "SetValue".into(),
             format!("Write {value_parts:?} starting at address {address}"),
@@ -374,6 +389,7 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
             format!("Set {destination:?}\nto {arithmetic:?}"),
         ),
         Instruction::StackPush { data } => ("StackPush".into(), format!("{data:?}")),
+        Instruction::StackExtend { data } => ("StackExtend".into(), format!("{data:?}")),
         Instruction::StackPop { destination } => (
             "StackPop".into(),
             match destination {

@@ -7,6 +7,7 @@
 //! the results to make other API calls.
 
 use events::{Event, EventWriter};
+use kittycad_execution_plan_traits::events;
 use kittycad_execution_plan_traits::Address;
 use kittycad_execution_plan_traits::{MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
@@ -22,7 +23,6 @@ pub use self::instruction::Instruction;
 
 pub mod api_request;
 mod arithmetic;
-pub mod events;
 mod instruction;
 mod memory;
 #[cfg(test)]
@@ -35,6 +35,15 @@ pub enum Destination {
     Address(Address),
     /// Push onto the stack.
     StackPush,
+}
+
+impl std::fmt::Display for Destination {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Destination::Address(a) => a.fmt(f),
+            Destination::StackPush => "Stack".fmt(f),
+        }
+    }
 }
 
 /// Argument to an operation.
@@ -101,7 +110,7 @@ pub async fn execute_time_travel(
             events.push(Event {
                 text: e.to_string(),
                 severity: events::Severity::Error,
-                related_address: None,
+                related_addresses: Vec::new(),
             });
             crashed = true;
         }

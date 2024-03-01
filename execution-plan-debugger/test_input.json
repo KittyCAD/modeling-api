@@ -25,7 +25,7 @@
       "address": 2,
       "value": {
         "NumericValue": {
-          "Float": 22.0
+          "Float": 0.0
         }
       }
     }
@@ -45,7 +45,7 @@
       "address": 4,
       "value": {
         "NumericValue": {
-          "Float": 33.0
+          "Float": 0.0
         }
       }
     }
@@ -53,13 +53,19 @@
   {
     "Copy": {
       "source": 2,
-      "destination": 5
+      "length": 1,
+      "destination": {
+        "Address": 5
+      }
     }
   },
   {
     "Copy": {
       "source": 4,
-      "destination": 6
+      "length": 1,
+      "destination": {
+        "Address": 6
+      }
     }
   },
   {
@@ -179,7 +185,7 @@
         "StackPop",
         "StackPop"
       ],
-      "cmd_id": "b37a0632-98e6-46a2-bd62-6c744a6f4269"
+      "cmd_id": "0848c11c-50b6-4d81-903e-717b9d67171f"
     }
   },
   {
@@ -228,7 +234,7 @@
     "StackPush": {
       "data": [
         {
-          "Uuid": "b37a0632-98e6-46a2-bd62-6c744a6f4269"
+          "Uuid": "0848c11c-50b6-4d81-903e-717b9d67171f"
         }
       ]
     }
@@ -243,7 +249,7 @@
         "StackPop",
         "StackPop"
       ],
-      "cmd_id": "7a7f1be8-213a-4c12-97b0-b767dc1fa4b8"
+      "cmd_id": "176c3eff-ef5d-46a2-9514-4ce1c787d260"
     }
   },
   {
@@ -251,14 +257,14 @@
       "endpoint": "StartPath",
       "store_response": null,
       "arguments": [],
-      "cmd_id": "d5da360d-0048-45fd-a3af-032e9f344b1b"
+      "cmd_id": "c7585edd-00b6-48e7-8506-0f5becaac665"
     }
   },
   {
     "StackPush": {
       "data": [
         {
-          "Uuid": "d5da360d-0048-45fd-a3af-032e9f344b1b"
+          "Uuid": "c7585edd-00b6-48e7-8506-0f5becaac665"
         }
       ]
     }
@@ -273,7 +279,7 @@
           "Address": 5
         }
       ],
-      "cmd_id": "bc10557e-57d4-4993-ba05-3d05334dcd14"
+      "cmd_id": "25cbaaaf-8f51-4e7a-9824-ab8033bec7b1"
     }
   },
   {
@@ -281,13 +287,13 @@
       "address": 7,
       "value_parts": [
         {
-          "Uuid": "d5da360d-0048-45fd-a3af-032e9f344b1b"
+          "Uuid": "c7585edd-00b6-48e7-8506-0f5becaac665"
         },
         {
           "String": "Plane"
         },
         {
-          "Uuid": "b37a0632-98e6-46a2-bd62-6c744a6f4269"
+          "Uuid": "0848c11c-50b6-4d81-903e-717b9d67171f"
         },
         {
           "String": "XY"
@@ -436,7 +442,7 @@
           "String": "Some"
         },
         {
-          "Uuid": "b37a0632-98e6-46a2-bd62-6c744a6f4269"
+          "Uuid": "0848c11c-50b6-4d81-903e-717b9d67171f"
         },
         {
           "NumericValue": {
@@ -472,13 +478,152 @@
   {
     "Copy": {
       "source": 5,
-      "destination": 43
+      "length": 1,
+      "destination": {
+        "Address": 43
+      }
     }
   },
   {
     "Copy": {
       "source": 5,
-      "destination": 45
+      "length": 1,
+      "destination": {
+        "Address": 45
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 47,
+      "value": {
+        "ListHeader": {
+          "count": 2,
+          "size": 4
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 48,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 49,
+      "value": {
+        "NumericValue": {
+          "Float": 4.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 50,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 51,
+      "value": {
+        "NumericValue": {
+          "Float": 4.0
+        }
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 49,
+      "length": 1,
+      "destination": {
+        "Address": 52
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 51,
+      "length": 1,
+      "destination": {
+        "Address": 53
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 54,
+      "value": {
+        "NumericValue": {
+          "Float": 0.0
+        }
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 52,
+      "length": 2,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "StackExtend": {
+      "data": [
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 55,
+      "value": {
+        "String": "Line"
+      }
+    }
+  },
+  {
+    "StackPop": {
+      "destination": 56
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 59,
+      "value": {
+        "Bool": false
+      }
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "ExtendPath",
+      "store_response": null,
+      "arguments": [
+        {
+          "Address": 7
+        },
+        {
+          "Address": 55
+        }
+      ],
+      "cmd_id": "a8e492bd-f3f6-4eef-9e34-aa59110bcd7b"
     }
   }
 ]

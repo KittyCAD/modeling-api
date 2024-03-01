@@ -89,7 +89,7 @@ macro_rules! arithmetic_body {
         $events.push({
             let mut evt = crate::events::Event::new(format!("Left operand is {l:?}"), crate::events::Severity::Info);
             if let Operand::Reference(a) = $arith.operand0 {
-                evt.related_address = Some(a);
+                evt.related_addresses = vec![a];
             }
             evt
         });
@@ -101,7 +101,7 @@ macro_rules! arithmetic_body {
         $events.push({
             let mut evt = crate::events::Event::new(format!("Right operand is {r:?}"), crate::events::Severity::Info);
             if let Operand::Reference(a) = $arith.operand1 {
-                evt.related_address = Some(a);
+                evt.related_addresses = vec![a];
             }
             evt
         });

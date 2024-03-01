@@ -42,7 +42,7 @@ fn impl_on_struct_no_fields(
         impl #generics_without_defaults #root::FromMemory for #name #generics_without_defaults
         #where_clause
         {
-            fn from_memory<I, M>(_fields: &mut I, _mem: &mut M) -> Result<Self, #root::MemoryError>
+            fn from_memory<I, M>(_fields: &mut I, _mem: &mut M, _events: &mut #root::events::EventWriter) -> Result<Self, #root::MemoryError>
             where
                 M: #root::ReadMemory,
                 I: Iterator<Item = #root::InMemory>
@@ -115,7 +115,7 @@ fn impl_on_struct_named_fields(
         impl #generics_without_defaults #root::FromMemory for #name #generics_without_defaults
         #where_clause
         {
-            fn from_memory<I, M>(fields: &mut I, mem: &mut M) -> Result<Self, #root::MemoryError>
+            fn from_memory<I, M>(fields: &mut I, mem: &mut M, _events: &mut #root::events::EventWriter) -> Result<Self, #root::MemoryError>
             where
                 M: #root::ReadMemory,
                 I: Iterator<Item = #root::InMemory>

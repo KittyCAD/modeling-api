@@ -1,12 +1,14 @@
 //! Traits and types used for KittyCAD Execution Plans.
 
 pub use self::address::Address;
+use self::events::EventWriter;
 pub use self::primitive::{ListHeader, NumericPrimitive, ObjectHeader, Primitive};
 
 use serde::{Deserialize, Serialize};
 
 mod address;
 mod containers;
+pub mod events;
 #[macro_use]
 mod primitive;
 
@@ -26,7 +28,7 @@ pub trait Value: Sized {
 /// scattered across multiple places in the address space.
 pub trait FromMemory: Sized {
     /// Read this type from memory, getting each field of the type from a different memory address.
-    fn from_memory<I, M>(fields: &mut I, mem: &mut M) -> Result<Self, MemoryError>
+    fn from_memory<I, M>(fields: &mut I, mem: &mut M, events: &mut EventWriter) -> Result<Self, MemoryError>
     where
         M: ReadMemory,
         I: Iterator<Item = InMemory>;

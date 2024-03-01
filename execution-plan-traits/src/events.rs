@@ -13,7 +13,7 @@ pub struct Event {
     pub severity: Severity,
     /// This event might be about a particular address.
     /// Debuggers might want to visualize this.
-    pub related_address: Option<Address>,
+    pub related_addresses: Vec<Address>,
 }
 
 impl Event {
@@ -22,7 +22,7 @@ impl Event {
         Self {
             text,
             severity,
-            related_address: None,
+            related_addresses: Default::default(),
         }
     }
 }
