@@ -7,6 +7,7 @@
 //! the results to make other API calls.
 
 use events::{Event, EventWriter};
+use kittycad_execution_plan_traits::events;
 use kittycad_execution_plan_traits::Address;
 use kittycad_execution_plan_traits::{MemoryError, Primitive, ReadMemory};
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
@@ -22,7 +23,6 @@ pub use self::instruction::Instruction;
 
 pub mod api_request;
 mod arithmetic;
-pub mod events;
 mod instruction;
 mod memory;
 #[cfg(test)]
