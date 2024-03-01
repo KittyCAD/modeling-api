@@ -2,7 +2,7 @@
 
 use crate::events::{Event, Severity};
 use crate::Result;
-use crate::{events::EventWriter, memory::Memory};
+use crate::{events::EventWriter, memory::Memory, ExecutionError};
 use kittycad_execution_plan_traits::{Address, FromMemory, InMemory};
 use kittycad_modeling_cmds::websocket::{ModelingBatch, ModelingCmdReq};
 use kittycad_modeling_cmds::ModelingCmd;
@@ -89,6 +89,43 @@ impl ApiRequest {
                 log_req(events);
                 session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
+            Endpoint::ImportFiles => {
+                let mut args_iter = arguments;
+                let arg_opt_import_files_struct = args_iter.next();
+
+                let Some(arg_import_files_struct_prim) = arg_opt_import_files_struct else {
+                    return Err(ExecutionError::General {
+                        reason: "Endpoint::ImportFiles requires an ImportFiles struct".to_string(),
+                    });
+                };
+
+                let arg_import_files_struct =
+                    mem.get_in_memory::<kittycad_modeling_cmds::ImportFiles>(arg_import_files_struct_prim)?;
+
+                log_req(events);
+                let kittycad_modeling_cmds::ok_response::OkModelingCmdResponse::ImportFiles(import_files) =
+                    session.run_command(cmd_id, arg_import_files_struct.0.clone()).await?
+                else {
+                    panic!("Unexpected OkModelingCmdResponse encountered");
+                };
+
+                // Transform a OkModelingCmdResponse::ImportFiles to a
+                // OkModelingCmdResponse::ImportedGeometry for ease of
+                // consumption by the rest of KCL.
+                //
+                // This is the most direct way to collect the original paths,
+                // and return a structure that is, at the time of writing,
+                // returned by the original KCL import() function call.
+                kittycad_modeling_cmds::ok_response::OkModelingCmdResponse::ImportedGeometry(
+                    kittycad_modeling_cmds::ok_response::output::ImportedGeometry {
+                        id: import_files.object_id,
+                        value: arg_import_files_struct.0.files.iter().fold(vec![], |mut acc, file| {
+                            acc.push(file.path.clone());
+                            acc
+                        }),
+                    },
+                )
+            }
             Endpoint::MakePlane => {
                 let cmd = each_cmd::MakePlane::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
@@ -103,6 +140,16 @@ impl ApiRequest {
                 let cmd = each_cmd::SketchModeEnable::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
                 session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
+            }
+            Endpoint::DefaultCameraZoom => {
+                let cmd = each_cmd::DefaultCameraZoom::from_memory(&mut arguments, mem, events)?;
+                log_req(events);
+                session.run_command(cmd_id, cmd).await?
+            }
+            Endpoint::DefaultCameraFocusOn => {
+                let cmd = each_cmd::DefaultCameraFocusOn::from_memory(&mut arguments, mem, events)?;
+                log_req(events);
+                session.run_command(cmd_id, cmd).await?
             }
             other => panic!("Haven't implemented endpoint {other:?} yet"),
         };

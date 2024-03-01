@@ -7,7 +7,8 @@ use serde::{Deserialize, Serialize};
 use crate::{
     events::{Event, EventWriter, Severity},
     sketch_types::{self},
-    Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, Memory, Operand, Result, UnaryArithmetic,
+    Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, ImportFiles, Memory, Operand, Result,
+    UnaryArithmetic,
 };
 
 /// One step of the execution plan.
@@ -15,6 +16,8 @@ use crate::{
 pub enum Instruction {
     /// Call the KittyCAD API.
     ApiRequest(ApiRequest),
+    /// Import a geometry file.
+    ImportFiles(ImportFiles),
     /// Set a primitive to a memory address.
     SetPrimitive {
         /// Which memory address to set.
@@ -183,6 +186,9 @@ impl Instruction {
                 } else {
                     return Err(ExecutionError::NoApiClient);
                 }
+            }
+            Instruction::ImportFiles(req) => {
+                req.execute(mem).await?;
             }
             Instruction::SetPrimitive { address, value } => {
                 events.push(Event {

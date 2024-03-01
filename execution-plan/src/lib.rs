@@ -20,10 +20,12 @@ pub use self::arithmetic::{
     operator::{BinaryOperation, Operation, UnaryOperation},
     BinaryArithmetic, UnaryArithmetic,
 };
+use self::import_files::ImportFiles;
 pub use self::instruction::Instruction;
 
 pub mod api_request;
 mod arithmetic;
+pub mod import_files;
 mod instruction;
 mod memory;
 pub mod sketch_types;
@@ -265,5 +267,17 @@ pub enum ExecutionError {
         destination: usize,
         /// Current SketchGroup vec length.
         len: usize,
+    },
+    /// Invalid argument type
+    #[error("An argument of the wrong type was used.")]
+    BadArg {
+        /// The reason why the argument is bad.
+        reason: String,
+    },
+    /// A general execution error.
+    #[error("An argument of the wrong type was used.")]
+    General {
+        /// The reason for the error.
+        reason: String,
     },
 }

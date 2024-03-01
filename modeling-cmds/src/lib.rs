@@ -6,6 +6,8 @@
 pub mod base64;
 /// Various coordinate systems.
 pub mod coord;
+/// chrono wrapper for datetimes.
+pub mod datetime;
 /// The modeling command enum with each specific modeling command.
 mod def_enum;
 /// Import and export types.
@@ -15,6 +17,8 @@ pub mod format;
 pub mod id;
 #[cfg(feature = "cxx")]
 pub mod impl_extern_type;
+/// Expected return structure for imported geometry.
+pub mod imported_geometry;
 mod kcep_primitive;
 pub mod length_unit;
 /// When a modeling command is successful, these responses could be returned.

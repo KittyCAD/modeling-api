@@ -1,3 +1,4 @@
+use kittycad_execution_plan_macros::ExecutionPlanValue;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -7,7 +8,9 @@ use serde::{Deserialize, Serialize};
 /// See [cglearn.eu] for background reading.
 ///
 /// [cglearn.eu]: https://cglearn.eu/pub/computer-graphics/introduction-to-geometry#material-coordinate-systems-1
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(
+    Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, ExecutionPlanValue,
+)]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum Axis {
@@ -18,7 +21,9 @@ pub enum Axis {
 }
 
 /// Specifies the sign of a co-ordinate axis.
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(
+    Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, ExecutionPlanValue,
+)]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum Direction {
@@ -40,7 +45,9 @@ impl std::ops::Mul for Direction {
 }
 
 /// An [`Axis`] paired with a [`Direction`].
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(
+    Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, ExecutionPlanValue,
+)]
 #[display("({axis}, {direction})")]
 pub struct AxisDirectionPair {
     /// Axis specifier.
@@ -57,7 +64,9 @@ pub struct AxisDirectionPair {
 /// See [cglearn.eu] for background reading.
 ///
 /// [cglearn.eu](https://cglearn.eu/pub/computer-graphics/introduction-to-geometry#material-coordinate-systems-1)
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(
+    Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, ExecutionPlanValue,
+)]
 #[display("forward: {forward}, up: {up}")]
 pub struct System {
     /// Axis the front face of a model looks along.

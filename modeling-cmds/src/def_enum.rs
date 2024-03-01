@@ -1,3 +1,4 @@
+use kittycad_execution_plan_macros::{ExecutionPlanFromMemory, ExecutionPlanValue};
 use kittycad_modeling_cmds_macros::define_modeling_cmd_enum;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -784,7 +785,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Import files to the current model.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Eq, PartialEq, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ExecutionPlanValue, ModelingCmdVariant)]
         pub struct ImportFiles {
             /// Files to import.
             pub files: Vec<super::ImportFile>,
@@ -962,7 +963,9 @@ impl ModelingCmd {
 /// File to import into the current model.
 /// If you are sending binary data for a file, be sure to send the WebSocketRequest as
 /// binary/bson, not text/json.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(
+    Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ExecutionPlanFromMemory, Eq, PartialEq,
+)]
 pub struct ImportFile {
     /// The file's full path, including file extension.
     pub path: String,
