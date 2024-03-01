@@ -84,12 +84,29 @@ fn impl_on_struct_named_fields(
             let #ident = fields.next()
                 .ok_or(#root::MemoryError::MemoryWrongSize)
                 .and_then(|a| match a {
-                    #root::InMemory::Address(a) => mem.get_composite(a),
+                    #root::InMemory::Address(a) => {
+                        events.push(#root::events::Event {
+                            text: format!("Reading '{}'", stringify!(#ident)),
+                            severity: #root::events::Severity::Debug,
+                            related_addresses: vec![a],
+                        });
+                        mem.get_composite(a)
+                    }
                     #root::InMemory::StackPop => {
+                        events.push(#root::events::Event {
+                            text: format!("Stack pop to read '{}'", stringify!(#ident)),
+                            severity: #root::events::Severity::Debug,
+                            related_addresses: Default::default(),
+                        });
                         let data = mem.stack_pop()?;
                         #root::Value::from_parts(&mut data.iter().cloned().map(Some))
                     }
                     #root::InMemory::StackPeek => {
+                        events.push(#root::events::Event {
+                            text: format!("Stack peek to read '{}'", stringify!(#ident)),
+                            severity: #root::events::Severity::Debug,
+                            related_addresses: Default::default(),
+                        });
                         let data = mem.stack_pop()?;
                         #root::Value::from_parts(&mut data.iter().cloned().map(Some))
                       }
@@ -115,7 +132,7 @@ fn impl_on_struct_named_fields(
         impl #generics_without_defaults #root::FromMemory for #name #generics_without_defaults
         #where_clause
         {
-            fn from_memory<I, M>(fields: &mut I, mem: &mut M, _events: &mut #root::events::EventWriter) -> Result<Self, #root::MemoryError>
+            fn from_memory<I, M>(fields: &mut I, mem: &mut M, events: &mut #root::events::EventWriter) -> Result<Self, #root::MemoryError>
             where
                 M: #root::ReadMemory,
                 I: Iterator<Item = #root::InMemory>
