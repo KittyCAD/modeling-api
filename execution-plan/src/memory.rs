@@ -63,16 +63,16 @@ impl kittycad_execution_plan_traits::ReadMemory for Memory {
 
     /// Get a value value (i.e. a value which takes up multiple addresses in memory).
     /// Its parts are stored in consecutive memory addresses starting at `start`.
-    fn get_composite<T: Value>(&self, start: Address) -> std::result::Result<T, MemoryError> {
+    fn get_composite<T: Value>(&self, start: Address) -> Result<(T, usize), MemoryError> {
         let mut values = self.addresses.iter().skip(inner(start)).cloned();
         T::from_parts(&mut values)
     }
 
-    fn stack_pop(&mut self) -> std::result::Result<Vec<Primitive>, MemoryError> {
+    fn stack_pop(&mut self) -> Result<Vec<Primitive>, MemoryError> {
         self.stack.pop()
     }
 
-    fn stack_peek(&self) -> std::result::Result<&Vec<Primitive>, MemoryError> {
+    fn stack_peek(&self) -> Result<&Vec<Primitive>, MemoryError> {
         self.stack.peek()
     }
 }

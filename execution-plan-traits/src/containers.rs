@@ -23,7 +23,7 @@ where
         }
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
+    fn from_parts<I>(values: &mut I) -> Result<(Self, usize), MemoryError>
     where
         I: Iterator<Item = Option<Primitive>>,
     {
@@ -33,10 +33,10 @@ where
             .ok_or(MemoryError::MemoryWrongSize)?
             .try_into()?;
         match variant.as_str() {
-            NONE => Ok(None),
+            NONE => Ok((None, 1)),
             SOME => {
-                let val = T::from_parts(values)?;
-                Ok(Some(val))
+                let (val, count) = T::from_parts(values)?;
+                Ok((Some(val), count + 1))
             }
             other => Err(MemoryError::InvalidEnumVariant {
                 expected_type: "option".to_owned(),
@@ -58,7 +58,7 @@ where
         parts
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
+    fn from_parts<I>(values: &mut I) -> Result<(Self, usize), MemoryError>
     where
         I: Iterator<Item = Option<Primitive>>,
     {
@@ -69,7 +69,12 @@ where
             .ok_or(MemoryError::MemoryWrongSize)?
             .try_into()?;
         // Read `n` elements from the parts.
-        (0..n).map(|_| T::from_parts(values)).collect()
+        (0..n).try_fold((Vec::with_capacity(n), 1), |(mut elems, count), _i| {
+            // Read another element, update the elements and the total primitive count.
+            let (next, next_count) = T::from_parts(values)?;
+            elems.push(next);
+            Ok((elems, count + next_count))
+        })
     }
 }
 
@@ -85,18 +90,14 @@ where
         parts
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
+    fn from_parts<I>(values: &mut I) -> Result<(Self, usize), MemoryError>
     where
         I: Iterator<Item = Option<Primitive>>,
     {
-        // Read the length of the vec -- how many elements does it have?
-        let n: usize = values
-            .next()
-            .flatten()
-            .ok_or(MemoryError::MemoryWrongSize)?
-            .try_into()?;
-        // Read `n` elements from the parts.
-        (0..n).map(|_| T::from_parts(values)).collect()
+        // Vec and HashSet use the same layout, so just read a vec.
+        Vec::from_parts(values)
+            // Then convert the vec into a hashmap.
+            .map(|(v, count)| (v.into_iter().collect(), count))
     }
 }
 
@@ -109,11 +110,11 @@ where
         (*self).into_parts()
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
+    fn from_parts<I>(values: &mut I) -> Result<(Self, usize), MemoryError>
     where
         I: Iterator<Item = Option<Primitive>>,
     {
-        T::from_parts(values).map(Box::new)
+        T::from_parts(values).map(|(x, i)| (Box::new(x), i))
     }
 }
 
