@@ -1,10 +1,10 @@
 use std::collections::{HashMap, HashSet};
 
-use kittycad_execution_plan::{
+use kittycad_execution_plan::{BinaryArithmetic, ExecutionState, Instruction};
+use kittycad_execution_plan_traits::{
     events::{Event, Severity},
-    BinaryArithmetic, ExecutionState, Instruction,
+    Address, Primitive,
 };
-use kittycad_execution_plan_traits::{Address, Primitive};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize as _},
