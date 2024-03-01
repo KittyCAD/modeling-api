@@ -349,7 +349,11 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
         Instruction::SetPrimitive { address, value } => {
             ("SetPrimitive".into(), format!("Set addr {address} to {value:?}"))
         }
-        Instruction::Copy { source, destination } => ("Copy".into(), format!("From {source} to {destination}")),
+        Instruction::Copy {
+            source,
+            destination,
+            length,
+        } => ("Copy".into(), format!("{length} from {source} to {destination}")),
         Instruction::SetValue { address, value_parts } => (
             "SetValue".into(),
             format!("Write {value_parts:?} starting at address {address}"),

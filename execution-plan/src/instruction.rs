@@ -91,8 +91,10 @@ pub enum Instruction {
     Copy {
         /// Copy from here.
         source: Address,
+        /// How many addresses to copy.
+        length: usize,
         /// Copy to here.
-        destination: Address,
+        destination: Destination,
     },
     /// Copy data from a range of addresses, into another range of addresses.
     /// The first address in the source range is the length (how many addresses to copy).
@@ -127,25 +129,38 @@ impl Instruction {
             Instruction::SetPrimitive { address, value } => {
                 mem.set(address, value);
             }
-            Instruction::Copy { source, destination } => {
+            Instruction::Copy {
+                source,
+                length,
+                destination,
+            } => {
+                let sources: Vec<_> = (0..length).map(|i| source + i).collect();
                 // Read the value
                 events.push(Event {
                     text: "Reading value".to_owned(),
                     severity: Severity::Debug,
-                    related_addresses: vec![source],
+                    related_addresses: sources.clone(),
                 });
-                let value = mem
-                    .get(&source)
-                    .cloned()
-                    .ok_or(ExecutionError::MemoryEmpty { addr: source })?;
 
-                // Write the value
-                events.push(Event {
-                    text: "Writing value".to_owned(),
-                    severity: Severity::Debug,
-                    related_addresses: vec![destination],
-                });
-                mem.set(destination, value);
+                let data = sources
+                    .iter()
+                    .map(|i| mem.get(i).cloned().ok_or(ExecutionError::MemoryEmpty { addr: source }))
+                    .collect::<Result<Vec<_>>>()?;
+                match destination {
+                    Destination::Address(dst) => {
+                        events.push(Event {
+                            text: "Writing value".to_owned(),
+                            severity: Severity::Debug,
+                            related_addresses: (0..length).map(|i| dst + i).collect(),
+                        });
+                        for (i, v) in data.into_iter().enumerate() {
+                            mem.set(dst + i, v);
+                        }
+                    }
+                    Destination::StackPush => {
+                        mem.stack.push(data);
+                    }
+                }
             }
             Instruction::SetValue { address, value_parts } => {
                 value_parts.into_iter().enumerate().for_each(|(i, part)| {
