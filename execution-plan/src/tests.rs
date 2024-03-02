@@ -185,7 +185,8 @@ async fn add_to_composite_value() {
     .unwrap();
 
     // Read the point out of memory, validate it.
-    let point_after: Point3d<f64> = mem.get_composite(start_addr).unwrap();
+    let (point_after, count): (Point3d<f64>, _) = mem.get_composite(start_addr).unwrap();
+    assert_eq!(count, 3);
     assert_eq!(
         point_after,
         Point3d {

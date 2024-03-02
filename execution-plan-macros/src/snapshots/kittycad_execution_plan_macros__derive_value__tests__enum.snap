@@ -35,26 +35,32 @@ impl ::kittycad_execution_plan_traits::Value for FooEnum {
         }
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, ::kittycad_execution_plan_traits::MemoryError>
+    fn from_parts<I>(
+        values: &mut I,
+    ) -> Result<(Self, usize), ::kittycad_execution_plan_traits::MemoryError>
     where
         I: Iterator<Item = Option<::kittycad_execution_plan_traits::Primitive>>,
     {
-        let variant_name = String::from_parts(values)?;
+        let (variant_name, mut count) = String::from_parts(values)?;
         match variant_name.as_str() {
             stringify!(A) => {
-                let x = usize::from_parts(values)?;
-                Ok(Self::A { x })
+                let (x, c) = usize::from_parts(values)?;
+                count += c;
+                Ok((Self::A { x }, count))
             }
             stringify!(B) => {
-                let y = usize::from_parts(values)?;
-                Ok(Self::B { y })
+                let (y, c) = usize::from_parts(values)?;
+                count += c;
+                Ok((Self::B { y }, count))
             }
             stringify!(C) => {
-                let field0 = usize::from_parts(values)?;
-                let field1 = String::from_parts(values)?;
-                Ok(Self::C(field0, field1))
+                let (field0, c) = usize::from_parts(values)?;
+                count += c;
+                let (field1, c) = String::from_parts(values)?;
+                count += c;
+                Ok((Self::C(field0, field1), count))
             }
-            stringify!(D) => Ok(Self::D),
+            stringify!(D) => Ok((Self::D, count)),
             other => Err(
                 ::kittycad_execution_plan_traits::MemoryError::InvalidEnumVariant {
                     expected_type: stringify!(FooEnum).to_owned(),
