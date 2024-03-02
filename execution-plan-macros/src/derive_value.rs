@@ -149,8 +149,9 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
 fn make_instantiate_field(ty: syn::Type, id: &Ident) -> TokenStream2 {
     if let Some(ub) = unbox(ty.clone()) {
         quote! {
-            let (#id, c) = Box::new(#ub::from_parts(values)?);
+            let (to_box, c) = #ub::from_parts(values)?;
             count += c;
+            let #id = Box::new(to_box);
         }
     } else {
         let field_type = remove_generics(ty);
