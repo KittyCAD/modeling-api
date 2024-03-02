@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-execution-plan-traits"
-version = "0.1.11"
+version = "0.1.12"
 edition = "2021"
 authors = ["KittyCAD, Inc."]
 description = "Types for KittyCAD execution plans"
