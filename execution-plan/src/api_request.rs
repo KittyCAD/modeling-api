@@ -44,11 +44,6 @@ impl ApiRequest {
         });
         let log_req = |events: &mut EventWriter| {
             events.push(Event {
-                text: "Parameters read".to_owned(),
-                severity: Severity::Debug,
-                related_addresses: Default::default(),
-            });
-            events.push(Event {
                 text: "Sending request".to_owned(),
                 severity: Severity::Info,
                 related_addresses: Default::default(),

@@ -85,12 +85,25 @@ fn impl_on_struct_named_fields(
                 .ok_or(#root::MemoryError::MemoryWrongSize)
                 .and_then(|a| match a {
                     #root::InMemory::Address(a) => {
-                        events.push(#root::events::Event {
-                            text: format!("Reading '{}'", stringify!(#ident)),
-                            severity: #root::events::Severity::Debug,
-                            related_addresses: vec![a],
-                        });
-                        mem.get_composite(a)
+
+                        match mem.get_composite(a) {
+                            Ok((val, count)) => {
+                                events.push(#root::events::Event {
+                                    text: format!("Read '{}'", stringify!(#ident)),
+                                    severity: #root::events::Severity::Debug,
+                                    related_addresses: (0..count).map(|i|i+a).collect(),
+                                });
+                                Ok(val)
+                            }
+                            Err(e) => {
+                                events.push(#root::events::Event {
+                                    text: format!("Error reading '{}': {e}", stringify!(#ident)),
+                                    severity: #root::events::Severity::Error,
+                                    related_addresses: vec![a],
+                                });
+                                Err(e)
+                            }
+                        }
                     }
                     #root::InMemory::StackPop => {
                         events.push(#root::events::Event {
@@ -99,7 +112,8 @@ fn impl_on_struct_named_fields(
                             related_addresses: Default::default(),
                         });
                         let data = mem.stack_pop()?;
-                        #root::Value::from_parts(&mut data.iter().cloned().map(Some))
+                        let (val, _count) = #root::Value::from_parts(&mut data.iter().cloned().map(Some))?;
+                        Ok(val)
                     }
                     #root::InMemory::StackPeek => {
                         events.push(#root::events::Event {
@@ -108,7 +122,8 @@ fn impl_on_struct_named_fields(
                             related_addresses: Default::default(),
                         });
                         let data = mem.stack_pop()?;
-                        #root::Value::from_parts(&mut data.iter().cloned().map(Some))
+                        let (val, _count) = #root::Value::from_parts(&mut data.iter().cloned().map(Some))?;
+                        Ok(val)
                       }
                 })?;
         }
