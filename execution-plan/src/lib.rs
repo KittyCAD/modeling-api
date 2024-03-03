@@ -25,6 +25,7 @@ pub mod api_request;
 mod arithmetic;
 mod instruction;
 mod memory;
+pub mod sketch_types;
 #[cfg(test)]
 mod tests;
 

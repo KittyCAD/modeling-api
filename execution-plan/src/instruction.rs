@@ -1,8 +1,12 @@
-use kittycad_execution_plan_traits::{ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory};
+use kittycad_execution_plan_traits::{
+    InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
+};
+use kittycad_modeling_cmds::shared::PathSegment;
 use serde::{Deserialize, Serialize};
 
 use crate::{
     events::{Event, EventWriter, Severity},
+    sketch_types::SketchGroup,
     Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, Memory, Operand, Result, UnaryArithmetic,
 };
 
@@ -107,6 +111,15 @@ pub enum Instruction {
         source_range: Operand,
         /// Start copying into this address.
         destination_range: Operand,
+    },
+    /// Add a path to a SketchGroup.
+    SketchGroupAddPath {
+        /// What to add to the SketchGroup.
+        path: PathSegment,
+        /// Where the SketchGroup to modify begins.
+        source: InMemory,
+        /// Where the modified SketchGroup should be written to.
+        destination: Destination,
     },
 }
 
@@ -416,6 +429,11 @@ impl Instruction {
                     mem.set(dst, val.clone());
                 }
             }
+            Instruction::SketchGroupAddPath {
+                path,
+                source,
+                destination,
+            } => todo!(),
         }
         Ok(())
     }
