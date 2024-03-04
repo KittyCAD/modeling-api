@@ -433,7 +433,9 @@ impl Instruction {
                 path,
                 source,
                 destination,
-            } => todo!(),
+            } => {
+                let prev_sg: SketchGroup = mem.get_in_memory(source)?.0;
+            }
         }
         Ok(())
     }
