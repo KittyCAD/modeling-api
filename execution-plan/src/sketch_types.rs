@@ -1,7 +1,9 @@
+//! Types for sketching models.
 use crate::{Destination, Instruction};
 use kittycad_execution_plan_macros::ExecutionPlanValue;
 use kittycad_execution_plan_traits::{Address, Value};
 use kittycad_modeling_cmds::shared::{Point2d, Point3d, Point4d};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 /// A sketch group is a collection of paths.
@@ -24,7 +26,7 @@ pub struct SketchGroup {
     /// The base path.
     pub path_first: BasePath,
     /// Paths after the first path, if any.
-    pub path_rest: Vec<Path>,
+    pub path_rest: Vec<PathSegment>,
 }
 
 impl SketchGroup {
@@ -32,6 +34,10 @@ impl SketchGroup {
     pub fn path_id_offset() -> usize {
         0
     }
+    /// Set the base path of the sketch group.
+    /// `sketch_group` is the starting address of the sketch group.
+    /// `start_point` is the address of the base path's `start` geometric point.
+    /// `tag` is the address of the base path's `tag`.
     pub fn set_base_path(&self, sketch_group: Address, start_point: Address, tag: Option<Address>) -> Vec<Instruction> {
         let base_path_addr = sketch_group
             + self.id.into_parts().len()
@@ -72,25 +78,37 @@ impl SketchGroup {
 /// The X, Y and Z axes.
 #[derive(Clone, Copy, ExecutionPlanValue)]
 pub struct Axes {
+    #[allow(missing_docs)]
     pub x: Point3d,
+    #[allow(missing_docs)]
     pub y: Point3d,
+    #[allow(missing_docs)]
     pub z: Point3d,
 }
 
-#[derive(Clone, ExecutionPlanValue)]
+/// A path which starts a SketchGroup.
+#[derive(Debug, Clone, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
 pub struct BasePath {
+    /// Where the path starts.
     pub from: Point2d<f64>,
+    /// Where the path ends.
     pub to: Point2d<f64>,
+    /// The name of the path.
     pub name: String,
 }
 
-/// A path.
-#[derive(Clone, ExecutionPlanValue)]
-pub enum Path {
+/// Paths are made up of multiple segments, laid out top-to-tail
+/// (i.e. the end of one segment is the start of the next).
+#[derive(Debug, Clone, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
+pub enum PathSegment {
     /// A path that goes to a point.
-    ToPoint { base: BasePath },
+    ToPoint {
+        /// Defines the end point, and where the path segment to it started.
+        base: BasePath,
+    },
     /// A arc that is tangential to the last path segment that goes to a point
     TangentialArcTo {
+        /// Defines the end point, and where the path segment to it started.
         base: BasePath,
         /// the arc's center
         center: Point2d,
@@ -99,12 +117,14 @@ pub enum Path {
     },
     /// A path that is horizontal.
     Horizontal {
+        /// Defines the end point, and where the line to it started.
         base: BasePath,
         /// The x coordinate.
         x: f64,
     },
     /// An angled line to.
     AngledLineTo {
+        /// Defines the end point, and where the line to it started.
         base: BasePath,
         /// The x coordinate.
         x: Option<f64>,
@@ -112,11 +132,29 @@ pub enum Path {
         y: Option<f64>,
     },
     /// A base path.
-    Base { base: BasePath },
+    Base {
+        /// Defines the end point, and where the line to it started.
+        base: BasePath,
+    },
 }
 
+impl PathSegment {
+    /// What kind of segment?
+    pub fn segment_kind(&self) -> &'static str {
+        match self {
+            PathSegment::ToPoint { .. } => "ToPoint",
+            PathSegment::TangentialArcTo { .. } => "TangentialArcTo",
+            PathSegment::Horizontal { .. } => "Horizontal",
+            PathSegment::AngledLineTo { .. } => "AngledLineTo",
+            PathSegment::Base { .. } => "Base",
+        }
+    }
+}
+
+/// What is being sketched on?
 #[derive(Clone, Copy, ExecutionPlanValue)]
 pub enum SketchSurface {
+    /// A plane.
     Plane(Plane),
 }
 
@@ -125,18 +163,23 @@ pub enum SketchSurface {
 pub struct Plane {
     /// The id of the plane.
     pub id: Uuid,
-    // The code for the plane either a string or custom.
+    /// The code for the plane either a string or custom.
     pub value: PlaneType,
     /// Origin of the plane.
     pub origin: Point3d,
+    /// The plane's axes.
     pub axes: Axes,
 }
 
 /// Type for a plane.
 #[derive(Clone, Copy, ExecutionPlanValue)]
 pub enum PlaneType {
+    #[allow(missing_docs)]
     XY,
+    #[allow(missing_docs)]
     XZ,
+    #[allow(missing_docs)]
     YZ,
+    /// A custom plane.
     Custom,
 }

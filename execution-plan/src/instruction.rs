@@ -1,12 +1,11 @@
 use kittycad_execution_plan_traits::{
     InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
 };
-use kittycad_modeling_cmds::shared::PathSegment;
 use serde::{Deserialize, Serialize};
 
 use crate::{
     events::{Event, EventWriter, Severity},
-    sketch_types::SketchGroup,
+    sketch_types::{self, SketchGroup},
     Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, Memory, Operand, Result, UnaryArithmetic,
 };
 
@@ -115,7 +114,7 @@ pub enum Instruction {
     /// Add a path to a SketchGroup.
     SketchGroupAddPath {
         /// What to add to the SketchGroup.
-        path: PathSegment,
+        segment: sketch_types::PathSegment,
         /// Where the SketchGroup to modify begins.
         source: InMemory,
         /// Where the modified SketchGroup should be written to.
@@ -430,11 +429,20 @@ impl Instruction {
                 }
             }
             Instruction::SketchGroupAddPath {
-                path,
+                segment,
                 source,
                 destination,
             } => {
-                let prev_sg: SketchGroup = mem.get_in_memory(source)?.0;
+                let mut sg: SketchGroup = mem.get_in_memory(source)?.0;
+                sg.path_rest.push(segment);
+                match destination {
+                    Destination::Address(a) => {
+                        mem.set_composite(a, sg);
+                    }
+                    Destination::StackPush => {
+                        mem.stack.push(sg.into_parts());
+                    }
+                }
             }
         }
         Ok(())
