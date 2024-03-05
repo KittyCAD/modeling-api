@@ -1618,6 +1618,7 @@ dependencies = [
  "image",
  "insta",
  "kittycad",
+ "kittycad-execution-plan-macros",
  "kittycad-execution-plan-traits",
  "kittycad-modeling-cmds",
  "kittycad-modeling-session",

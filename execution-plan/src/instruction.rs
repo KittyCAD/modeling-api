@@ -1,8 +1,11 @@
-use kittycad_execution_plan_traits::{ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory};
+use kittycad_execution_plan_traits::{
+    InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
+};
 use serde::{Deserialize, Serialize};
 
 use crate::{
     events::{Event, EventWriter, Severity},
+    sketch_types::{self, SketchGroup},
     Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, Memory, Operand, Result, UnaryArithmetic,
 };
 
@@ -107,6 +110,15 @@ pub enum Instruction {
         source_range: Operand,
         /// Start copying into this address.
         destination_range: Operand,
+    },
+    /// Add a path to a SketchGroup.
+    SketchGroupAddPath {
+        /// What to add to the SketchGroup.
+        segment: sketch_types::PathSegment,
+        /// Where the SketchGroup to modify begins.
+        source: InMemory,
+        /// Where the modified SketchGroup should be written to.
+        destination: Destination,
     },
 }
 
@@ -414,6 +426,22 @@ impl Instruction {
                     let dst = dst_addr + i;
                     let val = mem.get(&src).ok_or(ExecutionError::MemoryEmpty { addr: src })?;
                     mem.set(dst, val.clone());
+                }
+            }
+            Instruction::SketchGroupAddPath {
+                segment,
+                source,
+                destination,
+            } => {
+                let mut sg: SketchGroup = mem.get_in_memory(source)?.0;
+                sg.path_rest.push(segment);
+                match destination {
+                    Destination::Address(a) => {
+                        mem.set_composite(a, sg);
+                    }
+                    Destination::StackPush => {
+                        mem.stack.push(sg.into_parts());
+                    }
                 }
             }
         }

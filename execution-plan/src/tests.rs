@@ -2,6 +2,7 @@ use std::env;
 
 use insta::assert_snapshot;
 use kittycad_execution_plan_traits::{InMemory, ListHeader, ObjectHeader, Primitive, Value};
+use kittycad_modeling_cmds::shared::Point2d;
 use kittycad_modeling_cmds::ModelingCmdEndpoint as Endpoint;
 use kittycad_modeling_cmds::{
     id::ModelingCmdId,
@@ -11,6 +12,7 @@ use kittycad_modeling_cmds::{
 use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
 
+use crate::sketch_types::{Axes, BasePath, Plane, SketchGroup};
 use crate::{arithmetic::operator::BinaryOperation, Address};
 
 use super::*;
@@ -331,6 +333,65 @@ async fn modulo_and_power_with_reference() {
     let mut mem = Memory::default();
     execute(&mut mem, plan, None).await.expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&(-10i64).into()));
+}
+
+#[tokio::test]
+async fn add_path_to_sketch_group() {
+    let mut mem = Memory::default();
+    let axes = Axes {
+        x: Point3d { x: 1.0, y: 0.0, z: 0.0 },
+        y: Point3d { x: 0.0, y: 1.0, z: 0.0 },
+        z: Point3d { x: 0.0, y: 0.0, z: 1.0 },
+    };
+    let sg = SketchGroup {
+        id: Uuid::new_v4(),
+        on: sketch_types::SketchSurface::Plane(Plane {
+            id: Uuid::new_v4(),
+            value: sketch_types::PlaneType::XY,
+            origin: Default::default(),
+            axes,
+        }),
+        position: Default::default(),
+        rotation: Point4d {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            w: 1.0,
+        },
+        axes,
+        entity_id: None,
+        path_first: BasePath {
+            from: Default::default(),
+            to: Point2d { x: 20.0, y: 30.0 },
+            name: "first".to_owned(),
+        },
+        path_rest: vec![crate::sketch_types::PathSegment::ToPoint {
+            base: BasePath {
+                from: Point2d { x: 20.0, y: 30.0 },
+                to: Point2d { x: 20.0, y: 0.0 },
+                name: "second".to_owned(),
+            },
+        }],
+    };
+    let instructions = vec![
+        Instruction::SetValue {
+            address: Address::ZERO,
+            value_parts: sg.into_parts(),
+        },
+        Instruction::SketchGroupAddPath {
+            segment: sketch_types::PathSegment::ToPoint {
+                base: BasePath {
+                    from: Point2d { x: 20.0, y: 0.0 },
+                    to: Point2d::default(),
+                    name: "third".to_owned(),
+                },
+            },
+            source: InMemory::Address(Address::ZERO),
+            destination: Destination::Address(Address::ZERO),
+        },
+    ];
+    execute(&mut mem, instructions, None).await.unwrap();
+    assert_snapshot!("add_path_to_sketchgroup", mem.debug_table(None));
 }
 
 #[tokio::test]

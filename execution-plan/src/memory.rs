@@ -1,5 +1,5 @@
 use kittycad_execution_plan_traits::{
-    ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
+    InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
 };
 
 use crate::{Address, ExecutionError};
@@ -151,6 +151,23 @@ impl Memory {
             })
             .collect::<Result<Vec<_>, _>>()?;
         Ok(x)
+    }
+
+    /// Read a T value out of memory (either addressable or stack).
+    pub fn get_in_memory<T: Value>(&mut self, source: InMemory) -> Result<(T, usize), MemoryError> {
+        match source {
+            InMemory::Address(a) => self.get_composite(a),
+            InMemory::StackPop => {
+                let data = self.stack_pop()?;
+                let mut data_parts = data.iter().cloned().map(Some);
+                T::from_parts(&mut data_parts)
+            }
+            InMemory::StackPeek => {
+                let data = self.stack_peek()?;
+                let mut data_parts = data.iter().cloned().map(Some);
+                T::from_parts(&mut data_parts)
+            }
+        }
     }
 
     /// Return a nicely-formatted table of stack.
