@@ -179,4 +179,20 @@ pub enum ExecutionError {
         /// Starting address of the object
         address: Address,
     },
+    /// No such SketchGroup exists.
+    #[error("No SketchGroup exists at index {index}")]
+    NoSketchGroup {
+        /// Index into the vector of SketchGroups.
+        index: usize,
+    },
+    /// SketchGroup storage cannot have gaps.
+    #[error(
+        "You tried to set a SketchGroup into destination {destination} but no such index exists. The last slot available is {len}."
+    )]
+    SketchGroupNoGaps {
+        /// Index user tried to write into.
+        destination: usize,
+        /// Current SketchGroup vec length.
+        len: usize,
+    },
 }

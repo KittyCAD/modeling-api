@@ -1,11 +1,9 @@
-use kittycad_execution_plan_traits::{
-    InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
-};
+use kittycad_execution_plan_traits::{ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory};
 use serde::{Deserialize, Serialize};
 
 use crate::{
     events::{Event, EventWriter, Severity},
-    sketch_types::{self, SketchGroup},
+    sketch_types::{self},
     Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, Memory, Operand, Result, UnaryArithmetic,
 };
 
@@ -111,14 +109,22 @@ pub enum Instruction {
         /// Start copying into this address.
         destination_range: Operand,
     },
+    /// Write the SketchGroup to its special storage.
+    SketchGroupSet {
+        /// What to write.
+        sketch_group: sketch_types::SketchGroup,
+        /// Index into the SketchGroup storage vec.
+        destination: usize,
+    },
     /// Add a path to a SketchGroup.
     SketchGroupAddPath {
         /// What to add to the SketchGroup.
         segment: sketch_types::PathSegment,
         /// Where the SketchGroup to modify begins.
-        source: InMemory,
+        /// This is an index into the `SketchGroup` storage of the memory.
+        source: usize,
         /// Where the modified SketchGroup should be written to.
-        destination: Destination,
+        destination: usize,
     },
 }
 
@@ -428,21 +434,24 @@ impl Instruction {
                     mem.set(dst, val.clone());
                 }
             }
+            Instruction::SketchGroupSet {
+                sketch_group,
+                destination,
+            } => {
+                mem.sketch_group_set(sketch_group, destination)?;
+            }
             Instruction::SketchGroupAddPath {
                 segment,
                 source,
                 destination,
             } => {
-                let mut sg: SketchGroup = mem.get_in_memory(source)?.0;
+                let mut sg = mem
+                    .sketch_groups
+                    .get(source)
+                    .ok_or(ExecutionError::NoSketchGroup { index: source })?
+                    .clone();
                 sg.path_rest.push(segment);
-                match destination {
-                    Destination::Address(a) => {
-                        mem.set_composite(a, sg);
-                    }
-                    Destination::StackPush => {
-                        mem.stack.push(sg.into_parts());
-                    }
-                }
+                mem.sketch_group_set(sg, destination)?;
             }
         }
         Ok(())
