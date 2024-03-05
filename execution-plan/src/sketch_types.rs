@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 /// A sketch group is a collection of paths.
-#[derive(Clone, ExecutionPlanValue)]
+#[derive(Clone, ExecutionPlanValue, PartialEq, Debug, Deserialize, Serialize)]
 pub struct SketchGroup {
     // NOTE to developers
     // Do NOT reorder these fields without updating the  _offset() methods below.
@@ -76,7 +76,7 @@ impl SketchGroup {
 }
 
 /// The X, Y and Z axes.
-#[derive(Clone, Copy, ExecutionPlanValue)]
+#[derive(Debug, Clone, Copy, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
 pub struct Axes {
     #[allow(missing_docs)]
     pub x: Point3d,
@@ -152,14 +152,14 @@ impl PathSegment {
 }
 
 /// What is being sketched on?
-#[derive(Clone, Copy, ExecutionPlanValue)]
+#[derive(Debug, Clone, Copy, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
 pub enum SketchSurface {
     /// A plane.
     Plane(Plane),
 }
 
 /// A plane.
-#[derive(Clone, Copy, ExecutionPlanValue)]
+#[derive(Debug, Clone, Copy, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
 pub struct Plane {
     /// The id of the plane.
     pub id: Uuid,
@@ -172,7 +172,7 @@ pub struct Plane {
 }
 
 /// Type for a plane.
-#[derive(Clone, Copy, ExecutionPlanValue)]
+#[derive(Debug, Clone, Copy, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
 pub enum PlaneType {
     #[allow(missing_docs)]
     XY,
