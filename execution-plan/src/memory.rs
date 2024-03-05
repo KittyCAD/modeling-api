@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use kittycad_execution_plan_traits::{
     InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
 };
@@ -44,6 +46,8 @@ pub struct Memory {
     pub addresses: Vec<Option<Primitive>>,
     /// A stack where temporary values can be pushed or popped.
     pub stack: Stack<Vec<Primitive>>,
+    /// Special storage for SketchGroups.
+    pub sketch_groups: Vec<crate::sketch_types::SketchGroup>,
 }
 
 impl Default for Memory {
@@ -51,6 +55,7 @@ impl Default for Memory {
         Self {
             addresses: vec![None; 1024],
             stack: Stack::default(),
+            sketch_groups: Vec::new(),
         }
     }
 }
@@ -240,6 +245,28 @@ impl Memory {
         self.iter()
             .filter_map(|(i, v)| if v.is_some() { Some(i) } else { None })
             .last()
+    }
+
+    pub(crate) fn sketch_group_set(
+        &mut self,
+        sketch_group: crate::sketch_types::SketchGroup,
+        destination: usize,
+    ) -> Result<(), ExecutionError> {
+        match destination.cmp(&self.sketch_groups.len()) {
+            Ordering::Less => {
+                self.sketch_groups[destination] = sketch_group;
+            }
+            Ordering::Equal => {
+                self.sketch_groups.push(sketch_group);
+            }
+            Ordering::Greater => {
+                return Err(ExecutionError::SketchGroupNoGaps {
+                    destination,
+                    len: self.sketch_groups.len(),
+                });
+            }
+        }
+        Ok(())
     }
 }
 

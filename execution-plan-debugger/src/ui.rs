@@ -404,6 +404,10 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
             "Copy".into(),
             format!("copy from {source_range:?} to {destination_range:?}"),
         ),
+        Instruction::SketchGroupSet {
+            sketch_group,
+            destination,
+        } => ("SGSet".into(), format!("dst: {destination}")),
         Instruction::SketchGroupAddPath {
             segment,
             source,

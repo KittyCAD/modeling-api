@@ -362,6 +362,16 @@ impl From<euler::Vec3> for Point3d<f32> {
     }
 }
 
+impl<T> PartialEq for Point4d<T>
+where
+    kcep::Primitive: From<T>,
+    T: kcep::Value + PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y && self.z == other.z && self.w == other.w
+    }
+}
+
 /// A point in 2D space
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default, ExecutionPlanValue)]
 #[serde(rename = "Point2d")]

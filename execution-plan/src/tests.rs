@@ -373,25 +373,26 @@ async fn add_path_to_sketch_group() {
             },
         }],
     };
+    let next = sketch_types::PathSegment::ToPoint {
+        base: BasePath {
+            from: Point2d { x: 20.0, y: 0.0 },
+            to: Point2d::default(),
+            name: "third".to_owned(),
+        },
+    };
     let instructions = vec![
-        Instruction::SetValue {
-            address: Address::ZERO,
-            value_parts: sg.into_parts(),
+        Instruction::SketchGroupSet {
+            sketch_group: sg,
+            destination: 0,
         },
         Instruction::SketchGroupAddPath {
-            segment: sketch_types::PathSegment::ToPoint {
-                base: BasePath {
-                    from: Point2d { x: 20.0, y: 0.0 },
-                    to: Point2d::default(),
-                    name: "third".to_owned(),
-                },
-            },
-            source: InMemory::Address(Address::ZERO),
-            destination: Destination::Address(Address::ZERO),
+            segment: next.clone(),
+            source: 0,
+            destination: 0,
         },
     ];
     execute(&mut mem, instructions, None).await.unwrap();
-    assert_snapshot!("add_path_to_sketchgroup", mem.debug_table(None));
+    assert_eq!(mem.sketch_groups[0].path_rest.last().unwrap(), &next);
 }
 
 #[tokio::test]
