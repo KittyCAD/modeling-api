@@ -385,8 +385,11 @@ async fn add_path_to_sketch_group() {
             sketch_group: sg,
             destination: 0,
         },
-        Instruction::SketchGroupAddPath {
-            segment: next.clone(),
+        Instruction::StackPush {
+            data: next.clone().into_parts(),
+        },
+        Instruction::SketchGroupAddSegment {
+            segment: InMemory::StackPop,
             source: 0,
             destination: 0,
         },

@@ -1,4 +1,7 @@
-use kittycad_execution_plan_traits::{ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory};
+use kittycad_execution_plan_traits::{
+    InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory,
+};
+use kittycad_modeling_cmds::shared::Point2d;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -117,14 +120,37 @@ pub enum Instruction {
         destination: usize,
     },
     /// Add a path to a SketchGroup.
-    SketchGroupAddPath {
-        /// What to add to the SketchGroup.
-        segment: sketch_types::PathSegment,
+    SketchGroupAddSegment {
+        /// Address of a PathSegment which will be added to the SketchGroup.
+        segment: InMemory,
         /// Where the SketchGroup to modify begins.
         /// This is an index into the `SketchGroup` storage of the memory.
         source: usize,
         /// Where the modified SketchGroup should be written to.
         destination: usize,
+    },
+    /// Set the base path of a SketchGroup.
+    SketchGroupSetBasePath {
+        /// Where the SketchGroup to modify begins.
+        /// This is an index into the `SketchGroup` storage of the memory.
+        source: usize,
+        /// Where the base path starts.
+        from: InMemory,
+        /// Where the base path ends.
+        to: InMemory,
+        /// The name of the base path.
+        name: Option<InMemory>,
+    },
+    /// Copy data from a SketchGroup.
+    SketchGroupCopyFrom {
+        /// Index into the SketchGroup array.
+        source: usize,
+        /// Which offset into the SketchGroup's Vec<Primitive> should copying start at?
+        offset: usize,
+        /// How many primitives should be copied?
+        length: usize,
+        /// Where to copy them to.
+        destination: Destination,
     },
 }
 
@@ -164,21 +190,7 @@ impl Instruction {
                     .iter()
                     .map(|i| mem.get(i).cloned().ok_or(ExecutionError::MemoryEmpty { addr: source }))
                     .collect::<Result<Vec<_>>>()?;
-                match destination {
-                    Destination::Address(dst) => {
-                        events.push(Event {
-                            text: "Writing value".to_owned(),
-                            severity: Severity::Debug,
-                            related_addresses: (0..length).map(|i| dst + i).collect(),
-                        });
-                        for (i, v) in data.into_iter().enumerate() {
-                            mem.set(dst + i, v);
-                        }
-                    }
-                    Destination::StackPush => {
-                        mem.stack.push(data);
-                    }
-                }
+                write_to_dst(data, destination, mem, events);
             }
             Instruction::SetValue { address, value_parts } => {
                 value_parts.into_iter().enumerate().for_each(|(i, part)| {
@@ -440,7 +452,23 @@ impl Instruction {
             } => {
                 mem.sketch_group_set(sketch_group, destination)?;
             }
-            Instruction::SketchGroupAddPath {
+            Instruction::SketchGroupSetBasePath { source, from, to, name } => {
+                let mut sg = mem
+                    .sketch_groups
+                    .get(source)
+                    .ok_or(ExecutionError::NoSketchGroup { index: source })?
+                    .clone();
+                let from: Point2d<f64> = mem.get_in_memory(from, "from", events)?.0;
+                let to: Point2d<f64> = mem.get_in_memory(to, "to", events)?.0;
+                let name: String = match name {
+                    Some(name) => mem.get_in_memory(name, "name", events)?.0,
+                    None => String::new(),
+                };
+                let base_path = sketch_types::BasePath { from, to, name };
+                sg.path_first = base_path;
+                mem.sketch_group_set(sg, source)?;
+            }
+            Instruction::SketchGroupAddSegment {
                 segment,
                 source,
                 destination,
@@ -450,10 +478,45 @@ impl Instruction {
                     .get(source)
                     .ok_or(ExecutionError::NoSketchGroup { index: source })?
                     .clone();
+                let (segment, _count) = mem.get_in_memory(segment, "segment", events)?;
                 sg.path_rest.push(segment);
                 mem.sketch_group_set(sg, destination)?;
             }
+            Instruction::SketchGroupCopyFrom {
+                source,
+                offset,
+                length,
+                destination,
+            } => {
+                use kittycad_execution_plan_traits::Value;
+                let sg = mem
+                    .sketch_groups
+                    .get(source)
+                    .ok_or(ExecutionError::NoSketchGroup { index: source })?
+                    .clone()
+                    .into_parts();
+                let data = sg.into_iter().skip(offset).take(length).collect();
+                write_to_dst(data, destination, mem, events);
+            }
         }
         Ok(())
+    }
+}
+
+fn write_to_dst(data: Vec<Primitive>, destination: Destination, mem: &mut Memory, events: &mut EventWriter) {
+    match destination {
+        Destination::Address(dst) => {
+            events.push(Event {
+                text: "Writing value".to_owned(),
+                severity: Severity::Debug,
+                related_addresses: (0..data.len()).map(|i| dst + i).collect(),
+            });
+            for (i, v) in data.into_iter().enumerate() {
+                mem.set(dst + i, v);
+            }
+        }
+        Destination::StackPush => {
+            mem.stack.push(data);
+        }
     }
 }
