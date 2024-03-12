@@ -1575,9 +1575,9 @@ dependencies = [
 
 [[package]]
 name = "kittycad"
-version = "0.2.44"
+version = "0.2.60"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff968a1b90af9a16f162c7bb57d7725ee8d4eeae939a998c82b48129802a2804"
+checksum = "f8aa5906d0730bd90f6b3331fe57c04951d00743169a29ee96408767b4060605"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1591,6 +1591,7 @@ dependencies = [
  "http 0.2.11",
  "itertools 0.10.5",
  "log",
+ "mime_guess",
  "parse-display",
  "phonenumber",
  "rand 0.8.5",
@@ -1715,7 +1716,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-session"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "color-eyre",
  "futures",
