@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 
 use kittycad_execution_plan_traits::{
+    events::{Event, EventWriter},
     InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
 };
 
@@ -159,15 +160,37 @@ impl Memory {
     }
 
     /// Read a T value out of memory (either addressable or stack).
-    pub fn get_in_memory<T: Value>(&mut self, source: InMemory) -> Result<(T, usize), MemoryError> {
+    pub fn get_in_memory<T: Value>(
+        &mut self,
+        source: InMemory,
+        field_name: &'static str,
+        events: &mut EventWriter,
+    ) -> Result<(T, usize), MemoryError> {
         match source {
-            InMemory::Address(a) => self.get_composite(a),
+            InMemory::Address(a) => {
+                events.push(Event {
+                    text: format!("reading '{field_name}'"),
+                    severity: kittycad_execution_plan_traits::events::Severity::Debug,
+                    related_addresses: vec![a],
+                });
+                self.get_composite(a)
+            }
             InMemory::StackPop => {
+                events.push(Event {
+                    text: format!("popping '{field_name}' from stack"),
+                    severity: kittycad_execution_plan_traits::events::Severity::Debug,
+                    related_addresses: Default::default(),
+                });
                 let data = self.stack_pop()?;
                 let mut data_parts = data.iter().cloned().map(Some);
                 T::from_parts(&mut data_parts)
             }
             InMemory::StackPeek => {
+                events.push(Event {
+                    text: format!("peeking '{field_name}' from stack"),
+                    severity: kittycad_execution_plan_traits::events::Severity::Debug,
+                    related_addresses: Default::default(),
+                });
                 let data = self.stack_peek()?;
                 let mut data_parts = data.iter().cloned().map(Some);
                 T::from_parts(&mut data_parts)

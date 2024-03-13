@@ -25,7 +25,7 @@
       "address": 2,
       "value": {
         "NumericValue": {
-          "Float": 0.0
+          "Float": 4.0
         }
       }
     }
@@ -45,8 +45,16 @@
       "address": 4,
       "value": {
         "NumericValue": {
-          "Float": 0.0
+          "Float": 5.0
         }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 5,
+      "value": {
+        "String": "adam"
       }
     }
   },
@@ -55,7 +63,7 @@
       "source": 2,
       "length": 1,
       "destination": {
-        "Address": 5
+        "Address": 6
       }
     }
   },
@@ -64,13 +72,13 @@
       "source": 4,
       "length": 1,
       "destination": {
-        "Address": 6
+        "Address": 7
       }
     }
   },
   {
     "SetPrimitive": {
-      "address": 7,
+      "address": 8,
       "value": {
         "NumericValue": {
           "Float": 0.0
@@ -185,7 +193,7 @@
         "StackPop",
         "StackPop"
       ],
-      "cmd_id": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
+      "cmd_id": "d7fef3ab-756c-40d3-a726-1629b9abf40a"
     }
   },
   {
@@ -234,7 +242,7 @@
     "StackPush": {
       "data": [
         {
-          "Uuid": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
+          "Uuid": "d7fef3ab-756c-40d3-a726-1629b9abf40a"
         }
       ]
     }
@@ -249,7 +257,7 @@
         "StackPop",
         "StackPop"
       ],
-      "cmd_id": "a21a0e8f-d569-48e3-9537-6e8029936957"
+      "cmd_id": "b7a1cb12-f30e-4b77-b006-652fb71e7344"
     }
   },
   {
@@ -257,14 +265,14 @@
       "endpoint": "StartPath",
       "store_response": null,
       "arguments": [],
-      "cmd_id": "d8c1ddf2-5db4-43d6-982e-31b62acde065"
+      "cmd_id": "5ad51a02-e03e-4b81-a4e8-bf8b2f47618b"
     }
   },
   {
     "StackPush": {
       "data": [
         {
-          "Uuid": "d8c1ddf2-5db4-43d6-982e-31b62acde065"
+          "Uuid": "5ad51a02-e03e-4b81-a4e8-bf8b2f47618b"
         }
       ]
     }
@@ -276,226 +284,106 @@
       "arguments": [
         "StackPop",
         {
-          "Address": 5
+          "Address": 6
         }
       ],
-      "cmd_id": "17cf212e-b681-4c4c-88ae-9e4f6285702d"
+      "cmd_id": "af28f069-624e-4dde-a6f4-3484181816b3"
     }
   },
   {
-    "SetValue": {
-      "address": 7,
-      "value_parts": [
-        {
-          "Uuid": "d8c1ddf2-5db4-43d6-982e-31b62acde065"
-        },
-        {
-          "String": "Plane"
-        },
-        {
-          "Uuid": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
-        },
-        {
-          "String": "XY"
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
+    "SketchGroupSet": {
+      "sketch_group": {
+        "id": "5ad51a02-e03e-4b81-a4e8-bf8b2f47618b",
+        "on": {
+          "Plane": {
+            "id": "d7fef3ab-756c-40d3-a726-1629b9abf40a",
+            "value": "XY",
+            "origin": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "axes": {
+              "x": {
+                "x": 1.0,
+                "y": 0.0,
+                "z": 0.0
+              },
+              "y": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+              },
+              "z": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 1.0
+              }
+            }
           }
         },
-        {
-          "NumericValue": {
-            "Float": 0.0
+        "position": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "rotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0,
+          "w": 1.0
+        },
+        "axes": {
+          "x": {
+            "x": 1.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "y": {
+            "x": 0.0,
+            "y": 1.0,
+            "z": 0.0
+          },
+          "z": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
           }
         },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
+        "entity_id": "d7fef3ab-756c-40d3-a726-1629b9abf40a",
+        "path_first": {
+          "from": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "to": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "name": ""
         },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "String": "Some"
-        },
-        {
-          "Uuid": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "String": ""
-        },
-        {
-          "NumericValue": {
-            "UInteger": 0
-          }
-        }
-      ]
+        "path_rest": []
+      },
+      "destination": 0
     }
   },
   {
-    "Copy": {
-      "source": 5,
-      "length": 1,
-      "destination": {
-        "Address": 43
-      }
-    }
-  },
-  {
-    "Copy": {
-      "source": 5,
-      "length": 1,
-      "destination": {
-        "Address": 45
+    "SketchGroupSetBasePath": {
+      "source": 0,
+      "from": {
+        "Address": 6
+      },
+      "to": {
+        "Address": 6
+      },
+      "name": {
+        "Address": 5
       }
     }
   },
   {
     "SetPrimitive": {
-      "address": 47,
+      "address": 8,
       "value": {
         "ListHeader": {
           "count": 2,
@@ -506,7 +394,7 @@
   },
   {
     "SetPrimitive": {
-      "address": 48,
+      "address": 9,
       "value": {
         "NumericValue": {
           "UInteger": 1
@@ -516,7 +404,7 @@
   },
   {
     "SetPrimitive": {
-      "address": 49,
+      "address": 10,
       "value": {
         "NumericValue": {
           "Float": 4.0
@@ -526,7 +414,7 @@
   },
   {
     "SetPrimitive": {
-      "address": 50,
+      "address": 11,
       "value": {
         "NumericValue": {
           "UInteger": 1
@@ -536,7 +424,7 @@
   },
   {
     "SetPrimitive": {
-      "address": 51,
+      "address": 12,
       "value": {
         "NumericValue": {
           "Float": 0.0
@@ -546,25 +434,25 @@
   },
   {
     "Copy": {
-      "source": 49,
+      "source": 10,
       "length": 1,
       "destination": {
-        "Address": 52
+        "Address": 13
       }
     }
   },
   {
     "Copy": {
-      "source": 51,
+      "source": 12,
       "length": 1,
       "destination": {
-        "Address": 53
+        "Address": 14
       }
     }
   },
   {
     "SetPrimitive": {
-      "address": 54,
+      "address": 15,
       "value": {
         "NumericValue": {
           "Float": 0.0
@@ -574,7 +462,7 @@
   },
   {
     "Copy": {
-      "source": 52,
+      "source": 13,
       "length": 2,
       "destination": "StackPush"
     }
@@ -592,7 +480,7 @@
   },
   {
     "SetPrimitive": {
-      "address": 55,
+      "address": 19,
       "value": {
         "String": "Line"
       }
@@ -600,15 +488,23 @@
   },
   {
     "StackPop": {
-      "destination": 56
+      "destination": 20
     }
   },
   {
     "SetPrimitive": {
-      "address": 59,
+      "address": 23,
       "value": {
         "Bool": false
       }
+    }
+  },
+  {
+    "SketchGroupCopyFrom": {
+      "source": 1,
+      "offset": 0,
+      "length": 1,
+      "destination": "StackPush"
     }
   },
   {
@@ -616,14 +512,21 @@
       "endpoint": "ExtendPath",
       "store_response": null,
       "arguments": [
+        "StackPop",
         {
-          "Address": 7
-        },
-        {
-          "Address": 55
+          "Address": 19
         }
       ],
-      "cmd_id": "795aa93f-5af9-4a46-b942-2c418cb7bb54"
+      "cmd_id": "67f4c419-99aa-4386-ba61-cbdc7551dc51"
+    }
+  },
+  {
+    "SketchGroupAddSegment": {
+      "segment": {
+        "Address": 19
+      },
+      "source": 1,
+      "destination": 2
     }
   }
 ]
