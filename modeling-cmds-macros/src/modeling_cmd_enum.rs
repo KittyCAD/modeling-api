@@ -61,6 +61,7 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
         /// Commands that the KittyCAD engine can execute.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
         #[serde(rename_all = "snake_case", tag = "type")]
+        #[cfg_attr(not(exhaustive), non_exhaustive)]
         pub enum ModelingCmd {#(
             #[doc = #docs]
             #variants(kittycad_modeling_cmds::each_cmd::#variants),
