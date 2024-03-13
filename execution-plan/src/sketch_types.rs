@@ -30,6 +30,20 @@ pub struct SketchGroup {
 }
 
 impl SketchGroup {
+    /// The `to` end of the last path segment.
+    /// i.e. the point from which the next segment will start.
+    pub fn last_point(&self) -> Point2d<f64> {
+        self.get_last_path_segment().to
+    }
+
+    /// Get the last path segment, find its base path.
+    fn get_last_path_segment(&self) -> &BasePath {
+        match self.path_rest.last() {
+            Some(segment) => segment.get_base(),
+            None => &self.path_first,
+        }
+    }
+
     /// Get the offset for the `id` field.
     pub fn path_id_offset() -> usize {
         0
@@ -148,6 +162,17 @@ impl PathSegment {
             PathSegment::Horizontal { .. } => "Horizontal",
             PathSegment::AngledLineTo { .. } => "AngledLineTo",
             PathSegment::Base { .. } => "Base",
+        }
+    }
+
+    /// Get the BasePath from a segment.
+    fn get_base(&self) -> &BasePath {
+        match self {
+            PathSegment::ToPoint { base } => base,
+            PathSegment::TangentialArcTo { base, .. } => base,
+            PathSegment::Horizontal { base, .. } => base,
+            PathSegment::AngledLineTo { base, .. } => base,
+            PathSegment::Base { base } => base,
         }
     }
 }

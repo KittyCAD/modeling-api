@@ -431,5 +431,9 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
             "SGAddPath".into(),
             format!("Take {source:?}, add segment {segment:?}, dst {destination:?}"),
         ),
+        Instruction::SketchGroupGetLastPoint { source, destination } => {
+            ("SGGetLastPoint".into(), format!("source {source} dst={destination}"))
+        }
+        Instruction::NoOp { comment } => ("No op".into(), comment.to_owned()),
     }
 }

@@ -36,13 +36,16 @@ pub enum Destination {
     Address(Address),
     /// Push onto the stack.
     StackPush,
+    /// Extend what is already on the stack.
+    StackExtend,
 }
 
 impl std::fmt::Display for Destination {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Destination::Address(a) => a.fmt(f),
-            Destination::StackPush => "Stack".fmt(f),
+            Destination::StackPush => "StackPush".fmt(f),
+            Destination::StackExtend => "StackExtend".fmt(f),
         }
     }
 }

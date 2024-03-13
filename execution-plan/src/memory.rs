@@ -351,6 +351,16 @@ impl<T> Stack<T> {
     }
 }
 
+impl<T> Stack<Vec<T>> {
+    /// Extend the top of stack with more data.
+    pub fn extend(&mut self, data: Vec<T>) -> Result<(), MemoryError> {
+        let mut start = self.pop()?;
+        start.extend(data);
+        self.push(start);
+        Ok(())
+    }
+}
+
 impl Stack<Vec<Primitive>> {
     /// Remove a value from the top of the stack, and return it.
     /// If it's a single primitive long, return Ok, otherwise error.
