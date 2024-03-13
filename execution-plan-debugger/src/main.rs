@@ -1,9 +1,10 @@
 //! Time-travelling debugger for KittyCAD execution plans.
-use std::{env, io, process::exit};
+use std::{collections::HashMap, env, io, process::exit};
 
 use anyhow::{bail, Context, Result};
 use kittycad_execution_plan::Instruction;
 use kittycad_modeling_session::Session;
+use serde::{Deserialize, Serialize};
 
 mod app;
 mod ui;
@@ -20,15 +21,20 @@ async fn main() {
 }
 
 async fn inner_main() -> Result<()> {
-    let plan = get_instrs()?;
+    let Input { instructions, comments } = get_instrs()?;
+    let comments = comments
+        .into_iter()
+        .map(|(k, v)| k.parse().map(|k| (k, v)))
+        .collect::<Result<HashMap<usize, _>, _>>()?;
     let mut mem = kittycad_execution_plan::Memory::default();
     let session = client().await?;
     let (history, last_instruction) =
-        kittycad_execution_plan::execute_time_travel(&mut mem, plan.clone(), Some(session)).await;
+        kittycad_execution_plan::execute_time_travel(&mut mem, instructions.clone(), Some(session)).await;
     app::run(app::Context {
         last_instruction,
         history,
-        plan,
+        plan: instructions,
+        comments,
     })
 }
 
@@ -91,7 +97,16 @@ async fn client() -> Result<Session> {
     }
 }
 
-fn get_instrs() -> Result<Vec<Instruction>> {
+/// Inputs to the debugger.
+#[derive(Deserialize, Serialize)]
+pub struct Input {
+    /// What instructions to execute. A KCVM program, basically.
+    pub instructions: Vec<Instruction>,
+    /// Map of instruction number to comments.
+    pub comments: HashMap<String, String>,
+}
+
+fn get_instrs() -> Result<Input> {
     let args: Vec<_> = env::args().collect();
     if args.len() < 2 {
         print_help();

@@ -1644,6 +1644,7 @@ dependencies = [
  "kittycad-modeling-cmds",
  "kittycad-modeling-session",
  "ratatui",
+ "serde",
  "serde_json",
  "tokio",
 ]

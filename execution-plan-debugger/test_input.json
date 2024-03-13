@@ -1,4 +1,9 @@
-[
+{
+"comments": {
+  "0": "foo",
+  "1": "bar"
+},
+"instructions":  [
   {
     "SetPrimitive": {
       "address": 0,
@@ -1183,3 +1188,4 @@
     }
   }
 ]
+}

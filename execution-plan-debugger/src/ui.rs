@@ -49,10 +49,22 @@ pub fn ui(f: &mut Frame, ctx: &Context, state: &mut State) {
 
     let event_block = basic_block("Events", false);
     let events = match state.active_instruction() {
-        InstructionSelected::Instruction(i) => &ctx.history[i].events,
-        _ => [].as_slice(),
+        InstructionSelected::Start => Vec::new(),
+        InstructionSelected::Instruction(instr) => match ctx.comments.get(&instr) {
+            Some(comment) => {
+                let mut v = Vec::with_capacity(1 + ctx.history[instr].events.len());
+                v.push(Event {
+                    text: comment.to_owned(),
+                    severity: Severity::Info,
+                    related_addresses: Default::default(),
+                });
+                v.extend(ctx.history[instr].events.clone());
+                v
+            }
+            None => ctx.history[instr].events.to_vec(),
+        },
     };
-    let (event_view, addr_colors) = make_events_view(event_block, events);
+    let (event_view, addr_colors) = make_events_view(event_block, &events);
 
     // Render the addressable memory view.
     let address_block = basic_block("Address Memory", state.active_pane == Pane::Addresses);

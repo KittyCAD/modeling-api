@@ -1,4 +1,4 @@
-use std::{io::stderr, ops::ControlFlow, time::Duration};
+use std::{collections::HashMap, io::stderr, ops::ControlFlow, time::Duration};
 
 use kittycad_execution_plan::Instruction;
 use ratatui::{backend::CrosstermBackend, widgets::TableState, Terminal};
@@ -10,6 +10,7 @@ pub struct Context {
     pub history: Vec<kittycad_execution_plan::ExecutionState>,
     pub last_instruction: usize,
     pub plan: Vec<Instruction>,
+    pub comments: HashMap<usize, String>,
 }
 impl Context {
     /// How many addresses should be shown?
