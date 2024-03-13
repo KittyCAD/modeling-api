@@ -100,6 +100,7 @@ pub struct BasePath {
 /// Paths are made up of multiple segments, laid out top-to-tail
 /// (i.e. the end of one segment is the start of the next).
 #[derive(Debug, Clone, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case", tag = "type")]
 pub enum PathSegment {
     /// A path that goes to a point.
     ToPoint {
@@ -153,6 +154,7 @@ impl PathSegment {
 
 /// What is being sketched on?
 #[derive(Debug, Clone, Copy, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case", tag = "type")]
 pub enum SketchSurface {
     /// A plane.
     Plane(Plane),
@@ -173,6 +175,7 @@ pub struct Plane {
 
 /// Type for a plane.
 #[derive(Debug, Clone, Copy, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case", tag = "type")]
 pub enum PlaneType {
     #[allow(missing_docs)]
     XY,
