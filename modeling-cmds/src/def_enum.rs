@@ -633,7 +633,7 @@ define_modeling_cmd_enum! {
             pub adjust_camera: bool,
         }
 
-        /// Set the backgroud color of the scene.
+        /// Set the background color of the scene.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct SetBackgroundColor {
             /// The color to set the background to.
