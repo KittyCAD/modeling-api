@@ -416,12 +416,12 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
         } => ("SGSet".into(), format!("dst: {destination}")),
         Instruction::SketchGroupCopyFrom {
             destination,
-            source: _,
+            source,
             offset,
             length,
         } => (
             "SGCopyFrom".into(),
-            format!("dst {destination}, len {length}, offset {offset}"),
+            format!("{source} to {destination}, len {length}, offset {offset}"),
         ),
         Instruction::SketchGroupAddSegment {
             segment,

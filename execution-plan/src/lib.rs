@@ -72,11 +72,32 @@ impl Operand {
     }
 }
 
+/// Executing the program failed.
+#[derive(Debug)]
+pub struct ExecutionFailed {
+    /// What error occurred.
+    pub error: ExecutionError,
+    /// Which instruction was being executed when the error occurred?
+    pub instruction: Instruction,
+    /// Which instruction number was being executed when the error occurred?
+    pub instruction_index: usize,
+}
+
 /// Execute the plan.
-pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Option<ModelingSession>) -> Result<()> {
+pub async fn execute(
+    mem: &mut Memory,
+    plan: Vec<Instruction>,
+    mut session: Option<ModelingSession>,
+) -> std::result::Result<(), ExecutionFailed> {
     let mut events = EventWriter::default();
-    for instruction in plan.into_iter() {
-        instruction.execute(mem, session.as_mut(), &mut events).await?;
+    for (i, instruction) in plan.into_iter().enumerate() {
+        if let Err(e) = instruction.clone().execute(mem, session.as_mut(), &mut events).await {
+            return Err(ExecutionFailed {
+                error: e,
+                instruction,
+                instruction_index: i,
+            });
+        }
     }
     Ok(())
 }
