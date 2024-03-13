@@ -252,7 +252,7 @@ define_modeling_cmd_enum! {
         pub struct EntityLinearPattern {
             /// ID of the entity being copied.
             pub entity_id: Uuid,
-            /// Axis along which to make the copies
+            /// Axis along which to make the copies.
             /// For Solid2d patterns, the z component is ignored.
             pub axis: Point3d<f64>,
             /// Number of repetitions to make.
@@ -265,10 +265,10 @@ define_modeling_cmd_enum! {
         pub struct EntityCircularPattern {
             /// ID of the entity being copied.
             pub entity_id: Uuid,
-            /// Axis around which to make the copies
+            /// Axis around which to make the copies.
             /// For Solid2d patterns, this is ignored.
             pub axis: Point3d<f64>,
-            /// Point around which to make the copies
+            /// Point around which to make the copies.
             /// For Solid2d patterns, the z component is ignored.
             pub center: Point3d<LengthUnit>,
             /// Number of repetitions to make.
