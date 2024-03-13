@@ -633,6 +633,13 @@ define_modeling_cmd_enum! {
             pub adjust_camera: bool,
         }
 
+        /// Set the background color of the scene.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct SetBackgroundColor {
+            /// The color to set the background to.
+            pub color: Color,
+        }
+
         /// Get type of the given curve.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct CurveGetType {
