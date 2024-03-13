@@ -32,6 +32,7 @@ impl ::kittycad_execution_plan_traits::Value for Segment {
                 ::kittycad_execution_plan_traits::MemoryError::InvalidEnumVariant {
                     expected_type: stringify!(Segment).to_owned(),
                     actual: other.to_owned(),
+                    valid_variants: vec!["Line"],
                 },
             ),
         }

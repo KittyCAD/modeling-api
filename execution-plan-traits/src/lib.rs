@@ -78,12 +78,14 @@ pub enum MemoryError {
         actual: String,
     },
     /// When trying to read an enum from memory, found a variant tag which is not valid for this enum.
-    #[error("Found an unexpected tag '{actual}' when trying to read an enum of type {expected_type} from memory")]
+    #[error("Found an unexpected tag '{actual}' when trying to read an enum of type {expected_type} from memory. Looking for one of {}", csv(.valid_variants))]
     InvalidEnumVariant {
         /// What type of enum was being read from memory.
         expected_type: String,
         /// The actual enum tag found in memory.
         actual: String,
+        /// Which values would be acceptable?
+        valid_variants: Vec<&'static str>,
     },
     /// Stack is empty
     #[error("Stack is empty")]
@@ -95,6 +97,10 @@ pub enum MemoryError {
         /// Expected to be 1, but it was something else.
         actual_length: usize,
     },
+}
+
+fn csv(v: &[&'static str]) -> String {
+    v.join(", ")
 }
 
 /// Macro to generate an `impl Value` for the given type `$subject`.

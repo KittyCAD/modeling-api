@@ -65,6 +65,7 @@ impl ::kittycad_execution_plan_traits::Value for FooEnum {
                 ::kittycad_execution_plan_traits::MemoryError::InvalidEnumVariant {
                     expected_type: stringify!(FooEnum).to_owned(),
                     actual: other.to_owned(),
+                    valid_variants: vec!["A", "B", "C", "D"],
                 },
             ),
         }
