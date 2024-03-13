@@ -19,7 +19,7 @@ pub trait Value: Sized {
     /// Store the value in memory.
     fn into_parts(self) -> Vec<Primitive>;
     /// Read the value from memory.
-    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
+    fn from_parts<I>(values: &mut I) -> Result<(Self, usize), MemoryError>
     where
         I: Iterator<Item = Option<Primitive>>;
 }
@@ -56,7 +56,7 @@ pub trait ReadMemory {
     /// Get a value from the given address.
     fn get(&self, addr: &Address) -> Option<&Primitive>;
     /// Get a value from the given starting address. Value might require multiple addresses.
-    fn get_composite<T: Value>(&self, start: Address) -> Result<T, MemoryError>;
+    fn get_composite<T: Value>(&self, start: Address) -> Result<(T, usize), MemoryError>;
     /// Remove the value on top of the stack, return it.
     fn stack_pop(&mut self) -> Result<Vec<Primitive>, MemoryError>;
     /// Return the value on top of the stack.
@@ -108,7 +108,7 @@ macro_rules! impl_value_on_primitive_ish {
                 vec![self.into()]
             }
 
-            fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
+            fn from_parts<I>(values: &mut I) -> Result<(Self, usize), MemoryError>
             where
                 I: Iterator<Item = Option<Primitive>>,
             {
@@ -118,6 +118,7 @@ macro_rules! impl_value_on_primitive_ish {
                     .to_owned()
                     .ok_or(MemoryError::MemoryWrongSize)?
                     .try_into()
+                    .map(|prim| (prim, 1))
             }
         }
     };

@@ -62,7 +62,7 @@ fn test_derive_value_on_enum() {
             "failed test {i}, '{test_name}'.\nActual parts (left) != expected parts (right)"
         );
         let mut actual_iter = actual.into_iter().map(Some);
-        let inverted = FooEnum::from_parts(&mut actual_iter).expect("from_parts should succeed");
+        let (inverted, _count) = FooEnum::from_parts(&mut actual_iter).expect("from_parts should succeed");
         assert_eq!(inverted, input, "failed test {i}, '{test_name}'.\nInput value (right) != input value turned into parts then back into value (left).");
     }
 }
@@ -123,7 +123,7 @@ fn test_derive_value_on_struct() {
             "failed test {i}, '{test_name}'.\nActual parts (left) != expected parts (right)"
         );
         let mut actual_iter = actual.into_iter().map(Some);
-        let inverted = MyStruct::from_parts(&mut actual_iter).expect("from_parts should succeed");
+        let (inverted, _count) = MyStruct::from_parts(&mut actual_iter).expect("from_parts should succeed");
         assert_eq!(inverted, input, "failed test {i}, '{test_name}'.\nInput value (right) != input value turned into parts then back into value (left).");
     }
 }

@@ -1,5 +1,7 @@
+use std::cmp::Ordering;
+
 use kittycad_execution_plan_traits::{
-    ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
+    InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
 };
 
 use crate::{Address, ExecutionError};
@@ -44,6 +46,8 @@ pub struct Memory {
     pub addresses: Vec<Option<Primitive>>,
     /// A stack where temporary values can be pushed or popped.
     pub stack: Stack<Vec<Primitive>>,
+    /// Special storage for SketchGroups.
+    pub sketch_groups: Vec<crate::sketch_types::SketchGroup>,
 }
 
 impl Default for Memory {
@@ -51,6 +55,7 @@ impl Default for Memory {
         Self {
             addresses: vec![None; 1024],
             stack: Stack::default(),
+            sketch_groups: Vec::new(),
         }
     }
 }
@@ -63,16 +68,16 @@ impl kittycad_execution_plan_traits::ReadMemory for Memory {
 
     /// Get a value value (i.e. a value which takes up multiple addresses in memory).
     /// Its parts are stored in consecutive memory addresses starting at `start`.
-    fn get_composite<T: Value>(&self, start: Address) -> std::result::Result<T, MemoryError> {
+    fn get_composite<T: Value>(&self, start: Address) -> Result<(T, usize), MemoryError> {
         let mut values = self.addresses.iter().skip(inner(start)).cloned();
         T::from_parts(&mut values)
     }
 
-    fn stack_pop(&mut self) -> std::result::Result<Vec<Primitive>, MemoryError> {
+    fn stack_pop(&mut self) -> Result<Vec<Primitive>, MemoryError> {
         self.stack.pop()
     }
 
-    fn stack_peek(&self) -> std::result::Result<&Vec<Primitive>, MemoryError> {
+    fn stack_peek(&self) -> Result<&Vec<Primitive>, MemoryError> {
         self.stack.peek()
     }
 }
@@ -153,6 +158,23 @@ impl Memory {
         Ok(x)
     }
 
+    /// Read a T value out of memory (either addressable or stack).
+    pub fn get_in_memory<T: Value>(&mut self, source: InMemory) -> Result<(T, usize), MemoryError> {
+        match source {
+            InMemory::Address(a) => self.get_composite(a),
+            InMemory::StackPop => {
+                let data = self.stack_pop()?;
+                let mut data_parts = data.iter().cloned().map(Some);
+                T::from_parts(&mut data_parts)
+            }
+            InMemory::StackPeek => {
+                let data = self.stack_peek()?;
+                let mut data_parts = data.iter().cloned().map(Some);
+                T::from_parts(&mut data_parts)
+            }
+        }
+    }
+
     /// Return a nicely-formatted table of stack.
     #[must_use]
     pub fn debug_table_stack(&self) -> String {
@@ -223,6 +245,28 @@ impl Memory {
         self.iter()
             .filter_map(|(i, v)| if v.is_some() { Some(i) } else { None })
             .last()
+    }
+
+    pub(crate) fn sketch_group_set(
+        &mut self,
+        sketch_group: crate::sketch_types::SketchGroup,
+        destination: usize,
+    ) -> Result<(), ExecutionError> {
+        match destination.cmp(&self.sketch_groups.len()) {
+            Ordering::Less => {
+                self.sketch_groups[destination] = sketch_group;
+            }
+            Ordering::Equal => {
+                self.sketch_groups.push(sketch_group);
+            }
+            Ordering::Greater => {
+                return Err(ExecutionError::SketchGroupNoGaps {
+                    destination,
+                    len: self.sketch_groups.len(),
+                });
+            }
+        }
+        Ok(())
     }
 }
 

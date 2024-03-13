@@ -10,14 +10,19 @@ impl ::kittycad_execution_plan_traits::Value for Line {
         parts
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, ::kittycad_execution_plan_traits::MemoryError>
+    fn from_parts<I>(
+        values: &mut I,
+    ) -> Result<(Self, usize), ::kittycad_execution_plan_traits::MemoryError>
     where
         I: Iterator<Item = Option<::kittycad_execution_plan_traits::Primitive>>,
     {
-        Ok(Self {
-            point: ::kittycad_execution_plan_traits::Value::from_parts(values)?,
-            tag: ::kittycad_execution_plan_traits::Value::from_parts(values)?,
-        })
+        let mut count = 0;
+        let (point, c) = ::kittycad_execution_plan_traits::Value::from_parts(values)?;
+        count += c;
+        let (tag, c) = ::kittycad_execution_plan_traits::Value::from_parts(values)?;
+        count += c;
+        let slf = Self { point, tag };
+        Ok((slf, count))
     }
 }
 

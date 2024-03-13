@@ -47,6 +47,16 @@ impl std::ops::Add<usize> for Address {
 }
 
 /// Offset the address.
+impl std::ops::Add<Address> for usize {
+    type Output = Address;
+
+    /// Offset the address.
+    fn add(self, rhs: Address) -> Self::Output {
+        rhs.offset(self)
+    }
+}
+
+/// Offset the address.
 impl std::ops::AddAssign<usize> for Address {
     /// Offset the address.
     fn add_assign(&mut self, rhs: usize) {

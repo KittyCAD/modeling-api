@@ -247,26 +247,29 @@ define_modeling_cmd_enum! {
             pub distance_type: DistanceType,
         }
 
-        /// Create a linear pattern using this entity (currently only valid for 3D solids).
+        /// Create a linear pattern using this entity.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct EntityLinearPattern {
             /// ID of the entity being copied.
             pub entity_id: Uuid,
             /// Axis along which to make the copies
+            /// For Solid2d patterns, the z component is ignored.
             pub axis: Point3d<f64>,
             /// Number of repetitions to make.
             pub num_repetitions: u32,
             /// Spacing between repetitions.
             pub spacing: LengthUnit,
         }
-        /// Create a circular pattern using this entity (currently only valid for 3D solids).
+        /// Create a circular pattern using this entity.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct EntityCircularPattern {
             /// ID of the entity being copied.
             pub entity_id: Uuid,
             /// Axis around which to make the copies
+            /// For Solid2d patterns, this is ignored.
             pub axis: Point3d<f64>,
             /// Point around which to make the copies
+            /// For Solid2d patterns, the z component is ignored.
             pub center: Point3d<LengthUnit>,
             /// Number of repetitions to make.
             pub num_repetitions: u32,

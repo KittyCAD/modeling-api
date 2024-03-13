@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     events::{Event, EventWriter, Severity},
+    sketch_types::{self},
     Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, Memory, Operand, Result, UnaryArithmetic,
 };
 
@@ -107,6 +108,23 @@ pub enum Instruction {
         source_range: Operand,
         /// Start copying into this address.
         destination_range: Operand,
+    },
+    /// Write the SketchGroup to its special storage.
+    SketchGroupSet {
+        /// What to write.
+        sketch_group: sketch_types::SketchGroup,
+        /// Index into the SketchGroup storage vec.
+        destination: usize,
+    },
+    /// Add a path to a SketchGroup.
+    SketchGroupAddPath {
+        /// What to add to the SketchGroup.
+        segment: sketch_types::PathSegment,
+        /// Where the SketchGroup to modify begins.
+        /// This is an index into the `SketchGroup` storage of the memory.
+        source: usize,
+        /// Where the modified SketchGroup should be written to.
+        destination: usize,
     },
 }
 
@@ -415,6 +433,25 @@ impl Instruction {
                     let val = mem.get(&src).ok_or(ExecutionError::MemoryEmpty { addr: src })?;
                     mem.set(dst, val.clone());
                 }
+            }
+            Instruction::SketchGroupSet {
+                sketch_group,
+                destination,
+            } => {
+                mem.sketch_group_set(sketch_group, destination)?;
+            }
+            Instruction::SketchGroupAddPath {
+                segment,
+                source,
+                destination,
+            } => {
+                let mut sg = mem
+                    .sketch_groups
+                    .get(source)
+                    .ok_or(ExecutionError::NoSketchGroup { index: source })?
+                    .clone();
+                sg.path_rest.push(segment);
+                mem.sketch_group_set(sg, destination)?;
             }
         }
         Ok(())

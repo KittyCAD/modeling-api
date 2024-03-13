@@ -20,8 +20,8 @@ dbg_macro = "deny"
 [workspace.dependencies]
 kittycad = { version = "0.2.44", features = ["requests"] }
 kittycad-execution-plan = { path = "execution-plan" }
-kittycad-execution-plan-macros = { path = "execution-plan-macros", version = "0.1.6" }
-kittycad-execution-plan-traits = { path = "execution-plan-traits", version = "0.1.11" }
+kittycad-execution-plan-macros = { path = "execution-plan-macros", version = "0.1.8" }
+kittycad-execution-plan-traits = { path = "execution-plan-traits", version = "0.1.12" }
 kittycad-modeling-cmds = { path = "modeling-cmds", version = "0.1.24" }
 kittycad-modeling-cmds-macros = { path = "modeling-cmds-macros", version = "0.1.2" }
 kittycad-modeling-session = { path = "modeling-session" }

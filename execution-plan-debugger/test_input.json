@@ -185,7 +185,7 @@
         "StackPop",
         "StackPop"
       ],
-      "cmd_id": "0848c11c-50b6-4d81-903e-717b9d67171f"
+      "cmd_id": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
     }
   },
   {
@@ -234,7 +234,7 @@
     "StackPush": {
       "data": [
         {
-          "Uuid": "0848c11c-50b6-4d81-903e-717b9d67171f"
+          "Uuid": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
         }
       ]
     }
@@ -249,7 +249,7 @@
         "StackPop",
         "StackPop"
       ],
-      "cmd_id": "176c3eff-ef5d-46a2-9514-4ce1c787d260"
+      "cmd_id": "a21a0e8f-d569-48e3-9537-6e8029936957"
     }
   },
   {
@@ -257,14 +257,14 @@
       "endpoint": "StartPath",
       "store_response": null,
       "arguments": [],
-      "cmd_id": "c7585edd-00b6-48e7-8506-0f5becaac665"
+      "cmd_id": "d8c1ddf2-5db4-43d6-982e-31b62acde065"
     }
   },
   {
     "StackPush": {
       "data": [
         {
-          "Uuid": "c7585edd-00b6-48e7-8506-0f5becaac665"
+          "Uuid": "d8c1ddf2-5db4-43d6-982e-31b62acde065"
         }
       ]
     }
@@ -279,7 +279,7 @@
           "Address": 5
         }
       ],
-      "cmd_id": "25cbaaaf-8f51-4e7a-9824-ab8033bec7b1"
+      "cmd_id": "17cf212e-b681-4c4c-88ae-9e4f6285702d"
     }
   },
   {
@@ -287,13 +287,13 @@
       "address": 7,
       "value_parts": [
         {
-          "Uuid": "c7585edd-00b6-48e7-8506-0f5becaac665"
+          "Uuid": "d8c1ddf2-5db4-43d6-982e-31b62acde065"
         },
         {
           "String": "Plane"
         },
         {
-          "Uuid": "0848c11c-50b6-4d81-903e-717b9d67171f"
+          "Uuid": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
         },
         {
           "String": "XY"
@@ -442,7 +442,7 @@
           "String": "Some"
         },
         {
-          "Uuid": "0848c11c-50b6-4d81-903e-717b9d67171f"
+          "Uuid": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
         },
         {
           "NumericValue": {
@@ -539,7 +539,7 @@
       "address": 51,
       "value": {
         "NumericValue": {
-          "Float": 4.0
+          "Float": 0.0
         }
       }
     }
@@ -623,7 +623,7 @@
           "Address": 55
         }
       ],
-      "cmd_id": "a8e492bd-f3f6-4eef-9e34-aa59110bcd7b"
+      "cmd_id": "795aa93f-5af9-4a46-b942-2c418cb7bb54"
     }
   }
 ]

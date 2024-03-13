@@ -332,7 +332,7 @@ impl crate::Value for Primitive {
         vec![self]
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, MemoryError>
+    fn from_parts<I>(values: &mut I) -> Result<(Self, usize), MemoryError>
     where
         I: Iterator<Item = Option<Primitive>>,
     {
@@ -340,6 +340,7 @@ impl crate::Value for Primitive {
             .next()
             .and_then(|v| v.to_owned())
             .ok_or(MemoryError::MemoryWrongSize)
+            .map(|prim| (prim, 1))
     }
 }
 

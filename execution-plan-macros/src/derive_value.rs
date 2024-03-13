@@ -45,11 +45,11 @@ fn impl_value_on_enum(
                 }
             }
 
-            fn from_parts<I>(values: &mut I) -> Result<Self, #root::MemoryError>
+            fn from_parts<I>(values: &mut I) -> Result<(Self, usize), #root::MemoryError>
             where
                 I: Iterator<Item = Option<#root::Primitive>>,
             {
-                let variant_name = String::from_parts(values)?;
+                let (variant_name, mut count) = String::from_parts(values)?;
                 match variant_name.as_str() {
                     #(#from_parts_match_each_variant)*
                     other => Err(#root::MemoryError::InvalidEnumVariant{
@@ -91,7 +91,7 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
                         .unzip();
                     let rhs = quote_spanned! {expr.span()=>
                         #(#instantiate_fields)*
-                        Ok(Self::#variant_name{ #(#field_idents),* })
+                        Ok((Self::#variant_name{ #(#field_idents),* }, count))
                     };
                     quote_spanned! {variant.span() =>
                         stringify!(#variant_name) => {
@@ -120,7 +120,7 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
                         .unzip();
                     let rhs = quote_spanned! {expr.span()=>
                         #(#instantiate_fields)*
-                        Ok(Self::#variant_name(#(#field_idents),* ))
+                        Ok((Self::#variant_name(#(#field_idents),*), count ))
                     };
                     quote_spanned! {expr.span() =>
                         stringify!(#variant_name) => {
@@ -137,7 +137,7 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
                 Fields::Unit => {
                     quote_spanned! {variant.span()=>
                         stringify!(#variant_name) => {
-                            Ok(Self::#variant_name)
+                            Ok((Self::#variant_name, count))
                         }
                     }
                 }
@@ -149,12 +149,15 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
 fn make_instantiate_field(ty: syn::Type, id: &Ident) -> TokenStream2 {
     if let Some(ub) = unbox(ty.clone()) {
         quote! {
-            let #id = Box::new(#ub::from_parts(values)?);
+            let (to_box, c) = #ub::from_parts(values)?;
+            count += c;
+            let #id = Box::new(to_box);
         }
     } else {
         let field_type = remove_generics(ty);
         quote! {
-            let #id = #field_type::from_parts(values)?;
+            let (#id, c) = #field_type::from_parts(values)?;
+            count += c;
         }
     }
 }
@@ -318,7 +321,13 @@ fn impl_value_on_struct(
     });
     let instantiate_each_field = field_names.iter().map(|(ident, span)| {
         quote_spanned! {*span=>
-            #ident: #root::Value::from_parts(values)?,
+            let (#ident, c) = #root::Value::from_parts(values)?;
+            count += c;
+        }
+    });
+    let each_field = field_names.iter().map(|(ident, span)| {
+        quote_spanned! {*span=>
+            #ident,
         }
     });
 
@@ -341,13 +350,16 @@ fn impl_value_on_struct(
                 parts
             }
 
-            fn from_parts<I>(values: &mut I) -> Result<Self, #root::MemoryError>
+            fn from_parts<I>(values: &mut I) -> Result<(Self, usize), #root::MemoryError>
             where
                 I: Iterator<Item = Option<#root::Primitive>>,
             {
-                Ok(Self {
+                let mut count = 0;
                 #(#instantiate_each_field)*
-                })
+                let slf = Self {
+                    #(#each_field)*
+                };
+                Ok((slf, count))
             }
         }
     }
@@ -384,11 +396,17 @@ fn impl_value_on_struct_unnamed_fields(
             parts.extend(self.#index.into_parts());
         }
     });
-    let instantiate_each_field = field_names.iter().map(|(_, span)| {
+    let instantiate_each_field = field_names.iter().map(|(i, span)| {
+        let ident = Ident::new(&format!("field{}", i.index), *span);
         quote_spanned! {*span=>
-            #root::Value::from_parts(values)?,
+           let (#ident, c) = #root::Value::from_parts(values)?;
+           count += c;
         }
     });
+
+    let each_field = field_names
+        .iter()
+        .map(|(i, span)| Ident::new(&format!("field{}", i.index), *span));
 
     // Handle generics in the original struct.
     // Firstly, if the original struct has defaults on its generics, e.g. Point2d<T = f32>,
@@ -409,12 +427,17 @@ fn impl_value_on_struct_unnamed_fields(
                 parts
             }
 
-            fn from_parts<I>(values: &mut I) -> Result<Self, #root::MemoryError>
+            fn from_parts<I>(values: &mut I) -> Result<(Self, usize), #root::MemoryError>
             where
                 I: Iterator<Item = Option<#root::Primitive>>,
             {
-                Ok(Self (
+                let mut count = 0;
                 #(#instantiate_each_field)*
+                Ok((
+                    Self (
+                    #(#each_field)*
+                    ),
+                    count
                 ))
             }
         }

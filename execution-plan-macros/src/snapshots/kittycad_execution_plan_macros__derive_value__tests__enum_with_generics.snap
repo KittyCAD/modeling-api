@@ -15,15 +15,18 @@ impl ::kittycad_execution_plan_traits::Value for Segment {
         }
     }
 
-    fn from_parts<I>(values: &mut I) -> Result<Self, ::kittycad_execution_plan_traits::MemoryError>
+    fn from_parts<I>(
+        values: &mut I,
+    ) -> Result<(Self, usize), ::kittycad_execution_plan_traits::MemoryError>
     where
         I: Iterator<Item = Option<::kittycad_execution_plan_traits::Primitive>>,
     {
-        let variant_name = String::from_parts(values)?;
+        let (variant_name, mut count) = String::from_parts(values)?;
         match variant_name.as_str() {
             stringify!(Line) => {
-                let point = Point3d::from_parts(values)?;
-                Ok(Self::Line { point })
+                let (point, c) = Point3d::from_parts(values)?;
+                count += c;
+                Ok((Self::Line { point }, count))
             }
             other => Err(
                 ::kittycad_execution_plan_traits::MemoryError::InvalidEnumVariant {

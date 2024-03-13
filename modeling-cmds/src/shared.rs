@@ -281,7 +281,7 @@ pub enum CameraDragInteractionType {
 
 /// A segment of a path.
 /// Paths are composed of many segments.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, PartialEq)]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum PathSegment {
     /// A straight line segment.
@@ -362,6 +362,16 @@ impl From<euler::Vec3> for Point3d<f32> {
     }
 }
 
+impl<T> PartialEq for Point4d<T>
+where
+    kcep::Primitive: From<T>,
+    T: kcep::Value + PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y && self.z == other.z && self.w == other.w
+    }
+}
+
 /// A point in 2D space
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default, ExecutionPlanValue)]
 #[serde(rename = "Point2d")]
@@ -375,6 +385,16 @@ where
     pub x: T,
     #[allow(missing_docs)]
     pub y: T,
+}
+
+impl<T> PartialEq for Point2d<T>
+where
+    kcep::Primitive: From<T>,
+    T: kcep::Value + PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
 }
 
 impl<T> Point2d<T>
