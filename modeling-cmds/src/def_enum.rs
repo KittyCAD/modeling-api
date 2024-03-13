@@ -633,6 +633,13 @@ define_modeling_cmd_enum! {
             pub adjust_camera: bool,
         }
 
+        /// Set the clear color of the scene.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
+        pub struct SetClearColor {
+            /// The color to set the clear color to.
+            pub color: Color,
+        }
+
         /// Get type of the given curve.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct CurveGetType {

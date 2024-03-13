@@ -160,6 +160,12 @@ define_ok_modeling_cmd_response_enum! {
             /// Curve type
             pub curve_type: CurveType,
         }
+        /// The response from the `SetClearColor` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, Eq, PartialEq, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct SetClearColor {
+            /// Successfully set the clear color
+            pub success: bool,
+        }
 
         /// The response from the `MouseClick` command.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
