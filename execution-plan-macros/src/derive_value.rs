@@ -29,7 +29,7 @@ fn impl_value_on_enum(
     // First build fragments of the AST, then we'll combine them into a final output below.
     // Build the arms of the `match` statements we'll use below.
     let into_parts_match_each_variant = into_parts_match_arms(&data, &name, root);
-    let from_parts_match_each_variant = from_parts_match_arms(&data);
+    let (from_parts_match_each_variant, valid_variants) = from_parts_match_arms(&data);
     let generics_without_defaults = remove_generics_defaults(generics.clone());
     let where_clause = generics.where_clause;
 
@@ -55,6 +55,7 @@ fn impl_value_on_enum(
                     other => Err(#root::MemoryError::InvalidEnumVariant{
                         expected_type: stringify!(#name).to_owned(),
                         actual: other.to_owned(),
+                        valid_variants: vec![#(#valid_variants),*]
                     })
                 }
             }
@@ -66,7 +67,7 @@ fn impl_value_on_enum(
 // This generates one match arm for each variant of the enum on which `trait Value` is being derived.
 // Each match arm will call `from_parts()` recursively on each field of the enum variant,
 // then reconstruct the enum from those parts.
-fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
+fn from_parts_match_arms(data: &DataEnum) -> (Vec<TokenStream2>, Vec<String>) {
     data.variants
         .iter()
         .map(|variant| {
@@ -93,11 +94,14 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
                         #(#instantiate_fields)*
                         Ok((Self::#variant_name{ #(#field_idents),* }, count))
                     };
-                    quote_spanned! {variant.span() =>
-                        stringify!(#variant_name) => {
-                            #rhs
-                        }
-                    }
+                    (
+                        quote_spanned! {variant.span() =>
+                            stringify!(#variant_name) => {
+                                #rhs
+                            }
+                        },
+                        variant_name.to_string(),
+                    )
                 }
                 // Variant with unnamed fields (i.e. fields referenced by position, not name), like
                 // ```
@@ -122,11 +126,14 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
                         #(#instantiate_fields)*
                         Ok((Self::#variant_name(#(#field_idents),*), count ))
                     };
-                    quote_spanned! {expr.span() =>
-                        stringify!(#variant_name) => {
-                            #rhs
-                        }
-                    }
+                    (
+                        quote_spanned! {expr.span() =>
+                            stringify!(#variant_name) => {
+                                #rhs
+                            }
+                        },
+                        variant_name.to_string(),
+                    )
                 }
                 // Variant with no fields (or, equivalently, where the fields are () aka the unit type), like
                 // ```
@@ -134,16 +141,17 @@ fn from_parts_match_arms(data: &DataEnum) -> Vec<TokenStream2> {
                 //      Extrude,
                 // }
                 // ```
-                Fields::Unit => {
+                Fields::Unit => (
                     quote_spanned! {variant.span()=>
                         stringify!(#variant_name) => {
                             Ok((Self::#variant_name, count))
                         }
-                    }
-                }
+                    },
+                    variant_name.to_string(),
+                ),
             }
         })
-        .collect()
+        .unzip()
 }
 
 fn make_instantiate_field(ty: syn::Type, id: &Ident) -> TokenStream2 {
