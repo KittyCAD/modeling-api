@@ -95,13 +95,48 @@ async fn add_literals() {
 }
 
 #[tokio::test]
+async fn pop_off_stack_into_stack() {
+    // Test that StackPop works when its destination is StackExtend.
+    let plan = vec![
+        Instruction::StackPush {
+            data: vec![4u32.into()],
+        },
+        Instruction::StackPush {
+            data: vec![5u32.into()],
+        },
+        Instruction::StackPop {
+            destination: Some(Destination::StackExtend),
+        },
+    ];
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.stack_pop().unwrap(), vec![4u32.into(), 5u32.into()]);
+}
+
+#[tokio::test]
+async fn pop_off_stack_no_op() {
+    // Popping off a stack back onto the stack should be a no-op.
+    let plan = vec![
+        Instruction::StackPush {
+            data: vec![4u32.into()],
+        },
+        Instruction::StackPop {
+            destination: Some(Destination::StackPush),
+        },
+    ];
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    assert_eq!(mem.stack_pop().unwrap(), vec![4u32.into()]);
+}
+
+#[tokio::test]
 async fn basic_stack() {
     let plan = vec![
         Instruction::StackPush {
             data: vec![33u32.into()],
         },
         Instruction::StackPop {
-            destination: Some(Address::ZERO),
+            destination: Some(Destination::Address(Address::ZERO)),
         },
     ];
     let mut mem = Memory::default();

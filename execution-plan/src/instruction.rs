@@ -1,5 +1,5 @@
 use kittycad_execution_plan_traits::{
-    InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory,
+    InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
 };
 use kittycad_modeling_cmds::shared::Point2d;
 use serde::{Deserialize, Serialize};
@@ -81,9 +81,9 @@ pub enum Instruction {
     },
     /// Pop data off the stack into memory.
     StackPop {
-        /// If Some, the value popped will be stored at that address.
+        /// If Some, the value popped will be stored at the destination.
         /// If None, the value won't be stored anywhere.
-        destination: Option<Address>,
+        destination: Option<Destination>,
     },
     /// Add the given primitives to whatever is on top of the stack.
     /// If the stack is empty, runtime error.
@@ -152,6 +152,18 @@ pub enum Instruction {
         /// Where to copy them to.
         destination: Destination,
     },
+    /// Get the `to` end of the last path segment, i.e. the point from which the next segment will start.
+    SketchGroupGetLastPoint {
+        /// Which SketchGroup to examine.
+        source: usize,
+        /// Where to copy the data.
+        destination: Destination,
+    },
+    /// Does nothing. Used for debugging.
+    NoOp {
+        /// Debug message.
+        comment: String,
+    },
 }
 
 impl Instruction {
@@ -163,6 +175,7 @@ impl Instruction {
         events: &mut EventWriter,
     ) -> Result<()> {
         match self {
+            Instruction::NoOp { comment: _ } => {}
             Instruction::ApiRequest(req) => {
                 if let Some(session) = session {
                     req.execute(session, mem, events).await?;
@@ -171,6 +184,11 @@ impl Instruction {
                 }
             }
             Instruction::SetPrimitive { address, value } => {
+                events.push(Event {
+                    text: format!("Writing output to address {address}"),
+                    severity: crate::events::Severity::Info,
+                    related_addresses: vec![address],
+                });
                 mem.set(address, value);
             }
             Instruction::Copy {
@@ -190,7 +208,7 @@ impl Instruction {
                     .iter()
                     .map(|i| mem.get(i).cloned().ok_or(ExecutionError::MemoryEmpty { addr: source }))
                     .collect::<Result<Vec<_>>>()?;
-                write_to_dst(data, destination, mem, events);
+                write_to_dst(data, destination, mem, events)?;
             }
             Instruction::SetValue { address, value_parts } => {
                 value_parts.into_iter().enumerate().for_each(|(i, part)| {
@@ -211,7 +229,12 @@ impl Instruction {
                         });
                         mem.set(addr, out);
                     }
-                    Destination::StackPush => mem.stack.push(vec![out]),
+                    Destination::StackPush => {
+                        mem.stack.push(vec![out]);
+                    }
+                    Destination::StackExtend => {
+                        mem.stack.extend(vec![out])?;
+                    }
                 };
             }
             Instruction::UnaryArithmetic {
@@ -222,6 +245,7 @@ impl Instruction {
                 match destination {
                     Destination::Address(addr) => mem.set(addr, out),
                     Destination::StackPush => mem.stack.push(vec![out]),
+                    Destination::StackExtend => mem.stack.extend(vec![out])?,
                 };
             }
             Instruction::SetList { start, elements } => {
@@ -391,16 +415,12 @@ impl Instruction {
                 mem.stack.push(data);
             }
             Instruction::StackExtend { data } => {
-                let mut prev = mem.stack.pop()?;
-                prev.extend(data);
-                mem.stack.push(prev);
+                mem.stack.extend(data)?;
             }
             Instruction::StackPop { destination } => {
                 let data = mem.stack.pop()?;
                 let Some(destination) = destination else { return Ok(()) };
-                for (i, data_part) in data.into_iter().enumerate() {
-                    mem.set(destination + i, data_part);
-                }
+                write_to_dst(data, destination, mem, events)?;
             }
             Instruction::CopyLen {
                 source_range,
@@ -482,13 +502,21 @@ impl Instruction {
                 sg.path_rest.push(segment);
                 mem.sketch_group_set(sg, destination)?;
             }
+            Instruction::SketchGroupGetLastPoint { source, destination } => {
+                let sg = mem
+                    .sketch_groups
+                    .get(source)
+                    .ok_or(ExecutionError::NoSketchGroup { index: source })?
+                    .clone();
+                let p = sg.last_point();
+                write_to_dst(p.into_parts(), destination, mem, events)?;
+            }
             Instruction::SketchGroupCopyFrom {
                 source,
                 offset,
                 length,
                 destination,
             } => {
-                use kittycad_execution_plan_traits::Value;
                 let sg = mem
                     .sketch_groups
                     .get(source)
@@ -496,14 +524,19 @@ impl Instruction {
                     .clone()
                     .into_parts();
                 let data = sg.into_iter().skip(offset).take(length).collect();
-                write_to_dst(data, destination, mem, events);
+                write_to_dst(data, destination, mem, events)?;
             }
         }
         Ok(())
     }
 }
 
-fn write_to_dst(data: Vec<Primitive>, destination: Destination, mem: &mut Memory, events: &mut EventWriter) {
+fn write_to_dst(
+    data: Vec<Primitive>,
+    destination: Destination,
+    mem: &mut Memory,
+    events: &mut EventWriter,
+) -> std::result::Result<(), MemoryError> {
     match destination {
         Destination::Address(dst) => {
             events.push(Event {
@@ -514,9 +547,12 @@ fn write_to_dst(data: Vec<Primitive>, destination: Destination, mem: &mut Memory
             for (i, v) in data.into_iter().enumerate() {
                 mem.set(dst + i, v);
             }
+            Ok(())
         }
         Destination::StackPush => {
             mem.stack.push(data);
+            Ok(())
         }
+        Destination::StackExtend => mem.stack.extend(data),
     }
 }

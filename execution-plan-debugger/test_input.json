@@ -25,7 +25,7 @@
       "address": 2,
       "value": {
         "NumericValue": {
-          "Float": 4.0
+          "Float": 1.0
         }
       }
     }
@@ -45,7 +45,7 @@
       "address": 4,
       "value": {
         "NumericValue": {
-          "Float": 5.0
+          "Float": 1.0
         }
       }
     }
@@ -193,7 +193,7 @@
         "StackPop",
         "StackPop"
       ],
-      "cmd_id": "d7fef3ab-756c-40d3-a726-1629b9abf40a"
+      "cmd_id": "9a93753a-2c6c-483e-a3cb-8f864eba7a2b"
     }
   },
   {
@@ -242,7 +242,7 @@
     "StackPush": {
       "data": [
         {
-          "Uuid": "d7fef3ab-756c-40d3-a726-1629b9abf40a"
+          "Uuid": "9a93753a-2c6c-483e-a3cb-8f864eba7a2b"
         }
       ]
     }
@@ -257,7 +257,7 @@
         "StackPop",
         "StackPop"
       ],
-      "cmd_id": "b7a1cb12-f30e-4b77-b006-652fb71e7344"
+      "cmd_id": "67686e35-2d0c-4934-80a7-abd3d7c55254"
     }
   },
   {
@@ -265,14 +265,14 @@
       "endpoint": "StartPath",
       "store_response": null,
       "arguments": [],
-      "cmd_id": "5ad51a02-e03e-4b81-a4e8-bf8b2f47618b"
+      "cmd_id": "0703915b-7881-4190-81c4-adb534fd13d6"
     }
   },
   {
     "StackPush": {
       "data": [
         {
-          "Uuid": "5ad51a02-e03e-4b81-a4e8-bf8b2f47618b"
+          "Uuid": "0703915b-7881-4190-81c4-adb534fd13d6"
         }
       ]
     }
@@ -287,38 +287,39 @@
           "Address": 6
         }
       ],
-      "cmd_id": "af28f069-624e-4dde-a6f4-3484181816b3"
+      "cmd_id": "cd8727e8-f46b-4d52-aa2f-6ba2bc1f58aa"
     }
   },
   {
     "SketchGroupSet": {
       "sketch_group": {
-        "id": "5ad51a02-e03e-4b81-a4e8-bf8b2f47618b",
+        "id": "0703915b-7881-4190-81c4-adb534fd13d6",
         "on": {
-          "Plane": {
-            "id": "d7fef3ab-756c-40d3-a726-1629b9abf40a",
-            "value": "XY",
-            "origin": {
-              "x": 0.0,
+          "type": "plane",
+          "id": "9a93753a-2c6c-483e-a3cb-8f864eba7a2b",
+          "value": {
+            "type": "x_y"
+          },
+          "origin": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "axes": {
+            "x": {
+              "x": 1.0,
               "y": 0.0,
               "z": 0.0
             },
-            "axes": {
-              "x": {
-                "x": 1.0,
-                "y": 0.0,
-                "z": 0.0
-              },
-              "y": {
-                "x": 0.0,
-                "y": 1.0,
-                "z": 0.0
-              },
-              "z": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 1.0
-              }
+            "y": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "z": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 1.0
             }
           }
         },
@@ -350,7 +351,7 @@
             "z": 1.0
           }
         },
-        "entity_id": "d7fef3ab-756c-40d3-a726-1629b9abf40a",
+        "entity_id": "9a93753a-2c6c-483e-a3cb-8f864eba7a2b",
         "path_first": {
           "from": {
             "x": 0.0,
@@ -383,7 +384,7 @@
   },
   {
     "SetPrimitive": {
-      "address": 8,
+      "address": 9,
       "value": {
         "ListHeader": {
           "count": 2,
@@ -394,20 +395,10 @@
   },
   {
     "SetPrimitive": {
-      "address": 9,
-      "value": {
-        "NumericValue": {
-          "UInteger": 1
-        }
-      }
-    }
-  },
-  {
-    "SetPrimitive": {
       "address": 10,
       "value": {
         "NumericValue": {
-          "Float": 4.0
+          "UInteger": 1
         }
       }
     }
@@ -417,7 +408,7 @@
       "address": 11,
       "value": {
         "NumericValue": {
-          "UInteger": 1
+          "Float": 21.0
         }
       }
     }
@@ -427,32 +418,55 @@
       "address": 12,
       "value": {
         "NumericValue": {
-          "Float": 0.0
+          "UInteger": 1
         }
       }
     }
   },
   {
-    "Copy": {
-      "source": 10,
-      "length": 1,
-      "destination": {
-        "Address": 13
-      }
-    }
-  },
-  {
-    "Copy": {
-      "source": 12,
-      "length": 1,
-      "destination": {
-        "Address": 14
+    "SetPrimitive": {
+      "address": 13,
+      "value": {
+        "NumericValue": {
+          "Float": 1.0
+        }
       }
     }
   },
   {
     "SetPrimitive": {
-      "address": 15,
+      "address": 14,
+      "value": {
+        "String": "side0"
+      }
+    }
+  },
+  {
+    "NoOp": {
+      "comment": "arg (To)"
+    }
+  },
+  {
+    "Copy": {
+      "source": 11,
+      "length": 1,
+      "destination": {
+        "Address": 15
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 13,
+      "length": 1,
+      "destination": {
+        "Address": 16
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 17,
       "value": {
         "NumericValue": {
           "Float": 0.0
@@ -461,8 +475,18 @@
     }
   },
   {
+    "NoOp": {
+      "comment": "arg (SketchGroup)"
+    }
+  },
+  {
+    "NoOp": {
+      "comment": "arg (Tag)"
+    }
+  },
+  {
     "Copy": {
-      "source": 13,
+      "source": 15,
       "length": 2,
       "destination": "StackPush"
     }
@@ -480,7 +504,7 @@
   },
   {
     "SetPrimitive": {
-      "address": 19,
+      "address": 18,
       "value": {
         "String": "Line"
       }
@@ -488,12 +512,214 @@
   },
   {
     "StackPop": {
-      "destination": 20
+      "destination": {
+        "Address": 19
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 22,
+      "value": {
+        "Bool": false
+      }
+    }
+  },
+  {
+    "SketchGroupCopyFrom": {
+      "source": 0,
+      "offset": 0,
+      "length": 1,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "ExtendPath",
+      "store_response": null,
+      "arguments": [
+        "StackPop",
+        {
+          "Address": 18
+        }
+      ],
+      "cmd_id": "05491eba-596e-495b-a241-da6dda57b619"
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "String": "ToPoint"
+        }
+      ]
+    }
+  },
+  {
+    "SketchGroupGetLastPoint": {
+      "source": 0,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 19,
+      "length": 2,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 14,
+      "length": 1,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "SketchGroupAddSegment": {
+      "segment": "StackPop",
+      "source": 0,
+      "destination": 1
     }
   },
   {
     "SetPrimitive": {
       "address": 23,
+      "value": {
+        "ListHeader": {
+          "count": 2,
+          "size": 4
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 24,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 25,
+      "value": {
+        "NumericValue": {
+          "Float": 21.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 26,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 27,
+      "value": {
+        "NumericValue": {
+          "Float": 21.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 28,
+      "value": {
+        "String": "side1"
+      }
+    }
+  },
+  {
+    "NoOp": {
+      "comment": "arg (To)"
+    }
+  },
+  {
+    "Copy": {
+      "source": 25,
+      "length": 1,
+      "destination": {
+        "Address": 29
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 27,
+      "length": 1,
+      "destination": {
+        "Address": 30
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 31,
+      "value": {
+        "NumericValue": {
+          "Float": 0.0
+        }
+      }
+    }
+  },
+  {
+    "NoOp": {
+      "comment": "arg (SketchGroup)"
+    }
+  },
+  {
+    "NoOp": {
+      "comment": "arg (Tag)"
+    }
+  },
+  {
+    "Copy": {
+      "source": 29,
+      "length": 2,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "StackExtend": {
+      "data": [
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 32,
+      "value": {
+        "String": "Line"
+      }
+    }
+  },
+  {
+    "StackPop": {
+      "destination": {
+        "Address": 33
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 36,
       "value": {
         "Bool": false
       }
@@ -514,19 +740,446 @@
       "arguments": [
         "StackPop",
         {
-          "Address": 19
+          "Address": 32
         }
       ],
-      "cmd_id": "67f4c419-99aa-4386-ba61-cbdc7551dc51"
+      "cmd_id": "412e1191-7ca4-4fd4-8ec9-b0dbb01f4172"
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "String": "ToPoint"
+        }
+      ]
+    }
+  },
+  {
+    "SketchGroupGetLastPoint": {
+      "source": 1,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 33,
+      "length": 2,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 28,
+      "length": 1,
+      "destination": "StackExtend"
     }
   },
   {
     "SketchGroupAddSegment": {
-      "segment": {
-        "Address": 19
-      },
+      "segment": "StackPop",
       "source": 1,
       "destination": 2
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 37,
+      "value": {
+        "ListHeader": {
+          "count": 2,
+          "size": 4
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 38,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 39,
+      "value": {
+        "NumericValue": {
+          "Float": 1.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 40,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 41,
+      "value": {
+        "NumericValue": {
+          "Float": 21.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 42,
+      "value": {
+        "String": "side2"
+      }
+    }
+  },
+  {
+    "NoOp": {
+      "comment": "arg (To)"
+    }
+  },
+  {
+    "Copy": {
+      "source": 39,
+      "length": 1,
+      "destination": {
+        "Address": 43
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 41,
+      "length": 1,
+      "destination": {
+        "Address": 44
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 45,
+      "value": {
+        "NumericValue": {
+          "Float": 0.0
+        }
+      }
+    }
+  },
+  {
+    "NoOp": {
+      "comment": "arg (SketchGroup)"
+    }
+  },
+  {
+    "NoOp": {
+      "comment": "arg (Tag)"
+    }
+  },
+  {
+    "Copy": {
+      "source": 43,
+      "length": 2,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "StackExtend": {
+      "data": [
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 46,
+      "value": {
+        "String": "Line"
+      }
+    }
+  },
+  {
+    "StackPop": {
+      "destination": {
+        "Address": 47
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 50,
+      "value": {
+        "Bool": false
+      }
+    }
+  },
+  {
+    "SketchGroupCopyFrom": {
+      "source": 2,
+      "offset": 0,
+      "length": 1,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "ExtendPath",
+      "store_response": null,
+      "arguments": [
+        "StackPop",
+        {
+          "Address": 46
+        }
+      ],
+      "cmd_id": "94e8d3ad-9253-43c2-8ee8-96da984c6675"
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "String": "ToPoint"
+        }
+      ]
+    }
+  },
+  {
+    "SketchGroupGetLastPoint": {
+      "source": 2,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 47,
+      "length": 2,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 42,
+      "length": 1,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "SketchGroupAddSegment": {
+      "segment": "StackPop",
+      "source": 2,
+      "destination": 3
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 51,
+      "value": {
+        "ListHeader": {
+          "count": 2,
+          "size": 4
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 52,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 53,
+      "value": {
+        "NumericValue": {
+          "Float": 1.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 54,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 55,
+      "value": {
+        "NumericValue": {
+          "Float": 1.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 56,
+      "value": {
+        "String": "side3"
+      }
+    }
+  },
+  {
+    "NoOp": {
+      "comment": "arg (To)"
+    }
+  },
+  {
+    "Copy": {
+      "source": 53,
+      "length": 1,
+      "destination": {
+        "Address": 57
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 55,
+      "length": 1,
+      "destination": {
+        "Address": 58
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 59,
+      "value": {
+        "NumericValue": {
+          "Float": 0.0
+        }
+      }
+    }
+  },
+  {
+    "NoOp": {
+      "comment": "arg (SketchGroup)"
+    }
+  },
+  {
+    "NoOp": {
+      "comment": "arg (Tag)"
+    }
+  },
+  {
+    "Copy": {
+      "source": 57,
+      "length": 2,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "StackExtend": {
+      "data": [
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 60,
+      "value": {
+        "String": "Line"
+      }
+    }
+  },
+  {
+    "StackPop": {
+      "destination": {
+        "Address": 61
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 64,
+      "value": {
+        "Bool": false
+      }
+    }
+  },
+  {
+    "SketchGroupCopyFrom": {
+      "source": 3,
+      "offset": 0,
+      "length": 1,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "ExtendPath",
+      "store_response": null,
+      "arguments": [
+        "StackPop",
+        {
+          "Address": 60
+        }
+      ],
+      "cmd_id": "fb126a41-49fb-44e4-acee-a6fde7f2764a"
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "String": "ToPoint"
+        }
+      ]
+    }
+  },
+  {
+    "SketchGroupGetLastPoint": {
+      "source": 3,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 61,
+      "length": 2,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 56,
+      "length": 1,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "SketchGroupAddSegment": {
+      "segment": "StackPop",
+      "source": 3,
+      "destination": 4
     }
   }
 ]
