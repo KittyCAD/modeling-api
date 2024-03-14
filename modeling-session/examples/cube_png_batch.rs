@@ -10,7 +10,8 @@ use kittycad_modeling_cmds::{
     length_unit::LengthUnit,
     ok_response::OkModelingCmdResponse,
     shared::{PathSegment, Point3d},
-    ClosePath, ExtendPath, Extrude, MovePathPen, StartPath, TakeSnapshot,
+    websocket::{ModelingBatch, ModelingCmdReq},
+    ClosePath, ExtendPath, Extrude, ModelingCmd, MovePathPen, StartPath, TakeSnapshot,
 };
 use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
@@ -24,7 +25,7 @@ async fn main() -> Result<()> {
     let kittycad_api_client = kittycad::Client::new(kittycad_api_token);
 
     // Where should the final PNG be saved?
-    let img_output_path = env::var("IMAGE_OUTPUT_PATH").unwrap_or_else(|_| "model.png".to_owned());
+    let img_output_path = env::var("IMAGE_OUTPUT_PATH").unwrap_or_else(|_| "model_batched.png".to_owned());
 
     let session_builder = SessionBuilder {
         client: kittycad_api_client,
@@ -55,61 +56,56 @@ async fn main() -> Result<()> {
         y: -CUBE_WIDTH,
         z: -CUBE_WIDTH,
     };
-    session
-        .run_command(random_id(), MovePathPen { path, to: start })
-        .await
-        .context("could not move path pen to start")?;
+    let mut sketch_batch = vec![ModelingCmdReq {
+        cmd_id: random_id(),
+        cmd: ModelingCmd::MovePathPen(MovePathPen { path, to: start }),
+    }];
 
     // Now extend the path to each corner, and back to the start.
-    let points = [
-        Point3d {
-            x: CUBE_WIDTH,
-            y: -CUBE_WIDTH,
-            z: -CUBE_WIDTH,
-        },
-        Point3d {
-            x: CUBE_WIDTH,
-            y: CUBE_WIDTH,
-            z: -CUBE_WIDTH,
-        },
-        Point3d {
-            x: -CUBE_WIDTH,
-            y: CUBE_WIDTH,
-            z: -CUBE_WIDTH,
-        },
-        start,
-    ];
-    for point in points {
-        session
-            .run_command(
-                random_id(),
-                ExtendPath {
-                    path,
-                    segment: PathSegment::Line {
-                        end: point,
-                        relative: false,
-                    },
-                },
-            )
-            .await
-            .context("could not draw square")?;
-    }
-    // Extrude the square into a cube.
-    session
-        .run_command(random_id(), ClosePath { path_id })
-        .await
-        .context("could not close square path")?;
-    session
-        .run_command(
-            random_id(),
-            Extrude {
-                cap: true,
-                distance: CUBE_WIDTH * 2.0,
-                target: path,
+    sketch_batch.extend(
+        [
+            Point3d {
+                x: CUBE_WIDTH,
+                y: -CUBE_WIDTH,
+                z: -CUBE_WIDTH,
             },
-        )
+            Point3d {
+                x: CUBE_WIDTH,
+                y: CUBE_WIDTH,
+                z: -CUBE_WIDTH,
+            },
+            Point3d {
+                x: -CUBE_WIDTH,
+                y: CUBE_WIDTH,
+                z: -CUBE_WIDTH,
+            },
+            start,
+        ]
+        .map(|end| ModelingCmdReq {
+            cmd_id: random_id(),
+            cmd: ModelingCmd::ExtendPath(ExtendPath {
+                path,
+                segment: PathSegment::Line { end, relative: false },
+            }),
+        }),
+    );
+    sketch_batch.push(ModelingCmdReq {
+        cmd: ModelingCmd::ClosePath(ClosePath { path_id }),
+        cmd_id: random_id(),
+    });
+    sketch_batch.push(ModelingCmdReq {
+        cmd: ModelingCmd::Extrude(Extrude {
+            cap: true,
+            distance: CUBE_WIDTH * 2.0,
+            target: path,
+        }),
+        cmd_id: random_id(),
+    });
+    session
+        .run_batch(ModelingBatch { requests: sketch_batch })
         .await
-        .context("could not extrude square into cube")?;
+        .context("could not draw cube in batch")?;
+
     // Export model as a PNG.
     let snapshot_resp = session
         .run_command(
