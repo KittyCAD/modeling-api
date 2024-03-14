@@ -24,7 +24,7 @@ async fn inner_main() -> Result<()> {
     let mut mem = kittycad_execution_plan::Memory::default();
     let session = client().await?;
     let (history, last_instruction) =
-        kittycad_execution_plan::execute_time_travel(&mut mem, plan.clone(), Some(session)).await;
+        kittycad_execution_plan::execute_time_travel(&mut mem, plan.clone(), &mut Some(session)).await;
     app::run(app::Context {
         last_instruction,
         history,

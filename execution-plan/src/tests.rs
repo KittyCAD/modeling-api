@@ -75,7 +75,9 @@ async fn write_addr_to_memory() {
         value: 3.4.into(),
     }];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&Address::ZERO), Some(&3.4.into()))
 }
 
@@ -90,7 +92,9 @@ async fn add_literals() {
         destination: Destination::Address(Address::ZERO + 1),
     }];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&5u32.into()))
 }
 
@@ -109,7 +113,9 @@ async fn pop_off_stack_into_stack() {
         },
     ];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.stack_pop().unwrap(), vec![4u32.into(), 5u32.into()]);
 }
 
@@ -125,7 +131,9 @@ async fn pop_off_stack_no_op() {
         },
     ];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.stack_pop().unwrap(), vec![4u32.into()]);
 }
 
@@ -140,7 +148,9 @@ async fn basic_stack() {
         },
     ];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&Address::ZERO), Some(&33u32.into()));
     assert!(mem.stack.is_empty());
 }
@@ -161,7 +171,9 @@ async fn add_stack() {
         },
     ];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&Address::ZERO), Some(&30u32.into()))
 }
 
@@ -185,7 +197,9 @@ async fn add_literal_to_reference() {
     ];
     // 20 + 450 = 470
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&470u32.into()))
 }
 
@@ -216,7 +230,7 @@ async fn add_to_composite_value() {
             },
             destination: Destination::Address(start_addr),
         }],
-        None,
+        &mut None,
     )
     .await
     .unwrap();
@@ -255,7 +269,9 @@ async fn modulo_and_power_with_reference() {
     ];
     // 450 % 20 = 10
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&10u32.into()));
 
     // Pow with a positive integer and a positive float
@@ -277,7 +293,9 @@ async fn modulo_and_power_with_reference() {
     ];
     // 2.5^2 = 6.25
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&6.25f32.into()));
 
     // Modulo with two positive floats
@@ -299,7 +317,9 @@ async fn modulo_and_power_with_reference() {
     ];
     // 12.5 % 2.25 = 1.25
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&1.25f32.into()));
 
     // Pow with a two negative floats
@@ -321,7 +341,9 @@ async fn modulo_and_power_with_reference() {
     ];
     // (-2.5)^-4.2 = NaN
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     let result: f32 = mem.get_primitive(&(Address::ZERO + 1)).unwrap();
     assert!(result.is_nan());
 
@@ -344,7 +366,9 @@ async fn modulo_and_power_with_reference() {
     ];
     // -450 % -20 = -10
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&(-10i64).into()));
 
     // Modulo with a negative integer and a positive integer
@@ -366,7 +390,9 @@ async fn modulo_and_power_with_reference() {
     ];
     // -450 % 20 = -10
     let mut mem = Memory::default();
-    execute(&mut mem, plan, None).await.expect("failed to execute plan");
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&(-10i64).into()));
 }
 
@@ -429,7 +455,7 @@ async fn add_path_to_sketch_group() {
             destination: 0,
         },
     ];
-    execute(&mut mem, instructions, None).await.unwrap();
+    execute(&mut mem, instructions, &mut None).await.unwrap();
     assert_eq!(mem.sketch_groups[0].path_rest.last().unwrap(), &next);
 }
 
@@ -464,7 +490,7 @@ async fn get_element_of_array() {
                 member: Operand::Literal(Primitive::from(1usize)),
             },
         ],
-        None,
+        &mut None,
     )
     .await
     .unwrap();
@@ -522,7 +548,7 @@ async fn copy_len() {
             source_range: Operand::StackPop,
             destination_range: Operand::Literal(Primitive::Address(copied_into)),
         }],
-        None,
+        &mut None,
     )
     .await
     .unwrap();
@@ -557,7 +583,7 @@ async fn copy_onto_addresses() {
                 destination: Destination::Address(Address::ZERO + 10),
             },
         ],
-        None,
+        &mut None,
     )
     .await
     .unwrap();
@@ -590,7 +616,7 @@ async fn copy_onto_stack() {
                 destination: Destination::StackPush,
             },
         ],
-        None,
+        &mut None,
     )
     .await
     .unwrap();
@@ -610,7 +636,7 @@ async fn stack_extend() {
                 data: vec![Primitive::Bool(true)],
             },
         ],
-        None,
+        &mut None,
     )
     .await
     .unwrap();
@@ -647,7 +673,7 @@ async fn get_key_of_object() {
             start: Operand::Literal(Primitive::Address(start)),
             member: Operand::Literal("second".to_owned().into()),
         }],
-        None,
+        &mut None,
     )
     .await
     .unwrap();
@@ -766,7 +792,7 @@ async fn api_call_draw_cube() {
                 cmd_id: new_id(),
             }),
         ],
-        Some(client),
+        &mut Some(client),
     )
     .await
     .unwrap();

@@ -171,7 +171,7 @@ impl Instruction {
     pub async fn execute(
         self,
         mem: &mut Memory,
-        session: Option<&mut kittycad_modeling_session::Session>,
+        session: &mut Option<kittycad_modeling_session::Session>,
         events: &mut EventWriter,
     ) -> Result<()> {
         match self {
