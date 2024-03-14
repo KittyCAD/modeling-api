@@ -19,11 +19,11 @@ impl Value for DateTimeLocal {
         I: Iterator<Item = Option<Primitive>>,
     {
         let Some(maybe_datetime) = values.next() else {
-            return Err(MemoryError::MemoryBadAccess);
+            return Err(MemoryError::MemoryBadAccess {});
         };
 
         match maybe_datetime {
-            None => Err(MemoryError::MemoryBadAccess),
+            None => Err(MemoryError::MemoryBadAccess {}),
             Some(Primitive::NumericValue(NumericPrimitive::Integer(timestamp_nanos))) => Ok((
                 DateTimeLocal {
                     value: chrono::DateTime::from_timestamp_nanos(timestamp_nanos).into(),
