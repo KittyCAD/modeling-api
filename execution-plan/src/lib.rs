@@ -90,11 +90,11 @@ pub struct ExecutionFailed {
 pub async fn execute(
     mem: &mut Memory,
     plan: Vec<Instruction>,
-    mut session: Option<ModelingSession>,
+    session: &mut Option<ModelingSession>,
 ) -> std::result::Result<(), ExecutionFailed> {
     let mut events = EventWriter::default();
     for (i, instruction) in plan.into_iter().enumerate() {
-        if let Err(e) = instruction.clone().execute(mem, session.as_mut(), &mut events).await {
+        if let Err(e) = instruction.clone().execute(mem, session, &mut events).await {
             return Err(ExecutionFailed {
                 error: e,
                 instruction,
@@ -122,13 +122,13 @@ pub struct ExecutionState {
 pub async fn execute_time_travel(
     mem: &mut Memory,
     plan: Vec<Instruction>,
-    mut session: Option<ModelingSession>,
+    session: &mut Option<ModelingSession>,
 ) -> (Vec<ExecutionState>, usize) {
     let mut out = Vec::new();
     let mut events = EventWriter::default();
     let n = plan.len();
     for (active_instruction, instruction) in plan.into_iter().enumerate() {
-        let res = instruction.execute(mem, session.as_mut(), &mut events).await;
+        let res = instruction.execute(mem, session, &mut events).await;
 
         let mut crashed = false;
         if let Err(e) = res {
