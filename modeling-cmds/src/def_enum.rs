@@ -918,6 +918,12 @@ define_modeling_cmd_enum! {
         /// Find all IDs of selected entities
         #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct SelectGet;
+
+        /// Get the number of objects in the scene
+        #[derive(
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory, ModelingCmdVariant,
+        )]
+        pub struct GetNumObjects;
     }
 }
 
