@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-modeling-cmds"
-version = "0.1.28"
+version = "0.1.30"
 edition = "2021"
 authors = ["KittyCAD, Inc."]
 description = "Commands in the KittyCAD Modeling API"
@@ -57,3 +57,4 @@ slog = ["dep:slog"]
 cxx = ["dep:cxx"]
 diesel = ["dep:diesel"]
 websocket = ["dep:webrtc", "dep:serde_json"]
+exhaustive = []

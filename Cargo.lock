@@ -1650,7 +1650,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-execution-plan-macros"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
  "anyhow",
  "insta",
@@ -1664,7 +1664,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-execution-plan-traits"
-version = "0.1.12"
+version = "0.1.13"
 dependencies = [
  "serde",
  "thiserror",
@@ -1673,7 +1673,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds"
-version = "0.1.28"
+version = "0.1.30"
 dependencies = [
  "anyhow",
  "chrono",

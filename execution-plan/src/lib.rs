@@ -36,13 +36,16 @@ pub enum Destination {
     Address(Address),
     /// Push onto the stack.
     StackPush,
+    /// Extend what is already on the stack.
+    StackExtend,
 }
 
 impl std::fmt::Display for Destination {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Destination::Address(a) => a.fmt(f),
-            Destination::StackPush => "Stack".fmt(f),
+            Destination::StackPush => "StackPush".fmt(f),
+            Destination::StackExtend => "StackExtend".fmt(f),
         }
     }
 }
@@ -72,11 +75,32 @@ impl Operand {
     }
 }
 
+/// Executing the program failed.
+#[derive(Debug)]
+pub struct ExecutionFailed {
+    /// What error occurred.
+    pub error: ExecutionError,
+    /// Which instruction was being executed when the error occurred?
+    pub instruction: Instruction,
+    /// Which instruction number was being executed when the error occurred?
+    pub instruction_index: usize,
+}
+
 /// Execute the plan.
-pub async fn execute(mem: &mut Memory, plan: Vec<Instruction>, mut session: Option<ModelingSession>) -> Result<()> {
+pub async fn execute(
+    mem: &mut Memory,
+    plan: Vec<Instruction>,
+    session: &mut Option<ModelingSession>,
+) -> std::result::Result<(), ExecutionFailed> {
     let mut events = EventWriter::default();
-    for instruction in plan.into_iter() {
-        instruction.execute(mem, session.as_mut(), &mut events).await?;
+    for (i, instruction) in plan.into_iter().enumerate() {
+        if let Err(e) = instruction.clone().execute(mem, session, &mut events).await {
+            return Err(ExecutionFailed {
+                error: e,
+                instruction,
+                instruction_index: i,
+            });
+        }
     }
     Ok(())
 }
@@ -98,13 +122,13 @@ pub struct ExecutionState {
 pub async fn execute_time_travel(
     mem: &mut Memory,
     plan: Vec<Instruction>,
-    mut session: Option<ModelingSession>,
+    session: &mut Option<ModelingSession>,
 ) -> (Vec<ExecutionState>, usize) {
     let mut out = Vec::new();
     let mut events = EventWriter::default();
     let n = plan.len();
     for (active_instruction, instruction) in plan.into_iter().enumerate() {
-        let res = instruction.execute(mem, session.as_mut(), &mut events).await;
+        let res = instruction.execute(mem, session, &mut events).await;
 
         let mut crashed = false;
         if let Err(e) = res {

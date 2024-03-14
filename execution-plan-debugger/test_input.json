@@ -25,7 +25,7 @@
       "address": 2,
       "value": {
         "NumericValue": {
-          "Float": 0.0
+          "Float": 10.0
         }
       }
     }
@@ -45,8 +45,16 @@
       "address": 4,
       "value": {
         "NumericValue": {
-          "Float": 0.0
+          "Float": 10.0
         }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 5,
+      "value": {
+        "String": "adam"
       }
     }
   },
@@ -55,7 +63,7 @@
       "source": 2,
       "length": 1,
       "destination": {
-        "Address": 5
+        "Address": 6
       }
     }
   },
@@ -64,13 +72,13 @@
       "source": 4,
       "length": 1,
       "destination": {
-        "Address": 6
+        "Address": 7
       }
     }
   },
   {
     "SetPrimitive": {
-      "address": 7,
+      "address": 8,
       "value": {
         "NumericValue": {
           "Float": 0.0
@@ -185,7 +193,7 @@
         "StackPop",
         "StackPop"
       ],
-      "cmd_id": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
+      "cmd_id": "bffd2a8e-459c-434c-9696-b92caeb22082"
     }
   },
   {
@@ -234,7 +242,7 @@
     "StackPush": {
       "data": [
         {
-          "Uuid": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
+          "Uuid": "bffd2a8e-459c-434c-9696-b92caeb22082"
         }
       ]
     }
@@ -249,7 +257,7 @@
         "StackPop",
         "StackPop"
       ],
-      "cmd_id": "a21a0e8f-d569-48e3-9537-6e8029936957"
+      "cmd_id": "ed783ed1-a16a-4264-8b37-0a9a18ebe50f"
     }
   },
   {
@@ -257,14 +265,14 @@
       "endpoint": "StartPath",
       "store_response": null,
       "arguments": [],
-      "cmd_id": "d8c1ddf2-5db4-43d6-982e-31b62acde065"
+      "cmd_id": "eed53edd-5f01-4222-999e-1b915bb2beac"
     }
   },
   {
     "StackPush": {
       "data": [
         {
-          "Uuid": "d8c1ddf2-5db4-43d6-982e-31b62acde065"
+          "Uuid": "eed53edd-5f01-4222-999e-1b915bb2beac"
         }
       ]
     }
@@ -276,226 +284,107 @@
       "arguments": [
         "StackPop",
         {
-          "Address": 5
+          "Address": 6
         }
       ],
-      "cmd_id": "17cf212e-b681-4c4c-88ae-9e4f6285702d"
+      "cmd_id": "12588b84-4f56-4b08-8da4-400bfb1d58e1"
     }
   },
   {
-    "SetValue": {
-      "address": 7,
-      "value_parts": [
-        {
-          "Uuid": "d8c1ddf2-5db4-43d6-982e-31b62acde065"
-        },
-        {
-          "String": "Plane"
-        },
-        {
-          "Uuid": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
-        },
-        {
-          "String": "XY"
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
+    "SketchGroupSet": {
+      "sketch_group": {
+        "id": "eed53edd-5f01-4222-999e-1b915bb2beac",
+        "on": {
+          "type": "plane",
+          "id": "bffd2a8e-459c-434c-9696-b92caeb22082",
+          "value": {
+            "type": "x_y"
+          },
+          "origin": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "axes": {
+            "x": {
+              "x": 1.0,
+              "y": 0.0,
+              "z": 0.0
+            },
+            "y": {
+              "x": 0.0,
+              "y": 1.0,
+              "z": 0.0
+            },
+            "z": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 1.0
+            }
           }
         },
-        {
-          "NumericValue": {
-            "Float": 0.0
+        "position": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "rotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0,
+          "w": 1.0
+        },
+        "axes": {
+          "x": {
+            "x": 1.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "y": {
+            "x": 0.0,
+            "y": 1.0,
+            "z": 0.0
+          },
+          "z": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
           }
         },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
+        "entity_id": "bffd2a8e-459c-434c-9696-b92caeb22082",
+        "path_first": {
+          "from": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "to": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "name": ""
         },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 1.0
-          }
-        },
-        {
-          "String": "Some"
-        },
-        {
-          "Uuid": "3ce253e0-cfc3-4cb7-8e7b-dbd3a7e527ef"
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "NumericValue": {
-            "Float": 0.0
-          }
-        },
-        {
-          "String": ""
-        },
-        {
-          "NumericValue": {
-            "UInteger": 0
-          }
-        }
-      ]
+        "path_rest": []
+      },
+      "destination": 0
     }
   },
   {
-    "Copy": {
-      "source": 5,
-      "length": 1,
-      "destination": {
-        "Address": 43
-      }
-    }
-  },
-  {
-    "Copy": {
-      "source": 5,
-      "length": 1,
-      "destination": {
-        "Address": 45
+    "SketchGroupSetBasePath": {
+      "source": 0,
+      "from": {
+        "Address": 6
+      },
+      "to": {
+        "Address": 6
+      },
+      "name": {
+        "Address": 5
       }
     }
   },
   {
     "SetPrimitive": {
-      "address": 47,
+      "address": 9,
       "value": {
         "ListHeader": {
           "count": 2,
@@ -506,7 +395,7 @@
   },
   {
     "SetPrimitive": {
-      "address": 48,
+      "address": 10,
       "value": {
         "NumericValue": {
           "UInteger": 1
@@ -516,17 +405,17 @@
   },
   {
     "SetPrimitive": {
-      "address": 49,
+      "address": 11,
       "value": {
         "NumericValue": {
-          "Float": 4.0
+          "Float": 210.0
         }
       }
     }
   },
   {
     "SetPrimitive": {
-      "address": 50,
+      "address": 12,
       "value": {
         "NumericValue": {
           "UInteger": 1
@@ -536,35 +425,43 @@
   },
   {
     "SetPrimitive": {
-      "address": 51,
+      "address": 13,
       "value": {
         "NumericValue": {
-          "Float": 0.0
+          "Float": 10.0
         }
-      }
-    }
-  },
-  {
-    "Copy": {
-      "source": 49,
-      "length": 1,
-      "destination": {
-        "Address": 52
-      }
-    }
-  },
-  {
-    "Copy": {
-      "source": 51,
-      "length": 1,
-      "destination": {
-        "Address": 53
       }
     }
   },
   {
     "SetPrimitive": {
-      "address": 54,
+      "address": 14,
+      "value": {
+        "String": "side0"
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 11,
+      "length": 1,
+      "destination": {
+        "Address": 15
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 13,
+      "length": 1,
+      "destination": {
+        "Address": 16
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 17,
       "value": {
         "NumericValue": {
           "Float": 0.0
@@ -574,7 +471,7 @@
   },
   {
     "Copy": {
-      "source": 52,
+      "source": 15,
       "length": 2,
       "destination": "StackPush"
     }
@@ -592,7 +489,7 @@
   },
   {
     "SetPrimitive": {
-      "address": 55,
+      "address": 18,
       "value": {
         "String": "Line"
       }
@@ -600,15 +497,25 @@
   },
   {
     "StackPop": {
-      "destination": 56
+      "destination": {
+        "Address": 19
+      }
     }
   },
   {
     "SetPrimitive": {
-      "address": 59,
+      "address": 22,
       "value": {
         "Bool": false
       }
+    }
+  },
+  {
+    "SketchGroupCopyFrom": {
+      "source": 0,
+      "offset": 0,
+      "length": 1,
+      "destination": "StackPush"
     }
   },
   {
@@ -616,14 +523,662 @@
       "endpoint": "ExtendPath",
       "store_response": null,
       "arguments": [
+        "StackPop",
         {
-          "Address": 7
-        },
-        {
-          "Address": 55
+          "Address": 18
         }
       ],
-      "cmd_id": "795aa93f-5af9-4a46-b942-2c418cb7bb54"
+      "cmd_id": "1b32c41e-2dc4-44f7-b245-d5a6c6d21bb7"
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "String": "ToPoint"
+        }
+      ]
+    }
+  },
+  {
+    "SketchGroupGetLastPoint": {
+      "source": 0,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 19,
+      "length": 2,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 14,
+      "length": 1,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "SketchGroupAddSegment": {
+      "segment": "StackPop",
+      "source": 0,
+      "destination": 1
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 23,
+      "value": {
+        "ListHeader": {
+          "count": 2,
+          "size": 4
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 24,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 25,
+      "value": {
+        "NumericValue": {
+          "Float": 210.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 26,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 27,
+      "value": {
+        "NumericValue": {
+          "Float": 210.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 28,
+      "value": {
+        "String": "side1"
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 25,
+      "length": 1,
+      "destination": {
+        "Address": 29
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 27,
+      "length": 1,
+      "destination": {
+        "Address": 30
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 31,
+      "value": {
+        "NumericValue": {
+          "Float": 0.0
+        }
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 29,
+      "length": 2,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "StackExtend": {
+      "data": [
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 32,
+      "value": {
+        "String": "Line"
+      }
+    }
+  },
+  {
+    "StackPop": {
+      "destination": {
+        "Address": 33
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 36,
+      "value": {
+        "Bool": false
+      }
+    }
+  },
+  {
+    "SketchGroupCopyFrom": {
+      "source": 1,
+      "offset": 0,
+      "length": 1,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "ExtendPath",
+      "store_response": null,
+      "arguments": [
+        "StackPop",
+        {
+          "Address": 32
+        }
+      ],
+      "cmd_id": "e9b6003b-6da7-4532-a639-4477e3a212ef"
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "String": "ToPoint"
+        }
+      ]
+    }
+  },
+  {
+    "SketchGroupGetLastPoint": {
+      "source": 1,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 33,
+      "length": 2,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 28,
+      "length": 1,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "SketchGroupAddSegment": {
+      "segment": "StackPop",
+      "source": 1,
+      "destination": 2
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 37,
+      "value": {
+        "ListHeader": {
+          "count": 2,
+          "size": 4
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 38,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 39,
+      "value": {
+        "NumericValue": {
+          "Float": 10.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 40,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 41,
+      "value": {
+        "NumericValue": {
+          "Float": 210.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 42,
+      "value": {
+        "String": "side2"
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 39,
+      "length": 1,
+      "destination": {
+        "Address": 43
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 41,
+      "length": 1,
+      "destination": {
+        "Address": 44
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 45,
+      "value": {
+        "NumericValue": {
+          "Float": 0.0
+        }
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 43,
+      "length": 2,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "StackExtend": {
+      "data": [
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 46,
+      "value": {
+        "String": "Line"
+      }
+    }
+  },
+  {
+    "StackPop": {
+      "destination": {
+        "Address": 47
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 50,
+      "value": {
+        "Bool": false
+      }
+    }
+  },
+  {
+    "SketchGroupCopyFrom": {
+      "source": 2,
+      "offset": 0,
+      "length": 1,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "ExtendPath",
+      "store_response": null,
+      "arguments": [
+        "StackPop",
+        {
+          "Address": 46
+        }
+      ],
+      "cmd_id": "458d446b-3f03-461f-8d20-35626aefb447"
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "String": "ToPoint"
+        }
+      ]
+    }
+  },
+  {
+    "SketchGroupGetLastPoint": {
+      "source": 2,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 47,
+      "length": 2,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 42,
+      "length": 1,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "SketchGroupAddSegment": {
+      "segment": "StackPop",
+      "source": 2,
+      "destination": 3
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 51,
+      "value": {
+        "ListHeader": {
+          "count": 2,
+          "size": 4
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 52,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 53,
+      "value": {
+        "NumericValue": {
+          "Float": 10.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 54,
+      "value": {
+        "NumericValue": {
+          "UInteger": 1
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 55,
+      "value": {
+        "NumericValue": {
+          "Float": 10.0
+        }
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 56,
+      "value": {
+        "String": "side3"
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 53,
+      "length": 1,
+      "destination": {
+        "Address": 57
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 55,
+      "length": 1,
+      "destination": {
+        "Address": 58
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 59,
+      "value": {
+        "NumericValue": {
+          "Float": 0.0
+        }
+      }
+    }
+  },
+  {
+    "Copy": {
+      "source": 57,
+      "length": 2,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "StackExtend": {
+      "data": [
+        {
+          "NumericValue": {
+            "Float": 0.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 60,
+      "value": {
+        "String": "Line"
+      }
+    }
+  },
+  {
+    "StackPop": {
+      "destination": {
+        "Address": 61
+      }
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 64,
+      "value": {
+        "Bool": false
+      }
+    }
+  },
+  {
+    "SketchGroupCopyFrom": {
+      "source": 3,
+      "offset": 0,
+      "length": 1,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "ExtendPath",
+      "store_response": null,
+      "arguments": [
+        "StackPop",
+        {
+          "Address": 60
+        }
+      ],
+      "cmd_id": "d1ef3978-3ca0-434a-9516-792a0489592c"
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "String": "ToPoint"
+        }
+      ]
+    }
+  },
+  {
+    "SketchGroupGetLastPoint": {
+      "source": 3,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 61,
+      "length": 2,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "Copy": {
+      "source": 56,
+      "length": 1,
+      "destination": "StackExtend"
+    }
+  },
+  {
+    "SketchGroupAddSegment": {
+      "segment": "StackPop",
+      "source": 3,
+      "destination": 4
+    }
+  },
+  {
+    "SketchGroupCopyFrom": {
+      "source": 4,
+      "offset": 0,
+      "length": 1,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "ClosePath",
+      "store_response": null,
+      "arguments": [
+        "StackPop"
+      ],
+      "cmd_id": "3680a4c4-37d4-4fa6-bbbc-f632546cfe37"
+    }
+  },
+  {
+    "SetPrimitive": {
+      "address": 65,
+      "value": {
+        "NumericValue": {
+          "Float": 100.0
+        }
+      }
+    }
+  },
+  {
+    "StackPush": {
+      "data": [
+        {
+          "Bool": true
+        }
+      ]
+    }
+  },
+  {
+    "SketchGroupCopyFrom": {
+      "source": 4,
+      "offset": 0,
+      "length": 1,
+      "destination": "StackPush"
+    }
+  },
+  {
+    "ApiRequest": {
+      "endpoint": "Extrude",
+      "store_response": null,
+      "arguments": [
+        "StackPop",
+        {
+          "Address": 65
+        },
+        "StackPop"
+      ],
+      "cmd_id": "8d2ca257-f4c9-440f-b5ca-e33e92e7b4b9"
     }
   }
 ]

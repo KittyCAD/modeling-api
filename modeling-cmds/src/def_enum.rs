@@ -252,7 +252,7 @@ define_modeling_cmd_enum! {
         pub struct EntityLinearPattern {
             /// ID of the entity being copied.
             pub entity_id: Uuid,
-            /// Axis along which to make the copies
+            /// Axis along which to make the copies.
             /// For Solid2d patterns, the z component is ignored.
             pub axis: Point3d<f64>,
             /// Number of repetitions to make.
@@ -265,10 +265,10 @@ define_modeling_cmd_enum! {
         pub struct EntityCircularPattern {
             /// ID of the entity being copied.
             pub entity_id: Uuid,
-            /// Axis around which to make the copies
+            /// Axis around which to make the copies.
             /// For Solid2d patterns, this is ignored.
             pub axis: Point3d<f64>,
-            /// Point around which to make the copies
+            /// Point around which to make the copies.
             /// For Solid2d patterns, the z component is ignored.
             pub center: Point3d<LengthUnit>,
             /// Number of repetitions to make.
@@ -646,6 +646,13 @@ define_modeling_cmd_enum! {
             pub animated: bool,
             /// Should the camera move at all?
             pub adjust_camera: bool,
+        }
+
+        /// Set the background color of the scene.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct SetBackgroundColor {
+            /// The color to set the background to.
+            pub color: Color,
         }
 
         /// Get type of the given curve.

@@ -404,17 +404,36 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
             "Copy".into(),
             format!("copy from {source_range:?} to {destination_range:?}"),
         ),
+        Instruction::SketchGroupSetBasePath {
+            source,
+            from: _,
+            to: _,
+            name: _,
+        } => ("SGSetBasePath".into(), format!("SG#{source}")),
         Instruction::SketchGroupSet {
             sketch_group: _,
             destination,
         } => ("SGSet".into(), format!("dst: {destination}")),
-        Instruction::SketchGroupAddPath {
+        Instruction::SketchGroupCopyFrom {
+            destination,
+            source,
+            offset,
+            length,
+        } => (
+            "SGCopyFrom".into(),
+            format!("{source} to {destination}, len {length}, offset {offset}"),
+        ),
+        Instruction::SketchGroupAddSegment {
             segment,
             source,
             destination,
         } => (
             "SGAddPath".into(),
-            format!("copy {} from {source:?} to {destination:?}", segment.segment_kind()),
+            format!("Take {source:?}, add segment {segment:?}, dst {destination:?}"),
         ),
+        Instruction::SketchGroupGetLastPoint { source, destination } => {
+            ("SGGetLastPoint".into(), format!("source {source} dst={destination}"))
+        }
+        Instruction::NoOp { comment } => ("No op".into(), comment.to_owned()),
     }
 }

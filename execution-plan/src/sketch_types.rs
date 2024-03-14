@@ -30,6 +30,20 @@ pub struct SketchGroup {
 }
 
 impl SketchGroup {
+    /// The `to` end of the last path segment.
+    /// i.e. the point from which the next segment will start.
+    pub fn last_point(&self) -> Point2d<f64> {
+        self.get_last_path_segment().to
+    }
+
+    /// Get the last path segment, find its base path.
+    fn get_last_path_segment(&self) -> &BasePath {
+        match self.path_rest.last() {
+            Some(segment) => segment.get_base(),
+            None => &self.path_first,
+        }
+    }
+
     /// Get the offset for the `id` field.
     pub fn path_id_offset() -> usize {
         0
@@ -100,6 +114,7 @@ pub struct BasePath {
 /// Paths are made up of multiple segments, laid out top-to-tail
 /// (i.e. the end of one segment is the start of the next).
 #[derive(Debug, Clone, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case", tag = "type")]
 pub enum PathSegment {
     /// A path that goes to a point.
     ToPoint {
@@ -149,10 +164,22 @@ impl PathSegment {
             PathSegment::Base { .. } => "Base",
         }
     }
+
+    /// Get the BasePath from a segment.
+    fn get_base(&self) -> &BasePath {
+        match self {
+            PathSegment::ToPoint { base } => base,
+            PathSegment::TangentialArcTo { base, .. } => base,
+            PathSegment::Horizontal { base, .. } => base,
+            PathSegment::AngledLineTo { base, .. } => base,
+            PathSegment::Base { base } => base,
+        }
+    }
 }
 
 /// What is being sketched on?
 #[derive(Debug, Clone, Copy, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case", tag = "type")]
 pub enum SketchSurface {
     /// A plane.
     Plane(Plane),
@@ -173,6 +200,7 @@ pub struct Plane {
 
 /// Type for a plane.
 #[derive(Debug, Clone, Copy, ExecutionPlanValue, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case", tag = "type")]
 pub enum PlaneType {
     #[allow(missing_docs)]
     XY,

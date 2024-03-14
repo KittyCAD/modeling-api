@@ -41,6 +41,7 @@ where
             other => Err(MemoryError::InvalidEnumVariant {
                 expected_type: "option".to_owned(),
                 actual: other.to_owned(),
+                valid_variants: vec![NONE, SOME],
             }),
         }
     }
