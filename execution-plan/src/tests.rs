@@ -1,7 +1,7 @@
 use std::env;
 
 use insta::assert_snapshot;
-use kittycad_execution_plan_traits::{InMemory, ListHeader, MemoryArea, ObjectHeader, Primitive, Value};
+use kittycad_execution_plan_traits::{InMemory, ListHeader, ObjectHeader, Primitive, Value};
 use kittycad_modeling_cmds::shared::Point2d;
 use kittycad_modeling_cmds::ModelingCmdEndpoint as Endpoint;
 use kittycad_modeling_cmds::{
@@ -14,7 +14,7 @@ use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
 
 use crate::sketch_types::{Axes, BasePath, Plane, SketchGroup};
-use crate::{arithmetic::operator::BinaryOperation, arithmetic::operator::UnaryOperation, Address};
+use crate::{arithmetic::operator::BinaryOperation, arithmetic::operator::UnaryOperation, Address, Destination};
 
 use super::*;
 
@@ -1073,7 +1073,7 @@ async fn import_files_file_path_only() {
         &mut mem,
         vec![
             Instruction::ImportFiles(import_files::ImportFiles {
-                store_response: Some(MemoryArea::Stack),
+                store_response: Some(Destination::StackPush),
                 arguments: vec![file_path.into(), file_format.into()],
             }),
             Instruction::ApiRequest(ApiRequest {
@@ -1095,7 +1095,7 @@ async fn import_files_file_path_only() {
                 cmd_id: new_id(),
             }),
         ],
-        Some(client),
+        &mut Some(client),
     )
     .await
     .unwrap();
@@ -1155,7 +1155,7 @@ async fn import_files_with_file_format() {
         &mut mem,
         vec![
             Instruction::ImportFiles(import_files::ImportFiles {
-                store_response: Some(MemoryArea::Stack),
+                store_response: Some(Destination::StackPush),
                 arguments: vec![file_path.into(), file_format.into()],
             }),
             Instruction::ApiRequest(ApiRequest {
@@ -1177,7 +1177,7 @@ async fn import_files_with_file_format() {
                 cmd_id: new_id(),
             }),
         ],
-        Some(client),
+        &mut Some(client),
     )
     .await
     .unwrap();

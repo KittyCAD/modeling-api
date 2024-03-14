@@ -51,22 +51,18 @@ impl From<Address> for InMemory {
     }
 }
 
-/// Select a memory area.
-/// Intended to use for storing return values.
-#[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash, Debug)]
-pub enum MemoryArea {
-    /// At the given address.
-    Address(Address),
-    /// Push to stack.
-    Stack,
-}
-
 /// Memory that a KittyCAD Execution Plan can read from.
 pub trait ReadMemory {
     /// Get a value from the given address.
     fn get(&self, addr: &Address) -> Option<&Primitive>;
     /// Same as get but match the return signature of stack operations.
-    fn get_ok(&self, addr: &Address) -> Result<Vec<Primitive>, MemoryError>;
+    fn get_ok(&self, address: &Address) -> Result<Vec<Primitive>, MemoryError> {
+        match self.get(address) {
+            Some(prim) => Ok(vec![prim.clone()]),
+            None => Err(MemoryError::MemoryBadAccess),
+        }
+    }
+
     /// Get a value from the given starting address. Value might require multiple addresses.
     fn get_composite<T: Value>(&self, start: Address) -> Result<(T, usize), MemoryError>;
     /// Remove the value on top of the stack, return it.

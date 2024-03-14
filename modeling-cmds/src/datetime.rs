@@ -9,7 +9,7 @@ pub struct DateTimeLocal {
 impl Value for DateTimeLocal {
     fn into_parts(self) -> Vec<Primitive> {
         vec![Primitive::NumericValue(NumericPrimitive::Integer(
-            self.value.timestamp(),
+            self.value.timestamp_nanos_opt().unwrap(),
         ))]
     }
 
@@ -18,18 +18,15 @@ impl Value for DateTimeLocal {
     where
         I: Iterator<Item = Option<Primitive>>,
     {
-        let maybe_datetime = values.next().unwrap();
+        let Some(maybe_datetime) = values.next() else {
+            return Err(MemoryError::MemoryBadAccess);
+        };
 
         match maybe_datetime {
-            None => Ok((
+            None => Err(MemoryError::MemoryBadAccess),
+            Some(Primitive::NumericValue(NumericPrimitive::Integer(timestamp_nanos))) => Ok((
                 DateTimeLocal {
-                    value: chrono::DateTime::from_timestamp(0, 0).unwrap().into(),
-                },
-                1,
-            )),
-            Some(Primitive::NumericValue(NumericPrimitive::Integer(timestamp_sec))) => Ok((
-                DateTimeLocal {
-                    value: chrono::DateTime::from_timestamp(timestamp_sec, 0).unwrap().into(),
+                    value: chrono::DateTime::from_timestamp_nanos(timestamp_nanos).into(),
                 },
                 1,
             )),
@@ -39,4 +36,16 @@ impl Value for DateTimeLocal {
             }),
         }
     }
+}
+
+#[test]
+fn datetime_into_from_values() {
+    let a = DateTimeLocal {
+        value: chrono::Local::now(),
+    };
+    let Ok((b, _)) = DateTimeLocal::from_parts(&mut a.clone().into_parts().into_iter().map(Some)) else {
+        unreachable!();
+    };
+
+    assert_eq!(a, b);
 }

@@ -275,7 +275,7 @@ pub enum ExecutionError {
         reason: String,
     },
     /// A general execution error.
-    #[error("An argument of the wrong type was used.")]
+    #[error("A general execution error.")]
     General {
         /// The reason for the error.
         reason: String,

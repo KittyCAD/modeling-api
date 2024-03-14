@@ -100,7 +100,7 @@ impl ApiRequest {
                 };
 
                 let arg_import_files_struct =
-                    mem.get_in_memory::<kittycad_modeling_cmds::ImportFiles>(arg_import_files_struct_prim)?;
+                    mem.get_in_memory::<kittycad_modeling_cmds::ImportFiles>(arg_import_files_struct_prim, "", events)?;
 
                 log_req(events);
                 let kittycad_modeling_cmds::ok_response::OkModelingCmdResponse::ImportFiles(import_files) =

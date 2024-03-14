@@ -136,7 +136,7 @@ pub const VULKAN: &System = &System {
 /// KittyCAD (+Z up, -Y forward) to OpenGL (+Y up, +Z forward):
 ///
 /// ```
-/// # use format::coord::*;
+/// # use kittycad_modeling_cmds::coord::*;
 /// let a = [1.0, 2.0, 3.0];
 /// let b = transform(a, KITTYCAD, OPENGL);
 /// assert_eq!(b, [1.0, 3.0, -2.0]);
@@ -145,7 +145,7 @@ pub const VULKAN: &System = &System {
 /// OpenGL (+Y up, +Z forward) to KittyCAD (+Z up, -Y forward):
 ///
 /// ```
-/// # use format::coord::*;
+/// # use kittycad_modeling_cmds::coord::*;
 /// let a = [1.0, 2.0, 3.0];
 /// let b = transform(a, OPENGL, KITTYCAD);
 /// assert_eq!(b, [1.0, -3.0, 2.0]);
@@ -154,7 +154,7 @@ pub const VULKAN: &System = &System {
 /// KittyCAD (+Z up, -Y forward) to Vulkan (-Y up, +Z forward):
 ///
 /// ```
-/// # use format::coord::*;
+/// # use kittycad_modeling_cmds::coord::*;
 /// let a = [1.0, 2.0, 3.0];
 /// let b = transform(a, KITTYCAD, VULKAN);
 /// assert_eq!(b, [1.0, -3.0, -2.0]);
@@ -163,7 +163,7 @@ pub const VULKAN: &System = &System {
 /// OpenGL (+Y up, +Z forward) to Vulkan (-Y up, +Z forward):
 ///
 /// ```
-/// # use format::coord::*;
+/// # use kittycad_modeling_cmds::coord::*;
 /// let a = [1.0, 2.0, 3.0];
 /// let b = transform(a, OPENGL, VULKAN);
 /// assert_eq!(b, [1.0, -2.0, 3.0]);

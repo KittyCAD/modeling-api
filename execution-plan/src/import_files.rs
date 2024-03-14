@@ -3,8 +3,8 @@
 //! kittycad_modeling_cmds::ImportFiles to be passed to Endpoint::ImportFiles.
 
 use crate::Result;
-use crate::{memory::Memory, ExecutionError};
-use kittycad_execution_plan_traits::{InMemory, MemoryArea, Primitive, ReadMemory, Value};
+use crate::{memory::Memory, Destination, ExecutionError};
+use kittycad_execution_plan_traits::{InMemory, Primitive, ReadMemory, Value};
 use kittycad_modeling_cmds::{coord, format, shared, units};
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -16,7 +16,7 @@ use std::str::FromStr;
 pub struct ImportFiles {
     /// Which address should the response be stored in?
     /// If none, the response will be ignored.
-    pub store_response: Option<MemoryArea>,
+    pub store_response: Option<Destination>,
     /// Look up each parameter at this address.
     /// 1: file path
     /// 2: options (file format)
@@ -138,7 +138,7 @@ impl ImportFiles {
         // Write out to memory.
         if let Some(memory_area) = store_response {
             match memory_area {
-                MemoryArea::Address(addr) => {
+                Destination::Address(addr) => {
                     mem.set_composite(
                         addr,
                         kittycad_modeling_cmds::ImportFiles {
@@ -147,7 +147,7 @@ impl ImportFiles {
                         },
                     );
                 }
-                MemoryArea::Stack => {
+                Destination::StackPush => {
                     mem.stack.push(
                         kittycad_modeling_cmds::ImportFiles {
                             files: import_files,
@@ -155,6 +155,15 @@ impl ImportFiles {
                         }
                         .into_parts(),
                     );
+                }
+                Destination::StackExtend => {
+                    mem.stack.extend(
+                        kittycad_modeling_cmds::ImportFiles {
+                            files: import_files,
+                            format,
+                        }
+                        .into_parts(),
+                    )?;
                 }
             }
         }

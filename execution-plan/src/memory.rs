@@ -67,15 +67,6 @@ impl kittycad_execution_plan_traits::ReadMemory for Memory {
         self.addresses[inner(*address)].as_ref()
     }
 
-    /// Get a value from KCEP's program memory but match the return signature
-    /// of the stack operations.
-    fn get_ok(&self, address: &Address) -> Result<Vec<Primitive>, MemoryError> {
-        match &self.addresses[inner(*address)] {
-            Some(prim) => Ok(vec![prim.clone()]),
-            None => Err(MemoryError::MemoryBadAccess),
-        }
-    }
-
     /// Get a value value (i.e. a value which takes up multiple addresses in memory).
     /// Its parts are stored in consecutive memory addresses starting at `start`.
     fn get_composite<T: Value>(&self, start: Address) -> Result<(T, usize), MemoryError> {
@@ -88,10 +79,7 @@ impl kittycad_execution_plan_traits::ReadMemory for Memory {
     }
 
     fn stack_peek(&self) -> std::result::Result<Vec<Primitive>, MemoryError> {
-        match self.stack.peek() {
-            Ok(vs) => Ok(vs.to_vec()),
-            Err(e) => Err(e),
-        }
+        self.stack.peek().map(|vs| vs.to_vec())
     }
 }
 
