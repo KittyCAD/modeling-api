@@ -22,6 +22,7 @@ define_modeling_cmd_enum! {
             id::ModelingCmdId,
             length_unit::LengthUnit,
             shared::{
+                Angle,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, SceneSelectionType, SceneToolType,
@@ -277,6 +278,21 @@ define_modeling_cmd_enum! {
             pub arc_degrees: f64,
             /// Whether or not to rotate the objects as they are copied.
             pub rotate_duplicates: bool,
+        }
+
+        /// Create a helix using the input cylinder and other specified parameters.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        pub struct EntityMakeHelix {
+            /// ID of the cylinder.
+            pub cylinder_id: Uuid,
+            /// Number of revolutions.
+            pub revolutions: f64,
+            /// Start angle (in degrees).
+            pub start_angle: Angle,
+            /// Is the helix rotation clockwise?
+            pub is_clockwise: bool,
+            /// Length of the helix.
+            pub length: units::UnitLength,
         }
 
         /// Enter edit mode
