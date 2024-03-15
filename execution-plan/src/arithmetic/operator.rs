@@ -34,6 +34,32 @@ pub enum UnaryOperation {
     Not,
     /// Flip the sign of a signed number
     Neg,
+    /// Get the absolute value of a number
+    Abs,
+    /// Arc cosine
+    Acos,
+    /// Arc sine
+    Asin,
+    /// Arc tangent
+    Atan,
+    /// Ceiling
+    Ceil,
+    /// Cosine
+    Cos,
+    /// Floor,
+    Floor,
+    /// Natural logarithm
+    Ln,
+    /// Logarithm base 10
+    Log10,
+    /// Logarithm base 2
+    Log2,
+    /// Sine
+    Sin,
+    /// Square root
+    Sqrt,
+    /// Tangent
+    Tan,
 }
 
 impl From<BinaryOperation> for Operation {
@@ -62,6 +88,19 @@ impl fmt::Display for UnaryOperation {
         match self {
             UnaryOperation::Neg => "-",
             UnaryOperation::Not => "!",
+            UnaryOperation::Abs => "abs",
+            UnaryOperation::Acos => "acos",
+            UnaryOperation::Asin => "asin",
+            UnaryOperation::Atan => "atan",
+            UnaryOperation::Ceil => "ceil",
+            UnaryOperation::Cos => "cos",
+            UnaryOperation::Floor => "floor",
+            UnaryOperation::Ln => "ln",
+            UnaryOperation::Log10 => "log10",
+            UnaryOperation::Log2 => "log2",
+            UnaryOperation::Sin => "sin",
+            UnaryOperation::Sqrt => "sqrt",
+            UnaryOperation::Tan => "tan",
         }
         .fmt(f)
     }

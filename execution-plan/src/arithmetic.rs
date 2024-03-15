@@ -25,35 +25,6 @@ pub struct UnaryArithmetic {
     /// Operand for the operation
     pub operand: Operand,
 }
-impl UnaryArithmetic {
-    pub(crate) fn calculate(self, mem: &mut Memory) -> Result<Primitive, ExecutionError> {
-        let val = self.operand.eval(mem)?.clone();
-        match self.operation {
-            UnaryOperation::Not => {
-                if let Primitive::Bool(b) = val {
-                    Ok(Primitive::Bool(!b))
-                } else {
-                    Err(ExecutionError::CannotApplyOperation {
-                        op: self.operation.into(),
-                        operands: vec![val],
-                    })
-                }
-            }
-            UnaryOperation::Neg => match val {
-                Primitive::NumericValue(NumericPrimitive::Float(x)) => {
-                    Ok(Primitive::NumericValue(NumericPrimitive::Float(-x)))
-                }
-                Primitive::NumericValue(NumericPrimitive::Integer(x)) => {
-                    Ok(Primitive::NumericValue(NumericPrimitive::Integer(-x)))
-                }
-                _ => Err(ExecutionError::CannotApplyOperation {
-                    op: self.operation.into(),
-                    operands: vec![val],
-                }),
-            },
-        }
-    }
-}
 
 trait Power {
     fn power(self, other: Self) -> Self;
@@ -79,7 +50,7 @@ macro_rules! power_int_impl {
 }
 power_int_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 }
 
-macro_rules! arithmetic_body {
+macro_rules! binary_arithmetic_body {
     ($arith:ident, $mem:ident, $method:ident, $events:ident) => {{
         $events.push(crate::events::Event::new(
             "Evaluating left operand".to_owned(),
@@ -153,6 +124,143 @@ macro_rules! arithmetic_body {
         }
     }};
 }
+
+macro_rules! execution_error_if_match_otherwise {
+ ([], $b:ident, $err:expr, $otherwise:expr) => { $otherwise };
+ ([u32$(, $as:ident)*], u32, $err:expr, $otherwise:expr) => {
+   $err
+ };
+ ([i64$(, $as:ident)*], i64, $err:expr, $otherwise:expr) => {
+   $err
+ };
+ ([f64$(, $as:ident)*], f64, $err:expr, $otherwise:expr) => {
+   $err
+ };
+ ([$a:ident$(, $as:ident)*], $b:ident, $err:expr, $otherwise:expr) => {
+   execution_error_if_match_otherwise!([$($as)*], $b, $err, $otherwise)
+ };
+}
+
+macro_rules! unary_arithmetic_body {
+    ($arith:ident, $mem:ident, $events:ident, $op:ident, $($types:tt)*) => {{
+        $events.push(crate::events::Event::new(
+            "Evaluating operand".to_owned(),
+            crate::events::Severity::Debug,
+        ));
+        let operand = $arith.operand.eval($mem)?.clone();
+        $events.push({
+            let mut evt = crate::events::Event::new(format!("Operand is {operand:?}"), crate::events::Severity::Info);
+            if let Operand::Reference(a) = $arith.operand {
+                evt.related_addresses = vec![a];
+            }
+            evt
+        });
+        match operand {
+            // If both operands are numeric, then do the arithmetic operation.
+            Primitive::NumericValue(wrapped_x) => {
+                let num = match wrapped_x {
+                    // Looks like the compiler doesn't know x is actually used.
+                    NumericPrimitive::UInteger(_x) => {
+                      execution_error_if_match_otherwise!(
+                        $($types)*, u32,
+                        Err(ExecutionError::CannotApplyOperation {
+                          op: $arith.operation.into(),
+                          operands: vec![ $arith.operand.eval($mem)?.clone().to_owned(), ]
+                        })?,
+                        NumericPrimitive::Integer((_x as i64).$op())
+                      )
+                    }
+                    NumericPrimitive::Float(_x) => {
+                      execution_error_if_match_otherwise!(
+                        $($types)*, f64,
+                        Err(ExecutionError::CannotApplyOperation {
+                          op: $arith.operation.into(),
+                          operands: vec![ $arith.operand.eval($mem)?.clone().to_owned(), ]
+                        })?,
+                        NumericPrimitive::Float(_x.$op())
+                      )
+                    }
+                    NumericPrimitive::Integer(_x) => {
+                      execution_error_if_match_otherwise!(
+                        $($types)*, i64,
+                        Err(ExecutionError::CannotApplyOperation {
+                          op: $arith.operation.into(),
+                          operands: vec![ $arith.operand.eval($mem)?.clone().to_owned(), ]
+                        })?,
+                        NumericPrimitive::Integer(_x.$op())
+                      )
+                    }
+                };
+                let prim = Primitive::NumericValue(num);
+                $events.push(crate::events::Event::new(
+                    format!("Output is {prim:?}"),
+                    crate::events::Severity::Info,
+                ));
+                Ok(prim)
+            }
+            // This operation can only be done on numeric types.
+            _ => Err(ExecutionError::CannotApplyOperation {
+                op: $arith.operation.into(),
+                operands: vec![
+                    $arith.operand.eval($mem)?.clone().to_owned(),
+                ],
+            }),
+        }
+    }};
+}
+impl UnaryArithmetic {
+    /// Calculate unary operations
+    pub fn calculate(self, mem: &mut Memory, events: &mut EventWriter) -> Result<Primitive, ExecutionError> {
+        use std::ops::{Neg, Not};
+        match self.operation {
+            UnaryOperation::Not => {
+                unary_arithmetic_body!(self, mem, events, not, [f64])
+            }
+            UnaryOperation::Neg => {
+                unary_arithmetic_body!(self, mem, events, neg, [])
+            }
+            UnaryOperation::Abs => {
+                unary_arithmetic_body!(self, mem, events, abs, [])
+            }
+            UnaryOperation::Acos => {
+                unary_arithmetic_body!(self, mem, events, acos, [i64, u32])
+            }
+            UnaryOperation::Asin => {
+                unary_arithmetic_body!(self, mem, events, asin, [i64, u32])
+            }
+            UnaryOperation::Atan => {
+                unary_arithmetic_body!(self, mem, events, atan, [i64, u32])
+            }
+            UnaryOperation::Ceil => {
+                unary_arithmetic_body!(self, mem, events, ceil, [i64, u32])
+            }
+            UnaryOperation::Cos => {
+                unary_arithmetic_body!(self, mem, events, cos, [i64, u32])
+            }
+            UnaryOperation::Floor => {
+                unary_arithmetic_body!(self, mem, events, floor, [i64, u32])
+            }
+            UnaryOperation::Ln => {
+                unary_arithmetic_body!(self, mem, events, ln, [i64, u32])
+            }
+            UnaryOperation::Log10 => {
+                unary_arithmetic_body!(self, mem, events, log10, [i64, u32])
+            }
+            UnaryOperation::Log2 => {
+                unary_arithmetic_body!(self, mem, events, log2, [i64, u32])
+            }
+            UnaryOperation::Sin => {
+                unary_arithmetic_body!(self, mem, events, sin, [i64, u32])
+            }
+            UnaryOperation::Sqrt => {
+                unary_arithmetic_body!(self, mem, events, sqrt, [i64, u32])
+            }
+            UnaryOperation::Tan => {
+                unary_arithmetic_body!(self, mem, events, tan, [i64, u32])
+            }
+        }
+    }
+}
 impl BinaryArithmetic {
     /// Calculate the the arithmetic equation.
     /// May read values from the given memory.
@@ -160,22 +268,22 @@ impl BinaryArithmetic {
         use std::ops::{Add, Div, Mul, Rem, Sub};
         match self.operation {
             BinaryOperation::Add => {
-                arithmetic_body!(self, mem, add, events)
+                binary_arithmetic_body!(self, mem, add, events)
             }
             BinaryOperation::Mul => {
-                arithmetic_body!(self, mem, mul, events)
+                binary_arithmetic_body!(self, mem, mul, events)
             }
             BinaryOperation::Sub => {
-                arithmetic_body!(self, mem, sub, events)
+                binary_arithmetic_body!(self, mem, sub, events)
             }
             BinaryOperation::Div => {
-                arithmetic_body!(self, mem, div, events)
+                binary_arithmetic_body!(self, mem, div, events)
             }
             BinaryOperation::Mod => {
-                arithmetic_body!(self, mem, rem, events)
+                binary_arithmetic_body!(self, mem, rem, events)
             }
             BinaryOperation::Pow => {
-                arithmetic_body!(self, mem, power, events)
+                binary_arithmetic_body!(self, mem, power, events)
             }
         }
     }
