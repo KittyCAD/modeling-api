@@ -435,5 +435,6 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
             ("SGGetLastPoint".into(), format!("source {source} dst={destination}"))
         }
         Instruction::NoOp { comment } => ("No op".into(), comment.to_owned()),
+        Instruction::ApiBatch(reqs) => ("API batch".into(), format!("{reqs:?}")),
     }
 }

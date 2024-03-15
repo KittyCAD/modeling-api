@@ -93,7 +93,7 @@ pub enum WebSocketRequest {
 }
 
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
-#[derive(Serialize, Deserialize, JsonSchema, Debug)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Default)]
 #[serde(rename_all = "snake_case")]
 pub struct ModelingBatch {
     /// A sequence of modeling requests. If any request fails, following requests will not be tried.
