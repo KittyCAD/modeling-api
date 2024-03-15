@@ -93,11 +93,23 @@ pub enum WebSocketRequest {
 }
 
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
-#[derive(Serialize, Deserialize, JsonSchema, Debug)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Default)]
 #[serde(rename_all = "snake_case")]
 pub struct ModelingBatch {
     /// A sequence of modeling requests. If any request fails, following requests will not be tried.
     pub requests: Vec<ModelingCmdReq>,
+}
+
+impl ModelingBatch {
+    /// Add a new modeling command to the end of this batch.
+    pub fn push(&mut self, req: ModelingCmdReq) {
+        self.requests.push(req);
+    }
+
+    /// Are there any requests in the batch?
+    pub fn is_empty(&self) -> bool {
+        self.requests.is_empty()
+    }
 }
 
 /// Representation of an ICE server used for STUN/TURN

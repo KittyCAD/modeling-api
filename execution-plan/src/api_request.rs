@@ -4,6 +4,8 @@ use crate::events::{Event, Severity};
 use crate::Result;
 use crate::{events::EventWriter, memory::Memory};
 use kittycad_execution_plan_traits::{Address, FromMemory, InMemory};
+use kittycad_modeling_cmds::websocket::{ModelingBatch, ModelingCmdReq};
+use kittycad_modeling_cmds::ModelingCmd;
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId, ModelingCmdEndpoint as Endpoint};
 use kittycad_modeling_session::Session as ModelingSession;
 use serde::{Deserialize, Serialize};
@@ -29,7 +31,14 @@ impl ApiRequest {
         session: &mut ModelingSession,
         mem: &mut Memory,
         events: &mut EventWriter,
+        batch_queue: &mut ModelingBatch,
     ) -> Result<()> {
+        if self.store_response.is_none() {
+            return self.add_to_queue(mem, events, batch_queue).await;
+        }
+        if !batch_queue.is_empty() {
+            flush_batch_queue(session, std::mem::take(batch_queue), events).await?;
+        }
         let Self {
             endpoint,
             store_response,
@@ -108,4 +117,50 @@ impl ApiRequest {
         }
         Ok(())
     }
+
+    async fn add_to_queue(
+        self,
+        mem: &mut Memory,
+        events: &mut EventWriter,
+        batch_queue: &mut ModelingBatch,
+    ) -> Result<()> {
+        let mut arguments = self.arguments.into_iter();
+        let cmd: ModelingCmd = match self.endpoint {
+            Endpoint::StartPath => each_cmd::StartPath::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::MovePathPen => each_cmd::MovePathPen::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::ExtendPath => each_cmd::ExtendPath::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::ClosePath => each_cmd::ClosePath::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::Extrude => each_cmd::Extrude::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::TakeSnapshot => each_cmd::TakeSnapshot::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::MakePlane => each_cmd::MakePlane::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::EnableSketchMode => each_cmd::EnableSketchMode::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::SketchModeEnable => each_cmd::SketchModeEnable::from_memory(&mut arguments, mem, events)?.into(),
+            other => panic!("Haven't implemented endpoint {other:?} yet"),
+        };
+        events.push(Event {
+            text: format!("Adding {} to batch queue", self.endpoint),
+            severity: Severity::Info,
+            related_addresses: Default::default(),
+        });
+        batch_queue.push(ModelingCmdReq {
+            cmd,
+            cmd_id: self.cmd_id,
+        });
+        Ok(())
+    }
+}
+
+/// Send any API requests that have been queued, in a batch.
+pub async fn flush_batch_queue(
+    session: &mut ModelingSession,
+    batch_queue: ModelingBatch,
+    events: &mut EventWriter,
+) -> Result<()> {
+    events.push(Event {
+        text: format!("Running {} batched API calls", batch_queue.requests.len()),
+        severity: Severity::Info,
+        related_addresses: Default::default(),
+    });
+    session.run_batch(batch_queue).await?;
+    Ok(())
 }
