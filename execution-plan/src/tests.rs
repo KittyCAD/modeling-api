@@ -748,43 +748,45 @@ async fn api_call_draw_cube() {
                 arguments: vec![InMemory::Address(path_id_addr), InMemory::StackPop],
                 cmd_id: new_id(),
             }),
-            Instruction::ApiRequest(ApiRequest {
-                endpoint: Endpoint::ExtendPath,
-                store_response: None,
-                arguments: vec![path_id_addr.into(), segment_addrs[0].into()],
-                cmd_id: new_id(),
-            }),
-            Instruction::ApiRequest(ApiRequest {
-                endpoint: Endpoint::ExtendPath,
-                store_response: None,
-                arguments: vec![path_id_addr.into(), segment_addrs[1].into()],
-                cmd_id: new_id(),
-            }),
-            Instruction::ApiRequest(ApiRequest {
-                endpoint: Endpoint::ExtendPath,
-                store_response: None,
-                arguments: vec![path_id_addr.into(), segment_addrs[2].into()],
-                cmd_id: new_id(),
-            }),
-            Instruction::ApiRequest(ApiRequest {
-                endpoint: Endpoint::ExtendPath,
-                store_response: None,
-                arguments: vec![path_id_addr.into(), segment_addrs[3].into()],
-                cmd_id: new_id(),
-            }),
-            Instruction::ApiRequest(ApiRequest {
-                endpoint: Endpoint::ClosePath,
-                store_response: None,
-                arguments: vec![path_id_addr.into()],
-                cmd_id: new_id(),
-            }),
-            // Turn square into cube
-            Instruction::ApiRequest(ApiRequest {
-                endpoint: Endpoint::Extrude,
-                store_response: None,
-                arguments: vec![path_id_addr.into(), cube_height_addr.into(), cap_addr.into()],
-                cmd_id: new_id(),
-            }),
+            Instruction::ApiBatch(vec![
+                ApiRequest {
+                    endpoint: Endpoint::ExtendPath,
+                    store_response: None,
+                    arguments: vec![path_id_addr.into(), segment_addrs[0].into()],
+                    cmd_id: new_id(),
+                },
+                ApiRequest {
+                    endpoint: Endpoint::ExtendPath,
+                    store_response: None,
+                    arguments: vec![path_id_addr.into(), segment_addrs[1].into()],
+                    cmd_id: new_id(),
+                },
+                ApiRequest {
+                    endpoint: Endpoint::ExtendPath,
+                    store_response: None,
+                    arguments: vec![path_id_addr.into(), segment_addrs[2].into()],
+                    cmd_id: new_id(),
+                },
+                ApiRequest {
+                    endpoint: Endpoint::ExtendPath,
+                    store_response: None,
+                    arguments: vec![path_id_addr.into(), segment_addrs[3].into()],
+                    cmd_id: new_id(),
+                },
+                ApiRequest {
+                    endpoint: Endpoint::ClosePath,
+                    store_response: None,
+                    arguments: vec![path_id_addr.into()],
+                    cmd_id: new_id(),
+                },
+                // Turn square into cube
+                ApiRequest {
+                    endpoint: Endpoint::Extrude,
+                    store_response: None,
+                    arguments: vec![path_id_addr.into(), cube_height_addr.into(), cap_addr.into()],
+                    cmd_id: new_id(),
+                },
+            ]),
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::TakeSnapshot,
                 store_response: Some(output_addr),
