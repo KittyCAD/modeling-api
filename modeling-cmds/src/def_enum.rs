@@ -3,7 +3,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 pub use self::each_cmd::*;
-use crate::{self as kittycad_modeling_cmds};
+use crate::{self as kittycad_modeling_cmds, shared::Angle};
 
 define_modeling_cmd_enum! {
     pub mod each_cmd {
@@ -287,7 +287,7 @@ define_modeling_cmd_enum! {
             /// Number of revolutions.
             pub revolutions: f64,
             /// Start angle (in degrees).
-            pub start_angle: units::UnitAngle,
+            pub start_angle: Angle,
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
             /// Length of the helix.
