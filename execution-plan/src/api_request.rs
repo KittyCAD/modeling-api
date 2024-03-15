@@ -6,6 +6,7 @@ use crate::events::{Event, Severity};
 use crate::Result;
 use crate::{events::EventWriter, memory::Memory};
 use kittycad_execution_plan_traits::{Address, FromMemory, InMemory};
+use kittycad_modeling_cmds::ok_response::OkModelingCmdResponse;
 use kittycad_modeling_cmds::websocket::{ModelingBatch, ModelingCmdReq};
 use kittycad_modeling_cmds::ModelingCmd;
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId, ModelingCmdEndpoint as Endpoint};
@@ -103,15 +104,20 @@ impl ApiRequest {
         };
         // Write out to memory.
         if let Some(output_address) = store_response {
-            events.push(Event {
-                text: "Storing response".to_owned(),
-                severity: Severity::Info,
-                related_addresses: vec![output_address],
-            });
-            mem.set_composite(output_address, output);
+            output_response(events, output_address, output, mem);
         }
         Ok(())
     }
+}
+
+/// Store the given response in the given address.
+fn output_response(events: &mut EventWriter, dst: Address, response: OkModelingCmdResponse, mem: &mut Memory) {
+    events.push(Event {
+        text: "Storing response".to_owned(),
+        severity: Severity::Info,
+        related_addresses: vec![dst],
+    });
+    mem.set_composite(dst, response);
 }
 
 pub(crate) async fn execute_batch(
@@ -120,8 +126,10 @@ pub(crate) async fn execute_batch(
     mem: &mut Memory,
     events: &mut EventWriter,
 ) -> Result<()> {
-    // Batch the requests.
+    // We will need to look up responses in this hash table later.
     let reqs_by_id: HashMap<_, _> = reqs.iter().map(|req| (req.cmd_id, req.clone())).collect();
+
+    // Collect the individual requests into a batch.
     let batch = reqs
         .iter()
         .map(|req| {
@@ -170,16 +178,15 @@ pub(crate) async fn execute_batch(
         })
         .collect::<Result<Vec<_>>>()
         .map(|requests| ModelingBatch { requests })?;
+
+    // Send the batch.
     let resps = session.run_batch(batch).await?;
+
+    // For each response, write it to the given output address.
     for resp in resps {
         let store_response = reqs_by_id.get(&resp.cmd_id).unwrap().store_response;
         if let Some(output_address) = store_response {
-            events.push(Event {
-                text: "Storing response".to_owned(),
-                severity: Severity::Info,
-                related_addresses: vec![output_address],
-            });
-            mem.set_composite(output_address, resp.response);
+            output_response(events, output_address, resp.response, mem);
         }
     }
     Ok(())
