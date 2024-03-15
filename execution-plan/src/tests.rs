@@ -979,6 +979,16 @@ async fn tan_float() {
     test_unary_op!(Tan, 1f64, 1.5574077246549023f64);
 }
 
+#[tokio::test]
+async fn to_degrees_float() {
+    test_unary_op!(ToDegrees, std::f64::consts::PI, 180f64);
+}
+
+#[tokio::test]
+async fn to_radians_float() {
+    test_unary_op!(ToRadians, 180f64, std::f64::consts::PI);
+}
+
 fn new_id() -> ModelingCmdId {
     ModelingCmdId(Uuid::new_v4())
 }

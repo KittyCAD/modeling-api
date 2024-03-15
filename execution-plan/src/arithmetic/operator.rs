@@ -60,6 +60,10 @@ pub enum UnaryOperation {
     Sqrt,
     /// Tangent
     Tan,
+    /// Convert radians to degrees
+    ToDegrees,
+    /// Convert degrees to radians
+    ToRadians,
 }
 
 impl From<BinaryOperation> for Operation {
@@ -101,6 +105,8 @@ impl fmt::Display for UnaryOperation {
             UnaryOperation::Sin => "sin",
             UnaryOperation::Sqrt => "sqrt",
             UnaryOperation::Tan => "tan",
+            UnaryOperation::ToDegrees => "to_degrees",
+            UnaryOperation::ToRadians => "to_radians",
         }
         .fmt(f)
     }

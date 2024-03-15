@@ -258,6 +258,12 @@ impl UnaryArithmetic {
             UnaryOperation::Tan => {
                 unary_arithmetic_body!(self, mem, events, tan, [i64, u32])
             }
+            UnaryOperation::ToDegrees => {
+                unary_arithmetic_body!(self, mem, events, to_degrees, [i64, u32])
+            }
+            UnaryOperation::ToRadians => {
+                unary_arithmetic_body!(self, mem, events, to_radians, [i64, u32])
+            }
         }
     }
 }
