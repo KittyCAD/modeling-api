@@ -3,7 +3,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 pub use self::each_cmd::*;
-use crate::{self as kittycad_modeling_cmds, shared::Angle};
+use crate::{self as kittycad_modeling_cmds};
 
 define_modeling_cmd_enum! {
     pub mod each_cmd {
@@ -22,6 +22,7 @@ define_modeling_cmd_enum! {
             id::ModelingCmdId,
             length_unit::LengthUnit,
             shared::{
+                Angle,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, SceneSelectionType, SceneToolType,
