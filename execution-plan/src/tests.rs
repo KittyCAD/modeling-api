@@ -926,12 +926,12 @@ async fn acos_u32_err() {
 
 #[tokio::test]
 async fn asin_float() {
-    test_unary_op!(Asin, 1f64, 1.5707963267948966f64);
+    test_unary_op!(Asin, 1f64, std::f64::consts::FRAC_PI_2);
 }
 
 #[tokio::test]
 async fn atan_float() {
-    test_unary_op!(Atan, 1f64, 0.7853981633974483f64);
+    test_unary_op!(Atan, 1f64, std::f64::consts::FRAC_PI_4);
 }
 
 #[tokio::test]
