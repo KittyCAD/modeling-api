@@ -15,6 +15,8 @@ use crate::{
 pub enum Instruction {
     /// Call the KittyCAD API.
     ApiRequest(ApiRequest),
+    /// Batch multiple API requests.
+    ApiBatch(Vec<ApiRequest>),
     /// Set a primitive to a memory address.
     SetPrimitive {
         /// Which memory address to set.
@@ -176,6 +178,13 @@ impl Instruction {
     ) -> Result<()> {
         match self {
             Instruction::NoOp { comment: _ } => {}
+            Instruction::ApiBatch(reqs) => {
+                if let Some(session) = session {
+                    crate::api_request::execute_batch(reqs, session, mem, events).await?;
+                } else {
+                    return Err(ExecutionError::NoApiClient);
+                }
+            }
             Instruction::ApiRequest(req) => {
                 if let Some(session) = session {
                     req.execute(session, mem, events).await?;
