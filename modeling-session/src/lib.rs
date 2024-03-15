@@ -5,7 +5,10 @@ use std::time::Duration;
 use futures::StreamExt;
 use kittycad::{types::error::Error as ApiError, Client};
 use kittycad_modeling_cmds::{
-    id::ModelingCmdId, ok_response::OkModelingCmdResponse, websocket::ModelingCmdReq, ModelingCmd,
+    id::ModelingCmdId,
+    ok_response::OkModelingCmdResponse,
+    websocket::{ModelingBatch, ModelingCmdReq},
+    ModelingCmd,
 };
 use tokio::sync::{mpsc, oneshot};
 use uuid::Uuid;
@@ -76,7 +79,7 @@ impl Session {
     }
 
     /// Send a modeling command and wait for its response.
-    pub async fn run_command<'de, Cmd>(
+    pub async fn run_command<Cmd>(
         &mut self,
         cmd_id: ModelingCmdId,
         cmd: Cmd,
@@ -101,6 +104,17 @@ impl Session {
             .map_err(|_| RunCommandError::ActorFailed)?;
         let resp = rx.await.map_err(|_| RunCommandError::ActorFailed)??;
         Ok(resp)
+    }
+
+    /// Run a batch of commands at once.
+    pub async fn run_batch(&mut self, batch: ModelingBatch) -> Result<(), RunCommandError> {
+        let (tx, rx) = oneshot::channel();
+        self.actor_tx
+            .send(actor::Request::SendModelingBatch(batch, tx))
+            .await
+            .map_err(|_| RunCommandError::ActorFailed)?;
+        rx.await.map_err(|_| RunCommandError::ActorFailed)??;
+        Ok(())
     }
 }
 

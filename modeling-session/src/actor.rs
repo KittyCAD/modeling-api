@@ -7,7 +7,7 @@ use futures::{
 use kittycad_modeling_cmds::{
     id::ModelingCmdId,
     ok_response::OkModelingCmdResponse,
-    websocket::{ModelingCmdReq, OkWebSocketResponseData, WebSocketRequest, WebSocketResponse},
+    websocket::{ModelingBatch, ModelingCmdReq, OkWebSocketResponseData, WebSocketRequest, WebSocketResponse},
 };
 use reqwest::Upgraded;
 use tokio::{
@@ -23,6 +23,7 @@ type Result<T> = std::result::Result<T, RunCommandError>;
 pub enum Request {
     SendModelingCmd(ModelingCmdReq, oneshot::Sender<Result<()>>),
     GetResponse(ModelingCmdId, oneshot::Sender<Result<OkModelingCmdResponse>>),
+    SendModelingBatch(ModelingBatch, oneshot::Sender<Result<()>>),
 }
 
 pub async fn start(
@@ -105,6 +106,16 @@ pub async fn start(
                 if responder.send(Err(RunCommandError::TimeOutWaitingForResponse)).is_err() {
                     continue 'next_request;
                 }
+            }
+            Request::SendModelingBatch(batch, responder) => {
+                let ws_msg = WsMsg::Text(
+                    serde_json::to_string(&WebSocketRequest::ModelingCmdBatchReq(batch))
+                        .expect("ModelingCmdReq can always be serialized"),
+                );
+                let resp = write_to_ws.send(ws_msg).await.map_err(RunCommandError::WebSocketSend);
+                // If the send fails, it's because the caller dropped its end, so ignore the
+                // error because we're done with this request anyway.
+                let _ = responder.send(resp);
             }
         }
     }
