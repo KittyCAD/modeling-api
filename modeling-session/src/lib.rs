@@ -79,18 +79,14 @@ impl Session {
     }
 
     /// Send a modeling command and wait for its response.
-    pub async fn run_command<Cmd>(
+    pub async fn run_command(
         &mut self,
         cmd_id: ModelingCmdId,
-        cmd: Cmd,
-    ) -> Result<OkModelingCmdResponse, RunCommandError>
-    where
-        Cmd: kittycad_modeling_cmds::ModelingCmdVariant,
-    {
+        cmd: ModelingCmd,
+    ) -> Result<OkModelingCmdResponse, RunCommandError> {
         // All messages to the KittyCAD Modeling API will be sent over the WebSocket as Text.
         // The text will contain JSON representing a `ModelingCmdReq`.
         // This takes in a command and its ID, and makes a WebSocket message containing that command.
-        let cmd = ModelingCmd::from(cmd);
         let (tx, rx) = oneshot::channel();
         self.actor_tx
             .send(actor::Request::SendModelingCmd(ModelingCmdReq { cmd, cmd_id }, tx))

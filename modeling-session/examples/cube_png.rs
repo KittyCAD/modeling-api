@@ -10,7 +10,7 @@ use kittycad_modeling_cmds::{
     length_unit::LengthUnit,
     ok_response::OkModelingCmdResponse,
     shared::{PathSegment, Point3d},
-    ClosePath, ExtendPath, Extrude, MovePathPen, StartPath, TakeSnapshot,
+    ClosePath, ExtendPath, Extrude, ModelingCmd, MovePathPen, StartPath, TakeSnapshot,
 };
 use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
@@ -43,7 +43,7 @@ async fn main() -> Result<()> {
     let path_id = Uuid::new_v4();
     let path = path_id.into();
     session
-        .run_command(path, StartPath {})
+        .run_command(path, ModelingCmd::StartPath(StartPath {}))
         .await
         .context("could not create path")?;
 
@@ -56,7 +56,7 @@ async fn main() -> Result<()> {
         z: -CUBE_WIDTH,
     };
     session
-        .run_command(random_id(), MovePathPen { path, to: start })
+        .run_command(random_id(), MovePathPen { path, to: start }.into())
         .await
         .context("could not move path pen to start")?;
 
@@ -89,14 +89,15 @@ async fn main() -> Result<()> {
                         end: point,
                         relative: false,
                     },
-                },
+                }
+                .into(),
             )
             .await
             .context("could not draw square")?;
     }
     // Extrude the square into a cube.
     session
-        .run_command(random_id(), ClosePath { path_id })
+        .run_command(random_id(), ModelingCmd::ClosePath(ClosePath { path_id }))
         .await
         .context("could not close square path")?;
     session
@@ -106,7 +107,8 @@ async fn main() -> Result<()> {
                 cap: true,
                 distance: CUBE_WIDTH * 2.0,
                 target: path,
-            },
+            }
+            .into(),
         )
         .await
         .context("could not extrude square into cube")?;
@@ -116,7 +118,8 @@ async fn main() -> Result<()> {
             random_id(),
             TakeSnapshot {
                 format: kittycad_modeling_cmds::ImageFormat::Png,
-            },
+            }
+            .into(),
         )
         .await
         .context("could not get PNG snapshot")?;

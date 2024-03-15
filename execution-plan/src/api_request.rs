@@ -53,47 +53,47 @@ impl ApiRequest {
             Endpoint::StartPath => {
                 let cmd = each_cmd::StartPath::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::MovePathPen => {
                 let cmd = each_cmd::MovePathPen::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::ExtendPath => {
                 let cmd = each_cmd::ExtendPath::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::ClosePath => {
                 let cmd = each_cmd::ClosePath::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::Extrude => {
                 let cmd = each_cmd::Extrude::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::TakeSnapshot => {
                 let cmd = each_cmd::TakeSnapshot::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::MakePlane => {
                 let cmd = each_cmd::MakePlane::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::EnableSketchMode => {
                 let cmd = each_cmd::EnableSketchMode::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::SketchModeEnable => {
                 let cmd = each_cmd::SketchModeEnable::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             other => panic!("Haven't implemented endpoint {other:?} yet"),
         };
