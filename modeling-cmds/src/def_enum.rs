@@ -310,6 +310,10 @@ define_modeling_cmd_enum! {
             pub entities: Vec<Uuid>,
         }
 
+        /// Removes all of the Objects in the scene
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct SceneClearAll;
+
         /// Replaces current selection with these entities (by UUID).
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct SelectReplace {
