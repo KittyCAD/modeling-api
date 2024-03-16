@@ -79,18 +79,14 @@ impl Session {
     }
 
     /// Send a modeling command and wait for its response.
-    pub async fn run_command<Cmd>(
+    pub async fn run_command(
         &mut self,
         cmd_id: ModelingCmdId,
-        cmd: Cmd,
-    ) -> Result<OkModelingCmdResponse, RunCommandError>
-    where
-        Cmd: kittycad_modeling_cmds::ModelingCmdVariant,
-    {
+        cmd: ModelingCmd,
+    ) -> Result<OkModelingCmdResponse, RunCommandError> {
         // All messages to the KittyCAD Modeling API will be sent over the WebSocket as Text.
         // The text will contain JSON representing a `ModelingCmdReq`.
         // This takes in a command and its ID, and makes a WebSocket message containing that command.
-        let cmd = ModelingCmd::from(cmd);
         let (tx, rx) = oneshot::channel();
         self.actor_tx
             .send(actor::Request::SendModelingCmd(ModelingCmdReq { cmd, cmd_id }, tx))
@@ -107,38 +103,15 @@ impl Session {
     }
 
     /// Run a batch of commands at once.
-    pub async fn run_batch(&mut self, batch: ModelingBatch) -> Result<Vec<BatchResponse>, RunCommandError> {
-        let req_ids: Vec<_> = batch.requests.iter().map(|req| req.cmd_id).collect();
-
-        // Send all commands.
+    pub async fn run_batch(&mut self, batch: ModelingBatch) -> Result<(), RunCommandError> {
         let (tx, rx) = oneshot::channel();
         self.actor_tx
             .send(actor::Request::SendModelingBatch(batch, tx))
             .await
             .map_err(|_| RunCommandError::ActorFailed)?;
         rx.await.map_err(|_| RunCommandError::ActorFailed)??;
-
-        // Get all responses.
-        let mut resps = Vec::new();
-        for cmd_id in req_ids {
-            let (tx, rx) = oneshot::channel();
-            self.actor_tx
-                .send(actor::Request::GetResponse(cmd_id, tx))
-                .await
-                .map_err(|_| RunCommandError::ActorFailed)?;
-            let response = rx.await.map_err(|_| RunCommandError::ActorFailed)??;
-            resps.push(BatchResponse { response, cmd_id });
-        }
-        Ok(resps)
+        Ok(())
     }
-}
-
-/// Response to a batched request.
-pub struct BatchResponse {
-    /// Which request is this response for?
-    pub cmd_id: ModelingCmdId,
-    /// The response to the command.
-    pub response: OkModelingCmdResponse,
 }
 
 /// Errors from running a modeling command.

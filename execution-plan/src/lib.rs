@@ -10,6 +10,7 @@ use events::{Event, EventWriter};
 use kittycad_execution_plan_traits::events;
 use kittycad_execution_plan_traits::Address;
 use kittycad_execution_plan_traits::{MemoryError, Primitive, ReadMemory};
+use kittycad_modeling_cmds::websocket::ModelingBatch;
 use kittycad_modeling_session::{RunCommandError, Session as ModelingSession};
 pub use memory::{Memory, Stack, StaticMemoryInitializer};
 use serde::{Deserialize, Serialize};
@@ -81,7 +82,7 @@ pub struct ExecutionFailed {
     /// What error occurred.
     pub error: ExecutionError,
     /// Which instruction was being executed when the error occurred?
-    pub instruction: Instruction,
+    pub instruction: Option<Instruction>,
     /// Which instruction number was being executed when the error occurred?
     pub instruction_index: usize,
 }
@@ -93,15 +94,48 @@ pub async fn execute(
     session: &mut Option<ModelingSession>,
 ) -> std::result::Result<(), ExecutionFailed> {
     let mut events = EventWriter::default();
+    let mut batch_queue = ModelingBatch::default();
+    let n = plan.len();
     for (i, instruction) in plan.into_iter().enumerate() {
-        if let Err(e) = instruction.clone().execute(mem, session, &mut events).await {
+        if let Err(e) = instruction
+            .clone()
+            .execute(mem, session, &mut events, &mut batch_queue)
+            .await
+        {
             return Err(ExecutionFailed {
                 error: e,
-                instruction,
+                instruction: Some(instruction),
                 instruction_index: i,
             });
         }
     }
+    cleanup(session, batch_queue, &mut events, n).await?;
+    Ok(())
+}
+
+async fn cleanup(
+    session: &mut Option<ModelingSession>,
+    batch_queue: ModelingBatch,
+    events: &mut EventWriter,
+    n: usize,
+) -> std::result::Result<(), ExecutionFailed> {
+    if batch_queue.is_empty() {
+        return Ok(());
+    }
+    let Some(session) = session else {
+        return Err(ExecutionFailed {
+            error: ExecutionError::NoApiClient,
+            instruction: None,
+            instruction_index: n,
+        });
+    };
+    crate::api_request::flush_batch_queue(session, batch_queue, events)
+        .await
+        .map_err(|e| ExecutionFailed {
+            error: e,
+            instruction: None,
+            instruction_index: n,
+        })?;
     Ok(())
 }
 
@@ -126,9 +160,10 @@ pub async fn execute_time_travel(
 ) -> (Vec<ExecutionState>, usize) {
     let mut out = Vec::new();
     let mut events = EventWriter::default();
+    let mut batch_queue = Default::default();
     let n = plan.len();
     for (active_instruction, instruction) in plan.into_iter().enumerate() {
-        let res = instruction.execute(mem, session, &mut events).await;
+        let res = instruction.execute(mem, session, &mut events, &mut batch_queue).await;
 
         let mut crashed = false;
         if let Err(e) = res {
@@ -149,6 +184,18 @@ pub async fn execute_time_travel(
         if crashed {
             return (out, active_instruction);
         }
+    }
+    if let Err(e) = cleanup(session, batch_queue, &mut events, n).await {
+        events.push(Event {
+            text: e.error.to_string(),
+            severity: events::Severity::Error,
+            related_addresses: Default::default(),
+        });
+        out.push(ExecutionState {
+            mem: mem.clone(),
+            active_instruction: n - 1,
+            events: events.drain(),
+        });
     }
     (out, n - 1)
 }

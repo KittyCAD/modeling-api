@@ -100,6 +100,18 @@ pub struct ModelingBatch {
     pub requests: Vec<ModelingCmdReq>,
 }
 
+impl ModelingBatch {
+    /// Add a new modeling command to the end of this batch.
+    pub fn push(&mut self, req: ModelingCmdReq) {
+        self.requests.push(req);
+    }
+
+    /// Are there any requests in the batch?
+    pub fn is_empty(&self) -> bool {
+        self.requests.is_empty()
+    }
+}
+
 /// Representation of an ICE server used for STUN/TURN
 /// Used to initiate WebRTC connections
 /// based on <https://developer.mozilla.org/en-US/docs/Web/API/RTCIceServer>

@@ -1,7 +1,7 @@
 use kittycad_execution_plan_traits::{
     InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
 };
-use kittycad_modeling_cmds::shared::Point2d;
+use kittycad_modeling_cmds::{shared::Point2d, websocket::ModelingBatch};
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -15,8 +15,6 @@ use crate::{
 pub enum Instruction {
     /// Call the KittyCAD API.
     ApiRequest(ApiRequest),
-    /// Batch multiple API requests.
-    ApiBatch(Vec<ApiRequest>),
     /// Set a primitive to a memory address.
     SetPrimitive {
         /// Which memory address to set.
@@ -175,19 +173,13 @@ impl Instruction {
         mem: &mut Memory,
         session: &mut Option<kittycad_modeling_session::Session>,
         events: &mut EventWriter,
+        batch_queue: &mut ModelingBatch,
     ) -> Result<()> {
         match self {
             Instruction::NoOp { comment: _ } => {}
-            Instruction::ApiBatch(reqs) => {
-                if let Some(session) = session {
-                    crate::api_request::execute_batch(reqs, session, mem, events).await?;
-                } else {
-                    return Err(ExecutionError::NoApiClient);
-                }
-            }
             Instruction::ApiRequest(req) => {
                 if let Some(session) = session {
-                    req.execute(session, mem, events).await?;
+                    req.execute(session, mem, events, batch_queue).await?;
                 } else {
                     return Err(ExecutionError::NoApiClient);
                 }

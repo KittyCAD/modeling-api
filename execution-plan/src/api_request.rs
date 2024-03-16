@@ -1,12 +1,9 @@
 //! Instruction for running KittyCAD API requests.
 
-use std::collections::HashMap;
-
 use crate::events::{Event, Severity};
 use crate::Result;
 use crate::{events::EventWriter, memory::Memory};
 use kittycad_execution_plan_traits::{Address, FromMemory, InMemory};
-use kittycad_modeling_cmds::ok_response::OkModelingCmdResponse;
 use kittycad_modeling_cmds::websocket::{ModelingBatch, ModelingCmdReq};
 use kittycad_modeling_cmds::ModelingCmd;
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId, ModelingCmdEndpoint as Endpoint};
@@ -34,7 +31,14 @@ impl ApiRequest {
         session: &mut ModelingSession,
         mem: &mut Memory,
         events: &mut EventWriter,
+        batch_queue: &mut ModelingBatch,
     ) -> Result<()> {
+        if self.store_response.is_none() {
+            return self.add_to_queue(mem, events, batch_queue).await;
+        }
+        if !batch_queue.is_empty() {
+            flush_batch_queue(session, std::mem::take(batch_queue), events).await?;
+        }
         let Self {
             endpoint,
             store_response,
@@ -58,136 +62,105 @@ impl ApiRequest {
             Endpoint::StartPath => {
                 let cmd = each_cmd::StartPath::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::MovePathPen => {
                 let cmd = each_cmd::MovePathPen::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::ExtendPath => {
                 let cmd = each_cmd::ExtendPath::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::ClosePath => {
                 let cmd = each_cmd::ClosePath::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::Extrude => {
                 let cmd = each_cmd::Extrude::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::TakeSnapshot => {
                 let cmd = each_cmd::TakeSnapshot::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::MakePlane => {
                 let cmd = each_cmd::MakePlane::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::EnableSketchMode => {
                 let cmd = each_cmd::EnableSketchMode::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::SketchModeEnable => {
                 let cmd = each_cmd::SketchModeEnable::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             other => panic!("Haven't implemented endpoint {other:?} yet"),
         };
         // Write out to memory.
         if let Some(output_address) = store_response {
-            output_response(events, output_address, output, mem);
+            events.push(Event {
+                text: "Storing response".to_owned(),
+                severity: Severity::Info,
+                related_addresses: vec![output_address],
+            });
+            mem.set_composite(output_address, output);
         }
+        Ok(())
+    }
+
+    async fn add_to_queue(
+        self,
+        mem: &mut Memory,
+        events: &mut EventWriter,
+        batch_queue: &mut ModelingBatch,
+    ) -> Result<()> {
+        let mut arguments = self.arguments.into_iter();
+        let cmd: ModelingCmd = match self.endpoint {
+            Endpoint::StartPath => each_cmd::StartPath::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::MovePathPen => each_cmd::MovePathPen::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::ExtendPath => each_cmd::ExtendPath::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::ClosePath => each_cmd::ClosePath::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::Extrude => each_cmd::Extrude::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::TakeSnapshot => each_cmd::TakeSnapshot::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::MakePlane => each_cmd::MakePlane::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::EnableSketchMode => each_cmd::EnableSketchMode::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::SketchModeEnable => each_cmd::SketchModeEnable::from_memory(&mut arguments, mem, events)?.into(),
+            other => panic!("Haven't implemented endpoint {other:?} yet"),
+        };
+        events.push(Event {
+            text: format!("Adding {} to batch queue", self.endpoint),
+            severity: Severity::Info,
+            related_addresses: Default::default(),
+        });
+        batch_queue.push(ModelingCmdReq {
+            cmd,
+            cmd_id: self.cmd_id,
+        });
         Ok(())
     }
 }
 
-/// Store the given response in the given address.
-fn output_response(events: &mut EventWriter, dst: Address, response: OkModelingCmdResponse, mem: &mut Memory) {
-    events.push(Event {
-        text: "Storing response".to_owned(),
-        severity: Severity::Info,
-        related_addresses: vec![dst],
-    });
-    mem.set_composite(dst, response);
-}
-
-pub(crate) async fn execute_batch(
-    reqs: Vec<ApiRequest>,
+/// Send any API requests that have been queued, in a batch.
+pub async fn flush_batch_queue(
     session: &mut ModelingSession,
-    mem: &mut Memory,
+    batch_queue: ModelingBatch,
     events: &mut EventWriter,
 ) -> Result<()> {
-    // We will need to look up responses in this hash table later.
-    let reqs_by_id: HashMap<_, _> = reqs.iter().map(|req| (req.cmd_id, req.clone())).collect();
-
-    // Collect the individual requests into a batch.
-    let batch = reqs
-        .iter()
-        .map(|req| {
-            let cmd_id = req.cmd_id;
-            let mut arguments = req.arguments.clone().into_iter();
-            let cmd = match &req.endpoint {
-                Endpoint::StartPath => {
-                    let cmd = each_cmd::StartPath::from_memory(&mut arguments, mem, events)?;
-                    ModelingCmd::from(cmd)
-                }
-                Endpoint::MovePathPen => {
-                    let cmd = each_cmd::MovePathPen::from_memory(&mut arguments, mem, events)?;
-                    ModelingCmd::from(cmd)
-                }
-                Endpoint::ExtendPath => {
-                    let cmd = each_cmd::ExtendPath::from_memory(&mut arguments, mem, events)?;
-                    ModelingCmd::from(cmd)
-                }
-                Endpoint::ClosePath => {
-                    let cmd = each_cmd::ClosePath::from_memory(&mut arguments, mem, events)?;
-                    ModelingCmd::from(cmd)
-                }
-                Endpoint::Extrude => {
-                    let cmd = each_cmd::Extrude::from_memory(&mut arguments, mem, events)?;
-                    ModelingCmd::from(cmd)
-                }
-                Endpoint::TakeSnapshot => {
-                    let cmd = each_cmd::TakeSnapshot::from_memory(&mut arguments, mem, events)?;
-                    ModelingCmd::from(cmd)
-                }
-                Endpoint::MakePlane => {
-                    let cmd = each_cmd::MakePlane::from_memory(&mut arguments, mem, events)?;
-                    ModelingCmd::from(cmd)
-                }
-                Endpoint::EnableSketchMode => {
-                    let cmd = each_cmd::EnableSketchMode::from_memory(&mut arguments, mem, events)?;
-                    ModelingCmd::from(cmd)
-                }
-                Endpoint::SketchModeEnable => {
-                    let cmd = each_cmd::SketchModeEnable::from_memory(&mut arguments, mem, events)?;
-                    ModelingCmd::from(cmd)
-                }
-                other => panic!("Haven't implemented endpoint {other:?} yet"),
-            };
-            Ok(ModelingCmdReq { cmd, cmd_id })
-        })
-        .collect::<Result<Vec<_>>>()
-        .map(|requests| ModelingBatch { requests })?;
-
-    // Send the batch.
-    let resps = session.run_batch(batch).await?;
-
-    // For each response, write it to the given output address.
-    for resp in resps {
-        let store_response = reqs_by_id.get(&resp.cmd_id).unwrap().store_response;
-        if let Some(output_address) = store_response {
-            output_response(events, output_address, resp.response, mem);
-        }
-    }
+    events.push(Event {
+        text: format!("Running {} batched API calls", batch_queue.requests.len()),
+        severity: Severity::Info,
+        related_addresses: Default::default(),
+    });
+    session.run_batch(batch_queue).await?;
     Ok(())
 }
