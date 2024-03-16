@@ -1,7 +1,7 @@
 //! A little macro for easy implementation of cxx::ExternType
 
 /// This tells the c++ interop what the native c++ names are
-/// from https://docs.rs/cxx/latest/src/cxx/extern_type.rs.html
+/// from <https://docs.rs/cxx/latest/src/cxx/extern_type.rs.html>
 #[macro_export]
 macro_rules! impl_extern_type {
     ($([$kind:ident] $($(#[$($attr:tt)*])* $ty:path = $cxxpath:literal)*)*) => {
