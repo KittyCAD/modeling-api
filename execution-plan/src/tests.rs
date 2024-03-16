@@ -13,7 +13,7 @@ use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
 
 use crate::sketch_types::{Axes, BasePath, Plane, SketchGroup};
-use crate::{arithmetic::operator::BinaryOperation, Address};
+use crate::{arithmetic::operator::BinaryOperation, arithmetic::operator::UnaryOperation, Address};
 
 use super::*;
 
@@ -96,6 +96,57 @@ async fn add_literals() {
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&5u32.into()))
+}
+
+#[tokio::test]
+async fn min_uint_uint() {
+    let plan = vec![Instruction::BinaryArithmetic {
+        arithmetic: BinaryArithmetic {
+            operation: BinaryOperation::Min,
+            operand0: Operand::Literal(1u32.into()),
+            operand1: Operand::Literal(2u32.into()),
+        },
+        destination: Destination::Address(Address::ZERO + 1),
+    }];
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
+    assert_eq!(*mem.get(&(Address::ZERO + 1)).unwrap(), 1u32.into())
+}
+
+#[tokio::test]
+async fn log_float_float() {
+    let plan = vec![Instruction::BinaryArithmetic {
+        arithmetic: BinaryArithmetic {
+            operation: BinaryOperation::Log,
+            operand0: Operand::Literal(100f64.into()),
+            operand1: Operand::Literal(10f64.into()),
+        },
+        destination: Destination::Address(Address::ZERO + 1),
+    }];
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
+    assert_eq!(*mem.get(&(Address::ZERO + 1)).unwrap(), 2f64.into())
+}
+
+#[tokio::test]
+async fn max_uint_uint() {
+    let plan = vec![Instruction::BinaryArithmetic {
+        arithmetic: BinaryArithmetic {
+            operation: BinaryOperation::Max,
+            operand0: Operand::Literal(1u32.into()),
+            operand1: Operand::Literal(2u32.into()),
+        },
+        destination: Destination::Address(Address::ZERO + 1),
+    }];
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
+    assert_eq!(*mem.get(&(Address::ZERO + 1)).unwrap(), 2u32.into())
 }
 
 #[tokio::test]
@@ -814,6 +865,179 @@ async fn api_call_draw_cube() {
         .decode()
         .unwrap();
     twenty_twenty::assert_image("tests/outputs/cube.png", &img, 0.9999);
+}
+
+macro_rules! test_unary_op {
+    ($op:ident, $i:expr, $o:expr) => {
+        let plan = vec![Instruction::UnaryArithmetic {
+            arithmetic: UnaryArithmetic {
+                operation: UnaryOperation::$op,
+                operand: Operand::Literal($i.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        }];
+
+        let mut mem = Memory::default();
+
+        execute(&mut mem, plan, &mut None)
+            .await
+            .expect("failed to execute plan");
+
+        assert_eq!(*mem.get(&(Address::ZERO + 1)).unwrap(), ($o).into())
+    };
+}
+
+macro_rules! test_unary_op_intentional_err {
+    ($op:ident, $i:expr) => {
+        let plan = vec![Instruction::UnaryArithmetic {
+            arithmetic: UnaryArithmetic {
+                operation: UnaryOperation::$op,
+                operand: Operand::Literal($i.into()),
+            },
+            destination: Destination::Address(Address::ZERO + 1),
+        }];
+        let mut mem = Memory::default();
+        let ret_val = execute(&mut mem, plan, &mut None).await;
+        assert_eq!(ret_val.is_err(), true);
+    };
+}
+
+#[tokio::test]
+async fn neg_uinteger() {
+    test_unary_op!(Neg, 1u32, -1i64);
+}
+
+#[tokio::test]
+async fn neg_integer() {
+    test_unary_op!(Neg, 1i64, -1i64);
+}
+
+#[tokio::test]
+async fn neg_a_neg_int() {
+    test_unary_op!(Neg, -1i64, 1i64);
+}
+
+#[tokio::test]
+async fn neg_float() {
+    test_unary_op!(Neg, 1f64, -1f64);
+}
+
+#[tokio::test]
+async fn neg_a_neg_float() {
+    test_unary_op!(Neg, -1f64, 1f64);
+}
+
+// A neat test. We can bitflip numbers.
+#[tokio::test]
+async fn not_uinteger() {
+    test_unary_op!(Not, 1u32, -2i64);
+}
+
+#[tokio::test]
+async fn not_a_negative_one_is_zero() {
+    test_unary_op!(Not, -1i64, 0i64);
+}
+
+#[tokio::test]
+async fn not_float_err() {
+    test_unary_op_intentional_err!(Not, 1f64);
+}
+
+#[tokio::test]
+async fn abs_uinteger() {
+    test_unary_op!(Abs, 1u32, 1i64);
+}
+
+#[tokio::test]
+async fn abs_integer() {
+    test_unary_op!(Abs, -1i64, 1i64);
+}
+
+#[tokio::test]
+async fn abs_float() {
+    test_unary_op!(Abs, -1f64, 1f64);
+}
+
+#[tokio::test]
+async fn acos_float() {
+    test_unary_op!(Acos, 1f64, 0f64);
+}
+
+// No point doing this for every single unary variant because they all
+// use the same macro. The same error would appear across them all.
+#[tokio::test]
+async fn acos_i64_err() {
+    test_unary_op_intentional_err!(Acos, 1i64);
+}
+
+#[tokio::test]
+async fn acos_u32_err() {
+    test_unary_op_intentional_err!(Acos, 1u32);
+}
+
+#[tokio::test]
+async fn asin_float() {
+    test_unary_op!(Asin, 1f64, std::f64::consts::FRAC_PI_2);
+}
+
+#[tokio::test]
+async fn atan_float() {
+    test_unary_op!(Atan, 1f64, std::f64::consts::FRAC_PI_4);
+}
+
+#[tokio::test]
+async fn ceil_float() {
+    test_unary_op!(Ceil, 1.1f64, 2.0f64);
+}
+
+#[tokio::test]
+async fn cos_float() {
+    test_unary_op!(Cos, std::f64::consts::PI, -1.0f64);
+}
+
+#[tokio::test]
+async fn floor_float() {
+    test_unary_op!(Floor, 1.1f64, 1.0f64);
+}
+
+#[tokio::test]
+async fn ln_float() {
+    test_unary_op!(Ln, std::f64::consts::E, 1.0f64);
+}
+
+#[tokio::test]
+async fn log10_float() {
+    test_unary_op!(Log10, 10f64, 1.0f64);
+}
+
+#[tokio::test]
+async fn log2_float() {
+    test_unary_op!(Log2, 8f64, 3.0f64);
+}
+
+#[tokio::test]
+async fn sin_float() {
+    test_unary_op!(Sin, std::f64::consts::PI / 2.0, 1.0f64);
+}
+
+#[tokio::test]
+async fn sqrt_float() {
+    test_unary_op!(Sqrt, 16f64, 4f64);
+}
+
+#[tokio::test]
+async fn tan_float() {
+    test_unary_op!(Tan, 1f64, 1.5574077246549023f64);
+}
+
+#[tokio::test]
+async fn to_degrees_float() {
+    test_unary_op!(ToDegrees, std::f64::consts::PI, 180f64);
+}
+
+#[tokio::test]
+async fn to_radians_float() {
+    test_unary_op!(ToRadians, 180f64, std::f64::consts::PI);
 }
 
 fn new_id() -> ModelingCmdId {

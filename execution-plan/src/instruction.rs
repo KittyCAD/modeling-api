@@ -242,7 +242,7 @@ impl Instruction {
                 arithmetic,
                 destination,
             } => {
-                let out = arithmetic.calculate(mem)?;
+                let out = arithmetic.calculate(mem, events)?;
                 match destination {
                     Destination::Address(addr) => mem.set(addr, out),
                     Destination::StackPush => mem.stack.push(vec![out]),
