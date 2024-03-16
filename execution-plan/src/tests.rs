@@ -99,6 +99,57 @@ async fn add_literals() {
 }
 
 #[tokio::test]
+async fn min_uint_uint() {
+    let plan = vec![Instruction::BinaryArithmetic {
+        arithmetic: BinaryArithmetic {
+            operation: BinaryOperation::Min,
+            operand0: Operand::Literal(1u32.into()),
+            operand1: Operand::Literal(2u32.into()),
+        },
+        destination: Destination::Address(Address::ZERO + 1),
+    }];
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
+    assert_eq!(*mem.get(&(Address::ZERO + 1)).unwrap(), 1u32.into())
+}
+
+#[tokio::test]
+async fn log_float_float() {
+    let plan = vec![Instruction::BinaryArithmetic {
+        arithmetic: BinaryArithmetic {
+            operation: BinaryOperation::Log,
+            operand0: Operand::Literal(100f64.into()),
+            operand1: Operand::Literal(10f64.into()),
+        },
+        destination: Destination::Address(Address::ZERO + 1),
+    }];
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
+    assert_eq!(*mem.get(&(Address::ZERO + 1)).unwrap(), 2f64.into())
+}
+
+#[tokio::test]
+async fn max_uint_uint() {
+    let plan = vec![Instruction::BinaryArithmetic {
+        arithmetic: BinaryArithmetic {
+            operation: BinaryOperation::Max,
+            operand0: Operand::Literal(1u32.into()),
+            operand1: Operand::Literal(2u32.into()),
+        },
+        destination: Destination::Address(Address::ZERO + 1),
+    }];
+    let mut mem = Memory::default();
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
+    assert_eq!(*mem.get(&(Address::ZERO + 1)).unwrap(), 2u32.into())
+}
+
+#[tokio::test]
 async fn pop_off_stack_into_stack() {
     // Test that StackPop works when its destination is StackExtend.
     let plan = vec![

@@ -25,6 +25,12 @@ pub enum BinaryOperation {
     Mod,
     /// Power
     Pow,
+    /// Logarithm
+    Log,
+    /// Smallest of two numbers
+    Min,
+    /// Largest of two numbers
+    Max,
 }
 
 /// Operations that can be applied to a value in memory, requiring one operand.
@@ -121,6 +127,9 @@ impl fmt::Display for BinaryOperation {
             BinaryOperation::Div => "/",
             BinaryOperation::Mod => "%",
             BinaryOperation::Pow => "^",
+            BinaryOperation::Log => "log",
+            BinaryOperation::Min => "min",
+            BinaryOperation::Max => "max",
         }
         .fmt(f)
     }

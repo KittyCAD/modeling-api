@@ -50,8 +50,24 @@ macro_rules! power_int_impl {
 }
 power_int_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 }
 
+macro_rules! execution_error_if_match_otherwise {
+ ([], $b:ident, $err:expr, $otherwise:expr) => { $otherwise };
+ ([u32$(, $as:ident)*], u32, $err:expr, $otherwise:expr) => {
+   $err
+ };
+ ([i64$(, $as:ident)*], i64, $err:expr, $otherwise:expr) => {
+   $err
+ };
+ ([f64$(, $as:ident)*], f64, $err:expr, $otherwise:expr) => {
+   $err
+ };
+ ([$a:ident$(, $as:ident)*], $b:ident, $err:expr, $otherwise:expr) => {
+   execution_error_if_match_otherwise!([$($as)*], $b, $err, $otherwise)
+ };
+}
+
 macro_rules! binary_arithmetic_body {
-    ($arith:ident, $mem:ident, $method:ident, $events:ident) => {{
+    ($arith:ident, $mem:ident, $events:ident, $method:ident, $($types:tt)*) => {{
         $events.push(crate::events::Event::new(
             "Evaluating left operand".to_owned(),
             crate::events::Severity::Debug,
@@ -80,8 +96,18 @@ macro_rules! binary_arithmetic_body {
             // If both operands are numeric, then do the arithmetic operation.
             (Primitive::NumericValue(x), Primitive::NumericValue(y)) => {
                 let num = match (x, y) {
-                    (NumericPrimitive::UInteger(x), NumericPrimitive::UInteger(y)) => {
-                        NumericPrimitive::UInteger(x.$method(y))
+                    (NumericPrimitive::UInteger(_x), NumericPrimitive::UInteger(_y)) => {
+                        execution_error_if_match_otherwise!(
+                          $($types)*, u32,
+                          Err(ExecutionError::CannotApplyOperation {
+                            op: $arith.operation.into(),
+                            operands: vec![
+                                $arith.operand0.eval($mem)?.clone().to_owned(),
+                                $arith.operand1.eval($mem)?.clone().to_owned(),
+                            ],
+                          })?,
+                          NumericPrimitive::UInteger(_x.$method(_y))
+                        )
                     }
                     (NumericPrimitive::UInteger(x), NumericPrimitive::Float(y)) => {
                         NumericPrimitive::Float((x as f64).$method(y))
@@ -90,8 +116,18 @@ macro_rules! binary_arithmetic_body {
                         NumericPrimitive::Float(x.$method(y as f64))
                     }
                     (NumericPrimitive::Float(x), NumericPrimitive::Float(y)) => NumericPrimitive::Float(x.$method(y)),
-                    (NumericPrimitive::Integer(x), NumericPrimitive::Integer(y)) => {
-                        NumericPrimitive::Integer(x.$method(y))
+                    (NumericPrimitive::Integer(_x), NumericPrimitive::Integer(_y)) => {
+                        execution_error_if_match_otherwise!(
+                          $($types)*, i64,
+                          Err(ExecutionError::CannotApplyOperation {
+                            op: $arith.operation.into(),
+                            operands: vec![
+                                $arith.operand0.eval($mem)?.clone().to_owned(),
+                                $arith.operand1.eval($mem)?.clone().to_owned(),
+                            ],
+                          })?,
+                          NumericPrimitive::Integer(_x.$method(_y))
+                        )
                     }
                     (NumericPrimitive::Integer(x), NumericPrimitive::Float(y)) => {
                         NumericPrimitive::Float((x as f64).$method(y))
@@ -99,11 +135,31 @@ macro_rules! binary_arithmetic_body {
                     (NumericPrimitive::Float(x), NumericPrimitive::Integer(y)) => {
                         NumericPrimitive::Float(x.$method(y as f64))
                     }
-                    (NumericPrimitive::Integer(x), NumericPrimitive::UInteger(y)) => {
-                        NumericPrimitive::Integer(x.$method(y as i64))
+                    (NumericPrimitive::Integer(_x), NumericPrimitive::UInteger(_y)) => {
+                        execution_error_if_match_otherwise!(
+                          $($types)*, i64,
+                          Err(ExecutionError::CannotApplyOperation {
+                            op: $arith.operation.into(),
+                            operands: vec![
+                                $arith.operand0.eval($mem)?.clone().to_owned(),
+                                $arith.operand1.eval($mem)?.clone().to_owned(),
+                            ],
+                          })?,
+                          NumericPrimitive::Integer(_x.$method(_y as i64))
+                        )
                     }
-                    (NumericPrimitive::UInteger(x), NumericPrimitive::Integer(y)) => {
-                        NumericPrimitive::Integer((x as i64).$method(y))
+                    (NumericPrimitive::UInteger(_x), NumericPrimitive::Integer(_y)) => {
+                        execution_error_if_match_otherwise!(
+                          $($types)*, u32,
+                          Err(ExecutionError::CannotApplyOperation {
+                            op: $arith.operation.into(),
+                            operands: vec![
+                                $arith.operand0.eval($mem)?.clone().to_owned(),
+                                $arith.operand1.eval($mem)?.clone().to_owned(),
+                            ],
+                          })?,
+                          NumericPrimitive::Integer((_x as i64).$method(_y))
+                        )
                     }
                 };
                 let prim = Primitive::NumericValue(num);
@@ -123,22 +179,6 @@ macro_rules! binary_arithmetic_body {
             }),
         }
     }};
-}
-
-macro_rules! execution_error_if_match_otherwise {
- ([], $b:ident, $err:expr, $otherwise:expr) => { $otherwise };
- ([u32$(, $as:ident)*], u32, $err:expr, $otherwise:expr) => {
-   $err
- };
- ([i64$(, $as:ident)*], i64, $err:expr, $otherwise:expr) => {
-   $err
- };
- ([f64$(, $as:ident)*], f64, $err:expr, $otherwise:expr) => {
-   $err
- };
- ([$a:ident$(, $as:ident)*], $b:ident, $err:expr, $otherwise:expr) => {
-   execution_error_if_match_otherwise!([$($as)*], $b, $err, $otherwise)
- };
 }
 
 macro_rules! unary_arithmetic_body {
@@ -274,22 +314,31 @@ impl BinaryArithmetic {
         use std::ops::{Add, Div, Mul, Rem, Sub};
         match self.operation {
             BinaryOperation::Add => {
-                binary_arithmetic_body!(self, mem, add, events)
+                binary_arithmetic_body!(self, mem, events, add, [])
             }
             BinaryOperation::Mul => {
-                binary_arithmetic_body!(self, mem, mul, events)
+                binary_arithmetic_body!(self, mem, events, mul, [])
             }
             BinaryOperation::Sub => {
-                binary_arithmetic_body!(self, mem, sub, events)
+                binary_arithmetic_body!(self, mem, events, sub, [])
             }
             BinaryOperation::Div => {
-                binary_arithmetic_body!(self, mem, div, events)
+                binary_arithmetic_body!(self, mem, events, div, [])
             }
             BinaryOperation::Mod => {
-                binary_arithmetic_body!(self, mem, rem, events)
+                binary_arithmetic_body!(self, mem, events, rem, [])
             }
             BinaryOperation::Pow => {
-                binary_arithmetic_body!(self, mem, power, events)
+                binary_arithmetic_body!(self, mem, events, power, [])
+            }
+            BinaryOperation::Log => {
+                binary_arithmetic_body!(self, mem, events, log, [u32, i64])
+            }
+            BinaryOperation::Min => {
+                binary_arithmetic_body!(self, mem, events, min, [])
+            }
+            BinaryOperation::Max => {
+                binary_arithmetic_body!(self, mem, events, max, [])
             }
         }
     }
