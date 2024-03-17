@@ -34,10 +34,11 @@ impl ApiRequest {
         batch_queue: &mut ModelingBatch,
     ) -> Result<()> {
         if self.store_response.is_none() {
-            return self.add_to_queue(mem, events, batch_queue).await;
+            return self.add_to_queue(mem, events, batch_queue);
         }
         if !batch_queue.is_empty() {
-            flush_batch_queue(session, std::mem::take(batch_queue), events).await?;
+            self.add_to_queue(mem, events, batch_queue)?;
+            return flush_batch_queue(session, std::mem::take(batch_queue), events).await;
         }
         let Self {
             endpoint,
@@ -118,12 +119,7 @@ impl ApiRequest {
         Ok(())
     }
 
-    async fn add_to_queue(
-        self,
-        mem: &mut Memory,
-        events: &mut EventWriter,
-        batch_queue: &mut ModelingBatch,
-    ) -> Result<()> {
+    fn add_to_queue(self, mem: &mut Memory, events: &mut EventWriter, batch_queue: &mut ModelingBatch) -> Result<()> {
         let mut arguments = self.arguments.into_iter();
         let cmd: ModelingCmd = match self.endpoint {
             Endpoint::StartPath => each_cmd::StartPath::from_memory(&mut arguments, mem, events)?.into(),
