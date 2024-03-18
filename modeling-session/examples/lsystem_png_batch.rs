@@ -51,7 +51,7 @@ async fn main() -> Result<()> {
     let path_id = Uuid::new_v4();
     let path = path_id.into();
     session
-        .run_command(path, StartPath {})
+        .run_command(path, ModelingCmd::from(StartPath {}))
         .await
         .context("could not create path")?;
 
@@ -149,9 +149,9 @@ async fn main() -> Result<()> {
     let snapshot_resp = session
         .run_command(
             random_id(),
-            TakeSnapshot {
+            ModelingCmd::from(TakeSnapshot {
                 format: kittycad_modeling_cmds::ImageFormat::Png,
-            },
+            }),
         )
         .await
         .context("could not get PNG snapshot")?;
