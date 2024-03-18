@@ -1059,7 +1059,7 @@ async fn constants_add() {
     let pi = constants::Constant::value(&mut mem, constants::PI);
     let e = constants::Constant::value(&mut mem, constants::E);
 
-    let ret_val1 = Address(mem.last_nonempty_address().unwrap());
+    let ret_val1 = Address(mem.next_empty_cell().unwrap());
     let ret_val2 = ret_val1 + 1;
 
     // Compare adding two constants with two inline values
