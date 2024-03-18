@@ -1637,7 +1637,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-execution-plan"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bytes",
  "gltf-json",
@@ -1690,7 +1690,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-execution-plan-traits"
-version = "0.1.13"
+version = "0.1.14"
 dependencies = [
  "serde",
  "thiserror",

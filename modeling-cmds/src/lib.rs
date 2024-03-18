@@ -17,8 +17,6 @@ pub mod format;
 pub mod id;
 #[cfg(feature = "cxx")]
 pub mod impl_extern_type;
-/// Expected return structure for imported geometry.
-pub mod imported_geometry;
 mod kcep_primitive;
 pub mod length_unit;
 /// When a modeling command is successful, these responses could be returned.

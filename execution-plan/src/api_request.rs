@@ -99,12 +99,16 @@ impl ApiRequest {
                     });
                 };
 
-                let arg_import_files_struct =
-                    mem.get_in_memory::<kittycad_modeling_cmds::ImportFiles>(arg_import_files_struct_prim, "", events)?;
+                let arg_import_files_struct = mem.get_in_memory::<kittycad_modeling_cmds::ImportFiles>(
+                    arg_import_files_struct_prim,
+                    "ImportFiles struct",
+                    events,
+                )?;
 
                 log_req(events);
-                let kittycad_modeling_cmds::ok_response::OkModelingCmdResponse::ImportFiles(import_files) =
-                    session.run_command(cmd_id, arg_import_files_struct.0.clone()).await?
+                let kittycad_modeling_cmds::ok_response::OkModelingCmdResponse::ImportFiles(import_files) = session
+                    .run_command(cmd_id, ModelingCmd::from(arg_import_files_struct.0.clone()))
+                    .await?
                 else {
                     panic!("Unexpected OkModelingCmdResponse encountered");
                 };
@@ -144,12 +148,14 @@ impl ApiRequest {
             Endpoint::DefaultCameraZoom => {
                 let cmd = each_cmd::DefaultCameraZoom::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::DefaultCameraFocusOn => {
                 let cmd = each_cmd::DefaultCameraFocusOn::from_memory(&mut arguments, mem, events)?;
+                println!("Got cmd from memory");
                 log_req(events);
-                session.run_command(cmd_id, cmd).await?
+                println!("Running cmd");
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             other => panic!("Haven't implemented endpoint {other:?} yet"),
         };
@@ -182,6 +188,9 @@ impl ApiRequest {
             Endpoint::MakePlane => each_cmd::MakePlane::from_memory(&mut arguments, mem, events)?.into(),
             Endpoint::EnableSketchMode => each_cmd::EnableSketchMode::from_memory(&mut arguments, mem, events)?.into(),
             Endpoint::SketchModeEnable => each_cmd::SketchModeEnable::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::DefaultCameraFocusOn => {
+                each_cmd::DefaultCameraFocusOn::from_memory(&mut arguments, mem, events)?.into()
+            }
             other => panic!("Haven't implemented endpoint {other:?} yet"),
         };
         events.push(Event {

@@ -736,10 +736,6 @@ async fn get_key_of_object() {
     assert_eq!(actual, vec![(Address::ZERO + 5).into()]);
 }
 
-fn new_id() -> ModelingCmdId {
-    ModelingCmdId(Uuid::new_v4())
-}
-
 #[tokio::test]
 async fn api_call_draw_cube() {
     let client = test_client().await;
@@ -1045,10 +1041,6 @@ async fn to_radians_float() {
     test_unary_op!(ToRadians, 180f64, std::f64::consts::PI);
 }
 
-fn new_id() -> ModelingCmdId {
-    ModelingCmdId(Uuid::new_v4())
-}
-
 #[tokio::test]
 async fn import_files_file_path_only() {
     let client = test_client().await;
@@ -1195,4 +1187,8 @@ async fn import_files_with_file_format() {
         .unwrap();
 
     twenty_twenty::assert_image("tests/outputs/cube-stl.png", &img, 0.9999);
+}
+
+fn new_id() -> ModelingCmdId {
+    ModelingCmdId(Uuid::new_v4())
 }
