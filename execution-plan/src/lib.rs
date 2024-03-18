@@ -24,6 +24,7 @@ pub use self::instruction::Instruction;
 
 pub mod api_request;
 mod arithmetic;
+mod constants;
 mod instruction;
 mod memory;
 pub mod sketch_types;

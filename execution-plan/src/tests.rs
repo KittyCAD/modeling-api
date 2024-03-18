@@ -13,7 +13,7 @@ use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
 
 use crate::sketch_types::{Axes, BasePath, Plane, SketchGroup};
-use crate::{arithmetic::operator::BinaryOperation, arithmetic::operator::UnaryOperation, Address};
+use crate::{arithmetic::operator::BinaryOperation, arithmetic::operator::UnaryOperation, constants, Address};
 
 use super::*;
 
@@ -1038,6 +1038,55 @@ async fn to_degrees_float() {
 #[tokio::test]
 async fn to_radians_float() {
     test_unary_op!(ToRadians, 180f64, std::f64::consts::PI);
+}
+
+#[tokio::test]
+async fn constants_sets_value_moves_memory_pointer() {
+    let mut mem = Memory::default();
+
+    // Create variables to hold onto the addresses.
+    let pi = constants::Constant::value(&mut mem, constants::PI);
+    let e = constants::Constant::value(&mut mem, constants::E);
+
+    assert_eq!(mem.get(&pi), Some(constants::PI).as_ref());
+    assert_eq!(mem.get(&e), Some(constants::E).as_ref());
+}
+#[tokio::test]
+async fn constants_add() {
+    let mut mem = Memory::default();
+
+    // Create variables to hold onto the addresses.
+    let pi = constants::Constant::value(&mut mem, constants::PI);
+    let e = constants::Constant::value(&mut mem, constants::E);
+
+    let ret_val1 = Address(mem.last_nonempty_address().unwrap());
+    let ret_val2 = ret_val1 + 1;
+
+    // Compare adding two constants with two inline values
+    let plan = vec![
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Add,
+                operand0: Operand::Reference(pi),
+                operand1: Operand::Reference(e),
+            },
+            destination: Destination::Address(ret_val1),
+        },
+        Instruction::BinaryArithmetic {
+            arithmetic: BinaryArithmetic {
+                operation: BinaryOperation::Add,
+                operand0: Operand::Literal(constants::PI),
+                operand1: Operand::Literal(constants::E),
+            },
+            destination: Destination::Address(ret_val2),
+        },
+    ];
+
+    execute(&mut mem, plan, &mut None)
+        .await
+        .expect("failed to execute plan");
+
+    assert_eq!(mem.get(&ret_val1), mem.get(&ret_val2))
 }
 
 fn new_id() -> ModelingCmdId {
