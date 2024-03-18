@@ -1,4 +1,4 @@
-//! Use the KittyCAD modeling API to draw a cube and save it to a PNG.
+//! Use the KittyCAD modeling API to draw an L-System and save it to a PNG.
 use std::{env, io::Cursor};
 
 use color_eyre::{
@@ -24,7 +24,7 @@ async fn main() -> Result<()> {
     let kittycad_api_client = kittycad::Client::new(kittycad_api_token);
 
     // Where should the final PNG be saved?
-    let img_output_path = env::var("IMAGE_OUTPUT_PATH").unwrap_or_else(|_| "model_batched.png".to_owned());
+    let img_output_path = env::var("IMAGE_OUTPUT_PATH").unwrap_or_else(|_| "model_lsystem_batched.png".to_owned());
 
     let session_builder = SessionBuilder {
         client: kittycad_api_client,
