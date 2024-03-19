@@ -293,7 +293,7 @@ define_modeling_cmd_enum! {
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
             /// Length of the helix.
-            pub length: units::UnitLength,
+            pub length: LengthUnit,
         }
 
         /// Enter edit mode

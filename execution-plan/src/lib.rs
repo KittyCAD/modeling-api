@@ -25,7 +25,10 @@ pub use self::instruction::Instruction;
 
 pub mod api_request;
 mod arithmetic;
+/// Expose feature to import external geometry files.
 pub mod import_files;
+/// Defined constants and ability to create more.
+pub mod constants;
 mod instruction;
 mod memory;
 pub mod sketch_types;
