@@ -270,6 +270,12 @@ impl Memory {
             .last()
     }
 
+    /// Get the address of the last empty cell.
+    /// If none, then all cells are occupied.
+    pub fn next_empty_cell(&self) -> Option<usize> {
+        self.iter().position(|(_, v)| v.is_none())
+    }
+
     pub(crate) fn sketch_group_set(
         &mut self,
         sketch_group: crate::sketch_types::SketchGroup,
