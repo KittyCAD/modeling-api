@@ -1188,6 +1188,7 @@ async fn import_files_with_file_format() {
 
     twenty_twenty::assert_image("tests/outputs/cube-stl.png", &img, 0.9999);
 }
+#[tokio::test]
 async fn constants_sets_value_moves_memory_pointer() {
     let mut mem = Memory::default();
 
