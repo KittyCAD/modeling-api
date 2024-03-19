@@ -14,9 +14,12 @@ use std::str::FromStr;
 /// Data required to import a file
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct ImportFiles {
-    /// Which address should the response be stored in?
-    /// If none, the response will be ignored.
-    pub store_response: Option<Destination>,
+    /// Which address should the imported files names be stored in, if any?
+    /// Written after `format_destination`.
+    pub files_destination: Option<Destination>,
+    /// Which address should the imported files format be stored in, if any?
+    /// Written before `files_destination`.
+    pub format_destination: Option<Destination>,
     /// Look up each parameter at this address.
     /// 1: file path
     /// 2: options (file format)
@@ -27,7 +30,8 @@ impl ImportFiles {
     /// Import a file!
     pub async fn execute(self, mem: &mut Memory) -> Result<()> {
         let Self {
-            store_response,
+            files_destination,
+            format_destination,
             arguments,
         } = self;
 
@@ -133,34 +137,29 @@ impl ImportFiles {
         }
 
         // Write out to memory.
-        if let Some(memory_area) = store_response {
+        if let Some(memory_area) = format_destination {
             match memory_area {
                 Destination::Address(addr) => {
-                    mem.set_composite(
-                        addr,
-                        kittycad_modeling_cmds::ImportFiles {
-                            files: import_files,
-                            format,
-                        },
-                    );
+                    mem.set_composite(addr, format);
                 }
                 Destination::StackPush => {
-                    mem.stack.push(
-                        kittycad_modeling_cmds::ImportFiles {
-                            files: import_files,
-                            format,
-                        }
-                        .into_parts(),
-                    );
+                    mem.stack.push(format.into_parts());
                 }
                 Destination::StackExtend => {
-                    mem.stack.extend(
-                        kittycad_modeling_cmds::ImportFiles {
-                            files: import_files,
-                            format,
-                        }
-                        .into_parts(),
-                    )?;
+                    mem.stack.extend(format.into_parts())?;
+                }
+            }
+        }
+        if let Some(memory_area) = files_destination {
+            match memory_area {
+                Destination::Address(addr) => {
+                    mem.set_composite(addr, import_files);
+                }
+                Destination::StackPush => {
+                    mem.stack.push(import_files.into_parts());
+                }
+                Destination::StackExtend => {
+                    mem.stack.extend(import_files.into_parts())?;
                 }
             }
         }

@@ -1,7 +1,7 @@
 use std::env;
 
 use insta::assert_snapshot;
-use kittycad_execution_plan_traits::{InMemory, ListHeader, ObjectHeader, Primitive, Value};
+use kittycad_execution_plan_traits::{FromMemory, InMemory, ListHeader, ObjectHeader, Primitive, Value};
 use kittycad_modeling_cmds::shared::Point2d;
 use kittycad_modeling_cmds::ModelingCmdEndpoint as Endpoint;
 use kittycad_modeling_cmds::{
@@ -14,7 +14,9 @@ use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
 
 use crate::sketch_types::{Axes, BasePath, Plane, SketchGroup};
-use crate::{arithmetic::operator::BinaryOperation, arithmetic::operator::UnaryOperation, constants, Address, Destination};
+use crate::{
+    arithmetic::operator::BinaryOperation, arithmetic::operator::UnaryOperation, constants, Address, Destination,
+};
 
 use super::*;
 
@@ -1065,13 +1067,14 @@ async fn import_files_file_path_only() {
         &mut mem,
         vec![
             Instruction::ImportFiles(import_files::ImportFiles {
-                store_response: Some(Destination::StackPush),
+                files_destination: Some(Destination::StackPush),
+                format_destination: Some(Destination::StackPush),
                 arguments: vec![file_path.into(), file_format.into()],
             }),
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ImportFiles,
                 store_response: Some(imported_geometry),
-                arguments: vec![InMemory::StackPop],
+                arguments: vec![InMemory::StackPop, InMemory::StackPop],
                 cmd_id: Uuid::new_v4().into(),
             }),
             Instruction::ApiRequest(ApiRequest {
@@ -1147,13 +1150,14 @@ async fn import_files_with_file_format() {
         &mut mem,
         vec![
             Instruction::ImportFiles(import_files::ImportFiles {
-                store_response: Some(Destination::StackPush),
+                files_destination: Some(Destination::StackPush),
+                format_destination: Some(Destination::StackPush),
                 arguments: vec![file_path.into(), file_format.into()],
             }),
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ImportFiles,
                 store_response: Some(imported_geometry),
-                arguments: vec![InMemory::StackPop],
+                arguments: vec![InMemory::StackPop, InMemory::StackPop],
                 cmd_id: Uuid::new_v4().into(),
             }),
             Instruction::ApiRequest(ApiRequest {

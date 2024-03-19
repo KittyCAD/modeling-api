@@ -3,7 +3,8 @@
 use crate::events::{Event, Severity};
 use crate::Result;
 use crate::{events::EventWriter, memory::Memory, ExecutionError};
-use kittycad_execution_plan_traits::{Address, FromMemory, InMemory};
+use kittycad_execution_plan_traits::{Address, FromMemory, InMemory, ReadMemory};
+use kittycad_modeling_cmds::ok_response::{output as modeling_output, OkModelingCmdResponse};
 use kittycad_modeling_cmds::websocket::{ModelingBatch, ModelingCmdReq};
 use kittycad_modeling_cmds::ModelingCmd;
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId, ModelingCmdEndpoint as Endpoint};
@@ -45,6 +46,7 @@ impl ApiRequest {
             arguments,
             cmd_id,
         } = self;
+        let mut spare_args = arguments.clone();
         let mut arguments = arguments.into_iter();
         events.push(Event {
             text: "Reading parameters".to_owned(),
@@ -90,25 +92,21 @@ impl ApiRequest {
                 session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::ImportFiles => {
-                let mut args_iter = arguments;
-                let arg_opt_import_files_struct = args_iter.next();
-
-                let Some(arg_import_files_struct_prim) = arg_opt_import_files_struct else {
+                let mut args_iter = spare_args.into_iter();
+                let Some(arg_files) = args_iter.next() else {
                     return Err(ExecutionError::General {
-                        reason: "Endpoint::ImportFiles requires an ImportFiles struct".to_string(),
+                        reason: "not enough arguments (requires exactly 2)".to_owned(),
                     });
                 };
+                let file_paths: Vec<String> = mem
+                    .get_in_memory_pop_not_peek(arg_files, "ImportFiles files", events)?
+                    .0;
 
-                let arg_import_files_struct = mem.get_in_memory::<kittycad_modeling_cmds::ImportFiles>(
-                    arg_import_files_struct_prim,
-                    "ImportFiles struct",
-                    events,
-                )?;
+                let cmd = kittycad_modeling_cmds::ImportFiles::from_memory(&mut arguments, mem, events)?;
 
                 log_req(events);
-                let kittycad_modeling_cmds::ok_response::OkModelingCmdResponse::ImportFiles(import_files) = session
-                    .run_command(cmd_id, ModelingCmd::from(arg_import_files_struct.0.clone()))
-                    .await?
+                let OkModelingCmdResponse::ImportFiles(import_files) =
+                    session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
                 else {
                     panic!("Unexpected OkModelingCmdResponse encountered");
                 };
@@ -120,13 +118,11 @@ impl ApiRequest {
                 // This is the most direct way to collect the original paths,
                 // and return a structure that is, at the time of writing,
                 // returned by the original KCL import() function call.
-                let file_paths = arg_import_files_struct.0.files.iter().map(|f| f.path.clone()).collect();
-                kittycad_modeling_cmds::ok_response::OkModelingCmdResponse::ImportedGeometry(
-                    kittycad_modeling_cmds::ok_response::output::ImportedGeometry {
-                        id: import_files.object_id,
-                        value: file_paths,
-                    },
-                )
+
+                OkModelingCmdResponse::ImportedGeometry(modeling_output::ImportedGeometry {
+                    id: import_files.object_id,
+                    value: file_paths,
+                })
             }
             Endpoint::MakePlane => {
                 let cmd = each_cmd::MakePlane::from_memory(&mut arguments, mem, events)?;

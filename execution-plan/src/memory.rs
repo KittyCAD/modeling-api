@@ -197,6 +197,35 @@ impl Memory {
             }
         }
     }
+    /// Read a T value out of memory (either addressable or stack).
+    /// But instead of popping from stack, peeks.
+    pub fn get_in_memory_pop_not_peek<T: Value>(
+        &mut self,
+        source: InMemory,
+        field_name: &'static str,
+        events: &mut EventWriter,
+    ) -> Result<(T, usize), MemoryError> {
+        match source {
+            InMemory::Address(a) => {
+                events.push(Event {
+                    text: format!("reading '{field_name}'"),
+                    severity: kittycad_execution_plan_traits::events::Severity::Debug,
+                    related_addresses: vec![a],
+                });
+                self.get_composite(a)
+            }
+            InMemory::StackPop | InMemory::StackPeek => {
+                events.push(Event {
+                    text: format!("peeking '{field_name}' from stack"),
+                    severity: kittycad_execution_plan_traits::events::Severity::Debug,
+                    related_addresses: Default::default(),
+                });
+                let data = self.stack_peek()?;
+                let mut data_parts = data.iter().cloned().map(Some);
+                T::from_parts(&mut data_parts)
+            }
+        }
+    }
 
     /// Return a nicely-formatted table of stack.
     #[must_use]
