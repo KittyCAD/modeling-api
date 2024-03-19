@@ -1045,8 +1045,8 @@ async fn constants_sets_value_moves_memory_pointer() {
     let mut mem = Memory::default();
 
     // Create variables to hold onto the addresses.
-    let pi = constants::Constant::value(&mut mem, constants::PI);
-    let e = constants::Constant::value(&mut mem, constants::E);
+    let pi = constants::value(&mut mem, constants::PI);
+    let e = constants::value(&mut mem, constants::E);
 
     assert_eq!(mem.get(&pi), Some(constants::PI).as_ref());
     assert_eq!(mem.get(&e), Some(constants::E).as_ref());
@@ -1056,8 +1056,8 @@ async fn constants_add() {
     let mut mem = Memory::default();
 
     // Create variables to hold onto the addresses.
-    let pi = constants::Constant::value(&mut mem, constants::PI);
-    let e = constants::Constant::value(&mut mem, constants::E);
+    let pi = constants::value(&mut mem, constants::PI);
+    let e = constants::value(&mut mem, constants::E);
 
     let ret_val1 = Address(mem.next_empty_cell().unwrap());
     let ret_val2 = ret_val1 + 1;
