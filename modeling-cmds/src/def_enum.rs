@@ -804,6 +804,14 @@ define_modeling_cmd_enum! {
             pub unit: units::UnitLength,
         }
 
+        /// Set the units of the scene.
+        /// For all following commands, the units will be interpreted as the given units.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct TestDoNotMerge {
+            /// Which units the scene uses.
+            pub unit: units::UnitLength,
+        }
+
         /// Get the mass of entities in the scene or the default scene.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct Mass {
