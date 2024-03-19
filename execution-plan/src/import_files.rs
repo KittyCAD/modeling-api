@@ -44,13 +44,10 @@ impl ImportFiles {
         };
 
         let file_path = Path::new(&file_path_str);
-        let file_contents = match fs::read(file_path) {
-            Ok(contents) => contents,
-            Err(_) => {
-                return Err(ExecutionError::General {
-                    reason: "Can't read file".to_string(),
-                });
-            }
+        let Ok(file_contents) = fs::read(file_path) else {
+            return Err(ExecutionError::General {
+                reason: "Can't read file".to_string(),
+            });
         };
 
         let ext_format = get_import_format_from_extension(file_path_str.split('.').last().ok_or_else(|| {
@@ -96,7 +93,7 @@ impl ImportFiles {
         // We're going to return possibly many files. This is because some
         // file formats have multiple side-car files.
         let mut import_files = vec![kittycad_modeling_cmds::ImportFile {
-            path: file_name.to_string(),
+            path: file_name,
             data: file_contents.clone(),
         }];
 
@@ -110,7 +107,7 @@ impl ImportFiles {
                     .map_err(|e| ExecutionError::General { reason: e.to_string() })?;
 
                 // Read the gltf file and check if there is a bin file.
-                for buffer in json.buffers.iter() {
+                for buffer in json.buffers {
                     if let Some(uri) = &buffer.uri {
                         if !uri.starts_with("data:") {
                             // We want this path relative to the file_path given.

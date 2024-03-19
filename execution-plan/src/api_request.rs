@@ -120,13 +120,11 @@ impl ApiRequest {
                 // This is the most direct way to collect the original paths,
                 // and return a structure that is, at the time of writing,
                 // returned by the original KCL import() function call.
+                let file_paths = arg_import_files_struct.0.files.iter().map(|f| f.path.clone()).collect();
                 kittycad_modeling_cmds::ok_response::OkModelingCmdResponse::ImportedGeometry(
                     kittycad_modeling_cmds::ok_response::output::ImportedGeometry {
                         id: import_files.object_id,
-                        value: arg_import_files_struct.0.files.iter().fold(vec![], |mut acc, file| {
-                            acc.push(file.path.clone());
-                            acc
-                        }),
+                        value: file_paths,
                     },
                 )
             }
