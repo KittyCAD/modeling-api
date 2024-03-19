@@ -1,7 +1,7 @@
 use std::env;
 
 use insta::assert_snapshot;
-use kittycad_execution_plan_traits::{FromMemory, InMemory, ListHeader, ObjectHeader, Primitive, Value};
+use kittycad_execution_plan_traits::{InMemory, ListHeader, ObjectHeader, Primitive, Value};
 use kittycad_modeling_cmds::shared::Point2d;
 use kittycad_modeling_cmds::ModelingCmdEndpoint as Endpoint;
 use kittycad_modeling_cmds::{

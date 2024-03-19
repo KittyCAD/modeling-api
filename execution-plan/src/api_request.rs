@@ -3,7 +3,7 @@
 use crate::events::{Event, Severity};
 use crate::Result;
 use crate::{events::EventWriter, memory::Memory, ExecutionError};
-use kittycad_execution_plan_traits::{Address, FromMemory, InMemory, ReadMemory};
+use kittycad_execution_plan_traits::{Address, FromMemory, InMemory};
 use kittycad_modeling_cmds::ok_response::{output as modeling_output, OkModelingCmdResponse};
 use kittycad_modeling_cmds::websocket::{ModelingBatch, ModelingCmdReq};
 use kittycad_modeling_cmds::ModelingCmd;
@@ -46,7 +46,7 @@ impl ApiRequest {
             arguments,
             cmd_id,
         } = self;
-        let mut spare_args = arguments.clone();
+        let spare_args = arguments.clone();
         let mut arguments = arguments.into_iter();
         events.push(Event {
             text: "Reading parameters".to_owned(),
