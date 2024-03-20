@@ -201,8 +201,6 @@ define_modeling_cmd_enum! {
         pub struct Export {
             /// IDs of the entities to be exported. If this is empty, then all entities are exported.
             pub entity_ids: Vec<Uuid>,
-            /// Select the unit interpretation of exported objects.
-            pub source_unit: units::UnitLength,
             /// The file format to export to.
             pub format: OutputFormat,
         }
