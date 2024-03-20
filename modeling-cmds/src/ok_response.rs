@@ -99,6 +99,12 @@ define_ok_modeling_cmd_response_enum! {
             pub settings: CameraSettings
         }
 
+        /// The response from the `GetNumObjects` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct GetNumObjects {
+            /// The number of objects in the scene.
+            pub num_objects: u32,
+        }
         /// The response from the `DefaultCameraFocusOn` command.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
         pub struct DefaultCameraFocusOn { }

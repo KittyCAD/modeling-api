@@ -1699,7 +1699,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds"
-version = "0.1.32"
+version = "0.2.2"
 dependencies = [
  "anyhow",
  "chrono",
@@ -1729,7 +1729,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds-macros"
-version = "0.1.2"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "insta",

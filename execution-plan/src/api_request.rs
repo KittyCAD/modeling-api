@@ -149,6 +149,7 @@ impl ApiRequest {
             Endpoint::ClosePath => each_cmd::ClosePath::from_memory(&mut arguments, mem, events)?.into(),
             Endpoint::Extrude => each_cmd::Extrude::from_memory(&mut arguments, mem, events)?.into(),
             Endpoint::TakeSnapshot => each_cmd::TakeSnapshot::from_memory(&mut arguments, mem, events)?.into(),
+            Endpoint::ImportFiles => each_cmd::ImportFiles::from_memory(&mut arguments, mem, events)?.into(),
             Endpoint::MakePlane => each_cmd::MakePlane::from_memory(&mut arguments, mem, events)?.into(),
             Endpoint::EnableSketchMode => each_cmd::EnableSketchMode::from_memory(&mut arguments, mem, events)?.into(),
             Endpoint::SketchModeEnable => each_cmd::SketchModeEnable::from_memory(&mut arguments, mem, events)?.into(),
