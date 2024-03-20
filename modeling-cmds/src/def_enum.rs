@@ -295,6 +295,15 @@ define_modeling_cmd_enum! {
             pub length: LengthUnit,
         }
 
+        /// Mirror the input entities over the specified axis. (Currently only supports sketches)
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        pub struct EntityMirror {
+            /// ID of the mirror entities.
+            pub ids: Vec<Uuid>,
+            /// Axis to use as mirror.
+            pub axis: Point2d<f64>,
+        }
+
         /// Enter edit mode
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct EditModeEnter {
