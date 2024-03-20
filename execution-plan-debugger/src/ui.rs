@@ -436,5 +436,10 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
             ("SGGetLastPoint".into(), format!("source {source} dst={destination}"))
         }
         Instruction::NoOp { comment } => ("No op".into(), comment.to_owned()),
+        Instruction::TransformImportFiles {
+            source_import_files_response,
+            source_file_paths,
+            destination,
+        } => ("XformImportFiles".into(), format!("from response at {source_import_files_response:?} w/ names at {source_file_paths:?}, dst {destination:?}")),
     }
 }

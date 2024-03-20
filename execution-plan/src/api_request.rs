@@ -2,9 +2,8 @@
 
 use crate::events::{Event, Severity};
 use crate::Result;
-use crate::{events::EventWriter, memory::Memory, ExecutionError};
+use crate::{events::EventWriter, memory::Memory};
 use kittycad_execution_plan_traits::{Address, FromMemory, InMemory};
-use kittycad_modeling_cmds::ok_response::{output as modeling_output, OkModelingCmdResponse};
 use kittycad_modeling_cmds::websocket::{ModelingBatch, ModelingCmdReq};
 use kittycad_modeling_cmds::ModelingCmd;
 use kittycad_modeling_cmds::{each_cmd, id::ModelingCmdId, ModelingCmdEndpoint as Endpoint};
@@ -46,7 +45,6 @@ impl ApiRequest {
             arguments,
             cmd_id,
         } = self;
-        let spare_args = arguments.clone();
         let mut arguments = arguments.into_iter();
         events.push(Event {
             text: "Reading parameters".to_owned(),
@@ -92,37 +90,9 @@ impl ApiRequest {
                 session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::ImportFiles => {
-                let mut args_iter = spare_args.into_iter();
-                let Some(arg_files) = args_iter.next() else {
-                    return Err(ExecutionError::General {
-                        reason: "not enough arguments (requires exactly 2)".to_owned(),
-                    });
-                };
-                let file_paths: Vec<String> = mem
-                    .get_in_memory_pop_not_peek(arg_files, "ImportFiles files", events)?
-                    .0;
-
                 let cmd = kittycad_modeling_cmds::ImportFiles::from_memory(&mut arguments, mem, events)?;
-
                 log_req(events);
-                let OkModelingCmdResponse::ImportFiles(import_files) =
-                    session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
-                else {
-                    panic!("Unexpected OkModelingCmdResponse encountered");
-                };
-
-                // Transform a OkModelingCmdResponse::ImportFiles to a
-                // OkModelingCmdResponse::ImportedGeometry for ease of
-                // consumption by the rest of KCL.
-                //
-                // This is the most direct way to collect the original paths,
-                // and return a structure that is, at the time of writing,
-                // returned by the original KCL import() function call.
-
-                OkModelingCmdResponse::ImportedGeometry(modeling_output::ImportedGeometry {
-                    id: import_files.object_id,
-                    value: file_paths,
-                })
+                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
             Endpoint::MakePlane => {
                 let cmd = each_cmd::MakePlane::from_memory(&mut arguments, mem, events)?;

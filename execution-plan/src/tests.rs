@@ -1063,9 +1063,14 @@ async fn import_files_file_path_only() {
     let output_addr = Address::ZERO + 99;
     let mut mem = static_data.finish();
 
-    execute(
+    if let Err(e) = execute(
         &mut mem,
         vec![
+            Instruction::ImportFiles(import_files::ImportFiles {
+                files_destination: Some(Destination::StackPush),
+                format_destination: None,
+                arguments: vec![file_path.into(), file_format.into()],
+            }),
             Instruction::ImportFiles(import_files::ImportFiles {
                 files_destination: Some(Destination::StackPush),
                 format_destination: Some(Destination::StackPush),
@@ -1077,6 +1082,11 @@ async fn import_files_file_path_only() {
                 arguments: vec![InMemory::StackPop, InMemory::StackPop],
                 cmd_id: Uuid::new_v4().into(),
             }),
+            Instruction::TransformImportFiles {
+                source_import_files_response: InMemory::Address(imported_geometry),
+                source_file_paths: InMemory::StackPop,
+                destination: Destination::Address(imported_geometry),
+            },
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::DefaultCameraFocusOn,
                 store_response: None,
@@ -1093,7 +1103,9 @@ async fn import_files_file_path_only() {
         &mut Some(client),
     )
     .await
-    .unwrap();
+    {
+        terminate(e);
+    }
 
     let Primitive::Bytes(b) = mem.get(&(Address::ZERO + 100)).as_ref().unwrap() else {
         panic!("wrong format in memory addr 100");
@@ -1108,6 +1120,13 @@ async fn import_files_file_path_only() {
         .unwrap();
 
     twenty_twenty::assert_image("tests/outputs/cube-stl.png", &img, 0.9999);
+}
+
+fn terminate(e: ExecutionFailed) {
+    eprintln!("Error on instruction {}", e.instruction_index);
+    eprintln!("The instruction was {:#?}", e.instruction);
+    eprintln!("The error was {:#?}", e.error);
+    std::process::exit(1);
 }
 
 #[tokio::test]
@@ -1151,6 +1170,11 @@ async fn import_files_with_file_format() {
         vec![
             Instruction::ImportFiles(import_files::ImportFiles {
                 files_destination: Some(Destination::StackPush),
+                format_destination: None,
+                arguments: vec![file_path.into(), file_format.into()],
+            }),
+            Instruction::ImportFiles(import_files::ImportFiles {
+                files_destination: Some(Destination::StackPush),
                 format_destination: Some(Destination::StackPush),
                 arguments: vec![file_path.into(), file_format.into()],
             }),
@@ -1160,6 +1184,11 @@ async fn import_files_with_file_format() {
                 arguments: vec![InMemory::StackPop, InMemory::StackPop],
                 cmd_id: Uuid::new_v4().into(),
             }),
+            Instruction::TransformImportFiles {
+                source_import_files_response: InMemory::Address(imported_geometry),
+                source_file_paths: InMemory::StackPop,
+                destination: Destination::Address(imported_geometry),
+            },
             Instruction::ApiRequest(ApiRequest {
                 endpoint: Endpoint::DefaultCameraFocusOn,
                 store_response: None,
