@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "bumper",
     "execution-plan",
     "execution-plan-debugger",
     "execution-plan-macros",
