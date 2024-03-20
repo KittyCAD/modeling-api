@@ -68,6 +68,8 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
         )*}
         /// Each modeling command (no parameters or fields).
         #[derive(Serialize, Deserialize, Debug, PartialEq, Clone, ::parse_display::Display)]
+        #[serde(rename_all = "snake_case")]
+        #[cfg_attr(not(unstable_exhaustive), non_exhaustive)]
         pub enum ModelingCmdEndpoint{#(
             #[doc = #docs]
             #variants,
