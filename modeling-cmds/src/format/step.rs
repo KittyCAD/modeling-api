@@ -1,3 +1,4 @@
+use kittycad_execution_plan_macros::ExecutionPlanValue;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -48,7 +49,9 @@ impl std::str::FromStr for ExportOptions {
 }
 
 /// Options for importing STEP format.
-#[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(
+    Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, ExecutionPlanValue,
+)]
 #[display("")]
 #[serde(rename = "StepImportOptions")]
 pub struct ImportOptions {}

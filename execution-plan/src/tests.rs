@@ -5,6 +5,7 @@ use kittycad_execution_plan_traits::{InMemory, ListHeader, ObjectHeader, Primiti
 use kittycad_modeling_cmds::shared::Point2d;
 use kittycad_modeling_cmds::ModelingCmdEndpoint as Endpoint;
 use kittycad_modeling_cmds::{
+    coord,
     id::ModelingCmdId,
     length_unit::LengthUnit,
     shared::{PathSegment, Point3d, Point4d},
@@ -13,7 +14,9 @@ use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
 
 use crate::sketch_types::{Axes, BasePath, Plane, SketchGroup};
-use crate::{arithmetic::operator::BinaryOperation, arithmetic::operator::UnaryOperation, constants, Address};
+use crate::{
+    arithmetic::operator::BinaryOperation, arithmetic::operator::UnaryOperation, constants, Address, Destination,
+};
 
 use super::*;
 
@@ -1040,6 +1043,184 @@ async fn to_radians_float() {
     test_unary_op!(ToRadians, 180f64, std::f64::consts::PI);
 }
 
+#[tokio::test]
+async fn import_files_file_path_only() {
+    let client = test_client().await;
+
+    let mut static_data = StaticMemoryInitializer::default();
+    let file_path = static_data.push(Primitive::from("cube.stl".to_owned()));
+    let file_format = static_data.push(Primitive::Nil);
+
+    // Make space for the ImportedGeometry call.
+    let imported_geometry_enum_variant_header = static_data.push(Primitive::Nil);
+    let imported_geometry_id = static_data.push(Primitive::Nil);
+    let _imported_geometry_value_len = static_data.push(Primitive::Nil);
+    let _imported_geometry_value_0 = static_data.push(Primitive::Nil);
+    // Point to the beginning of the structure.
+    let imported_geometry = imported_geometry_enum_variant_header;
+
+    let img_format_addr = static_data.push(Primitive::from("Png".to_owned()));
+    let output_addr = Address::ZERO + 99;
+    let mut mem = static_data.finish();
+
+    if let Err(e) = execute(
+        &mut mem,
+        vec![
+            Instruction::ImportFiles(import_files::ImportFiles {
+                files_destination: Some(Destination::StackPush),
+                format_destination: None,
+                arguments: vec![file_path.into(), file_format.into()],
+            }),
+            Instruction::ImportFiles(import_files::ImportFiles {
+                files_destination: Some(Destination::StackPush),
+                format_destination: Some(Destination::StackPush),
+                arguments: vec![file_path.into(), file_format.into()],
+            }),
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ImportFiles,
+                store_response: Some(imported_geometry),
+                arguments: vec![InMemory::StackPop, InMemory::StackPop],
+                cmd_id: Uuid::new_v4().into(),
+            }),
+            Instruction::TransformImportFiles {
+                source_import_files_response: InMemory::Address(imported_geometry),
+                source_file_paths: InMemory::StackPop,
+                destination: Destination::Address(imported_geometry),
+            },
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::DefaultCameraFocusOn,
+                store_response: None,
+                arguments: vec![imported_geometry_id.into()],
+                cmd_id: new_id(),
+            }),
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::TakeSnapshot,
+                store_response: Some(output_addr),
+                arguments: vec![img_format_addr.into()],
+                cmd_id: new_id(),
+            }),
+        ],
+        &mut Some(client),
+    )
+    .await
+    {
+        terminate(e);
+    }
+
+    let Primitive::Bytes(b) = mem.get(&(Address::ZERO + 100)).as_ref().unwrap() else {
+        panic!("wrong format in memory addr 100");
+    };
+
+    // Visually check that the image is a cube from the cube.stl file.
+    use image::io::Reader as ImageReader;
+    let img = ImageReader::new(std::io::Cursor::new(b))
+        .with_guessed_format()
+        .unwrap()
+        .decode()
+        .unwrap();
+
+    twenty_twenty::assert_image("tests/outputs/cube-stl.png", &img, 0.9999);
+}
+
+fn terminate(e: ExecutionFailed) {
+    eprintln!("Error on instruction {}", e.instruction_index);
+    eprintln!("The instruction was {:#?}", e.instruction);
+    eprintln!("The error was {:#?}", e.error);
+    std::process::exit(1);
+}
+
+#[tokio::test]
+async fn import_files_with_file_format() {
+    let client = test_client().await;
+
+    let mut smi = StaticMemoryInitializer::default();
+    let file_path = smi.push(Primitive::from("cube.stl".to_owned()));
+
+    let file_format = smi.push(Primitive::from(ObjectHeader {
+        properties: vec!["type".to_owned(), "units".to_owned(), "coords".to_owned()],
+        size: 12,
+    }));
+    smi.push(Primitive::from("stl".to_string()));
+    smi.push(Primitive::from("mm".to_string()));
+    smi.push(coord::System {
+        forward: coord::AxisDirectionPair {
+            axis: coord::Axis::Y,
+            direction: coord::Direction::Negative,
+        },
+        up: coord::AxisDirectionPair {
+            axis: coord::Axis::Z,
+            direction: coord::Direction::Positive,
+        },
+    });
+
+    // Make space for the ImportedGeometry call.
+    let imported_geometry_enum_variant_header = smi.push(Primitive::Nil);
+    let imported_geometry_id = smi.push(Primitive::Nil);
+    let _imported_geometry_value_len = smi.push(Primitive::Nil);
+    let _imported_geometry_value_0 = smi.push(Primitive::Nil);
+    // Point to the beginning of the structure.
+    let imported_geometry = imported_geometry_enum_variant_header;
+
+    let img_format_addr = smi.push(Primitive::from("Png".to_owned()));
+    let output_addr = Address::ZERO + 99;
+    let mut mem = smi.finish();
+
+    execute(
+        &mut mem,
+        vec![
+            Instruction::ImportFiles(import_files::ImportFiles {
+                files_destination: Some(Destination::StackPush),
+                format_destination: None,
+                arguments: vec![file_path.into(), file_format.into()],
+            }),
+            Instruction::ImportFiles(import_files::ImportFiles {
+                files_destination: Some(Destination::StackPush),
+                format_destination: Some(Destination::StackPush),
+                arguments: vec![file_path.into(), file_format.into()],
+            }),
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ImportFiles,
+                store_response: Some(imported_geometry),
+                arguments: vec![InMemory::StackPop, InMemory::StackPop],
+                cmd_id: Uuid::new_v4().into(),
+            }),
+            Instruction::TransformImportFiles {
+                source_import_files_response: InMemory::Address(imported_geometry),
+                source_file_paths: InMemory::StackPop,
+                destination: Destination::Address(imported_geometry),
+            },
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::DefaultCameraFocusOn,
+                store_response: None,
+                arguments: vec![imported_geometry_id.into()],
+                cmd_id: new_id(),
+            }),
+            Instruction::ApiRequest(ApiRequest {
+                endpoint: Endpoint::TakeSnapshot,
+                store_response: Some(output_addr),
+                arguments: vec![img_format_addr.into()],
+                cmd_id: new_id(),
+            }),
+        ],
+        &mut Some(client),
+    )
+    .await
+    .unwrap();
+
+    let Primitive::Bytes(b) = mem.get(&(Address::ZERO + 100)).as_ref().unwrap() else {
+        panic!("wrong format in memory addr 100");
+    };
+
+    // Visually check that the image is a cube from the cube.stl file.
+    use image::io::Reader as ImageReader;
+    let img = ImageReader::new(std::io::Cursor::new(b))
+        .with_guessed_format()
+        .unwrap()
+        .decode()
+        .unwrap();
+
+    twenty_twenty::assert_image("tests/outputs/cube-stl.png", &img, 0.9999);
+}
 #[tokio::test]
 async fn constants_sets_value_moves_memory_pointer() {
     let mut mem = Memory::default();

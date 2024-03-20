@@ -346,6 +346,7 @@ fn make_instruction_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors
 fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static, str>, String) {
     match instruction {
         Instruction::ApiRequest(req) => (format!("API {}", req.endpoint).into(), format!("{:?}", req.arguments)),
+        Instruction::ImportFiles(req) => ("ImportFiles".into(), format!("{:?}", req.arguments)),
         Instruction::SetPrimitive { address, value } => {
             ("SetPrimitive".into(), format!("Set addr {address} to {value:?}"))
         }
@@ -435,5 +436,10 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
             ("SGGetLastPoint".into(), format!("source {source} dst={destination}"))
         }
         Instruction::NoOp { comment } => ("No op".into(), comment.to_owned()),
+        Instruction::TransformImportFiles {
+            source_import_files_response,
+            source_file_paths,
+            destination,
+        } => ("XformImportFiles".into(), format!("from response at {source_import_files_response:?} w/ names at {source_file_paths:?}, dst {destination:?}")),
     }
 }

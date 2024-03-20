@@ -1,13 +1,16 @@
 use kittycad_execution_plan_traits::{
     InMemory, ListHeader, MemoryError, NumericPrimitive, ObjectHeader, Primitive, ReadMemory, Value,
 };
-use kittycad_modeling_cmds::{shared::Point2d, websocket::ModelingBatch};
+use kittycad_modeling_cmds::{
+    ok_response::OkModelingCmdResponse, output::ImportedGeometry, shared::Point2d, websocket::ModelingBatch,
+};
 use serde::{Deserialize, Serialize};
 
 use crate::{
     events::{Event, EventWriter, Severity},
     sketch_types::{self},
-    Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, Memory, Operand, Result, UnaryArithmetic,
+    Address, ApiRequest, BinaryArithmetic, Destination, ExecutionError, ImportFiles, Memory, Operand, Result,
+    UnaryArithmetic,
 };
 
 /// One step of the execution plan.
@@ -15,6 +18,8 @@ use crate::{
 pub enum Instruction {
     /// Call the KittyCAD API.
     ApiRequest(ApiRequest),
+    /// Import a geometry file.
+    ImportFiles(ImportFiles),
     /// Set a primitive to a memory address.
     SetPrimitive {
         /// Which memory address to set.
@@ -164,6 +169,16 @@ pub enum Instruction {
         /// Debug message.
         comment: String,
     },
+    /// Transform the response of an API call to ImportFiles,
+    /// into an OkWebSocketResponse::ImportGeometry.
+    TransformImportFiles {
+        /// Where the API response was stored. Read first.
+        source_import_files_response: InMemory,
+        /// Where the filenames are stored. Read second.
+        source_file_paths: InMemory,
+        /// Where to write the `ImportGeometry`.
+        destination: Destination,
+    },
 }
 
 impl Instruction {
@@ -183,6 +198,9 @@ impl Instruction {
                 } else {
                     return Err(ExecutionError::NoApiClient);
                 }
+            }
+            Instruction::ImportFiles(req) => {
+                req.execute(mem).await?;
             }
             Instruction::SetPrimitive { address, value } => {
                 events.push(Event {
@@ -526,6 +544,26 @@ impl Instruction {
                     .into_parts();
                 let data = sg.into_iter().skip(offset).take(length).collect();
                 write_to_dst(data, destination, mem, events)?;
+            }
+            Instruction::TransformImportFiles {
+                source_import_files_response,
+                source_file_paths,
+                destination,
+            } => {
+                let resp: OkModelingCmdResponse = mem
+                    .get_in_memory(source_import_files_response, "import files response", events)?
+                    .0;
+                let OkModelingCmdResponse::ImportFiles(resp) = resp else {
+                    return Err(ExecutionError::General {
+                        reason: "Should have been ::ImportFiles variant".to_owned(),
+                    });
+                };
+                let filepaths: Vec<String> = mem.get_in_memory(source_file_paths, "import files response", events)?.0;
+                let geometry = OkModelingCmdResponse::ImportedGeometry(ImportedGeometry {
+                    id: resp.object_id,
+                    value: filepaths,
+                });
+                write_to_dst(geometry.into_parts(), destination, mem, events)?;
             }
         }
         Ok(())

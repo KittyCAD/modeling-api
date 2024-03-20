@@ -55,12 +55,20 @@ impl From<Address> for InMemory {
 pub trait ReadMemory {
     /// Get a value from the given address.
     fn get(&self, addr: &Address) -> Option<&Primitive>;
+    /// Same as get but match the return signature of stack operations.
+    fn get_ok(&self, address: &Address) -> Result<Vec<Primitive>, MemoryError> {
+        match self.get(address) {
+            Some(prim) => Ok(vec![prim.clone()]),
+            None => Err(MemoryError::MemoryBadAccess),
+        }
+    }
+
     /// Get a value from the given starting address. Value might require multiple addresses.
     fn get_composite<T: Value>(&self, start: Address) -> Result<(T, usize), MemoryError>;
     /// Remove the value on top of the stack, return it.
     fn stack_pop(&mut self) -> Result<Vec<Primitive>, MemoryError>;
     /// Return the value on top of the stack.
-    fn stack_peek(&self) -> Result<&Vec<Primitive>, MemoryError>;
+    fn stack_peek(&self) -> Result<Vec<Primitive>, MemoryError>;
 }
 
 /// Errors that could occur when reading a type from KittyCAD Execution Plan program memory.
@@ -69,6 +77,9 @@ pub enum MemoryError {
     /// Something went wrong
     #[error("Memory was wrong size")]
     MemoryWrongSize,
+    /// Something went very wrong
+    #[error("Bad memory access")]
+    MemoryBadAccess,
     /// Type error, memory contained the wrong type.
     #[error("Tried to read a '{expected}' from KCEP program memory, found an '{actual}' instead")]
     MemoryWrongType {
