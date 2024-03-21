@@ -6,7 +6,6 @@ lint:
 check-typos:
     codespell --config .codespellrc
 
-# Run unit tests
 test:
     cargo nextest --all-features run
 
@@ -35,7 +34,8 @@ start-release pkg bump='patch':
     git push
     
 # e.g. `just finish-release modeling-cmds`
-# Assuming you just merged the PR from the `start-release` recipe, publishes (to crates.io) the release for a package in this workspace, 
+# Assumes you just merged the PR from the `start-release` recipe.
+# Publishes the release for a package in this workspace, 
 finish-release pkg:
     #!/usr/bin/env bash
     set -euxo pipefail
