@@ -6,14 +6,16 @@ lint:
 check-typos:
     codespell --config .codespellrc
 
+# Run unit tests
 test:
     cargo nextest --all-features run
 
+# Run unit tests, output coverage to `lcov.info`.
 test-with-coverage:
     cargo llvm-cov nextest --all-features --workspace --lcov --output-path lcov.info
 
-# Must be invoked with a package e.g.
-# `just start-release modeling-cmds`
+# e.g. `just start-release modeling-cmds`
+# Opens a release PR for a package in this workspace
 start-release pkg bump='patch':
     #!/usr/bin/env bash
     set -euxo pipefail
@@ -32,8 +34,8 @@ start-release pkg bump='patch':
     git commit -m "Release modeling commands $next_version"
     git push
     
-# Must be invoked with a package e.g.
-# `just finish-release modeling-cmds`
+# e.g. `just finish-release modeling-cmds`
+# Assuming you just merged the PR from the `start-release` recipe, publishes (to crates.io) the release for a package in this workspace, 
 finish-release pkg:
     #!/usr/bin/env bash
     set -euxo pipefail
@@ -46,7 +48,7 @@ finish-release pkg:
     git pull
     version=$(cargo run --bin bumper -- --manifest-path {{pkg}}/Cargo.toml)
     latest_commit_msg=$(git show --oneline -s)
-    echo $latest_commit_msg | grep "Release modeling commands $version"
+    echo "$latest_commit_msg" | grep "Release modeling commands $version"
 
     # If so, then tag and publish.
     git tag kittycad-{{pkg}}-$version
