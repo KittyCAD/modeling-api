@@ -18,7 +18,7 @@ pub(crate) fn impl_derive_from_memory(input: DeriveInput, root: &TokenStream2) -
             Fields::Unit => impl_on_struct_no_fields(span, name, generics, root),
         },
         _ => quote_spanned! {span =>
-            compile_error!("Value cannot be implemented on an enum or union type")
+            compile_error!("FromMemory cannot be implemented on an enum or union type")
         },
     }
 }
@@ -82,7 +82,7 @@ fn impl_on_struct_named_fields(
     let read_each_field = field_names.iter().map(|(ident, span)| {
         quote_spanned! {*span=>
             let #ident = fields.next()
-                .ok_or(#root::MemoryError::MemoryWrongSize)
+                .ok_or(#root::MemoryError::NotEnoughFields)
                 .and_then(|a| match a {
                     #root::InMemory::Address(a) => {
 
