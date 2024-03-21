@@ -108,6 +108,9 @@ pub enum MemoryError {
         /// Expected to be 1, but it was something else.
         actual_length: usize,
     },
+    /// You didn't supply enough fields -- you have to supply one field per field of the original struct
+    #[error("You didn't supply enough fields -- you have to supply one field per field of the original struct")]
+    NotEnoughFields,
 }
 
 fn csv(v: &[&'static str]) -> String {
