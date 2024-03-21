@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use kittycad_execution_plan::{BinaryArithmetic, ExecutionState, Instruction};
+use kittycad_execution_plan::{BinaryArithmetic, ExecutionState, Instruction, InstructionKind};
 use kittycad_execution_plan_traits::{
     events::{Event, Severity},
     Address, Primitive,
@@ -344,30 +344,30 @@ fn make_instruction_view<'a>(block: Block<'a>, ctx: &Context, instrs_with_errors
 
 /// Display the instruction type and the operands, in a human-readable, friendly way.
 fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static, str>, String) {
-    match instruction {
-        Instruction::ApiRequest(req) => (format!("API {}", req.endpoint).into(), format!("{:?}", req.arguments)),
-        Instruction::ImportFiles(req) => ("ImportFiles".into(), format!("{:?}", req.arguments)),
-        Instruction::SetPrimitive { address, value } => {
+    match &instruction.kind {
+        InstructionKind::ApiRequest(req) => (format!("API {}", req.endpoint).into(), format!("{:?}", req.arguments)),
+        InstructionKind::ImportFiles(req) => ("ImportFiles".into(), format!("{:?}", req.arguments)),
+        InstructionKind::SetPrimitive { address, value } => {
             ("SetPrimitive".into(), format!("Set addr {address} to {value:?}"))
         }
-        Instruction::Copy {
+        InstructionKind::Copy {
             source,
             destination,
             length,
         } => ("Copy".into(), format!("{length} from {source} to {destination}")),
-        Instruction::SetValue { address, value_parts } => (
+        InstructionKind::SetValue { address, value_parts } => (
             "SetValue".into(),
             format!("Write {value_parts:?} starting at address {address}"),
         ),
-        Instruction::AddrOfMember { start, member } => (
+        InstructionKind::AddrOfMember { start, member } => (
             "AddrOfMember".into(),
             format!("Find member '{member:?}'\nof object at address {start:?}"),
         ),
-        Instruction::SetList { start, elements } => (
+        InstructionKind::SetList { start, elements } => (
             "SetList234".into(),
             format!("Create list at {start:?}\nwith elements {elements:?}"),
         ),
-        Instruction::BinaryArithmetic {
+        InstructionKind::BinaryArithmetic {
             arithmetic,
             destination,
         } => {
@@ -382,40 +382,40 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
                 format!("Set {destination:?}\nto {arith_description}"),
             )
         }
-        Instruction::UnaryArithmetic {
+        InstructionKind::UnaryArithmetic {
             arithmetic,
             destination,
         } => (
             "UnaryArithmetic".into(),
             format!("Set {destination:?}\nto {arithmetic:?}"),
         ),
-        Instruction::StackPush { data } => ("StackPush".into(), format!("{data:?}")),
-        Instruction::StackExtend { data } => ("StackExtend".into(), format!("{data:?}")),
-        Instruction::StackPop { destination } => (
+        InstructionKind::StackPush { data } => ("StackPush".into(), format!("{data:?}")),
+        InstructionKind::StackExtend { data } => ("StackExtend".into(), format!("{data:?}")),
+        InstructionKind::StackPop { destination } => (
             "StackPop".into(),
             match destination {
                 Some(dst) => format!("Into: {dst:?}"),
                 None => "Discard".to_owned(),
             },
         ),
-        Instruction::CopyLen {
+        InstructionKind::CopyLen {
             source_range,
             destination_range,
         } => (
             "Copy".into(),
             format!("copy from {source_range:?} to {destination_range:?}"),
         ),
-        Instruction::SketchGroupSetBasePath {
+        InstructionKind::SketchGroupSetBasePath {
             source,
             from: _,
             to: _,
             name: _,
         } => ("SGSetBasePath".into(), format!("SG#{source}")),
-        Instruction::SketchGroupSet {
+        InstructionKind::SketchGroupSet {
             sketch_group: _,
             destination,
         } => ("SGSet".into(), format!("dst: {destination}")),
-        Instruction::SketchGroupCopyFrom {
+        InstructionKind::SketchGroupCopyFrom {
             destination,
             source,
             offset,
@@ -424,7 +424,7 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
             "SGCopyFrom".into(),
             format!("{source} to {destination}, len {length}, offset {offset}"),
         ),
-        Instruction::SketchGroupAddSegment {
+        InstructionKind::SketchGroupAddSegment {
             segment,
             source,
             destination,
@@ -432,11 +432,11 @@ fn describe_instruction(instruction: &Instruction) -> (std::borrow::Cow<'static,
             "SGAddPath".into(),
             format!("Take {source:?}, add segment {segment:?}, dst {destination:?}"),
         ),
-        Instruction::SketchGroupGetLastPoint { source, destination } => {
+        InstructionKind::SketchGroupGetLastPoint { source, destination } => {
             ("SGGetLastPoint".into(), format!("source {source} dst={destination}"))
         }
-        Instruction::NoOp { comment } => ("No op".into(), comment.to_owned()),
-        Instruction::TransformImportFiles {
+        InstructionKind::NoOp { comment } => ("No op".into(), comment.to_owned()),
+        InstructionKind::TransformImportFiles {
             source_import_files_response,
             source_file_paths,
             destination,
