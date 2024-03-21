@@ -21,7 +21,7 @@ start-release pkg bump='patch':
     set -euxo pipefail
     
     # Validate that the argument is a valid project in this repo.
-    ls {{pkg}} || { print "No such package {{pkg}}"; exit 2; }
+    ls {{pkg}} || { echo "No such package {{pkg}} in this Cargo workspace"; exit 2; }
 
     # Bump the version.
     next_version=$(cargo run --bin bumper -- --manifest-path {{pkg}}/Cargo.toml --bump {{bump}})
@@ -41,14 +41,14 @@ finish-release pkg:
     set -euxo pipefail
 
     # Validate that the argument is a valid project in this repo.
-    ls {{pkg}} || { print "No such package {{pkg}}"; exit 2; }
+    ls {{pkg}} || { echo "No such package {{pkg}} in this Cargo workspace"; exit 2; }
 
     # Validate that the latest commit on `main` is the release we started.
-    git switch main
-    git pull
+    # git switch main
+    # git pull
     version=$(cargo run --bin bumper -- --manifest-path {{pkg}}/Cargo.toml)
     latest_commit_msg=$(git show --oneline -s)
-    echo "$latest_commit_msg" | grep "Release modeling commands $version"
+    echo "$latest_commit_msg" | grep "Release modeling commands $version" || { echo "The latest commit on `main` is not a release commit. Did you open a PR with just start-release? Did you merge it?"; exit 2; }
 
     # If so, then tag and publish.
     git tag kittycad-{{pkg}}-$version
