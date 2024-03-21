@@ -985,6 +985,8 @@ impl ModelingCmd {
             MovePathPen(_)
                 | ExtendPath(_)
                 | Extrude(_)
+                | Revolve(_)
+                | Solid3dFilletEdge(_)
                 | ClosePath(_)
                 | UpdateAnnotation(_)
                 | ObjectVisible(_)
