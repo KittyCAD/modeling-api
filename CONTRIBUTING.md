@@ -11,16 +11,15 @@
 
 # Releasing a crate
 
-In this example we'll use the modeling-cmds crate and release version 0.1.15, but you can follow
-the same procedure for any of the crates in this repo, and any version.
+This repo uses a `justfile`. Be sure to [install `just`](https://github.com/casey/just?tab=readme-ov-file#packages) if you haven't already.
 
-You should **only ever bump the patch** e.g. go from 0.1.22 to 0.1.23 -- otherwise you'll need to open PRs to KittyCAD's format and engine repos to explicitly bump them to 0.2.
+ - Create a release branch: `just start-release modeling-cmds`.
+ - Open a PR (hint: `just start-release` output should include a link to GitHub which will open a release PR).
+ - Merge the PR
+ - Run `just finish-release modeling-cmds`.
 
-We do *not* consider adding a new variant to `enum ModelingCmd` to be a breaking change.
+The `just` scripts above accept any workspace member as their first argument. For example, you could replace `modeling-cmds` with `execution-plan-traits` there.
 
-- `git checkout -b release/modeling-cmds/0.1.15`
-- Edit `modeling-cmds/Cargo.toml` and update the `version` field
-- `git add --all && git commit -m "Release modeling commands 0.1.15" && git push`
-- Open a PR from your branch into `main` and merge it.
-- `git checkout main && git tag kittycad-modeling-cmds-0.1.15 && git push --tags`
-- `cargo publish -p kittycad-modeling-cmds`
+## Note on semver
+
+The `just` scripts also accept a second arg, which defaults to `patch` -- this is the kind of semver bump to make. Technically you can specify `minor` or `major` too, but you should **almost always just bump the patch** e.g. go from 0.1.22 to 0.1.23. We don't really care about semver accuracy as Zoo engineers are the only people using this crate currently. Once other users need these crates, we'll start enforcing semver -- until then, convenience is really what matters. If you ever bump `modeling-cmds` major/minor versions, you'll need to open PRs to KittyCAD's format and engine repos to explicitly bump them to 0.2. Talk to Adam Chalmers before bumping the minor or major version.
