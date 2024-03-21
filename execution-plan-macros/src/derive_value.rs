@@ -176,9 +176,7 @@ fn unbox(ty: syn::Type) -> Option<syn::Type> {
     let syn::Type::Path(p) = ty else {
         return None;
     };
-    let Some(first) = p.path.segments.into_iter().next() else {
-        return None;
-    };
+    let first = p.path.segments.into_iter().next()?;
     if first.ident != "Box" {
         return None;
     }
