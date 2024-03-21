@@ -18,9 +18,23 @@ use crate::{
 pub struct Instruction {
     /// What kind of instruction is it?
     pub kind: InstructionKind,
+    /// Which range in the high-level source code does this instruction correspond to?
+    /// Useful for error reporting, syntax highlighting, etc.
+    pub source_range: Option<SourceRange>,
 }
 
+/// A range of high-level source code.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, PartialOrd, Ord, Deserialize, Serialize)]
+pub struct SourceRange(pub [usize; 2]);
+
 impl Instruction {
+    /// Instantiate an Instruction corresponding to a certain place in the high-level source language.
+    pub fn from_range(kind: InstructionKind, source_range: SourceRange) -> Self {
+        Self {
+            kind,
+            source_range: Some(source_range),
+        }
+    }
     /// Execute the instruction.
     pub async fn execute(
         self,
@@ -35,7 +49,10 @@ impl Instruction {
 
 impl From<InstructionKind> for Instruction {
     fn from(kind: InstructionKind) -> Self {
-        Self { kind }
+        Self {
+            kind,
+            source_range: None,
+        }
     }
 }
 
