@@ -24,26 +24,29 @@ fn inner_main(args: Args) -> anyhow::Result<()> {
 
 /// Update the given TOML document (for a Cargo.toml file) by bumping its `version` field.
 /// What kind of bump (major, minor, patch) is given by the `bump` argument.
-fn update_semver(bump: SemverBump, doc: &mut DocumentMut) -> anyhow::Result<()> {
+fn update_semver(bump: Option<SemverBump>, doc: &mut DocumentMut) -> anyhow::Result<()> {
     let current_version = doc["package"]["version"]
         .to_string()
         // Clean quotations and whitespace.
         .replace([' ', '"'], "");
 
     let current_version = semver::Version::parse(&current_version).context("Could not parse semver version")?;
-    println!("Current version is {current_version}");
 
     // Get the next version.
+    let Some(bump) = bump else {
+        println!("{current_version}");
+        return Ok(());
+    };
     let mut next_version = current_version;
     match bump {
         SemverBump::Major => next_version.major += 1,
         SemverBump::Minor => next_version.minor += 1,
         SemverBump::Patch => next_version.patch += 1,
     };
-    println!("Bumping to {next_version}");
 
     // Update the Cargo.toml
     doc["package"]["version"] = value(next_version.to_string());
+    println!("{next_version}");
     Ok(())
 }
 
@@ -54,8 +57,10 @@ struct Args {
     #[arg(short, long)]
     manifest_path: String,
 
+    /// What part of the semantic version (major, minor or patch) to bump.
+    /// If not given, bumper will just print the current version and then exit.
     #[arg(short, long)]
-    bump: SemverBump,
+    bump: Option<SemverBump>,
 }
 
 #[derive(Debug, Clone, Copy)]
