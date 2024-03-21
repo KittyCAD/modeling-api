@@ -20,7 +20,7 @@ start-release-modeling-cmds:
     # Bump the version.
     next_version=$(cargo run --bin bumper -- --manifest-path modeling-cmds/Cargo.toml --bump patch)
     cargo publish -p kittycad-modeling-cmds --dry-run --allow-dirty
-    git branch -c release/$next_version
+    git checkout -b release/$next_version
     git add --all
     git commit -m "Release modeling commands $next_version"
     git push
