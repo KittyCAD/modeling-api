@@ -21,14 +21,14 @@ pub use self::arithmetic::{
     BinaryArithmetic, UnaryArithmetic,
 };
 use self::import_files::ImportFiles;
-pub use self::instruction::Instruction;
+pub use self::instruction::{Instruction, InstructionKind};
 
 pub mod api_request;
 mod arithmetic;
-/// Expose feature to import external geometry files.
-pub mod import_files;
 /// Defined constants and ability to create more.
 pub mod constants;
+/// Expose feature to import external geometry files.
+pub mod import_files;
 mod instruction;
 mod memory;
 pub mod sketch_types;

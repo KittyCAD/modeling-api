@@ -15,7 +15,33 @@ use crate::{
 
 /// One step of the execution plan.
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-pub enum Instruction {
+pub struct Instruction {
+    /// What kind of instruction is it?
+    pub kind: InstructionKind,
+}
+
+impl Instruction {
+    /// Execute the instruction.
+    pub async fn execute(
+        self,
+        mem: &mut Memory,
+        session: &mut Option<kittycad_modeling_session::Session>,
+        events: &mut EventWriter,
+        batch_queue: &mut ModelingBatch,
+    ) -> Result<()> {
+        self.kind.execute(mem, session, events, batch_queue).await
+    }
+}
+
+impl From<InstructionKind> for Instruction {
+    fn from(kind: InstructionKind) -> Self {
+        Self { kind }
+    }
+}
+
+/// One step of the execution plan.
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+pub enum InstructionKind {
     /// Call the KittyCAD API.
     ApiRequest(ApiRequest),
     /// Import a geometry file.
@@ -36,7 +62,7 @@ pub enum Instruction {
     },
     /// Find an element/property of an array/object.
     /// Push the element/property's address onto the stack.
-    /// Assumes the object/list is formatted according to [`Instruction::SetList`] documentation.
+    /// Assumes the object/list is formatted according to [`Self::SetList`] documentation.
     AddrOfMember {
         /// Starting address of the array/object.
         start: Operand,
@@ -181,7 +207,7 @@ pub enum Instruction {
     },
 }
 
-impl Instruction {
+impl InstructionKind {
     /// Execute the instruction
     pub async fn execute(
         self,
@@ -191,18 +217,18 @@ impl Instruction {
         batch_queue: &mut ModelingBatch,
     ) -> Result<()> {
         match self {
-            Instruction::NoOp { comment: _ } => {}
-            Instruction::ApiRequest(req) => {
+            Self::NoOp { comment: _ } => {}
+            Self::ApiRequest(req) => {
                 if let Some(session) = session {
                     req.execute(session, mem, events, batch_queue).await?;
                 } else {
                     return Err(ExecutionError::NoApiClient);
                 }
             }
-            Instruction::ImportFiles(req) => {
+            Self::ImportFiles(req) => {
                 req.execute(mem).await?;
             }
-            Instruction::SetPrimitive { address, value } => {
+            Self::SetPrimitive { address, value } => {
                 events.push(Event {
                     text: format!("Writing output to address {address}"),
                     severity: crate::events::Severity::Info,
@@ -210,7 +236,7 @@ impl Instruction {
                 });
                 mem.set(address, value);
             }
-            Instruction::Copy {
+            Self::Copy {
                 source,
                 length,
                 destination,
@@ -229,12 +255,12 @@ impl Instruction {
                     .collect::<Result<Vec<_>>>()?;
                 write_to_dst(data, destination, mem, events)?;
             }
-            Instruction::SetValue { address, value_parts } => {
+            Self::SetValue { address, value_parts } => {
                 value_parts.into_iter().enumerate().for_each(|(i, part)| {
                     mem.set(address.offset(i), part);
                 });
             }
-            Instruction::BinaryArithmetic {
+            Self::BinaryArithmetic {
                 arithmetic,
                 destination,
             } => {
@@ -256,7 +282,7 @@ impl Instruction {
                     }
                 };
             }
-            Instruction::UnaryArithmetic {
+            Self::UnaryArithmetic {
                 arithmetic,
                 destination,
             } => {
@@ -267,7 +293,7 @@ impl Instruction {
                     Destination::StackExtend => mem.stack.extend(vec![out])?,
                 };
             }
-            Instruction::SetList { start, elements } => {
+            Self::SetList { start, elements } => {
                 // Store size of list.
                 let mut curr = start;
                 curr += 1;
@@ -290,7 +316,7 @@ impl Instruction {
                     }),
                 );
             }
-            Instruction::AddrOfMember { start, member } => {
+            Self::AddrOfMember { start, member } => {
                 // Read the member.
                 let member_primitive: Primitive = match member {
                     Operand::Literal(p) => p,
@@ -430,18 +456,18 @@ impl Instruction {
                 // The length is followed by that many addresses worth of data.
                 mem.stack.push(vec![Primitive::Address(curr)]);
             }
-            Instruction::StackPush { data } => {
+            Self::StackPush { data } => {
                 mem.stack.push(data);
             }
-            Instruction::StackExtend { data } => {
+            Self::StackExtend { data } => {
                 mem.stack.extend(data)?;
             }
-            Instruction::StackPop { destination } => {
+            Self::StackPop { destination } => {
                 let data = mem.stack.pop()?;
                 let Some(destination) = destination else { return Ok(()) };
                 write_to_dst(data, destination, mem, events)?;
             }
-            Instruction::CopyLen {
+            Self::CopyLen {
                 source_range,
                 destination_range,
             } => {
@@ -485,13 +511,13 @@ impl Instruction {
                     mem.set(dst, val.clone());
                 }
             }
-            Instruction::SketchGroupSet {
+            Self::SketchGroupSet {
                 sketch_group,
                 destination,
             } => {
                 mem.sketch_group_set(sketch_group, destination)?;
             }
-            Instruction::SketchGroupSetBasePath { source, from, to, name } => {
+            Self::SketchGroupSetBasePath { source, from, to, name } => {
                 let mut sg = mem
                     .sketch_groups
                     .get(source)
@@ -507,7 +533,7 @@ impl Instruction {
                 sg.path_first = base_path;
                 mem.sketch_group_set(sg, source)?;
             }
-            Instruction::SketchGroupAddSegment {
+            Self::SketchGroupAddSegment {
                 segment,
                 source,
                 destination,
@@ -521,7 +547,7 @@ impl Instruction {
                 sg.path_rest.push(segment);
                 mem.sketch_group_set(sg, destination)?;
             }
-            Instruction::SketchGroupGetLastPoint { source, destination } => {
+            Self::SketchGroupGetLastPoint { source, destination } => {
                 let sg = mem
                     .sketch_groups
                     .get(source)
@@ -530,7 +556,7 @@ impl Instruction {
                 let p = sg.last_point();
                 write_to_dst(p.into_parts(), destination, mem, events)?;
             }
-            Instruction::SketchGroupCopyFrom {
+            Self::SketchGroupCopyFrom {
                 source,
                 offset,
                 length,
@@ -545,7 +571,7 @@ impl Instruction {
                 let data = sg.into_iter().skip(offset).take(length).collect();
                 write_to_dst(data, destination, mem, events)?;
             }
-            Instruction::TransformImportFiles {
+            Self::TransformImportFiles {
                 source_import_files_response,
                 source_file_paths,
                 destination,
