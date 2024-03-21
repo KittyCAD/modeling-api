@@ -11,7 +11,6 @@ test:
 
 test-with-coverage:
     cargo llvm-cov nextest --all-features --workspace --lcov --output-path lcov.info
-    cargo llvm-cov nextest --all-features --workspace --lcov --output-path lcov.info
 
 start-release-modeling-cmds:
     #!/usr/bin/env bash
@@ -20,6 +19,7 @@ start-release-modeling-cmds:
     # Bump the version.
     next_version=$(cargo run --bin bumper -- --manifest-path modeling-cmds/Cargo.toml --bump patch)
     cargo publish -p kittycad-modeling-cmds --dry-run --allow-dirty
+    just lint
     git checkout -b release/$next_version
     git add --all
     git commit -m "Release modeling commands $next_version"
