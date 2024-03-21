@@ -1801,7 +1801,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-execution-plan-traits"
-version = "0.1.14"
+version = "0.1.15"
 dependencies = [
  "serde",
  "thiserror",
