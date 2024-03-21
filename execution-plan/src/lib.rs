@@ -29,7 +29,8 @@ mod arithmetic;
 pub mod constants;
 /// Expose feature to import external geometry files.
 pub mod import_files;
-mod instruction;
+/// KCVM aka KCEP instructions.
+pub mod instruction;
 mod memory;
 pub mod sketch_types;
 #[cfg(test)]
