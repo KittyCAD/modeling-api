@@ -6,6 +6,18 @@ pub struct DateTimeLocal {
     value: chrono::DateTime<chrono::Local>,
 }
 
+impl From<DateTimeLocal> for chrono::DateTime<chrono::Local> {
+    fn from(value: DateTimeLocal) -> Self {
+        value.value
+    }
+}
+
+impl From<chrono::DateTime<chrono::Local>> for DateTimeLocal {
+    fn from(value: chrono::DateTime<chrono::Local>) -> Self {
+        Self { value }
+    }
+}
+
 impl Value for DateTimeLocal {
     fn into_parts(self) -> Vec<Primitive> {
         vec![Primitive::NumericValue(NumericPrimitive::Integer(
