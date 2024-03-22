@@ -815,8 +815,6 @@ define_modeling_cmd_enum! {
             pub material_density_unit: units::UnitDensity,
             /// The output unit for the mass.
             pub output_unit: units::UnitMass,
-            /// Select the unit interpretation of distances in the scene.
-            pub source_unit: units::UnitLength,
         }
 
         /// Get the density of entities in the scene or the default scene.
@@ -831,8 +829,6 @@ define_modeling_cmd_enum! {
             pub material_mass_unit: units::UnitMass,
             /// The output unit for the density.
             pub output_unit: units::UnitDensity,
-            /// Select the unit interpretation of distances in the scene.
-            pub source_unit: units::UnitLength,
         }
 
         /// Get the volume of entities in the scene or the default scene.
@@ -843,8 +839,6 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The output unit for the volume.
             pub output_unit: units::UnitVolume,
-            /// Select the unit interpretation of distances in the scene.
-            pub source_unit: units::UnitLength,
         }
 
         /// Get the center of mass of entities in the scene or the default scene.
@@ -855,8 +849,6 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The output unit for the center of mass.
             pub output_unit: units::UnitLength,
-            /// Select the unit interpretation of distances in the scene.
-            pub source_unit: units::UnitLength,
         }
 
         /// Get the surface area of entities in the scene or the default scene.
@@ -867,8 +859,6 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The output unit for the surface area.
             pub output_unit: units::UnitArea,
-            /// Select the unit interpretation of distances in the scene.
-            pub source_unit: units::UnitLength,
         }
 
         /// Focus the default camera upon an object in the scene.
