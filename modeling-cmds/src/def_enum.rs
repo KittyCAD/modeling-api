@@ -66,7 +66,7 @@ define_modeling_cmd_enum! {
             pub segment: PathSegment,
         }
 
-        /// Command for extruding a solid.
+        /// Command for extruding a solid 2d.
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
         )]
@@ -80,6 +80,36 @@ define_modeling_cmd_enum! {
             /// If true, the resulting solid will be closed on all sides, like a dice.
             /// If false, it will be open on one side, like a drinking glass.
             pub cap: bool,
+        }
+
+        /// Command for revolving a solid 2d.
+        #[derive(
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
+        )]
+        pub struct Revolve {
+            /// Which sketch to revolve.
+            /// Must be a closed 2D solid.
+            pub target: ModelingCmdId,
+            /// The origin of the extrusion axis
+            pub origin: Point3d<f64>,
+            /// The axis of the extrusion (taken from the origin)
+            pub axis: Point3d<f64>,
+            /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
+            pub angle: Angle,
+        }
+
+        /// Command for revolving a solid 2d about a brep edge
+        #[derive(
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
+        )]
+        pub struct RevolveAboutEdge {
+            /// Which sketch to revolve.
+            /// Must be a closed 2D solid.
+            pub target: ModelingCmdId,
+            /// The edge to use as the axis of revolution, must be linear and lie in the plane of the solid
+            pub edge_id: Uuid,
+            /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
+            pub angle: Angle,
         }
 
         /// Closes a path, converting it to a 2D solid.
@@ -945,6 +975,8 @@ impl ModelingCmd {
             MovePathPen(_)
                 | ExtendPath(_)
                 | Extrude(_)
+                | Revolve(_)
+                | Solid3dFilletEdge(_)
                 | ClosePath(_)
                 | UpdateAnnotation(_)
                 | ObjectVisible(_)
