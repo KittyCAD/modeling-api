@@ -101,7 +101,7 @@ pub struct ModelingBatch {
     /// ID of batch being submitted.
     /// Each request has their own individual ModelingCmdId, but this is the
     /// ID of the overall batch.
-    pub id: ModelingCmdId,
+    pub batch_id: ModelingCmdId,
 }
 
 impl std::default::Default for ModelingBatch {
@@ -109,7 +109,7 @@ impl std::default::Default for ModelingBatch {
     fn default() -> Self {
         Self {
             requests: Default::default(),
-            id: Uuid::new_v4().into(),
+            batch_id: Uuid::new_v4().into(),
         }
     }
 }

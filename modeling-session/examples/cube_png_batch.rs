@@ -104,7 +104,7 @@ async fn main() -> Result<()> {
     session
         .run_batch(ModelingBatch {
             requests: sketch_batch,
-            id: random_id(),
+            batch_id: random_id(),
         })
         .await
         .context("could not draw cube in batch")?;
