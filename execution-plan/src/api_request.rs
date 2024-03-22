@@ -182,6 +182,6 @@ pub async fn flush_batch_queue(
         severity: Severity::Info,
         related_addresses: Default::default(),
     });
-    session.run_batch(batch_queue).await?;
+    dbg!(session.run_batch(batch_queue).await)?;
     Ok(())
 }

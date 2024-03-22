@@ -184,6 +184,25 @@ where
 
 impl<T> Point3d<T>
 where
+    T: kcep::Value,
+    kcep::Primitive: From<T>,
+{
+    /// Apply a function `f` to each component of the point.
+    pub fn map<U, F>(self, mut f: F) -> Point3d<U>
+    where
+        F: FnMut(T) -> U,
+        U: kcep::Value,
+        kcep::Primitive: From<U>,
+    {
+        let x: U = f(self.x);
+        let y: U = f(self.y);
+        let z: U = f(self.z);
+        Point3d { x, y, z }
+    }
+}
+
+impl<T> Point3d<T>
+where
     kcep::Primitive: From<T>,
     T: kcep::Value,
 {

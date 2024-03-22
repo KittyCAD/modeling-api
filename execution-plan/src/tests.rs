@@ -780,7 +780,6 @@ async fn api_call_draw_cube() {
         y: -CUBE_WIDTH,
         z: -CUBE_WIDTH,
     };
-    let line_segment = |end: Point3d<LengthUnit>| PathSegment::Line { end, relative: false };
     let segments = [
         Point3d {
             x: CUBE_WIDTH,
@@ -1302,6 +1301,118 @@ async fn constants_add() {
     assert_eq!(mem.get(&ret_val1), mem.get(&ret_val2))
 }
 
+#[tokio::test]
+async fn handles_api_errors() {
+    let client = test_client().await;
+
+    const CUBE_WIDTH: LengthUnit = LengthUnit(200.0);
+
+    // Define primitives, load them into memory.
+    let mut static_data = StaticMemoryInitializer::default();
+    // This path will exist.
+    let path = ModelingCmdId(Uuid::parse_str("4cd175a3-e313-4c91-b624-368bea3c0483").unwrap());
+    // This path will NOT exist.
+    let bad_path = ModelingCmdId(Uuid::parse_str("fc33c254-b290-4846-be0f-4eacc5e11510").unwrap());
+    let path_id_addr = static_data.push(Primitive::from(path.0));
+    let bad_path_id_addr = static_data.push(Primitive::from(bad_path.0));
+    let starting_point = Point3d {
+        x: -CUBE_WIDTH,
+        y: -CUBE_WIDTH,
+        z: -CUBE_WIDTH,
+    };
+    let segments = [
+        Point3d {
+            x: CUBE_WIDTH,
+            y: -CUBE_WIDTH,
+            z: -CUBE_WIDTH,
+        },
+        Point3d {
+            x: CUBE_WIDTH,
+            y: CUBE_WIDTH,
+            z: -CUBE_WIDTH,
+        },
+        Point3d {
+            x: -CUBE_WIDTH,
+            y: CUBE_WIDTH,
+            z: -CUBE_WIDTH,
+        },
+        starting_point,
+    ]
+    .map(line_segment);
+    let segment_addrs = segments.map(|segment| static_data.push(segment));
+    let mut mem = static_data.finish();
+
+    // Run the plan!
+    let res = execute(
+        &mut mem,
+        vec![
+            InstructionKind::StackPush {
+                data: starting_point.into_parts(),
+            },
+            // Start the path.
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::StartPath,
+                store_response: None,
+                arguments: vec![],
+                cmd_id: path,
+            }),
+            // Draw a square.
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::MovePathPen,
+                store_response: None,
+                arguments: vec![InMemory::Address(path_id_addr), InMemory::StackPop],
+                cmd_id: new_id(),
+            }),
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ExtendPath,
+                store_response: None,
+                arguments: vec![path_id_addr.into(), segment_addrs[0].into()],
+                cmd_id: new_id(),
+            }),
+            // This instruction will fail, because it uses a ModelingCmdId which does not actually
+            // correspond to any object in the 3D scene.
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ExtendPath,
+                store_response: None,
+                arguments: vec![bad_path_id_addr.into(), segment_addrs[1].into()],
+                cmd_id: new_id(),
+            }),
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ExtendPath,
+                store_response: None,
+                arguments: vec![path_id_addr.into(), segment_addrs[2].into()],
+                cmd_id: new_id(),
+            }),
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ExtendPath,
+                store_response: None,
+                arguments: vec![path_id_addr.into(), segment_addrs[3].into()],
+                cmd_id: new_id(),
+            }),
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ClosePath,
+                store_response: None,
+                arguments: vec![path_id_addr.into()],
+                cmd_id: new_id(),
+            }),
+        ]
+        .into_iter()
+        .map(Instruction::from)
+        .collect(),
+        &mut Some(client),
+    )
+    .await;
+    if let Err(e) = res {
+        eprintln!("Expected an error, and good news, there was an error: {e:#?}");
+    } else {
+        panic!("This should have returned an error, because there's no path ID matching {bad_path}. But it didn't. This is a bug.");
+    }
+}
+
 fn new_id() -> ModelingCmdId {
     ModelingCmdId(Uuid::new_v4())
+}
+
+fn line_segment(end: Point3d<LengthUnit>) -> PathSegment {
+    PathSegment::Line { end, relative: false }
 }
