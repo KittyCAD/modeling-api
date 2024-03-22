@@ -1,7 +1,7 @@
 use kittycad_execution_plan_traits::{MemoryError, NumericPrimitive, Primitive, Value};
 
 /// A wrapper for chrono types, since we need to impl Value for them.
-#[derive(Clone, Debug, Eq, PartialEq, Hash)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Default)]
 pub struct DateTimeLocal {
     value: chrono::DateTime<chrono::Local>,
 }
@@ -55,7 +55,7 @@ fn datetime_into_from_values() {
     let a = DateTimeLocal {
         value: chrono::Local::now(),
     };
-    let Ok((b, _)) = DateTimeLocal::from_parts(&mut a.clone().into_parts().into_iter().map(Some)) else {
+    let Ok((b, _)) = DateTimeLocal::from_parts(&mut a.into_parts().into_iter().map(Some)) else {
         unreachable!();
     };
 
