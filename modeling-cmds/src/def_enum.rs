@@ -94,8 +94,12 @@ define_modeling_cmd_enum! {
             pub origin: Point3d<f64>,
             /// The axis of the extrusion (taken from the origin)
             pub axis: Point3d<f64>,
+            /// If true, the axis is interpreted within the 2D space of the solid 2D's plane
+            pub axis_is_2d: bool,
             /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
             pub angle: Angle,
+            /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
         }
 
         /// Command for revolving a solid 2d about a brep edge
@@ -110,6 +114,8 @@ define_modeling_cmd_enum! {
             pub edge_id: Uuid,
             /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
             pub angle: Angle,
+            /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
         }
 
         /// Closes a path, converting it to a 2D solid.
