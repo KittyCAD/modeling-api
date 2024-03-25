@@ -7,7 +7,8 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
 
     // Parse all items from the module, to discover which enum variants should exist.
     // Also, find the doc for each enum variant.
-    let (variants, docs): (Vec<_>, Vec<_>) = input
+    use itertools::MultiUnzip;
+    let (variants, docs, response_type): (Vec<_>, Vec<_>, Vec<_>) = input
         .content
         .iter()
         .next()
@@ -49,9 +50,36 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
                 })
                 .collect::<Vec<_>>()
                 .join("\n");
-            Some((&item.ident, doc))
+
+            // What is the response type for this impl of ModelingCmdVariant?
+            // Check the derives -- if it derives ModelingCmdVariantEmpty, then its response type is ().
+            // Otherwise, it's the appropriate type from `kittycad_modeling_cmds::output` module.
+            let has_response_type = item.attrs.iter().any(|attr| {
+                let syn::Meta::List(item) = &attr.meta else {
+                    return false;
+                };
+                if !item.path.is_ident("derive") {
+                    return false;
+                }
+                item.tokens.clone().into_iter().any(|token| {
+                    let proc_macro2::TokenTree::Ident(ident) = token else {
+                        return false;
+                    };
+                    ident == "ModelingCmdVariant"
+                })
+            });
+
+            let response_type = if has_response_type {
+                let ident = &item.ident;
+                quote_spanned! {span=>
+                    kittycad_modeling_cmds::output::#ident
+                }
+            } else {
+                ::quote::quote! {()}
+            };
+            Some((&item.ident, doc, response_type))
         })
-        .unzip();
+        .multiunzip();
 
     // Output the generated enum.
     quote_spanned! {span=>
@@ -74,6 +102,20 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
             #[doc = #docs]
             #variants,
         )*}
+
+        /// Each modeling command, and a channel to receive a response.
+        #[cfg(feature = "tokio")]
+        #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+        #[serde(rename_all = "snake_case")]
+        #[cfg_attr(not(unstable_exhaustive), non_exhaustive)]
+        pub enum ModelingCmdWithResp{#(
+            #[doc = #docs]
+            #variants{
+                params: kittycad_modeling_cmds::each_cmd::#variants,
+                response_sender: ::tokio::sync::oneshot::Sender<#response_type>,
+            },
+        )*}
+
         /// You can easily convert each modeling command with its fields,
         /// into a modeling command without fields.
         impl From<ModelingCmd> for ModelingCmdEndpoint {

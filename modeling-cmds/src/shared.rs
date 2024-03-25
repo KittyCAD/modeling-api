@@ -663,7 +663,7 @@ pub enum CurveType {
 }
 
 /// A file to be exported to the client.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, PartialEq)]
 pub struct ExportFile {
     /// The name of the file.
     pub name: String,
@@ -765,7 +765,7 @@ impl From<EngineErrorCode> for http::StatusCode {
 impl_string_enum_sql! {FileImportFormat}
 
 /// Camera settings including position, center, fov etc
-#[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, PartialEq)]
 pub struct CameraSettings {
     ///Camera position (vantage)
     pub pos: Point3d,
