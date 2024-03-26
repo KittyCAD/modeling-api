@@ -105,8 +105,7 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
 
         /// Each modeling command, and a channel to receive a response.
         #[cfg(feature = "tokio")]
-        #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-        #[serde(rename_all = "snake_case")]
+        #[derive(Debug)]
         #[cfg_attr(not(unstable_exhaustive), non_exhaustive)]
         pub enum ModelingCmdWithResp{#(
             #[doc = #docs]
