@@ -880,6 +880,35 @@ pub enum ExtrusionFaceCapType {
 }
 impl_string_enum_sql! {ExtrusionFaceCapType}
 
+/// Modes the engine can be in.
+#[derive(
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
+    Default,
+)]
+pub enum EngineMode {
+    /// Normal mode.
+    #[default]
+    Default,
+    /// Visually draw geometry.
+    /// In this mode, selection selects the entire object.
+    Sketch,
+    /// In this mode, selection selects inner geometric features, like lines, curves, edges, faces, etc.
+    Edit,
+}
+
 // Enum: Connect Rust Enums to Cpp
 // add our native c++ names for our cxx::ExternType implementation
 #[cfg(feature = "cxx")]

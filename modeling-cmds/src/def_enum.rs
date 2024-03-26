@@ -24,7 +24,7 @@ define_modeling_cmd_enum! {
             length_unit::LengthUnit,
             shared::{
                 Angle,
-                AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
+                AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType, EngineMode,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, SceneSelectionType, SceneToolType,
             },
@@ -929,6 +929,15 @@ define_modeling_cmd_enum! {
             Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
         )]
         pub struct DefaultCameraSetOrthographic;
+
+        /// Set the current engine mode.
+        #[derive(
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
+        )]
+        pub struct SetEngineMode{
+            /// What mode to be in.
+            pub mode: EngineMode,
+        }
 
         /// Use perspective projection.
         #[derive(
