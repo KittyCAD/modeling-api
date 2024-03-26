@@ -110,7 +110,9 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
         pub enum ModelingCmdWithResp{#(
             #[doc = #docs]
             #variants{
+                /// Parameters for the request.
                 params: kittycad_modeling_cmds::each_cmd::#variants,
+                /// Channel the backend will send the response on.
                 response_sender: ::tokio::sync::oneshot::Sender<#response_type>,
             },
         )*}
