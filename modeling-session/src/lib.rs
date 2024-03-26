@@ -105,11 +105,20 @@ impl Session {
     /// Run a batch of commands at once.
     pub async fn run_batch(&mut self, batch: ModelingBatch) -> Result<(), RunCommandError> {
         let (tx, rx) = oneshot::channel();
+        let cmd_ids: Vec<_> = batch.requests.iter().map(|req| req.cmd_id).collect();
         self.actor_tx
             .send(actor::Request::SendModelingBatch(batch, tx))
             .await
             .map_err(|_| RunCommandError::ActorFailed)?;
         rx.await.map_err(|_| RunCommandError::ActorFailed)??;
+        for cmd_id in cmd_ids {
+            let (tx, rx) = oneshot::channel();
+            self.actor_tx
+                .send(actor::Request::GetResponse(cmd_id, tx))
+                .await
+                .map_err(|_| RunCommandError::ActorFailed)?;
+            let _resp = dbg!(rx.await.map_err(|_| RunCommandError::ActorFailed))??;
+        }
         Ok(())
     }
 }
