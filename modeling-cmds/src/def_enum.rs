@@ -336,7 +336,9 @@ define_modeling_cmd_enum! {
             /// ID of the mirror entities.
             pub ids: Vec<Uuid>,
             /// Axis to use as mirror.
-            pub axis: Point2d<f64>,
+            pub axis: Point3d<f64>,
+            /// Point through which the mirror axis passes.
+            pub point: Point3d<f64>,
         }
 
         /// Enter edit mode
