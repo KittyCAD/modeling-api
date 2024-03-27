@@ -93,11 +93,25 @@ pub enum WebSocketRequest {
 }
 
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Default)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug)]
 #[serde(rename_all = "snake_case")]
 pub struct ModelingBatch {
     /// A sequence of modeling requests. If any request fails, following requests will not be tried.
     pub requests: Vec<ModelingCmdReq>,
+    /// ID of batch being submitted.
+    /// Each request has their own individual ModelingCmdId, but this is the
+    /// ID of the overall batch.
+    pub batch_id: ModelingCmdId,
+}
+
+impl std::default::Default for ModelingBatch {
+    /// Creates a batch with 0 requests and a random ID.
+    fn default() -> Self {
+        Self {
+            requests: Default::default(),
+            batch_id: Uuid::new_v4().into(),
+        }
+    }
 }
 
 impl ModelingBatch {

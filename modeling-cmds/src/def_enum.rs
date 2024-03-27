@@ -1,3 +1,4 @@
+use kittycad_execution_plan_macros::{ExecutionPlanFromMemory, ExecutionPlanValue};
 use kittycad_modeling_cmds_macros::define_modeling_cmd_enum;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -65,7 +66,7 @@ define_modeling_cmd_enum! {
             pub segment: PathSegment,
         }
 
-        /// Command for extruding a solid.
+        /// Command for extruding a solid 2d.
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
         )]
@@ -79,6 +80,42 @@ define_modeling_cmd_enum! {
             /// If true, the resulting solid will be closed on all sides, like a dice.
             /// If false, it will be open on one side, like a drinking glass.
             pub cap: bool,
+        }
+
+        /// Command for revolving a solid 2d.
+        #[derive(
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
+        )]
+        pub struct Revolve {
+            /// Which sketch to revolve.
+            /// Must be a closed 2D solid.
+            pub target: ModelingCmdId,
+            /// The origin of the extrusion axis
+            pub origin: Point3d<f64>,
+            /// The axis of the extrusion (taken from the origin)
+            pub axis: Point3d<f64>,
+            /// If true, the axis is interpreted within the 2D space of the solid 2D's plane
+            pub axis_is_2d: bool,
+            /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
+            pub angle: Angle,
+            /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+        }
+
+        /// Command for revolving a solid 2d about a brep edge
+        #[derive(
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
+        )]
+        pub struct RevolveAboutEdge {
+            /// Which sketch to revolve.
+            /// Must be a closed 2D solid.
+            pub target: ModelingCmdId,
+            /// The edge to use as the axis of revolution, must be linear and lie in the plane of the solid
+            pub edge_id: Uuid,
+            /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
+            pub angle: Angle,
+            /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
         }
 
         /// Closes a path, converting it to a 2D solid.
@@ -201,8 +238,6 @@ define_modeling_cmd_enum! {
         pub struct Export {
             /// IDs of the entities to be exported. If this is empty, then all entities are exported.
             pub entity_ids: Vec<Uuid>,
-            /// Select the unit interpretation of exported objects.
-            pub source_unit: units::UnitLength,
             /// The file format to export to.
             pub format: OutputFormat,
         }
@@ -797,7 +832,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Import files to the current model.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Eq, PartialEq, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ExecutionPlanValue, ModelingCmdVariant)]
         pub struct ImportFiles {
             /// Files to import.
             pub files: Vec<super::ImportFile>,
@@ -825,8 +860,6 @@ define_modeling_cmd_enum! {
             pub material_density_unit: units::UnitDensity,
             /// The output unit for the mass.
             pub output_unit: units::UnitMass,
-            /// Select the unit interpretation of distances in the scene.
-            pub source_unit: units::UnitLength,
         }
 
         /// Get the density of entities in the scene or the default scene.
@@ -841,8 +874,6 @@ define_modeling_cmd_enum! {
             pub material_mass_unit: units::UnitMass,
             /// The output unit for the density.
             pub output_unit: units::UnitDensity,
-            /// Select the unit interpretation of distances in the scene.
-            pub source_unit: units::UnitLength,
         }
 
         /// Get the volume of entities in the scene or the default scene.
@@ -853,8 +884,6 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The output unit for the volume.
             pub output_unit: units::UnitVolume,
-            /// Select the unit interpretation of distances in the scene.
-            pub source_unit: units::UnitLength,
         }
 
         /// Get the center of mass of entities in the scene or the default scene.
@@ -865,8 +894,6 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The output unit for the center of mass.
             pub output_unit: units::UnitLength,
-            /// Select the unit interpretation of distances in the scene.
-            pub source_unit: units::UnitLength,
         }
 
         /// Get the surface area of entities in the scene or the default scene.
@@ -877,8 +904,6 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The output unit for the surface area.
             pub output_unit: units::UnitArea,
-            /// Select the unit interpretation of distances in the scene.
-            pub source_unit: units::UnitLength,
         }
 
         /// Focus the default camera upon an object in the scene.
@@ -965,6 +990,8 @@ impl ModelingCmd {
             MovePathPen(_)
                 | ExtendPath(_)
                 | Extrude(_)
+                | Revolve(_)
+                | Solid3dFilletEdge(_)
                 | ClosePath(_)
                 | UpdateAnnotation(_)
                 | ObjectVisible(_)
@@ -981,7 +1008,9 @@ impl ModelingCmd {
 /// File to import into the current model.
 /// If you are sending binary data for a file, be sure to send the WebSocketRequest as
 /// binary/bson, not text/json.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(
+    Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ExecutionPlanFromMemory, Eq, PartialEq,
+)]
 pub struct ImportFile {
     /// The file's full path, including file extension.
     pub path: String,

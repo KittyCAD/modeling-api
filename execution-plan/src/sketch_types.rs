@@ -1,5 +1,5 @@
 //! Types for sketching models.
-use crate::{Destination, Instruction};
+use crate::{instruction::InstructionKind, Destination, Instruction};
 use kittycad_execution_plan_macros::ExecutionPlanValue;
 use kittycad_execution_plan_traits::{Address, Value};
 use kittycad_modeling_cmds::shared::{Point2d, Point3d, Point4d};
@@ -63,27 +63,27 @@ impl SketchGroup {
             + self.entity_id.into_parts().len();
         let mut out = vec![
             // Copy over the `from` field.
-            Instruction::Copy {
+            Instruction::from(InstructionKind::Copy {
                 source: start_point,
                 destination: Destination::Address(base_path_addr),
                 length: 1,
-            },
+            }),
             // Copy over the `to` field.
-            Instruction::Copy {
+            Instruction::from(InstructionKind::Copy {
                 source: start_point,
                 destination: Destination::Address(base_path_addr + self.path_first.from.into_parts().len()),
                 length: 1,
-            },
+            }),
         ];
         if let Some(tag) = tag {
             // Copy over the `name` field.
-            out.push(Instruction::Copy {
+            out.push(Instruction::from(InstructionKind::Copy {
                 source: tag,
                 destination: Destination::Address(
                     base_path_addr + self.path_first.from.into_parts().len() + self.path_first.to.into_parts().len(),
                 ),
                 length: 1,
-            });
+            }));
         }
         out
     }

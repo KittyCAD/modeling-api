@@ -20,13 +20,17 @@ pub use self::arithmetic::{
     operator::{BinaryOperation, Operation, UnaryOperation},
     BinaryArithmetic, UnaryArithmetic,
 };
-pub use self::instruction::Instruction;
+use self::import_files::ImportFiles;
+pub use self::instruction::{Instruction, InstructionKind};
 
 pub mod api_request;
 mod arithmetic;
 /// Defined constants and ability to create more.
 pub mod constants;
-mod instruction;
+/// Expose feature to import external geometry files.
+pub mod import_files;
+/// KCVM aka KCEP instructions.
+pub mod instruction;
 mod memory;
 pub mod sketch_types;
 #[cfg(test)]
@@ -267,5 +271,17 @@ pub enum ExecutionError {
         destination: usize,
         /// Current SketchGroup vec length.
         len: usize,
+    },
+    /// Invalid argument type
+    #[error("An argument of the wrong type was used.")]
+    BadArg {
+        /// The reason why the argument is bad.
+        reason: String,
+    },
+    /// A general execution error.
+    #[error("A general execution error.")]
+    General {
+        /// The reason for the error.
+        reason: String,
     },
 }

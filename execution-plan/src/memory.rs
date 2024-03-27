@@ -78,8 +78,8 @@ impl kittycad_execution_plan_traits::ReadMemory for Memory {
         self.stack.pop()
     }
 
-    fn stack_peek(&self) -> Result<&Vec<Primitive>, MemoryError> {
-        self.stack.peek()
+    fn stack_peek(&self) -> std::result::Result<Vec<Primitive>, MemoryError> {
+        self.stack.peek().cloned()
     }
 }
 

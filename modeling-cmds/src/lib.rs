@@ -6,6 +6,8 @@
 pub mod base64;
 /// Various coordinate systems.
 pub mod coord;
+/// chrono wrapper for datetimes.
+pub mod datetime;
 /// The modeling command enum with each specific modeling command.
 mod def_enum;
 /// Import and export types.

@@ -1,3 +1,5 @@
+use crate::datetime::DateTimeLocal;
+use kittycad_execution_plan_macros::ExecutionPlanValue;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -6,7 +8,20 @@ use serde::{Deserialize, Serialize};
 pub mod import {
     use super::*;
     /// Options for importing FBX.
-    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        Hash,
+        PartialEq,
+        Serialize,
+        Deserialize,
+        JsonSchema,
+        Display,
+        FromStr,
+        ExecutionPlanValue,
+    )]
     #[display("")]
     #[serde(rename = "FbxImportOptions")]
     pub struct Options {}
@@ -17,7 +32,7 @@ pub mod export {
     use super::*;
 
     /// Options for exporting FBX.
-    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
+    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
     #[serde(rename = "FbxExportOptions")]
     pub struct Options {
         /// Specifies which kind of FBX will be exported.
@@ -28,7 +43,7 @@ pub mod export {
         /// This is intended for local integration testing only; it is not provided as an option
         /// in the JSON schema.
         #[serde(skip)]
-        pub created: Option<chrono::DateTime<chrono::Local>>,
+        pub created: Option<DateTimeLocal>,
     }
 
     impl std::fmt::Display for Options {
@@ -49,7 +64,19 @@ pub mod export {
 
     /// Describes the storage format of an FBX file.
     #[derive(
-        Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
+        Default,
+        Clone,
+        Copy,
+        Debug,
+        Eq,
+        Hash,
+        PartialEq,
+        Serialize,
+        Deserialize,
+        JsonSchema,
+        Display,
+        FromStr,
+        ExecutionPlanValue,
     )]
     #[display(style = "snake_case")]
     #[serde(rename = "FbxStorage", rename_all = "snake_case")]

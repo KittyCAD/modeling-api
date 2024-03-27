@@ -1,3 +1,4 @@
+use kittycad_execution_plan_macros::ExecutionPlanValue;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -9,7 +10,9 @@ pub mod import {
     use super::*;
 
     /// Options for importing PLY.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(
+        Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, ExecutionPlanValue,
+    )]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "PlyImportOptions")]
     pub struct Options {

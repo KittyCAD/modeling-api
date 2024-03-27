@@ -5,6 +5,7 @@ use kittycad_execution_plan_traits::{InMemory, ListHeader, ObjectHeader, Primiti
 use kittycad_modeling_cmds::shared::Point2d;
 use kittycad_modeling_cmds::ModelingCmdEndpoint as Endpoint;
 use kittycad_modeling_cmds::{
+    coord,
     id::ModelingCmdId,
     length_unit::LengthUnit,
     shared::{PathSegment, Point3d, Point4d},
@@ -12,8 +13,11 @@ use kittycad_modeling_cmds::{
 use kittycad_modeling_session::{Session, SessionBuilder};
 use uuid::Uuid;
 
+use crate::instruction::InstructionKind;
 use crate::sketch_types::{Axes, BasePath, Plane, SketchGroup};
-use crate::{arithmetic::operator::BinaryOperation, arithmetic::operator::UnaryOperation, constants, Address};
+use crate::{
+    arithmetic::operator::BinaryOperation, arithmetic::operator::UnaryOperation, constants, Address, Destination,
+};
 
 use super::*;
 
@@ -70,12 +74,12 @@ async fn test_client() -> Session {
 
 #[tokio::test]
 async fn write_addr_to_memory() {
-    let plan = vec![Instruction::SetPrimitive {
+    let plan = vec![InstructionKind::SetPrimitive {
         address: Address::ZERO,
         value: 3.4.into(),
     }];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.get(&Address::ZERO), Some(&3.4.into()))
@@ -83,7 +87,7 @@ async fn write_addr_to_memory() {
 
 #[tokio::test]
 async fn add_literals() {
-    let plan = vec![Instruction::BinaryArithmetic {
+    let plan = vec![InstructionKind::BinaryArithmetic {
         arithmetic: BinaryArithmetic {
             operation: BinaryOperation::Add,
             operand0: Operand::Literal(3u32.into()),
@@ -92,7 +96,7 @@ async fn add_literals() {
         destination: Destination::Address(Address::ZERO + 1),
     }];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&5u32.into()))
@@ -100,7 +104,7 @@ async fn add_literals() {
 
 #[tokio::test]
 async fn min_uint_uint() {
-    let plan = vec![Instruction::BinaryArithmetic {
+    let plan = vec![InstructionKind::BinaryArithmetic {
         arithmetic: BinaryArithmetic {
             operation: BinaryOperation::Min,
             operand0: Operand::Literal(1u32.into()),
@@ -109,7 +113,7 @@ async fn min_uint_uint() {
         destination: Destination::Address(Address::ZERO + 1),
     }];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(*mem.get(&(Address::ZERO + 1)).unwrap(), 1u32.into())
@@ -117,7 +121,7 @@ async fn min_uint_uint() {
 
 #[tokio::test]
 async fn log_float_float() {
-    let plan = vec![Instruction::BinaryArithmetic {
+    let plan = vec![InstructionKind::BinaryArithmetic {
         arithmetic: BinaryArithmetic {
             operation: BinaryOperation::Log,
             operand0: Operand::Literal(100f64.into()),
@@ -126,7 +130,7 @@ async fn log_float_float() {
         destination: Destination::Address(Address::ZERO + 1),
     }];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(*mem.get(&(Address::ZERO + 1)).unwrap(), 2f64.into())
@@ -134,7 +138,7 @@ async fn log_float_float() {
 
 #[tokio::test]
 async fn max_uint_uint() {
-    let plan = vec![Instruction::BinaryArithmetic {
+    let plan = vec![InstructionKind::BinaryArithmetic {
         arithmetic: BinaryArithmetic {
             operation: BinaryOperation::Max,
             operand0: Operand::Literal(1u32.into()),
@@ -143,7 +147,7 @@ async fn max_uint_uint() {
         destination: Destination::Address(Address::ZERO + 1),
     }];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(*mem.get(&(Address::ZERO + 1)).unwrap(), 2u32.into())
@@ -153,18 +157,18 @@ async fn max_uint_uint() {
 async fn pop_off_stack_into_stack() {
     // Test that StackPop works when its destination is StackExtend.
     let plan = vec![
-        Instruction::StackPush {
+        InstructionKind::StackPush {
             data: vec![4u32.into()],
         },
-        Instruction::StackPush {
+        InstructionKind::StackPush {
             data: vec![5u32.into()],
         },
-        Instruction::StackPop {
+        InstructionKind::StackPop {
             destination: Some(Destination::StackExtend),
         },
     ];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.stack_pop().unwrap(), vec![4u32.into(), 5u32.into()]);
@@ -174,15 +178,15 @@ async fn pop_off_stack_into_stack() {
 async fn pop_off_stack_no_op() {
     // Popping off a stack back onto the stack should be a no-op.
     let plan = vec![
-        Instruction::StackPush {
+        InstructionKind::StackPush {
             data: vec![4u32.into()],
         },
-        Instruction::StackPop {
+        InstructionKind::StackPop {
             destination: Some(Destination::StackPush),
         },
     ];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.stack_pop().unwrap(), vec![4u32.into()]);
@@ -191,15 +195,15 @@ async fn pop_off_stack_no_op() {
 #[tokio::test]
 async fn basic_stack() {
     let plan = vec![
-        Instruction::StackPush {
+        InstructionKind::StackPush {
             data: vec![33u32.into()],
         },
-        Instruction::StackPop {
+        InstructionKind::StackPop {
             destination: Some(Destination::Address(Address::ZERO)),
         },
     ];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.get(&Address::ZERO), Some(&33u32.into()));
@@ -209,10 +213,10 @@ async fn basic_stack() {
 #[tokio::test]
 async fn add_stack() {
     let plan = vec![
-        Instruction::StackPush {
+        InstructionKind::StackPush {
             data: vec![10u32.into()],
         },
-        Instruction::BinaryArithmetic {
+        InstructionKind::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Add,
                 operand0: Operand::Literal(20u32.into()),
@@ -222,7 +226,7 @@ async fn add_stack() {
         },
     ];
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.get(&Address::ZERO), Some(&30u32.into()))
@@ -232,12 +236,12 @@ async fn add_stack() {
 async fn add_literal_to_reference() {
     let plan = vec![
         // Memory addr 0 contains 450
-        Instruction::SetPrimitive {
+        InstructionKind::SetPrimitive {
             address: Address::ZERO,
             value: 450u32.into(),
         },
         // Add 20 to addr 0
-        Instruction::BinaryArithmetic {
+        InstructionKind::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Add,
                 operand0: Operand::Reference(Address::ZERO),
@@ -248,7 +252,7 @@ async fn add_literal_to_reference() {
     ];
     // 20 + 450 = 470
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&470u32.into()))
@@ -273,14 +277,17 @@ async fn add_to_composite_value() {
     // Update the point's x-value in memory.
     execute(
         &mut mem,
-        vec![Instruction::BinaryArithmetic {
+        vec![InstructionKind::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Add,
                 operand0: Operand::Reference(start_addr),
                 operand1: Operand::Literal(40u32.into()),
             },
             destination: Destination::Address(start_addr),
-        }],
+        }]
+        .into_iter()
+        .map(Instruction::from)
+        .collect(),
         &mut None,
     )
     .await
@@ -304,12 +311,12 @@ async fn modulo_and_power_with_reference() {
     // Modulo with two positive integers
     let plan = vec![
         // Memory addr 0 contains 450
-        Instruction::SetPrimitive {
+        InstructionKind::SetPrimitive {
             address: Address::ZERO,
             value: 450u32.into(),
         },
         // Take (address 0) % 20
-        Instruction::BinaryArithmetic {
+        InstructionKind::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Mod,
                 operand0: Operand::Reference(Address::ZERO),
@@ -320,7 +327,7 @@ async fn modulo_and_power_with_reference() {
     ];
     // 450 % 20 = 10
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&10u32.into()));
@@ -328,12 +335,12 @@ async fn modulo_and_power_with_reference() {
     // Pow with a positive integer and a positive float
     let plan = vec![
         // Memory addr 0 contains 2.5
-        Instruction::SetPrimitive {
+        InstructionKind::SetPrimitive {
             address: Address::ZERO,
             value: 2.5f32.into(),
         },
         // Take (address 0) ^ 2
-        Instruction::BinaryArithmetic {
+        InstructionKind::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Pow,
                 operand0: Operand::Reference(Address::ZERO),
@@ -344,7 +351,7 @@ async fn modulo_and_power_with_reference() {
     ];
     // 2.5^2 = 6.25
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&6.25f32.into()));
@@ -352,12 +359,12 @@ async fn modulo_and_power_with_reference() {
     // Modulo with two positive floats
     let plan = vec![
         // Memory addr 0 contains 12.5
-        Instruction::SetPrimitive {
+        InstructionKind::SetPrimitive {
             address: Address::ZERO,
             value: 12.5f32.into(),
         },
         // Take (address 0) % 2.25
-        Instruction::BinaryArithmetic {
+        InstructionKind::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Mod,
                 operand0: Operand::Reference(Address::ZERO),
@@ -368,7 +375,7 @@ async fn modulo_and_power_with_reference() {
     ];
     // 12.5 % 2.25 = 1.25
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&1.25f32.into()));
@@ -376,12 +383,12 @@ async fn modulo_and_power_with_reference() {
     // Pow with a two negative floats
     let plan = vec![
         // Memory addr 0 contains -2.5
-        Instruction::SetPrimitive {
+        InstructionKind::SetPrimitive {
             address: Address::ZERO,
             value: (-2.5f32).into(),
         },
         // Take (address 0) ^ -4.2
-        Instruction::BinaryArithmetic {
+        InstructionKind::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Pow,
                 operand0: Operand::Reference(Address::ZERO),
@@ -392,7 +399,7 @@ async fn modulo_and_power_with_reference() {
     ];
     // (-2.5)^-4.2 = NaN
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     let result: f32 = mem.get_primitive(&(Address::ZERO + 1)).unwrap();
@@ -401,12 +408,12 @@ async fn modulo_and_power_with_reference() {
     // Modulo with two negative integers
     let plan = vec![
         // Memory addr 0 contains -450
-        Instruction::SetPrimitive {
+        InstructionKind::SetPrimitive {
             address: Address::ZERO,
             value: (-450i64).into(),
         },
         // Take (address 0) % -20
-        Instruction::BinaryArithmetic {
+        InstructionKind::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Mod,
                 operand0: Operand::Reference(Address::ZERO),
@@ -417,7 +424,7 @@ async fn modulo_and_power_with_reference() {
     ];
     // -450 % -20 = -10
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&(-10i64).into()));
@@ -425,12 +432,12 @@ async fn modulo_and_power_with_reference() {
     // Modulo with a negative integer and a positive integer
     let plan = vec![
         // Memory addr 0 contains -450
-        Instruction::SetPrimitive {
+        InstructionKind::SetPrimitive {
             address: Address::ZERO,
             value: (-450i64).into(),
         },
         // Take (address 0) % 20
-        Instruction::BinaryArithmetic {
+        InstructionKind::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Mod,
                 operand0: Operand::Reference(Address::ZERO),
@@ -441,7 +448,7 @@ async fn modulo_and_power_with_reference() {
     ];
     // -450 % 20 = -10
     let mut mem = Memory::default();
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
     assert_eq!(mem.get(&(Address::ZERO + 1)), Some(&(-10i64).into()));
@@ -493,20 +500,26 @@ async fn add_path_to_sketch_group() {
         },
     };
     let instructions = vec![
-        Instruction::SketchGroupSet {
+        InstructionKind::SketchGroupSet {
             sketch_group: sg,
             destination: 0,
         },
-        Instruction::StackPush {
+        InstructionKind::StackPush {
             data: next.clone().into_parts(),
         },
-        Instruction::SketchGroupAddSegment {
+        InstructionKind::SketchGroupAddSegment {
             segment: InMemory::StackPop,
             source: 0,
             destination: 0,
         },
     ];
-    execute(&mut mem, instructions, &mut None).await.unwrap();
+    execute(
+        &mut mem,
+        instructions.into_iter().map(Instruction::from).collect(),
+        &mut None,
+    )
+    .await
+    .unwrap();
     assert_eq!(mem.sketch_groups[0].path_rest.last().unwrap(), &next);
 }
 
@@ -532,15 +545,18 @@ async fn get_element_of_array() {
     execute(
         &mut mem,
         vec![
-            Instruction::SetList {
+            InstructionKind::SetList {
                 start: START_DATA_AT.into(),
                 elements: list,
             },
-            Instruction::AddrOfMember {
+            InstructionKind::AddrOfMember {
                 start: Operand::Literal(Primitive::Address(Address::ZERO + 10)),
                 member: Operand::Literal(Primitive::from(1usize)),
             },
-        ],
+        ]
+        .into_iter()
+        .map(Instruction::from)
+        .collect(),
         &mut None,
     )
     .await
@@ -593,16 +609,14 @@ async fn copy_len() {
 
     // Copy the value at addr 5 into addr 100.
     let copied_into = Address::ZERO + 100;
-    execute(
-        &mut mem,
-        vec![Instruction::CopyLen {
-            source_range: Operand::StackPop,
-            destination_range: Operand::Literal(Primitive::Address(copied_into)),
-        }],
-        &mut None,
-    )
-    .await
-    .unwrap();
+    let plan = vec![InstructionKind::CopyLen {
+        source_range: Operand::StackPop,
+        destination_range: Operand::Literal(Primitive::Address(copied_into)),
+    }]
+    .into_iter()
+    .map(Instruction::from)
+    .collect();
+    execute(&mut mem, plan, &mut None).await.unwrap();
 
     // Assert that the property was properly copied into the destination.
     assert_eq!(mem.get(&copied_into), mem.get(&(start_of_second_property + 1)));
@@ -616,24 +630,27 @@ async fn copy_onto_addresses() {
     execute(
         &mut mem,
         vec![
-            Instruction::SetPrimitive {
+            InstructionKind::SetPrimitive {
                 address: Address::ZERO + 3,
                 value: 1.0.into(),
             },
-            Instruction::SetPrimitive {
+            InstructionKind::SetPrimitive {
                 address: Address::ZERO + 4,
                 value: 2.0.into(),
             },
-            Instruction::SetPrimitive {
+            InstructionKind::SetPrimitive {
                 address: Address::ZERO + 5,
                 value: 3.0.into(),
             },
-            Instruction::Copy {
+            InstructionKind::Copy {
                 source: Address::ZERO + 4,
                 length: 2,
                 destination: Destination::Address(Address::ZERO + 10),
             },
-        ],
+        ]
+        .into_iter()
+        .map(Instruction::from)
+        .collect(),
         &mut None,
     )
     .await
@@ -649,24 +666,27 @@ async fn copy_onto_stack() {
     execute(
         &mut mem,
         vec![
-            Instruction::SetPrimitive {
+            InstructionKind::SetPrimitive {
                 address: Address::ZERO + 3,
                 value: 1.0.into(),
             },
-            Instruction::SetPrimitive {
+            InstructionKind::SetPrimitive {
                 address: Address::ZERO + 4,
                 value: 2.0.into(),
             },
-            Instruction::SetPrimitive {
+            InstructionKind::SetPrimitive {
                 address: Address::ZERO + 5,
                 value: 3.0.into(),
             },
-            Instruction::Copy {
+            InstructionKind::Copy {
                 source: Address::ZERO + 4,
                 length: 2,
                 destination: Destination::StackPush,
             },
-        ],
+        ]
+        .into_iter()
+        .map(Instruction::from)
+        .collect(),
         &mut None,
     )
     .await
@@ -680,13 +700,16 @@ async fn stack_extend() {
     execute(
         &mut mem,
         vec![
-            Instruction::StackPush {
+            InstructionKind::StackPush {
                 data: vec![Primitive::Nil],
             },
-            Instruction::StackExtend {
+            InstructionKind::StackExtend {
                 data: vec![Primitive::Bool(true)],
             },
-        ],
+        ]
+        .into_iter()
+        .map(Instruction::from)
+        .collect(),
         &mut None,
     )
     .await
@@ -720,10 +743,13 @@ async fn get_key_of_object() {
     let mut mem = smem.finish();
     execute(
         &mut mem,
-        vec![Instruction::AddrOfMember {
+        vec![InstructionKind::AddrOfMember {
             start: Operand::Literal(Primitive::Address(start)),
             member: Operand::Literal("second".to_owned().into()),
-        }],
+        }]
+        .into_iter()
+        .map(Instruction::from)
+        .collect(),
         &mut None,
     )
     .await
@@ -782,67 +808,70 @@ async fn api_call_draw_cube() {
     execute(
         &mut mem,
         vec![
-            Instruction::StackPush {
+            InstructionKind::StackPush {
                 data: starting_point.into_parts(),
             },
             // Start the path.
-            Instruction::ApiRequest(ApiRequest {
+            InstructionKind::ApiRequest(ApiRequest {
                 endpoint: Endpoint::StartPath,
                 store_response: None,
                 arguments: vec![],
                 cmd_id: path,
             }),
             // Draw a square.
-            Instruction::ApiRequest(ApiRequest {
+            InstructionKind::ApiRequest(ApiRequest {
                 endpoint: Endpoint::MovePathPen,
                 store_response: None,
                 arguments: vec![InMemory::Address(path_id_addr), InMemory::StackPop],
                 cmd_id: new_id(),
             }),
-            Instruction::ApiRequest(ApiRequest {
+            InstructionKind::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ExtendPath,
                 store_response: None,
                 arguments: vec![path_id_addr.into(), segment_addrs[0].into()],
                 cmd_id: new_id(),
             }),
-            Instruction::ApiRequest(ApiRequest {
+            InstructionKind::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ExtendPath,
                 store_response: None,
                 arguments: vec![path_id_addr.into(), segment_addrs[1].into()],
                 cmd_id: new_id(),
             }),
-            Instruction::ApiRequest(ApiRequest {
+            InstructionKind::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ExtendPath,
                 store_response: None,
                 arguments: vec![path_id_addr.into(), segment_addrs[2].into()],
                 cmd_id: new_id(),
             }),
-            Instruction::ApiRequest(ApiRequest {
+            InstructionKind::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ExtendPath,
                 store_response: None,
                 arguments: vec![path_id_addr.into(), segment_addrs[3].into()],
                 cmd_id: new_id(),
             }),
-            Instruction::ApiRequest(ApiRequest {
+            InstructionKind::ApiRequest(ApiRequest {
                 endpoint: Endpoint::ClosePath,
                 store_response: None,
                 arguments: vec![path_id_addr.into()],
                 cmd_id: new_id(),
             }),
             // Turn square into cube
-            Instruction::ApiRequest(ApiRequest {
+            InstructionKind::ApiRequest(ApiRequest {
                 endpoint: Endpoint::Extrude,
                 store_response: None,
                 arguments: vec![path_id_addr.into(), cube_height_addr.into(), cap_addr.into()],
                 cmd_id: new_id(),
             }),
-            Instruction::ApiRequest(ApiRequest {
+            InstructionKind::ApiRequest(ApiRequest {
                 endpoint: Endpoint::TakeSnapshot,
                 store_response: Some(output_addr),
                 arguments: vec![img_format_addr.into()],
                 cmd_id: new_id(),
             }),
-        ],
+        ]
+        .into_iter()
+        .map(Instruction::from)
+        .collect(),
         &mut Some(client),
     )
     .await
@@ -869,7 +898,7 @@ async fn api_call_draw_cube() {
 
 macro_rules! test_unary_op {
     ($op:ident, $i:expr, $o:expr) => {
-        let plan = vec![Instruction::UnaryArithmetic {
+        let plan = vec![InstructionKind::UnaryArithmetic {
             arithmetic: UnaryArithmetic {
                 operation: UnaryOperation::$op,
                 operand: Operand::Literal($i.into()),
@@ -879,7 +908,7 @@ macro_rules! test_unary_op {
 
         let mut mem = Memory::default();
 
-        execute(&mut mem, plan, &mut None)
+        execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
             .await
             .expect("failed to execute plan");
 
@@ -889,7 +918,7 @@ macro_rules! test_unary_op {
 
 macro_rules! test_unary_op_intentional_err {
     ($op:ident, $i:expr) => {
-        let plan = vec![Instruction::UnaryArithmetic {
+        let plan = vec![InstructionKind::UnaryArithmetic {
             arithmetic: UnaryArithmetic {
                 operation: UnaryOperation::$op,
                 operand: Operand::Literal($i.into()),
@@ -897,7 +926,7 @@ macro_rules! test_unary_op_intentional_err {
             destination: Destination::Address(Address::ZERO + 1),
         }];
         let mut mem = Memory::default();
-        let ret_val = execute(&mut mem, plan, &mut None).await;
+        let ret_val = execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None).await;
         assert_eq!(ret_val.is_err(), true);
     };
 }
@@ -1041,6 +1070,190 @@ async fn to_radians_float() {
 }
 
 #[tokio::test]
+async fn import_files_file_path_only() {
+    let client = test_client().await;
+
+    let mut static_data = StaticMemoryInitializer::default();
+    let file_path = static_data.push(Primitive::from("cube.stl".to_owned()));
+    let file_format = static_data.push(Primitive::Nil);
+
+    // Make space for the ImportedGeometry call.
+    let imported_geometry_enum_variant_header = static_data.push(Primitive::Nil);
+    let imported_geometry_id = static_data.push(Primitive::Nil);
+    let _imported_geometry_value_len = static_data.push(Primitive::Nil);
+    let _imported_geometry_value_0 = static_data.push(Primitive::Nil);
+    // Point to the beginning of the structure.
+    let imported_geometry = imported_geometry_enum_variant_header;
+
+    let img_format_addr = static_data.push(Primitive::from("Png".to_owned()));
+    let output_addr = Address::ZERO + 99;
+    let mut mem = static_data.finish();
+
+    if let Err(e) = execute(
+        &mut mem,
+        vec![
+            InstructionKind::ImportFiles(import_files::ImportFiles {
+                files_destination: Some(Destination::StackPush),
+                format_destination: None,
+                arguments: vec![file_path.into(), file_format.into()],
+            }),
+            InstructionKind::ImportFiles(import_files::ImportFiles {
+                files_destination: Some(Destination::StackPush),
+                format_destination: Some(Destination::StackPush),
+                arguments: vec![file_path.into(), file_format.into()],
+            }),
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ImportFiles,
+                store_response: Some(imported_geometry),
+                arguments: vec![InMemory::StackPop, InMemory::StackPop],
+                cmd_id: Uuid::new_v4().into(),
+            }),
+            InstructionKind::TransformImportFiles {
+                source_import_files_response: InMemory::Address(imported_geometry),
+                source_file_paths: InMemory::StackPop,
+                destination: Destination::Address(imported_geometry),
+            },
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::DefaultCameraFocusOn,
+                store_response: None,
+                arguments: vec![imported_geometry_id.into()],
+                cmd_id: new_id(),
+            }),
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::TakeSnapshot,
+                store_response: Some(output_addr),
+                arguments: vec![img_format_addr.into()],
+                cmd_id: new_id(),
+            }),
+        ]
+        .into_iter()
+        .map(Instruction::from)
+        .collect(),
+        &mut Some(client),
+    )
+    .await
+    {
+        terminate(e);
+    }
+
+    let Primitive::Bytes(b) = mem.get(&(Address::ZERO + 100)).as_ref().unwrap() else {
+        panic!("wrong format in memory addr 100");
+    };
+
+    // Visually check that the image is a cube from the cube.stl file.
+    use image::io::Reader as ImageReader;
+    let img = ImageReader::new(std::io::Cursor::new(b))
+        .with_guessed_format()
+        .unwrap()
+        .decode()
+        .unwrap();
+
+    twenty_twenty::assert_image("tests/outputs/cube-stl.png", &img, 0.9999);
+}
+
+fn terminate(e: ExecutionFailed) {
+    eprintln!("Error on instruction {}", e.instruction_index);
+    eprintln!("The instruction was {:#?}", e.instruction);
+    eprintln!("The error was {:#?}", e.error);
+    std::process::exit(1);
+}
+
+#[tokio::test]
+async fn import_files_with_file_format() {
+    let client = test_client().await;
+
+    let mut smi = StaticMemoryInitializer::default();
+    let file_path = smi.push(Primitive::from("cube.stl".to_owned()));
+
+    let file_format = smi.push(Primitive::from(ObjectHeader {
+        properties: vec!["type".to_owned(), "units".to_owned(), "coords".to_owned()],
+        size: 12,
+    }));
+    smi.push(Primitive::from("stl".to_string()));
+    smi.push(Primitive::from("mm".to_string()));
+    smi.push(coord::System {
+        forward: coord::AxisDirectionPair {
+            axis: coord::Axis::Y,
+            direction: coord::Direction::Negative,
+        },
+        up: coord::AxisDirectionPair {
+            axis: coord::Axis::Z,
+            direction: coord::Direction::Positive,
+        },
+    });
+
+    // Make space for the ImportedGeometry call.
+    let imported_geometry_enum_variant_header = smi.push(Primitive::Nil);
+    let imported_geometry_id = smi.push(Primitive::Nil);
+    let _imported_geometry_value_len = smi.push(Primitive::Nil);
+    let _imported_geometry_value_0 = smi.push(Primitive::Nil);
+    // Point to the beginning of the structure.
+    let imported_geometry = imported_geometry_enum_variant_header;
+
+    let img_format_addr = smi.push(Primitive::from("Png".to_owned()));
+    let output_addr = Address::ZERO + 99;
+    let mut mem = smi.finish();
+
+    execute(
+        &mut mem,
+        vec![
+            InstructionKind::ImportFiles(import_files::ImportFiles {
+                files_destination: Some(Destination::StackPush),
+                format_destination: None,
+                arguments: vec![file_path.into(), file_format.into()],
+            }),
+            InstructionKind::ImportFiles(import_files::ImportFiles {
+                files_destination: Some(Destination::StackPush),
+                format_destination: Some(Destination::StackPush),
+                arguments: vec![file_path.into(), file_format.into()],
+            }),
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::ImportFiles,
+                store_response: Some(imported_geometry),
+                arguments: vec![InMemory::StackPop, InMemory::StackPop],
+                cmd_id: Uuid::new_v4().into(),
+            }),
+            InstructionKind::TransformImportFiles {
+                source_import_files_response: InMemory::Address(imported_geometry),
+                source_file_paths: InMemory::StackPop,
+                destination: Destination::Address(imported_geometry),
+            },
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::DefaultCameraFocusOn,
+                store_response: None,
+                arguments: vec![imported_geometry_id.into()],
+                cmd_id: new_id(),
+            }),
+            InstructionKind::ApiRequest(ApiRequest {
+                endpoint: Endpoint::TakeSnapshot,
+                store_response: Some(output_addr),
+                arguments: vec![img_format_addr.into()],
+                cmd_id: new_id(),
+            }),
+        ]
+        .into_iter()
+        .map(Instruction::from)
+        .collect(),
+        &mut Some(client),
+    )
+    .await
+    .unwrap();
+
+    let Primitive::Bytes(b) = mem.get(&(Address::ZERO + 100)).as_ref().unwrap() else {
+        panic!("wrong format in memory addr 100");
+    };
+
+    // Visually check that the image is a cube from the cube.stl file.
+    use image::io::Reader as ImageReader;
+    let img = ImageReader::new(std::io::Cursor::new(b))
+        .with_guessed_format()
+        .unwrap()
+        .decode()
+        .unwrap();
+
+    twenty_twenty::assert_image("tests/outputs/cube-stl.png", &img, 0.9999);
+}
+#[tokio::test]
 async fn constants_sets_value_moves_memory_pointer() {
     let mut mem = Memory::default();
 
@@ -1064,7 +1277,7 @@ async fn constants_add() {
 
     // Compare adding two constants with two inline values
     let plan = vec![
-        Instruction::BinaryArithmetic {
+        InstructionKind::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Add,
                 operand0: Operand::Reference(pi),
@@ -1072,7 +1285,7 @@ async fn constants_add() {
             },
             destination: Destination::Address(ret_val1),
         },
-        Instruction::BinaryArithmetic {
+        InstructionKind::BinaryArithmetic {
             arithmetic: BinaryArithmetic {
                 operation: BinaryOperation::Add,
                 operand0: Operand::Literal(constants::PI),
@@ -1082,7 +1295,7 @@ async fn constants_add() {
         },
     ];
 
-    execute(&mut mem, plan, &mut None)
+    execute(&mut mem, plan.into_iter().map(Instruction::from).collect(), &mut None)
         .await
         .expect("failed to execute plan");
 

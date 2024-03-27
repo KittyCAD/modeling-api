@@ -105,6 +105,9 @@ define_ok_modeling_cmd_response_enum! {
             /// The number of objects in the scene.
             pub num_objects: u32,
         }
+        /// The response from the `DefaultCameraFocusOn` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct DefaultCameraFocusOn { }
 
         /// The response from the `SelectGet` command.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
@@ -275,6 +278,15 @@ define_ok_modeling_cmd_response_enum! {
         pub struct ImportFiles {
             /// ID of the imported 3D models within the scene.
             pub object_id: Uuid,
+        }
+
+        /// Data from importing the files
+        #[derive(Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct ImportedGeometry {
+            /// ID of the imported 3D models within the scene.
+            pub id: Uuid,
+            /// The original file paths that held the geometry.
+            pub value: Vec<String>,
         }
 
         /// The mass response.

@@ -36,6 +36,7 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
         /// This can be one of several types of responses, depending on the command.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
         #[serde(rename_all = "snake_case", tag = "type", content = "data")]
+        #[cfg_attr(not(unstable_exhaustive), non_exhaustive)]
         pub enum OkModelingCmdResponse {
             /// An empty response, used for any command that does not explicitly have a response
             /// defined here.
