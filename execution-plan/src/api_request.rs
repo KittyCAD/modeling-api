@@ -99,16 +99,6 @@ impl ApiRequest {
                 log_req(events);
                 session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
             }
-            Endpoint::EnableSketchMode => {
-                let cmd = each_cmd::EnableSketchMode::from_memory(&mut arguments, mem, events)?;
-                log_req(events);
-                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
-            }
-            Endpoint::SketchModeEnable => {
-                let cmd = each_cmd::SketchModeEnable::from_memory(&mut arguments, mem, events)?;
-                log_req(events);
-                session.run_command(cmd_id, ModelingCmd::from(cmd)).await?
-            }
             Endpoint::DefaultCameraZoom => {
                 let cmd = each_cmd::DefaultCameraZoom::from_memory(&mut arguments, mem, events)?;
                 log_req(events);
@@ -151,8 +141,6 @@ impl ApiRequest {
             Endpoint::TakeSnapshot => each_cmd::TakeSnapshot::from_memory(&mut arguments, mem, events)?.into(),
             Endpoint::ImportFiles => each_cmd::ImportFiles::from_memory(&mut arguments, mem, events)?.into(),
             Endpoint::MakePlane => each_cmd::MakePlane::from_memory(&mut arguments, mem, events)?.into(),
-            Endpoint::EnableSketchMode => each_cmd::EnableSketchMode::from_memory(&mut arguments, mem, events)?.into(),
-            Endpoint::SketchModeEnable => each_cmd::SketchModeEnable::from_memory(&mut arguments, mem, events)?.into(),
             Endpoint::DefaultCameraFocusOn => {
                 each_cmd::DefaultCameraFocusOn::from_memory(&mut arguments, mem, events)?.into()
             }
