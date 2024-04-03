@@ -903,7 +903,7 @@ impl_string_enum_sql! {ExtrusionFaceCapType}
 #[serde(rename_all = "lowercase")]
 pub enum PostEffectType {
     Phosphor,
-    SSAO,
+    Ssao,
     NoEffect,
 }
 impl_string_enum_sql! {PostEffectType}
