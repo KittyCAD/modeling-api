@@ -1748,7 +1748,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-execution-plan"
-version = "0.1.1"
+version = "0.1.3"
 dependencies = [
  "bytes",
  "gltf-json",
@@ -1853,7 +1853,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-session"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "color-eyre",
  "futures",
