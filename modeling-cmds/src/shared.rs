@@ -908,7 +908,6 @@ pub enum PostEffectType {
 }
 impl_string_enum_sql! {PostEffectType}
 
-
 // Enum: Connect Rust Enums to Cpp
 // add our native c++ names for our cxx::ExternType implementation
 #[cfg(feature = "cxx")]
