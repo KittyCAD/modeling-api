@@ -880,6 +880,35 @@ pub enum ExtrusionFaceCapType {
 }
 impl_string_enum_sql! {ExtrusionFaceCapType}
 
+/// Post effect type
+#[allow(missing_docs)]
+#[derive(
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
+)]
+#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
+#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
+#[serde(rename_all = "lowercase")]
+pub enum PostEffectType {
+    Phosphor,
+    SSAO,
+    NoEffect,
+}
+impl_string_enum_sql! {PostEffectType}
+
+
 // Enum: Connect Rust Enums to Cpp
 // add our native c++ names for our cxx::ExternType implementation
 #[cfg(feature = "cxx")]
@@ -908,4 +937,7 @@ impl_extern_type! {
     // Utils
     EngineErrorCode = "Enums::_ErrorCode"
     GlobalAxis = "Enums::_GlobalAxis"
+
+    // Graphics engine
+    PostEffectType = "Enums::_PostEffectType"
 }
