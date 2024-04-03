@@ -102,6 +102,10 @@ pub struct ModelingBatch {
     /// Each request has their own individual ModelingCmdId, but this is the
     /// ID of the overall batch.
     pub batch_id: ModelingCmdId,
+    /// If false or omitted, responses to each batch command will just be Ok(()).
+    /// If true, responses will be the actual response data for that modeling command.
+    #[serde(default)]
+    pub responses: bool,
 }
 
 impl std::default::Default for ModelingBatch {
@@ -110,6 +114,7 @@ impl std::default::Default for ModelingBatch {
         Self {
             requests: Default::default(),
             batch_id: Uuid::new_v4().into(),
+            responses: false,
         }
     }
 }
