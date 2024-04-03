@@ -144,6 +144,7 @@ async fn main() -> Result<()> {
         .run_batch(ModelingBatch {
             requests: sketch_batch,
             batch_id: random_id(),
+            responses: false,
         })
         .await
         .context("could not draw cube in batch")?;
