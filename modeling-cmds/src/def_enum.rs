@@ -697,16 +697,16 @@ define_modeling_cmd_enum! {
 
         /// Set the color of the tool lines for the scene.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
-        pub struct SetCurrentToolColor {
+        pub struct SetCurrentToolProperties {
             /// The color to set the tool line to.
-            pub color: Color,
+            pub color: Option<Color>,
         }
 
         /// Set the default color used when a specific color isn't used.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
-        pub struct SetDefaultSystemColor {
+        pub struct SetDefaultSystemProperties {
             /// The color to set.
-            pub color: Color,
+            pub color: Option<Color>,
         }
 
         /// Get type of the given curve.
