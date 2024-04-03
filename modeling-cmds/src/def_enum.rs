@@ -695,6 +695,20 @@ define_modeling_cmd_enum! {
             pub color: Color,
         }
 
+        /// Set the color of the grid lines for the scene.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct SetGridLineColor {
+            /// The color to set the grid line to.
+            pub color: Color,
+        }
+
+        /// Set the default color used when a specific color isn't used.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct SetDefaultSystemColor {
+            /// The color to set.
+            pub color: Color,
+        }
+
         /// Get type of the given curve.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct CurveGetType {
