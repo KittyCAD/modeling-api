@@ -695,10 +695,10 @@ define_modeling_cmd_enum! {
             pub color: Color,
         }
 
-        /// Set the color of the grid lines for the scene.
+        /// Set the color of the tool lines for the scene.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
-        pub struct SetGridLineColor {
-            /// The color to set the grid line to.
+        pub struct SetCurrentToolColor {
+            /// The color to set the tool line to.
             pub color: Color,
         }
 
