@@ -695,17 +695,17 @@ define_modeling_cmd_enum! {
             pub color: Color,
         }
 
-        /// Set the color of the tool lines for the scene.
+        /// Set the properties of the tool lines for the scene.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct SetCurrentToolProperties {
             /// The color to set the tool line to.
             pub color: Option<Color>,
         }
 
-        /// Set the default color used when a specific color isn't used.
+        /// Set the default system properties used when a specific property isn't set.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct SetDefaultSystemProperties {
-            /// The color to set.
+            /// The default system color.
             pub color: Option<Color>,
         }
 
