@@ -58,3 +58,7 @@ cxx = ["dep:cxx"]
 diesel = ["dep:diesel"]
 websocket = ["dep:webrtc", "dep:serde_json"]
 unstable_exhaustive = []
+
+[package.metadata.docs.rs]
+all-features = true
+
