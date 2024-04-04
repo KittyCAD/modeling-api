@@ -897,13 +897,13 @@ impl_string_enum_sql! {ExtrusionFaceCapType}
     Ord,
     PartialOrd,
     ExecutionPlanValue,
+    Default,
 )]
-#[cfg_attr(feature = "diesel", derive(AsExpression, FromSqlRow))]
-#[cfg_attr(feature = "diesel", diesel(sql_type = Text))]
 #[serde(rename_all = "lowercase")]
 pub enum PostEffectType {
     Phosphor,
     Ssao,
+    #[default]
     NoEffect,
 }
 impl_string_enum_sql! {PostEffectType}
