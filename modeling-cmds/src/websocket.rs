@@ -1,6 +1,6 @@
 //! Types for the websocket server.
 
-use std::borrow::Cow;
+use std::{borrow::Cow, collections::HashMap};
 
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
@@ -171,6 +171,12 @@ pub enum OkWebSocketResponseData {
         /// The result of the command.
         modeling_response: OkModelingCmdResponse,
     },
+    /// Response to a ModelingBatch.
+    ModelingBatch {
+        /// For each request in the batch,
+        /// maps its ID to the request's outcome.
+        responses: HashMap<ModelingCmdId, BatchResponse>,
+    },
     /// The exported files.
     Export {
         /// The exported files
@@ -222,6 +228,23 @@ pub enum WebSocketResponse {
     Success(SuccessWebSocketResponse),
     /// Response sent when a request did not succeed.
     Failure(FailureWebSocketResponse),
+}
+
+/// Websocket responses can either be successful or unsuccessful.
+/// Slightly different schemas in either case.
+#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case", untagged)]
+pub enum BatchResponse {
+    /// Response sent when a request succeeded.
+    Success {
+        /// Response to the modeling command.
+        response: OkModelingCmdResponse,
+    },
+    /// Response sent when a request did not succeed.
+    Failure {
+        /// Errors that occurred during the modeling command.
+        errors: Vec<ApiError>,
+    },
 }
 
 impl WebSocketResponse {
