@@ -329,7 +329,7 @@ impl KV for LoggableApiError {
 }
 
 /// An error.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Eq, PartialEq)]
 pub struct ApiError {
     /// The error code.
     pub error_code: ErrorCode,
