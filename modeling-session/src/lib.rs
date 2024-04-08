@@ -103,7 +103,7 @@ impl Session {
     }
 
     /// Run a batch of commands at once.
-    pub async fn run_batch(
+    pub async fn run_batch_no_responses(
         &mut self,
         requests: Vec<ModelingCmdReq>,
         batch_id: ModelingCmdId,
