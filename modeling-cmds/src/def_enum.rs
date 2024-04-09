@@ -369,7 +369,7 @@ define_modeling_cmd_enum! {
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct SceneZoomToFit {
             /// How much to pad the view frame by.
-            pub padding: f64,
+            pub padding: f32,
         }
 
         /// Replaces current selection with these entities (by UUID).
