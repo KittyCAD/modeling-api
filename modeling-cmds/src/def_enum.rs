@@ -365,6 +365,13 @@ define_modeling_cmd_enum! {
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct SceneClearAll;
 
+        /// Fit the view to the geometry in the scene.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct SceneZoomToFit {
+            /// How much to pad the view frame by.
+            pub padding: f64,
+        }
+
         /// Replaces current selection with these entities (by UUID).
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct SelectReplace {
