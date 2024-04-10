@@ -451,7 +451,7 @@ impl Angle {
 
 impl Angle {
     /// 360 degrees.
-    pub fn revolution() -> Self {
+    pub fn turn() -> Self {
         Self::from_degrees(360.0)
     }
     /// 180 degrees.
