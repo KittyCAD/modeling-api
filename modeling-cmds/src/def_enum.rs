@@ -368,6 +368,8 @@ define_modeling_cmd_enum! {
         /// Fit the view to the geometry in the scene.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct SceneZoomToFit {
+            /// Which entities to fit to
+            pub entities: Vec<Uuid>,
             /// How much to pad the view frame by.
             pub padding: f32,
         }
