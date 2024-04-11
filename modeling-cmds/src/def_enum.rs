@@ -365,15 +365,6 @@ define_modeling_cmd_enum! {
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct SceneClearAll;
 
-        /// Fit the view to the geometry in the scene.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
-        pub struct SceneZoomToFit {
-            /// Which entities to fit to
-            pub entities: Vec<Uuid>,
-            /// How much to pad the view frame by.
-            pub padding: f32,
-        }
-
         /// Replaces current selection with these entities (by UUID).
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct SelectReplace {
@@ -436,6 +427,15 @@ define_modeling_cmd_enum! {
         pub struct ObjectBringToFront {
             /// Which object to change
             pub object_id: Uuid,
+        }
+
+        /// Fit the view to the specified object(s).
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct ObjectZoomToFit {
+            /// Which objects to fit to
+            pub objects: Vec<Uuid>,
+            /// How much to pad the view frame by.
+            pub padding: f32,
         }
 
         /// Set the material properties of an object
