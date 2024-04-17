@@ -337,6 +337,8 @@ define_ok_modeling_cmd_response_enum! {
         /// The plane for sketch mode.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
         pub struct GetSketchModePlane {
+            /// The origin.
+            pub origin: Point3d<f64>,
             /// The x axis.
             pub x_axis: Point3d<f64>,
             /// The y axis.
