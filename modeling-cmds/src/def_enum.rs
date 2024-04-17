@@ -436,15 +436,6 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
         }
 
-        /// Fit the view to the specified object(s).
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
-        pub struct ObjectZoomToFit {
-            /// Which objects to fit to
-            pub object_ids: Vec<Uuid>,
-            /// How much to pad the view frame by.
-            pub padding: f32,
-        }
-
         /// Set the material properties of an object
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct ObjectSetMaterialParamsPbr {
@@ -967,6 +958,15 @@ define_modeling_cmd_enum! {
         pub struct DefaultCameraSetPerspective {
             /// If this is not given, use the same parameters as last time the perspective camera was used.
             pub parameters: Option<PerspectiveCameraParameters>,
+        }
+
+        /// Fit the view to the specified object(s).
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct ZoomToFit {
+            /// Which objects to fit to
+            pub object_ids: Vec<Uuid>,
+            /// How much to pad the view frame by.
+            pub padding: f32,
         }
 
         /// Get a concise description of all of an extrusion's faces.
