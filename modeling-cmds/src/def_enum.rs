@@ -413,6 +413,13 @@ define_modeling_cmd_enum! {
             pub options: AnnotationOptions,
         }
 
+        /// Changes visibility of scene-wide edge lines on brep solids
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct EdgeLinesVisible {
+            /// Whether or not the edge lines should be hidden.
+            pub hidden: bool,
+        }
+
         /// Hide or show an object
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct ObjectVisible {

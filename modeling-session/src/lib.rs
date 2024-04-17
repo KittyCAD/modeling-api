@@ -57,7 +57,15 @@ impl Session {
         let webrtc = Some(false);
         let ws = client
             .modeling()
-            .commands_ws(fps, None, unlocked_framerate, video_res_height, video_res_width, webrtc)
+            .commands_ws(
+                fps,
+                None,
+                None,
+                unlocked_framerate,
+                video_res_height,
+                video_res_width,
+                webrtc,
+            )
             .await?;
         // Now that we have a WebSocket connection, we can split it into two ends:
         // one for writing to and one for reading from.

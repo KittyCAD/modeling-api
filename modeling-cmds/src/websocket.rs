@@ -90,6 +90,12 @@ pub enum WebSocketRequest {
         /// Collected metrics from the Client's end of the engine connection.
         metrics: Box<ClientMetrics>,
     },
+
+    /// Authentication header request.
+    Headers {
+        /// The authentication header.
+        headers: HashMap<String, String>,
+    },
 }
 
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
