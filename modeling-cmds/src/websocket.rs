@@ -1,6 +1,6 @@
 //! Types for the websocket server.
 
-use std::borrow::Cow;
+use std::{borrow::Cow, collections::HashMap};
 
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
@@ -90,6 +90,12 @@ pub enum WebSocketRequest {
         /// Collected metrics from the Client's end of the engine connection.
         metrics: Box<ClientMetrics>,
     },
+
+    /// Authentication header request.
+    Headers {
+        /// The authentication header.
+        headers: HashMap<String, String>,
+    },
 }
 
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
@@ -102,6 +108,10 @@ pub struct ModelingBatch {
     /// Each request has their own individual ModelingCmdId, but this is the
     /// ID of the overall batch.
     pub batch_id: ModelingCmdId,
+    /// If false or omitted, responses to each batch command will just be Ok(()).
+    /// If true, responses will be the actual response data for that modeling command.
+    #[serde(default)]
+    pub responses: bool,
 }
 
 impl std::default::Default for ModelingBatch {
@@ -110,6 +120,7 @@ impl std::default::Default for ModelingBatch {
         Self {
             requests: Default::default(),
             batch_id: Uuid::new_v4().into(),
+            responses: false,
         }
     }
 }
@@ -166,6 +177,12 @@ pub enum OkWebSocketResponseData {
         /// The result of the command.
         modeling_response: OkModelingCmdResponse,
     },
+    /// Response to a ModelingBatch.
+    ModelingBatch {
+        /// For each request in the batch,
+        /// maps its ID to the request's outcome.
+        responses: HashMap<ModelingCmdId, BatchResponse>,
+    },
     /// The exported files.
     Export {
         /// The exported files
@@ -217,6 +234,23 @@ pub enum WebSocketResponse {
     Success(SuccessWebSocketResponse),
     /// Response sent when a request did not succeed.
     Failure(FailureWebSocketResponse),
+}
+
+/// Websocket responses can either be successful or unsuccessful.
+/// Slightly different schemas in either case.
+#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case", untagged)]
+pub enum BatchResponse {
+    /// Response sent when a request succeeded.
+    Success {
+        /// Response to the modeling command.
+        response: OkModelingCmdResponse,
+    },
+    /// Response sent when a request did not succeed.
+    Failure {
+        /// Errors that occurred during the modeling command.
+        errors: Vec<ApiError>,
+    },
 }
 
 impl WebSocketResponse {
@@ -301,7 +335,7 @@ impl KV for LoggableApiError {
 }
 
 /// An error.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Eq, PartialEq)]
 pub struct ApiError {
     /// The error code.
     pub error_code: ErrorCode,

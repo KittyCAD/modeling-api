@@ -426,6 +426,13 @@ impl Angle {
             UnitAngle::Radians => self.value.to_degrees(),
         }
     }
+    /// Converts a given angle to radians.
+    pub fn to_radians(self) -> f64 {
+        match self.unit {
+            UnitAngle::Degrees => self.value.to_radians(),
+            UnitAngle::Radians => self.value,
+        }
+    }
     /// Create an angle in degrees.
     pub fn from_degrees(value: f64) -> Self {
         Self {
@@ -438,6 +445,53 @@ impl Angle {
         Self {
             unit: UnitAngle::Radians,
             value,
+        }
+    }
+}
+
+impl Angle {
+    /// 360 degrees.
+    pub fn turn() -> Self {
+        Self::from_degrees(360.0)
+    }
+    /// 180 degrees.
+    pub fn half_circle() -> Self {
+        Self::from_degrees(180.0)
+    }
+    /// 90 degrees.
+    pub fn quarter_circle() -> Self {
+        Self::from_degrees(90.0)
+    }
+}
+
+/// 0 degrees.
+impl Default for Angle {
+    /// 0 degrees.
+    fn default() -> Self {
+        Self::from_degrees(0.0)
+    }
+}
+
+impl std::ops::Add for Angle {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            unit: UnitAngle::Degrees,
+            value: self.to_degrees() + rhs.to_degrees(),
+        }
+    }
+}
+
+impl std::ops::AddAssign for Angle {
+    fn add_assign(&mut self, rhs: Self) {
+        match self.unit {
+            UnitAngle::Degrees => {
+                self.value += rhs.to_degrees();
+            }
+            UnitAngle::Radians => {
+                self.value += rhs.to_radians();
+            }
         }
     }
 }
@@ -880,6 +934,34 @@ pub enum ExtrusionFaceCapType {
 }
 impl_string_enum_sql! {ExtrusionFaceCapType}
 
+/// Post effect type
+#[allow(missing_docs)]
+#[derive(
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+    ExecutionPlanValue,
+    Default,
+)]
+#[serde(rename_all = "lowercase")]
+pub enum PostEffectType {
+    Phosphor,
+    Ssao,
+    #[default]
+    NoEffect,
+}
+impl_string_enum_sql! {PostEffectType}
+
 // Enum: Connect Rust Enums to Cpp
 // add our native c++ names for our cxx::ExternType implementation
 #[cfg(feature = "cxx")]
@@ -908,4 +990,7 @@ impl_extern_type! {
     // Utils
     EngineErrorCode = "Enums::_ErrorCode"
     GlobalAxis = "Enums::_GlobalAxis"
+
+    // Graphics engine
+    PostEffectType = "Enums::_PostEffectType"
 }

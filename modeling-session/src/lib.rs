@@ -57,7 +57,15 @@ impl Session {
         let webrtc = Some(false);
         let ws = client
             .modeling()
-            .commands_ws(fps, None, unlocked_framerate, video_res_height, video_res_width, webrtc)
+            .commands_ws(
+                fps,
+                None,
+                None,
+                unlocked_framerate,
+                video_res_height,
+                video_res_width,
+                webrtc,
+            )
             .await?;
         // Now that we have a WebSocket connection, we can split it into two ends:
         // one for writing to and one for reading from.
@@ -103,10 +111,21 @@ impl Session {
     }
 
     /// Run a batch of commands at once.
-    pub async fn run_batch(&mut self, batch: ModelingBatch) -> Result<(), RunCommandError> {
+    pub async fn run_batch_no_responses(
+        &mut self,
+        requests: Vec<ModelingCmdReq>,
+        batch_id: ModelingCmdId,
+    ) -> Result<(), RunCommandError> {
         let (tx, rx) = oneshot::channel();
         self.actor_tx
-            .send(actor::Request::SendModelingBatch(batch, tx))
+            .send(actor::Request::SendModelingBatch(
+                ModelingBatch {
+                    requests,
+                    batch_id,
+                    responses: false,
+                },
+                tx,
+            ))
             .await
             .map_err(|_| RunCommandError::ActorFailed)?;
         rx.await.map_err(|_| RunCommandError::ActorFailed)??;

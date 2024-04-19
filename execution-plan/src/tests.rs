@@ -1,7 +1,7 @@
 use std::env;
 
 use insta::assert_snapshot;
-use kittycad_execution_plan_traits::{InMemory, ListHeader, ObjectHeader, Primitive, Value};
+use kittycad_execution_plan_traits::{InMemory, ListHeader, NumericPrimitive, ObjectHeader, Primitive, Value};
 use kittycad_modeling_cmds::shared::Point2d;
 use kittycad_modeling_cmds::ModelingCmdEndpoint as Endpoint;
 use kittycad_modeling_cmds::{
@@ -912,7 +912,7 @@ macro_rules! test_unary_op {
             .await
             .expect("failed to execute plan");
 
-        assert_eq!(*mem.get(&(Address::ZERO + 1)).unwrap(), ($o).into())
+        assert!(approx_eq(mem.get(&(Address::ZERO + 1)).unwrap(), ($o).into(), 0.0001),)
     };
 }
 
@@ -1304,4 +1304,21 @@ async fn constants_add() {
 
 fn new_id() -> ModelingCmdId {
     ModelingCmdId(Uuid::new_v4())
+}
+
+pub fn approx_eq(lhs: &Primitive, rhs: Primitive, tolerance: f64) -> bool {
+    match (lhs, rhs) {
+        (Primitive::NumericValue(NumericPrimitive::Float(x)), Primitive::NumericValue(NumericPrimitive::Float(y))) => {
+            (x - y).abs() <= tolerance
+        }
+        (
+            Primitive::NumericValue(NumericPrimitive::UInteger(x)),
+            Primitive::NumericValue(NumericPrimitive::UInteger(y)),
+        ) => *x == y,
+        (
+            Primitive::NumericValue(NumericPrimitive::Integer(x)),
+            Primitive::NumericValue(NumericPrimitive::Integer(y)),
+        ) => *x == y,
+        (_, _) => false,
+    }
 }

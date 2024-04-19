@@ -10,7 +10,7 @@ use kittycad_modeling_cmds::{
     length_unit::LengthUnit,
     ok_response::OkModelingCmdResponse,
     shared::{PathSegment, Point3d},
-    websocket::{ModelingBatch, ModelingCmdReq},
+    websocket::ModelingCmdReq,
     ClosePath, ExtendPath, Extrude, ModelingCmd, MovePathPen, StartPath, TakeSnapshot,
 };
 use kittycad_modeling_session::{Session, SessionBuilder};
@@ -141,10 +141,7 @@ async fn main() -> Result<()> {
         cmd_id: random_id(),
     });
     session
-        .run_batch(ModelingBatch {
-            requests: sketch_batch,
-            batch_id: random_id(),
-        })
+        .run_batch_no_responses(sketch_batch, random_id())
         .await
         .context("could not draw cube in batch")?;
 
