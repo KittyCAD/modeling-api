@@ -964,7 +964,7 @@ define_modeling_cmd_enum! {
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct ZoomToFit {
             /// Which objects to fit to
-            pub object_ids: Vec<Uuid>,
+            pub object_ids: Option<Vec<Uuid>>,
             /// How much to pad the view frame by.
             pub padding: f32,
         }
