@@ -36,6 +36,11 @@ define_modeling_cmd_enum! {
             0.4
         }
 
+        /// Default empty uuid vector.
+        fn default_uuid_vector() -> Vec<Uuid> {
+            Vec::new()
+        }
+
         /// Start a new path.
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
@@ -974,7 +979,8 @@ define_modeling_cmd_enum! {
         /// Fit the view to the specified object(s).
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct ZoomToFit {
-            /// Which objects to fit camera to; if empty, fit to all non-default objects.
+            /// Which objects to fit camera to; if empty, fit to all non-default objects. Defaults to empty vector.
+            #[serde(default = "default_uuid_vector")]
             pub object_ids: Vec<Uuid>,
             /// How much to pad the view frame by.
             pub padding: f32,
