@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-modeling-session"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 authors = ["KittyCAD, Inc."]
 description = "Start a session with the KittyCAD Modeling API"
