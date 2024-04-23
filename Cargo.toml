@@ -19,7 +19,7 @@ missing_docs = "deny"
 dbg_macro = "deny"
 
 [workspace.dependencies]
-kittycad = { version = "0.2.44", features = ["requests"] }
+kittycad = { version = "0.3.0", features = ["requests"] }
 kittycad-execution-plan = { path = "execution-plan" }
 kittycad-execution-plan-macros = { path = "execution-plan-macros", version = "0.1.9" }
 kittycad-execution-plan-traits = { path = "execution-plan-traits", version = "0.1.15" }
