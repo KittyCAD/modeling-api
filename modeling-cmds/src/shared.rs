@@ -293,6 +293,7 @@ pub enum PathSegment {
         relative: bool,
     },
     /// A circular arc segment.
+    /// Arcs can be drawn clockwise when start > end.
     Arc {
         /// Center of the circle
         center: Point2d<LengthUnit>,
@@ -323,10 +324,11 @@ pub enum PathSegment {
         /// Radius of the arc.
         /// Not to be confused with Raiders of the Lost Ark.
         radius: LengthUnit,
-        /// Offset of the arc.
+        /// Offset of the arc. Negative values will arc clockwise.
         offset: Angle,
     },
     /// Adds a tangent arc from current pen position to the new position.
+    /// Arcs will chose a clockwise or counter-clockwise direction based on the arc end position.
     TangentialArcTo {
         /// Where the arc should end.
         /// Must lie in the same plane as the current path pen position.
