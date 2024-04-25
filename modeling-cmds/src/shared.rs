@@ -328,7 +328,7 @@ pub enum PathSegment {
         offset: Angle,
     },
     /// Adds a tangent arc from current pen position to the new position.
-    /// Arcs will chose a clockwise or counter-clockwise direction based on the arc end position.
+    /// Arcs will choose a clockwise or counter-clockwise direction based on the arc end position.
     TangentialArcTo {
         /// Where the arc should end.
         /// Must lie in the same plane as the current path pen position.
