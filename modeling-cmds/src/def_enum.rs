@@ -36,6 +36,11 @@ define_modeling_cmd_enum! {
             0.4
         }
 
+        /// Default empty uuid vector.
+        fn default_uuid_vector() -> Vec<Uuid> {
+            Vec::new()
+        }
+
         /// Start a new path.
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
@@ -307,6 +312,17 @@ define_modeling_cmd_enum! {
             pub length: LengthUnit,
         }
 
+        /// Mirror the input entities over the specified axis. (Currently only supports sketches)
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        pub struct EntityMirror {
+            /// ID of the mirror entities.
+            pub ids: Vec<Uuid>,
+            /// Axis to use as mirror.
+            pub axis: Point3d<f64>,
+            /// Point through which the mirror axis passes.
+            pub point: Point3d<f64>,
+        }
+
         /// Enter edit mode
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct EditModeEnter {
@@ -388,6 +404,13 @@ define_modeling_cmd_enum! {
             /// If any of these fields are set, they will overwrite the previous options for the
             /// annotation.
             pub options: AnnotationOptions,
+        }
+
+        /// Changes visibility of scene-wide edge lines on brep solids
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct EdgeLinesVisible {
+            /// Whether or not the edge lines should be hidden.
+            pub hidden: bool,
         }
 
         /// Hide or show an object
@@ -916,6 +939,16 @@ define_modeling_cmd_enum! {
         pub struct DefaultCameraSetPerspective {
             /// If this is not given, use the same parameters as last time the perspective camera was used.
             pub parameters: Option<PerspectiveCameraParameters>,
+        }
+
+        /// Fit the view to the specified object(s).
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct ZoomToFit {
+            /// Which objects to fit camera to; if empty, fit to all non-default objects. Defaults to empty vector.
+            #[serde(default = "default_uuid_vector")]
+            pub object_ids: Vec<Uuid>,
+            /// How much to pad the view frame by.
+            pub padding: f32,
         }
 
         /// Get a concise description of all of an extrusion's faces.
