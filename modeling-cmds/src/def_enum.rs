@@ -215,29 +215,6 @@ define_modeling_cmd_enum! {
             pub magnitude: f32,
         }
 
-        /// Enable sketch mode, where users can sketch 2D geometry.
-        /// Users choose a plane to sketch on.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
-        pub struct DefaultCameraEnableSketchMode {
-            /// What's the origin of the sketching plane?
-            pub origin: Point3d,
-            /// Which 3D axis of the scene should be the X axis of the sketching plane?
-            pub x_axis: Point3d,
-            /// Which 3D axis of the scene should be the Y axis of the sketching plane?
-            pub y_axis: Point3d,
-            /// How far to the sketching plane?
-            pub distance_to_plane: f32,
-            /// Should the camera use orthographic projection?
-            /// In other words, should an object's size in the rendered image stay constant regardless of its distance from the camera.
-            pub ortho: bool,
-            /// Should we animate or snap for the camera transition?
-            pub animated: bool,
-        }
-
-        /// Disable sketch mode, from the default camera.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
-        pub struct DefaultCameraDisableSketchMode;
-
         /// Export the scene to a file.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct Export {
@@ -661,21 +638,6 @@ define_modeling_cmd_enum! {
             pub window: Point2d,
         }
 
-        /// Enable sketch mode on the given plane.
-        /// If you want to sketch on a face, use `enable_sketch_mode` instead.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
-        pub struct SketchModeEnable {
-            /// Sketch on this plane.
-            pub plane_id: Uuid,
-            /// Use an orthographic camera.
-            pub ortho: bool,
-            /// Animate the transition to sketch mode.
-            pub animated: bool,
-            /// Disable the camera entirely for sketch mode and sketch on a plane (this would be the normal
-            /// of that plane).
-            pub disable_camera_with_plane: Option<Point3d<f64>>,
-        }
-
         /// Disable sketch mode.
         /// If you are sketching on a face, be sure to not disable sketch mode until you have extruded.
         /// Otherwise, your object will not be fused with the face.
@@ -709,6 +671,9 @@ define_modeling_cmd_enum! {
             pub animated: bool,
             /// Should the camera move at all?
             pub adjust_camera: bool,
+            /// If provided, ensures that the normal of the sketch plane must be aligned with this supplied normal
+            /// (otherwise the camera position will be used to infer the normal to point towards the viewer)
+            pub planar_normal: Option<Point3d<f64>>,
         }
 
         /// Set the background color of the scene.
