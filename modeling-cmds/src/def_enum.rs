@@ -953,7 +953,7 @@ define_modeling_cmd_enum! {
 
         /// Fit the view to the scene with an isometric view.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
-        pub struct Isometric {
+        pub struct ViewIsometric {
             /// How much to pad the view frame by.
             #[serde(default = "f32::default")]
             pub padding: f32,
