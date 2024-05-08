@@ -951,6 +951,14 @@ define_modeling_cmd_enum! {
             pub padding: f32,
         }
 
+        /// Fit the view to the scene with an isometric view.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct ViewIsometric {
+            /// How much to pad the view frame by.
+            #[serde(default = "f32::default")]
+            pub padding: f32,
+        }
+
         /// Get a concise description of all of an extrusion's faces.
         #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct Solid3dGetExtrusionFaceInfo {
