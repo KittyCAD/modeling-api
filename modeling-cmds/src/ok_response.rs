@@ -253,6 +253,13 @@ define_ok_modeling_cmd_response_enum! {
             pub pos: Point3d<f64>,
         }
 
+        /// The 3D center of mass on the surface
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct FaceGetCenter {
+            /// The 3D position on the surface center of mass
+            pub pos: Point3d<f64>,
+        }
+
         /// The gradient (dFdu, dFdv) + normal vector on a brep face
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
         pub struct FaceGetGradient {
