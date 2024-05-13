@@ -542,6 +542,13 @@ define_modeling_cmd_enum! {
             pub uv: Point2d<f64>,
         }
 
+        ///Obtains the surface "center of mass"
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
+        pub struct FaceGetCenter {
+            /// Which face is being queried.
+            pub object_id: Uuid,
+        }
+
         /// Determines the gradient (dFdu, dFdv) + normal vector on a brep face evaluated by parameters u,v
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct FaceGetGradient {
