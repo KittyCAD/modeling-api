@@ -422,6 +422,15 @@ define_modeling_cmd_enum! {
             pub hidden: bool,
         }
 
+        /// Make an object default or not
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        pub struct ObjectDefault {
+            /// Which object to change
+            pub object_id: Uuid,
+            /// Whether or not the object should be default.
+            pub default: bool,
+        }
+
         /// Bring an object to the front of the scene
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
         pub struct ObjectBringToFront {
