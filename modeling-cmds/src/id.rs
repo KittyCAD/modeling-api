@@ -21,7 +21,7 @@ impl std::str::FromStr for ModelingCmdId {
         // For example, 01234567890123456789012345678901 is returned as
         // 01234567-8901-2345-6789-012345678901. This is not great when
         // developers expect their UUIDs to not change (even in representation).
-        // Forcing them to use hypenated UUIDs resolves the issue.
+        // Forcing them to use hyphenated UUIDs resolves the issue.
         // 8-4-4-4-12 is the grouping.
         // uuid::error is a private module, so we have no access to ErrorKind.
         // We must use another way to invoke a uuid::Error.
