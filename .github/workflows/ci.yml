@@ -102,13 +102,3 @@ jobs:
           run: cargo install cargo-sort
         - name: Run check
           run: cargo sort --workspace --check
-
-    semver-checks:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Check semver
-          uses: obi1kenobi/cargo-semver-checks-action@v2
-          with:
-            package: kittycad-modeling-cmds

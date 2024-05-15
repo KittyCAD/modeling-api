@@ -28,6 +28,10 @@ pub enum ErrorCode {
     /// Don't retry this request, as it's inherently impossible. Instead, read the error message
     /// and change your request.
     BadRequest,
+    /// Auth token is missing from the request
+    AuthTokenMissing,
+    /// Auth token is invalid in some way (expired, incorrect format, etc)
+    AuthTokenInvalid,
     /// Client sent invalid JSON.
     InvalidJson,
     /// Client sent invalid BSON.
@@ -370,6 +374,8 @@ impl ApiError {
             | Code::MessageTypeNotAccepted
             | Code::BadRequest
             | Code::WrongProtocol
+            | Code::AuthTokenMissing
+            | Code::AuthTokenInvalid
             | Code::InvalidBson
             | Code::InvalidJson => false,
             // In debug builds, log connection problems, otherwise don't.
