@@ -28,10 +28,8 @@ pub enum ErrorCode {
     /// Don't retry this request, as it's inherently impossible. Instead, read the error message
     /// and change your request.
     BadRequest,
-    #[non_exhaustive]
     /// Auth token is missing from the request
     AuthTokenMissing,
-    #[non_exhaustive]
     /// Auth token is invalid in some way (expired, incorrect format, etc)
     AuthTokenInvalid,
     /// Client sent invalid JSON.
