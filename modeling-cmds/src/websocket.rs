@@ -19,6 +19,7 @@ use crate::{
 /// The type of error sent by the KittyCAD API.
 #[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
 #[serde(rename_all = "snake_case")]
+#[non_exhaustive]
 pub enum ErrorCode {
     /// Graphics engine failed to complete request, consider retrying
     InternalEngine,
