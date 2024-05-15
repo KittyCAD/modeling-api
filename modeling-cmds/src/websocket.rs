@@ -19,7 +19,6 @@ use crate::{
 /// The type of error sent by the KittyCAD API.
 #[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
 #[serde(rename_all = "snake_case")]
-#[non_exhaustive]
 pub enum ErrorCode {
     /// Graphics engine failed to complete request, consider retrying
     InternalEngine,
@@ -29,8 +28,10 @@ pub enum ErrorCode {
     /// Don't retry this request, as it's inherently impossible. Instead, read the error message
     /// and change your request.
     BadRequest,
+    #[non_exhaustive]
     /// Auth token is missing from the request
     AuthTokenMissing,
+    #[non_exhaustive]
     /// Auth token is invalid in some way (expired, incorrect format, etc)
     AuthTokenInvalid,
     /// Client sent invalid JSON.
