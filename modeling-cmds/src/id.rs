@@ -14,6 +14,27 @@ pub struct ModelingCmdId(pub Uuid);
 // implement our own serde deserializer for UUID essentially. We are
 // fortunate to have wrapped the UUID type already so we can do this.
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn modeling_cmd_id_from_bson() {
+        #[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
+        struct Id {
+            id: ModelingCmdId,
+        }
+
+        // Serializing and deserializing an ID (via BSON) should not change it.
+        let id_before = Id {
+            id: ModelingCmdId("f09fc20f-40d4-4a73-92fa-05d53baaabac".parse().unwrap()),
+        };
+        let bytes = bson::to_vec(&id_before).unwrap();
+        let id_after = bson::from_reader(bytes.as_slice()).unwrap();
+        assert_eq!(id_before, id_after);
+    }
+}
+
 struct UuidVisitor;
 
 impl<'de> Visitor<'de> for UuidVisitor {
@@ -28,6 +49,33 @@ impl<'de> Visitor<'de> for UuidVisitor {
         E: de::Error,
     {
         ModelingCmdId::from_str(value).map_err(|e| de::Error::custom(e.to_string()))
+    }
+
+    fn visit_bytes<E>(self, v: &[u8]) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Uuid::from_slice(v)
+            .map_err(|e| de::Error::custom(e.to_string()))
+            .map(ModelingCmdId)
+    }
+
+    fn visit_borrowed_bytes<E>(self, v: &'de [u8]) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Uuid::from_slice(v)
+            .map_err(|e| de::Error::custom(e.to_string()))
+            .map(ModelingCmdId)
+    }
+
+    fn visit_byte_buf<E>(self, v: Vec<u8>) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Uuid::from_slice(v.as_slice())
+            .map_err(|e| de::Error::custom(e.to_string()))
+            .map(ModelingCmdId)
     }
 }
 
