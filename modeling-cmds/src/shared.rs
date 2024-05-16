@@ -411,6 +411,9 @@ where
     }
 }
 
+///A quaternion
+pub type Quaternion = Point4d;
+
 /// An angle, with a specific unit.
 #[derive(Clone, Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize)]
 pub struct Angle {
@@ -831,6 +834,9 @@ pub struct CameraSettings {
 
     ///Camera's world-space up vector
     pub up: Point3d,
+
+    ///The Camera's orientation (in the form of a quaternion)
+    pub orientation: Quaternion,
 
     ///Camera's field-of-view angle (if ortho is false)
     pub fov_y: Option<f32>,
