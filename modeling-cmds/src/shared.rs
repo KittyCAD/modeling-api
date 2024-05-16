@@ -414,6 +414,13 @@ where
 ///A quaternion
 pub type Quaternion = Point4d;
 
+impl Default for Quaternion {
+    /// identity.
+    fn default() -> Self {
+        Self { x: 0.0, y: 0.0, z: 0.0, w: 1.0 }
+    }
+}
+
 /// An angle, with a specific unit.
 #[derive(Clone, Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize)]
 pub struct Angle {
