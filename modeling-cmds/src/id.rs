@@ -50,6 +50,33 @@ impl<'de> Visitor<'de> for UuidVisitor {
     {
         ModelingCmdId::from_str(value).map_err(|e| de::Error::custom(e.to_string()))
     }
+
+    fn visit_bytes<E>(self, v: &[u8]) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Uuid::from_slice(v)
+            .map_err(|e| de::Error::custom(e.to_string()))
+            .map(ModelingCmdId)
+    }
+
+    fn visit_borrowed_bytes<E>(self, v: &'de [u8]) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Uuid::from_slice(v)
+            .map_err(|e| de::Error::custom(e.to_string()))
+            .map(ModelingCmdId)
+    }
+
+    fn visit_byte_buf<E>(self, v: Vec<u8>) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Uuid::from_slice(v.as_slice())
+            .map_err(|e| de::Error::custom(e.to_string()))
+            .map(ModelingCmdId)
+    }
 }
 
 impl<'de> Deserialize<'de> for ModelingCmdId {
