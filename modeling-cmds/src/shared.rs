@@ -415,7 +415,7 @@ where
 pub type Quaternion = Point4d;
 
 impl Default for Quaternion {
-    /// identity.
+    /// (0, 0, 0, 1)
     fn default() -> Self {
         Self { x: 0.0, y: 0.0, z: 0.0, w: 1.0 }
     }
