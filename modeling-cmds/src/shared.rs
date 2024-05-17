@@ -412,7 +412,7 @@ where
 }
 
 ///A quaternion
-pub type Quaternion = Point4d;
+pub struct Quaternion(pub Point4d);
 
 impl Default for Quaternion {
     /// identity.
