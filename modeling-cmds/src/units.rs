@@ -91,8 +91,6 @@ pub enum UnitAngle {
     Radians,
 }
 
-impl_string_enum_sql!(UnitAngle);
-
 /// The valid types of area units.
 #[derive(
     Display,

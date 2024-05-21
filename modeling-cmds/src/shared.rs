@@ -102,8 +102,6 @@ pub enum AnnotationTextAlignmentX {
     Right,
 }
 
-impl_string_enum_sql! {AnnotationTextAlignmentX}
-
 /// Vertical Text alignment
 #[allow(missing_docs)]
 #[derive(
@@ -128,8 +126,6 @@ pub enum AnnotationTextAlignmentY {
     Center,
     Top,
 }
-
-impl_string_enum_sql! {AnnotationTextAlignmentY}
 
 /// A point in 3D space
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq, Default, ExecutionPlanValue)]
@@ -183,8 +179,6 @@ pub enum AnnotationLineEnd {
     Arrow,
 }
 
-impl_string_enum_sql! {AnnotationLineEnd}
-
 /// The type of annotation
 #[derive(
     Display,
@@ -209,8 +203,6 @@ pub enum AnnotationType {
     /// 3D annotation type
     T3D,
 }
-
-impl_string_enum_sql! {AnnotationType}
 
 /// The type of camera drag interaction.
 #[derive(
@@ -495,8 +487,6 @@ pub enum SceneSelectionType {
     Remove,
 }
 
-impl_string_enum_sql! {SceneSelectionType}
-
 /// The type of scene's active tool
 #[allow(missing_docs)]
 #[derive(
@@ -526,8 +516,6 @@ pub enum SceneToolType {
     SketchCurveMod,
 }
 
-impl_string_enum_sql! {SceneToolType}
-
 /// The path component constraint bounds type
 #[allow(missing_docs)]
 #[derive(
@@ -554,8 +542,6 @@ pub enum PathComponentConstraintBound {
     PartiallyConstrained,
     FullyConstrained,
 }
-
-impl_string_enum_sql! {PathComponentConstraintBound}
 
 /// The path component constraint type
 #[allow(missing_docs)]
@@ -586,8 +572,6 @@ pub enum PathComponentConstraintType {
     Parallel,
     AngleBetween,
 }
-
-impl_string_enum_sql! {PathComponentConstraintType}
 
 /// The path component command type (within a Path)
 #[allow(missing_docs)]
@@ -722,8 +706,6 @@ pub enum FileExportFormat {
     Stl,
 }
 
-impl_string_enum_sql! {FileExportFormat}
-
 /// The valid types of source file formats.
 #[derive(
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence,
@@ -769,8 +751,6 @@ impl From<EngineErrorCode> for http::StatusCode {
         }
     }
 }
-
-impl_string_enum_sql! {FileImportFormat}
 
 /// Camera settings including position, center, fov etc
 #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
@@ -856,7 +836,6 @@ pub enum GlobalAxis {
     /// The Z axis
     Z,
 }
-impl_string_enum_sql! {GlobalAxis}
 
 /// Possible types of faces which can be extruded from a 3D solid.
 #[derive(
@@ -885,7 +864,6 @@ pub enum ExtrusionFaceCapType {
     /// Capped below.
     Bottom,
 }
-impl_string_enum_sql! {ExtrusionFaceCapType}
 
 /// Post effect type
 #[allow(missing_docs)]
@@ -913,7 +891,6 @@ pub enum PostEffectType {
     #[default]
     NoEffect,
 }
-impl_string_enum_sql! {PostEffectType}
 
 // Enum: Connect Rust Enums to Cpp
 // add our native c++ names for our cxx::ExternType implementation
