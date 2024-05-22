@@ -99,6 +99,20 @@ define_ok_modeling_cmd_response_enum! {
             pub settings: CameraSettings
         }
 
+        /// The response from the `ZoomToFit` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct ZoomToFit {
+            /// Camera settings
+            pub settings: CameraSettings
+        }
+
+        /// The response from the `ViewIsometric` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        pub struct ViewIsometric {
+            /// Camera settings
+            pub settings: CameraSettings
+        }
+
         /// The response from the `GetNumObjects` command.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
         pub struct GetNumObjects {

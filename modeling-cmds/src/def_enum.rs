@@ -949,7 +949,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Fit the view to the specified object(s).
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct ZoomToFit {
             /// Which objects to fit camera to; if empty, fit to all non-default objects. Defaults to empty vector.
             #[serde(default = "default_uuid_vector")]
@@ -959,7 +959,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Fit the view to the scene with an isometric view.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariant)]
         pub struct ViewIsometric {
             /// How much to pad the view frame by.
             #[serde(default = "f32::default")]
