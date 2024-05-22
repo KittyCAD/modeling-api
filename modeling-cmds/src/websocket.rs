@@ -254,6 +254,8 @@ pub enum BatchResponse {
     Failure {
         /// Errors that occurred during the modeling command.
         errors: Vec<ApiError>,
+        /// Which command failed?
+        cmd_id: ModelingCmdId,
     },
 }
 
