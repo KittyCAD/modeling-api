@@ -880,6 +880,16 @@ impl From<CameraSettings> for crate::output::DefaultCameraGetSettings {
         Self { settings }
     }
 }
+impl From<CameraSettings> for crate::output::ZoomToFit {
+    fn from(settings: CameraSettings) -> Self {
+        Self { settings }
+    }
+}
+impl From<CameraSettings> for crate::output::ViewIsometric {
+    fn from(settings: CameraSettings) -> Self {
+        Self { settings }
+    }
+}
 
 /// Defines a perspective view.
 #[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd, ExecutionPlanValue)]
