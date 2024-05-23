@@ -417,7 +417,12 @@ pub type Quaternion = Point4d;
 impl Default for Quaternion {
     /// (0, 0, 0, 1)
     fn default() -> Self {
-        Self { x: 0.0, y: 0.0, z: 0.0, w: 1.0 }
+        Self {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            w: 1.0,
+        }
     }
 }
 
@@ -871,6 +876,16 @@ impl From<CameraSettings> for crate::output::CameraDragEnd {
     }
 }
 impl From<CameraSettings> for crate::output::DefaultCameraGetSettings {
+    fn from(settings: CameraSettings) -> Self {
+        Self { settings }
+    }
+}
+impl From<CameraSettings> for crate::output::ZoomToFit {
+    fn from(settings: CameraSettings) -> Self {
+        Self { settings }
+    }
+}
+impl From<CameraSettings> for crate::output::ViewIsometric {
     fn from(settings: CameraSettings) -> Self {
         Self { settings }
     }
