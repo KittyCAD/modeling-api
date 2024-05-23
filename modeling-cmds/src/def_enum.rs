@@ -26,7 +26,7 @@ define_modeling_cmd_enum! {
                 Angle,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
-                Point2d, Point3d, SceneSelectionType, SceneToolType,
+                Point2d, Point3d, Repeat, SceneSelectionType, SceneToolType,
             },
             units,
         };
@@ -273,8 +273,8 @@ define_modeling_cmd_enum! {
             /// Axis along which to make the copies.
             /// For Solid2d patterns, the z component is ignored.
             pub axis: Point3d<f64>,
-            /// Number of repetitions to make.
-            pub num_repetitions: u32,
+            /// How the pattern should be repeated.
+            pub repeat: Repeat,
             /// Spacing between repetitions.
             pub spacing: LengthUnit,
         }
@@ -289,8 +289,8 @@ define_modeling_cmd_enum! {
             /// Point around which to make the copies.
             /// For Solid2d patterns, the z component is ignored.
             pub center: Point3d<LengthUnit>,
-            /// Number of repetitions to make.
-            pub num_repetitions: u32,
+            /// How the pattern should be repeated.
+            pub repeat: Repeat,
             /// Arc angle (in degrees) to place repetitions along.
             pub arc_degrees: f64,
             /// Whether or not to rotate the objects as they are copied.

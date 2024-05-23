@@ -94,6 +94,16 @@ pub enum DistanceType {
     },
 }
 
+/// The type of repetition for a pattern
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
+#[serde(rename_all = "snake_case", tag = "type")]
+pub enum Repeat {
+    /// The number of repetitions (no gaps).
+    NumTimes(u32),
+    /// The places at which to insert the pattern, must be in ascending order.
+    InsertAt(Vec<u32>),
+}
+
 /// An RGBA color
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
 pub struct Color {
