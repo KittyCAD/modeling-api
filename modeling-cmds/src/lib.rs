@@ -21,6 +21,8 @@ mod kcep_primitive;
 pub mod length_unit;
 /// When a modeling command is successful, these responses could be returned.
 pub mod ok_response;
+/// Controlling the rendering session.
+pub mod session;
 /// Types that are shared between various modeling commands, like Point3d.
 pub mod shared;
 /// The modeling command trait that each modeling command implements.
