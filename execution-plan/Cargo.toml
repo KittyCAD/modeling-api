@@ -17,7 +17,7 @@ kittycad-execution-plan-macros = { workspace = true }
 kittycad-execution-plan-traits = { workspace = true }
 kittycad-modeling-cmds = { workspace = true }
 kittycad-modeling-session = { workspace = true }
-parse-display-derive = "0.8.2"
+parse-display-derive = "0.9.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0.114"
 tabled = "0.15.0"
@@ -29,5 +29,5 @@ uuid = "1.6.1"
 workspace = true
 
 [dev-dependencies]
-image = { version = "0.24.7", default-features = false, features = ["png"] }
-twenty-twenty = "0.7.0"
+image = { version = "0.25.1", default-features = false, features = ["png"] }
+twenty-twenty = "0.8.0"

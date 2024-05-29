@@ -24,7 +24,7 @@ uuid = { version = "1.6.1", features = ["v4"] }
 
 [dev-dependencies]
 color-eyre = "0.6"
-image = "0.24.7"
+image = "0.25.1"
 tokio = { version = "1", features = ["rt", "macros"] }
 
 [lints]
