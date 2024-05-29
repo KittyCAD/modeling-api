@@ -85,7 +85,7 @@ jobs:
           uses: actions/checkout@v4
         - uses: taiki-e/install-action@just
         - name: Set up Python
-          uses: actions/setup-python@v4
+          uses: actions/setup-python@v5
         - name: Install codespell
           run: python -m pip install codespell
         - name: Run codespell
