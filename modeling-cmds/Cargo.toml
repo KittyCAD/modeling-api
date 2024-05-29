@@ -18,7 +18,7 @@ data-encoding = "2.5.0"
 enum-iterator = "1.4.1"
 enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
-http = "0.2.9"
+http = "1.1.0"
 kittycad-execution-plan-macros = { workspace = true }
 kittycad-execution-plan-traits = { workspace = true }
 kittycad-modeling-cmds-macros = { workspace = true }

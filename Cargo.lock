@@ -1975,7 +1975,7 @@ dependencies = [
  "enum-iterator",
  "enum-iterator-derive",
  "euler",
- "http 0.2.12",
+ "http 1.1.0",
  "kittycad-execution-plan-macros",
  "kittycad-execution-plan-traits",
  "kittycad-modeling-cmds-macros",
