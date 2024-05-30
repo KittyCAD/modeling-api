@@ -107,6 +107,20 @@ define_modeling_cmd_enum! {
             pub tolerance: LengthUnit,
         }
 
+        /// Command for revolving a solid 2d.
+        #[derive(
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
+        )]
+        pub struct Solid3dShellFace {
+            /// Which Solid3D is being shelled.
+            pub object_id: Uuid,
+            /// Which faces to remove, leaving only the shell.
+            pub face_ids: Vec<Uuid>,
+            /// How thick the shell should be.
+            /// Smaller values mean a thinner shell.
+            pub shell_thickness: LengthUnit,
+        }
+
         /// Command for revolving a solid 2d about a brep edge
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanFromMemory, ModelingCmdVariantEmpty,
