@@ -30,4 +30,4 @@ workspace = true
 
 [dev-dependencies]
 image = { version = "0.25.1", default-features = false, features = ["png"] }
-twenty-twenty = "0.8.0"
+twenty-twenty = "0.8.1"
