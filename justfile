@@ -7,7 +7,7 @@ check-typos:
     codespell --config .codespellrc
 
 test:
-    cargo nextest --all-features run
+    cargo nextest run --all-features 
 
 # Run unit tests, output coverage to `lcov.info`.
 test-with-coverage:
