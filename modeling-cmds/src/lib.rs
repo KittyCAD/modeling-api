@@ -17,7 +17,6 @@ pub mod format;
 pub mod id;
 #[cfg(feature = "cxx")]
 pub mod impl_extern_type;
-mod kcep_primitive;
 pub mod length_unit;
 /// When a modeling command is successful, these responses could be returned.
 pub mod ok_response;

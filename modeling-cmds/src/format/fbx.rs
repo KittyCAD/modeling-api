@@ -1,5 +1,5 @@
 use crate::datetime::DateTimeLocal;
-use kittycad_execution_plan_macros::ExecutionPlanValue;
+
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -20,7 +20,7 @@ pub mod import {
         JsonSchema,
         Display,
         FromStr,
-        ExecutionPlanValue,
+       
     )]
     #[display("")]
     #[serde(rename = "FbxImportOptions")]
@@ -32,7 +32,7 @@ pub mod export {
     use super::*;
 
     /// Options for exporting FBX.
-    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
+    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
     #[serde(rename = "FbxExportOptions")]
     pub struct Options {
         /// Specifies which kind of FBX will be exported.
@@ -76,7 +76,7 @@ pub mod export {
         JsonSchema,
         Display,
         FromStr,
-        ExecutionPlanValue,
+       
     )]
     #[display(style = "snake_case")]
     #[serde(rename = "FbxStorage", rename_all = "snake_case")]

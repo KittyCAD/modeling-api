@@ -2,10 +2,6 @@
 resolver = "2"
 members = [
     "bumper",
-    "execution-plan",
-    "execution-plan-debugger",
-    "execution-plan-macros",
-    "execution-plan-traits",
     "modeling-cmds",
     "modeling-cmds-macros",
     "modeling-session",
@@ -20,9 +16,6 @@ dbg_macro = "deny"
 
 [workspace.dependencies]
 kittycad = { version = "0.3.0", features = ["requests"] }
-kittycad-execution-plan = { path = "execution-plan" }
-kittycad-execution-plan-macros = { path = "execution-plan-macros", version = "0.1.9" }
-kittycad-execution-plan-traits = { path = "execution-plan-traits", version = "0.1.15" }
 kittycad-modeling-cmds = { path = "modeling-cmds", version = "0.2.0" }
 kittycad-modeling-cmds-macros = { path = "modeling-cmds-macros", version = "0.1.5" }
 kittycad-modeling-session = { path = "modeling-session", version = "0.1.2" }
