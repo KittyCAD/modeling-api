@@ -1,4 +1,4 @@
-use kittycad_execution_plan_macros::ExecutionPlanValue;
+
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -11,7 +11,7 @@ pub mod import {
 
     /// Options for importing STL.
     #[derive(
-        Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, ExecutionPlanValue,
+        Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
     )]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "StlImportOptions")]

@@ -1,4 +1,4 @@
-use kittycad_execution_plan_macros::ExecutionPlanValue;
+
 use kittycad_modeling_cmds_macros::define_ok_modeling_cmd_response_enum;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -8,7 +8,7 @@ impl crate::ModelingCmdOutput for () {}
 define_ok_modeling_cmd_response_enum! {
     /// Output from Modeling API commands.
     pub mod output {
-        use kittycad_execution_plan_macros::ExecutionPlanValue;
+        
         use kittycad_modeling_cmds_macros::ModelingCmdOutput;
         use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
@@ -25,19 +25,19 @@ define_ok_modeling_cmd_response_enum! {
         };
 
         /// The response from the `Export` endpoint.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct Export {
             /// The files that were exported.
             pub files: Vec<ExportFile>,
         }
         /// The response from the `SelectWithPoint` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct SelectWithPoint {
             /// The UUID of the entity that was selected.
             pub entity_id: Option<Uuid>,
         }
         /// The response from the `HighlightSetEntity` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct HighlightSetEntity {
             /// The UUID of the entity that was highlighted.
             pub entity_id: Option<Uuid>,
@@ -45,25 +45,25 @@ define_ok_modeling_cmd_response_enum! {
             pub sequence: Option<u32>,
         }
         /// The response from the `EntityGetChildUuid` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct EntityGetChildUuid {
             /// The UUID of the child entity.
             pub entity_id: Uuid,
         }
         /// The response from the `EntityGetNumChildren` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct EntityGetNumChildren {
             /// The number of children the entity has.
             pub num: u32,
         }
         /// The response from the `EntityGetParentId` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct EntityGetParentId {
             /// The UUID of the parent entity.
             pub entity_id: Uuid,
         }
         /// The response from the `EntityGetAllChildUuids` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct EntityGetAllChildUuids {
             /// The UUIDs of the child entities.
             pub entity_ids: Vec<Uuid>,
@@ -72,121 +72,121 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `CameraDragMove` command.
         /// Note this is an "unreliable" channel message, so this data may need more data like a "sequence"
         //  to work properly
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct CameraDragMove {
             /// Camera settings
             pub settings: CameraSettings
         }
 
         /// The response from the `CameraDragEnd` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct CameraDragEnd {
             /// Camera settings
             pub settings: CameraSettings
         }
 
         /// The response from the `DefaultCameraGetSettings` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct DefaultCameraGetSettings {
             /// Camera settings
             pub settings: CameraSettings
         }
 
         /// The response from the `DefaultCameraZoom` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct DefaultCameraZoom {
             /// Camera settings
             pub settings: CameraSettings
         }
 
         /// The response from the `ZoomToFit` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct ZoomToFit {
             /// Camera settings
             pub settings: CameraSettings
         }
 
         /// The response from the `ViewIsometric` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct ViewIsometric {
             /// Camera settings
             pub settings: CameraSettings
         }
 
         /// The response from the `GetNumObjects` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct GetNumObjects {
             /// The number of objects in the scene.
             pub num_objects: u32,
         }
         /// The response from the `DefaultCameraFocusOn` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct DefaultCameraFocusOn { }
 
         /// The response from the `SelectGet` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct SelectGet {
             /// The UUIDs of the selected entities.
             pub entity_ids: Vec<Uuid>,
         }
 
         /// The response from the `Solid3dGetAllEdgeFaces` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetAllEdgeFaces {
             /// The UUIDs of the faces.
             pub faces: Vec<Uuid>,
         }
 
         /// The response from the `Solid3dGetAllOppositeEdges` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetAllOppositeEdges {
             /// The UUIDs of the edges.
             pub edges: Vec<Uuid>,
         }
 
         /// The response from the `Solid3dGetOppositeEdge` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetOppositeEdge {
             /// The UUID of the edge.
             pub edge: Uuid,
         }
 
         /// The response from the `Solid3dGetNextAdjacentEdge` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetNextAdjacentEdge {
             /// The UUID of the edge.
             pub edge: Option<Uuid>,
         }
 
         /// The response from the `Solid3dGetPrevAdjacentEdge` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetPrevAdjacentEdge {
             /// The UUID of the edge.
             pub edge: Option<Uuid>,
         }
 
         /// The response from the `GetEntityType` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct GetEntityType {
             /// The type of the entity.
             pub entity_type: EntityType,
         }
         /// The response from the `CurveGetControlPoints` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct CurveGetControlPoints {
             /// Control points in the curve.
             pub control_points: Vec<Point3d>,
         }
 
         /// The response from the `CurveGetType` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, Eq, PartialEq, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, Eq, PartialEq, ModelingCmdOutput)]
         pub struct CurveGetType {
             /// Curve type
             pub curve_type: CurveType,
         }
 
         /// The response from the `MouseClick` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct MouseClick {
             /// Entities that are modified.
             pub entities_modified: Vec<Uuid>,
@@ -195,21 +195,21 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `TakeSnapshot` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct TakeSnapshot {
             /// Contents of the image.
             pub contents: Base64Data,
         }
 
         /// The response from the `PathGetInfo` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct PathGetInfo {
             /// All segments in the path, in the order they were added.
             pub segments: Vec<PathSegmentInfo>,
         }
 
         /// Info about a path segment
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct PathSegmentInfo {
             /// Which command created this path?
             /// This field is absent if the path command is not actually creating a path segment,
@@ -222,21 +222,21 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `PathGetCurveUuidsForVertices` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct PathGetCurveUuidsForVertices {
             /// The UUIDs of the curve entities.
             pub curve_ids: Vec<Uuid>,
         }
 
         /// The response from the `PathGetVertexUuids` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct PathGetVertexUuids {
             /// The UUIDs of the vertex entities.
             pub vertex_ids: Vec<Uuid>,
         }
 
         /// Endpoints of a curve
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct CurveGetEndPoints {
             /// Start
             pub start: Point3d<LengthUnit>,
@@ -245,7 +245,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Surface-local planar axes (if available)
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct FaceIsPlanar {
             /// plane's origin
             pub origin: Option<Point3d<f64>>,
@@ -261,21 +261,21 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The 3D position on the surface that was evaluated
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct FaceGetPosition {
             /// The 3D position on the surface that was evaluated
             pub pos: Point3d<f64>,
         }
 
         /// The 3D center of mass on the surface
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct FaceGetCenter {
             /// The 3D position on the surface center of mass
             pub pos: Point3d<f64>,
         }
 
         /// The gradient (dFdu, dFdv) + normal vector on a brep face
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct FaceGetGradient {
             /// dFdu
             pub df_du: Point3d<f64>,
@@ -288,21 +288,21 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Corresponding coordinates of given window coordinates, intersected on given plane.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct PlaneIntersectAndProject {
             /// Corresponding coordinates of given window coordinates, intersected on given plane.
             pub plane_coordinates: Option<Point2d<LengthUnit>>,
         }
 
         /// Data from importing the files
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct ImportFiles {
             /// ID of the imported 3D models within the scene.
             pub object_id: Uuid,
         }
 
         /// Data from importing the files
-        #[derive(Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct ImportedGeometry {
             /// ID of the imported 3D models within the scene.
             pub id: Uuid,
@@ -311,7 +311,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The mass response.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct Mass {
             /// The mass.
             pub mass: f64,
@@ -320,7 +320,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The volume response.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct Volume {
             /// The volume.
             pub volume: f64,
@@ -329,7 +329,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The density response.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct Density {
             /// The density.
             pub density: f64,
@@ -338,7 +338,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The surface area response.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct SurfaceArea {
             /// The surface area.
             pub surface_area: f64,
@@ -347,7 +347,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The center of mass response.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct CenterOfMass {
             /// The center of mass.
             pub center_of_mass: Point3d<f64>,
@@ -356,7 +356,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The plane for sketch mode.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct GetSketchModePlane {
             /// The origin.
             pub origin: Point3d<f64>,
@@ -369,7 +369,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntitiesGetDistance` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct EntityGetDistance {
             /// The minimum distance between the input entities.
             pub min_distance: LengthUnit,
@@ -378,28 +378,28 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityLinearPattern` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct EntityLinearPattern {
             /// The UUIDs of the entities that were created.
             pub entity_ids: Vec<Uuid>,
         }
 
         /// The response from the `EntityCircularPattern` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct EntityCircularPattern {
             /// The UUIDs of the entities that were created.
             pub entity_ids: Vec<Uuid>,
         }
 
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetExtrusionFaceInfo {
             /// Details of each face.
             pub faces: Vec<ExtrusionFaceInfo>,
         }
 
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct ExtrusionFaceInfo {
             /// Path component (curve) UUID.
             pub curve_id: Option<Uuid>,

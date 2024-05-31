@@ -34,7 +34,7 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
         #input
         /// A successful response from a modeling command.
         /// This can be one of several types of responses, depending on the command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ExecutionPlanValue)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema)]
         #[serde(rename_all = "snake_case", tag = "type", content = "data")]
         #[cfg_attr(not(unstable_exhaustive), non_exhaustive)]
         pub enum OkModelingCmdResponse {

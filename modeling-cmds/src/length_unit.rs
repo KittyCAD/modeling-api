@@ -1,12 +1,12 @@
 //! A length unit is a type that converts a length value from one unit to another.
 //! In the case of the engine we will always convert to millimeters, since that is what the engine uses.
-use kittycad_execution_plan_macros::ExecutionPlanValue;
+
 use serde::{Deserialize, Serialize};
 
 use crate::shared::{Point2d, Point3d, Point4d};
 
 /// A length unit is wrapper around an f64 that represents a length in some unit.
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Serialize, Deserialize, ExecutionPlanValue, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Serialize, Deserialize, Default)]
 pub struct LengthUnit(pub f64);
 
 impl LengthUnit {
