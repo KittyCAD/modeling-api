@@ -8,7 +8,7 @@ use crate::impl_extern_type;
 use crate::{length_unit::LengthUnit, units::UnitAngle};
 
 /// What kind of cut to do
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum CutType {
     /// Round off an edge.
