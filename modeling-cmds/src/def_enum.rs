@@ -22,6 +22,7 @@ define_modeling_cmd_enum! {
             length_unit::LengthUnit,
             shared::{
                 Angle,
+                CutType,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, SceneSelectionType, SceneToolType,
@@ -535,6 +536,8 @@ define_modeling_cmd_enum! {
             pub radius: LengthUnit,
             /// The maximum acceptable surface gap computed between the filleted surfaces. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
+            /// How to apply the cut.
+            pub cut_type: CutType,
         }
 
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so
