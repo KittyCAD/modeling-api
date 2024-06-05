@@ -18,7 +18,7 @@ This repo uses a `justfile`. Be sure to [install `just`](https://github.com/case
  - Merge the PR
  - Run `just finish-release modeling-cmds`.
 
-The `just` scripts above accept any workspace member as their first argument. For example, you could replace `modeling-cmds` with `execution-plan-traits` there.
+The `just` scripts above accept any workspace member as their first argument. For example, you could replace `modeling-cmds` with `modeling-cmds-macros` there.
 
 ## Note on semver
 
