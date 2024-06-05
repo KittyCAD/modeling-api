@@ -18,6 +18,23 @@ pub enum CutType {
     Chamfer,
 }
 
+/// Ways to transform each solid being replicated in a repeating pattern.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
+#[serde(rename_all = "snake_case")]
+pub struct LinearTransform {
+    /// Translate the replica this far along each dimension.
+    /// Defaults to zero (i.e. same position as the original).
+    #[serde(default)]
+    translate: Point3d<LengthUnit>,
+    /// Whether to replicate the original solid in this instance.
+    #[serde(default = "bool_true")]
+    replicate: bool,
+    /// Scale the replica's size along each axis.
+    /// Defaults to (1, 1, 1) i.e. the same size as the original.
+    #[serde(default = "same_scale")]
+    scale: Point3d<LengthUnit>,
+}
+
 /// Options for annotations
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -760,4 +777,12 @@ impl_extern_type! {
 
     // Graphics engine
     PostEffectType = "Enums::_PostEffectType"
+}
+
+fn bool_true() -> bool {
+    true
+}
+fn same_scale() -> Point3d<LengthUnit> {
+    let p = 1.0.into();
+    Point3d { x: p, y: p, z: p }
 }

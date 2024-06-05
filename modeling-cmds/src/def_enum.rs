@@ -280,6 +280,19 @@ define_modeling_cmd_enum! {
 
         /// Create a linear pattern using this entity.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct EntityLinearPatternTransform {
+            /// ID of the entity being copied.
+            pub entity_id: Uuid,
+            /// Axis along which to make the copies.
+            /// For Solid2d patterns, the z component is ignored.
+            pub axis: Point3d<f64>,
+            /// How to transform each repeated solid.
+            /// The total number of repetitions equals the size of this list.
+            pub transform: Vec<crate::shared::LinearTransform>,
+        }
+
+        /// Create a linear pattern using this entity.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EntityLinearPattern {
             /// ID of the entity being copied.
             pub entity_id: Uuid,
