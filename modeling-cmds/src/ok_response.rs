@@ -73,7 +73,7 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct ClosePath {
             /// The UUID of the lone face of the resulting solid2D.
-            pub face_id: Option<Uuid>,
+            pub face_id: Uuid,
         }
 
         /// The response from the `CameraDragMove` command.
