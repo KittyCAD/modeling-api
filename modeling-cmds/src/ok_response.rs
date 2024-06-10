@@ -69,6 +69,13 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_ids: Vec<Uuid>,
         }
 
+        /// The response from the `ClosePath` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        pub struct ClosePath {
+            /// The UUID of the lone face of the resulting solid2D.
+            pub face_id: Uuid,
+        }
+
         /// The response from the `CameraDragMove` command.
         /// Note this is an "unreliable" channel message, so this data may need more data like a "sequence"
         //  to work properly

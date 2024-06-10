@@ -138,7 +138,7 @@ define_modeling_cmd_enum! {
 
         /// Closes a path, converting it to a 2D solid.
         #[derive(
-            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         pub struct ClosePath {
             /// Which path to close.
