@@ -23,16 +23,16 @@ pub enum CutType {
 #[serde(rename_all = "snake_case")]
 pub struct LinearTransform {
     /// Translate the replica this far along each dimension.
-    /// Defaults to zero (i.e. same position as the original).
+    /// Defaults to zero vector (i.e. same position as the original).
     #[serde(default)]
     pub translate: Point3d<LengthUnit>,
+    /// Scale the replica's size along each axis.
+    /// Defaults to (1, 1, 1) (i.e. the same size as the original).
+    #[serde(default = "same_scale")]
+    pub scale: Point3d<LengthUnit>,
     /// Whether to replicate the original solid in this instance.
     #[serde(default = "bool_true")]
     pub replicate: bool,
-    /// Scale the replica's size along each axis.
-    /// Defaults to (1, 1, 1) i.e. the same size as the original.
-    #[serde(default = "same_scale")]
-    pub scale: Point3d<LengthUnit>,
 }
 
 /// Options for annotations
