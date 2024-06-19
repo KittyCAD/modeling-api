@@ -1,4 +1,3 @@
-
 use kittycad_modeling_cmds_macros::define_ok_modeling_cmd_response_enum;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -8,7 +7,7 @@ impl crate::ModelingCmdOutput for () {}
 define_ok_modeling_cmd_response_enum! {
     /// Output from Modeling API commands.
     pub mod output {
-        
+
         use kittycad_modeling_cmds_macros::ModelingCmdOutput;
         use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
@@ -382,6 +381,13 @@ define_ok_modeling_cmd_response_enum! {
             pub min_distance: LengthUnit,
             /// The maximum distance between the input entities.
             pub max_distance: LengthUnit,
+        }
+
+        /// The response from the `EntityLinearPatternTransform` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityLinearPatternTransform {
+            /// The UUIDs of the entities that were created.
+            pub entity_ids: Vec<Uuid>,
         }
 
         /// The response from the `EntityLinearPattern` command.
