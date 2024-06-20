@@ -207,11 +207,11 @@ define_modeling_cmd_enum! {
             /// Which way is "up", from the camera's point of view.
             pub up: Point3d,
             /// The field of view angle in the y direction, in degrees.
-            pub fov_y: f32,
+            pub fov_y: Option<f32>,
             /// The distance to the near clipping plane.
-            pub z_near: f32,
+            pub z_near: Option<f32>,
             /// The distance to the far clipping plane.
-            pub z_far: f32,
+            pub z_far: Option<f32>,
             /// Logical timestamp. The client should increment this
             /// with every event in the current mouse drag. That way, if the
             /// events are being sent over an unordered channel, the API
