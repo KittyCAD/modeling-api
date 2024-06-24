@@ -684,11 +684,11 @@ impl From<CameraSettings> for crate::output::ViewIsometric {
 #[serde(rename_all = "snake_case")]
 pub struct PerspectiveCameraParameters {
     /// Camera frustum vertical field of view.
-    pub fov_y: f32,
+    pub fov_y: Option<f32>,
     /// Camera frustum near plane.
-    pub z_near: f32,
+    pub z_near: Option<f32>,
     /// Camera frustum far plane.
-    pub z_far: f32,
+    pub z_far: Option<f32>,
 }
 
 /// The global axes.
