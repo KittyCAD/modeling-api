@@ -680,7 +680,7 @@ impl From<CameraSettings> for crate::output::ViewIsometric {
 }
 
 /// Defines a perspective view.
-#[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd)]
+#[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd, Default)]
 #[serde(rename_all = "snake_case")]
 pub struct PerspectiveCameraParameters {
     /// Camera frustum vertical field of view.
