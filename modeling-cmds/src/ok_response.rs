@@ -254,7 +254,7 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct FaceIsPlanar {
             /// plane's origin
-            pub origin: Option<Point3d<f64>>,
+            pub origin: Option<Point3d<LengthUnit>>,
 
             /// plane's local x-axis
             pub x_axis: Option<Point3d<f64>>,
@@ -270,14 +270,14 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct FaceGetPosition {
             /// The 3D position on the surface that was evaluated
-            pub pos: Point3d<f64>,
+            pub pos: Point3d<LengthUnit>,
         }
 
         /// The 3D center of mass on the surface
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct FaceGetCenter {
             /// The 3D position on the surface center of mass
-            pub pos: Point3d<f64>,
+            pub pos: Point3d<LengthUnit>,
         }
 
         /// The gradient (dFdu, dFdv) + normal vector on a brep face
@@ -365,7 +365,7 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct GetSketchModePlane {
             /// The origin.
-            pub origin: Point3d<f64>,
+            pub origin: Point3d<LengthUnit>,
             /// The x axis.
             pub x_axis: Point3d<f64>,
             /// The y axis.
