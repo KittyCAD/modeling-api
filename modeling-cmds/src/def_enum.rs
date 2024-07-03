@@ -346,6 +346,17 @@ define_modeling_cmd_enum! {
             pub point: Point3d<f64>,
         }
 
+        /// Mirror the input entities over the specified edge. (Currently only supports sketches)
+        #[derive(
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
+        )]
+       pub struct EntityMirrorAcrossEdge {
+            /// ID of the mirror entities.
+            pub ids: Vec<Uuid>,
+            /// The edge to use as the mirror axis, must be linear and lie in the plane of the solid
+            pub edge_id: Uuid,
+        }
+
         /// Enter edit mode
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
         pub struct EditModeEnter {
