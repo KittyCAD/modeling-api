@@ -29,7 +29,7 @@ pub struct LinearTransform {
     /// Scale the replica's size along each axis.
     /// Defaults to (1, 1, 1) (i.e. the same size as the original).
     #[serde(default = "same_scale")]
-    pub scale: Point3d<LengthUnit>,
+    pub scale: Point3d<f64>,
     /// Whether to replicate the original solid in this instance.
     #[serde(default = "bool_true")]
     pub replicate: bool,
@@ -782,7 +782,7 @@ impl_extern_type! {
 fn bool_true() -> bool {
     true
 }
-fn same_scale() -> Point3d<LengthUnit> {
-    let p = 1.0.into();
+fn same_scale() -> Point3d<f64> {
+    let p = 1.0;
     Point3d { x: p, y: p, z: p }
 }
