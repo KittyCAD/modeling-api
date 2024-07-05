@@ -35,6 +35,7 @@ async fn main() -> Result<()> {
         video_res_width: Some(1280),
         buffer_reqs: None,
         await_response_timeout: None,
+        show_grid: None,
     };
     let mut session = Session::start(session_builder)
         .await
