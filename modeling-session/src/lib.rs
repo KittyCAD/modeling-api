@@ -32,6 +32,8 @@ pub struct SessionBuilder {
     /// How long to wait for the response to a modeling command.
     /// Defaults to 10 seconds.
     pub await_response_timeout: Option<Duration>,
+    /// Show the grid?
+    pub show_grid: Option<bool>,
 }
 
 /// An active session with the KittyCAD Modeling API.
@@ -51,6 +53,7 @@ impl Session {
             video_res_width,
             buffer_reqs,
             await_response_timeout,
+            show_grid,
         }: SessionBuilder,
     ) -> Result<Self, ApiError> {
         // TODO: establish WebRTC connections for the user.
@@ -61,6 +64,7 @@ impl Session {
                 fps,
                 None,
                 None,
+                show_grid,
                 unlocked_framerate,
                 video_res_height,
                 video_res_width,
