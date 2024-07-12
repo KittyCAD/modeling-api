@@ -801,6 +801,16 @@ define_modeling_cmd_enum! {
             pub vertex_ids: Vec<Uuid>,
         }
 
+        /// Obtain curve id by index
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct PathGetCurveUuid {
+            /// Which path to query
+            pub path_id: Uuid,
+
+            /// IDs of the vertices for which to obtain curve ids from
+            pub index: u32,
+        }
+
         /// Obtain vertex ids for a path
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct PathGetVertexUuids {
