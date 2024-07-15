@@ -95,7 +95,7 @@ define_modeling_cmd_enum! {
             /// Must be a closed 2D solid.
             pub target: ModelingCmdId,
             /// The origin of the extrusion axis
-            pub origin: Point3d<f64>,
+            pub origin: Point3d<LengthUnit>,
             /// The axis of the extrusion (taken from the origin)
             pub axis: Point3d<f64>,
             /// If true, the axis is interpreted within the 2D space of the solid 2D's plane
@@ -344,7 +344,7 @@ define_modeling_cmd_enum! {
             /// Axis to use as mirror.
             pub axis: Point3d<f64>,
             /// Point through which the mirror axis passes.
-            pub point: Point3d<f64>,
+            pub point: Point3d<LengthUnit>,
         }
 
         /// Mirror the input entities over the specified edge. (Currently only supports sketches)

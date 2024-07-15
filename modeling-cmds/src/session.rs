@@ -23,6 +23,8 @@ pub struct EngineParams {
     /// The 'default' pool is used when none is specified.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pool: Option<String>,
+    /// If true, will show the grid at the start of the session.
+    pub show_grid: bool,
 }
 
 impl Default for EngineParams {
@@ -35,6 +37,7 @@ impl Default for EngineParams {
             post_effect: None,
             webrtc: true,
             pool: None,
+            show_grid: false,
         }
     }
 }
