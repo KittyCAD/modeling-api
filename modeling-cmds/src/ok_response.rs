@@ -234,6 +234,13 @@ define_ok_modeling_cmd_response_enum! {
             pub curve_ids: Vec<Uuid>,
         }
 
+        /// The response from the `PathGetCurveUuid` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        pub struct PathGetCurveUuid {
+            /// The UUID of the curve entity.
+            pub curve_id: Uuid,
+        }
+
         /// The response from the `PathGetVertexUuids` command.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct PathGetVertexUuids {
