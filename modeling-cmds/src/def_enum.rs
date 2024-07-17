@@ -796,6 +796,13 @@ define_modeling_cmd_enum! {
             pub path_id: Uuid,
         }
 
+        /// Obtain the sketch surface id (if the path was drawn in sketchmode) for a path
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct PathGetSketchSurfaceUuid {
+            /// Which path to query
+            pub path_id: Uuid,
+        }
+
         /// Start dragging the mouse.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
         pub struct HandleMouseDragStart {
