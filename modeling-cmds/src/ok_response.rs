@@ -68,6 +68,13 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_ids: Vec<Uuid>,
         }
 
+        /// The response from the `EntityGetSketchPaths` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityGetSketchPaths {
+            /// The UUIDs of the sketch paths.
+            pub entity_ids: Vec<Uuid>,
+        }
+
         /// The response from the `ClosePath` command.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct ClosePath {

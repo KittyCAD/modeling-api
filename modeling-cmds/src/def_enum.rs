@@ -267,6 +267,13 @@ define_modeling_cmd_enum! {
             pub entity_id: Uuid,
         }
 
+        /// What are all UUIDs of all the paths sketched on top of this entity?
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct EntityGetSketchPaths {
+            /// ID of the entity being queried.
+            pub entity_id: Uuid,
+        }
+
         /// What is the distance between these two entities?
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EntityGetDistance {
