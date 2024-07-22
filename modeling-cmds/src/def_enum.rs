@@ -285,13 +285,14 @@ define_modeling_cmd_enum! {
             pub distance_type: DistanceType,
         }
 
-        /// Create a linear pattern using this entity.
+        /// Create a pattern using this entity by specifying the transform for each desired repetition.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EntityLinearPatternTransform {
             /// ID of the entity being copied.
             pub entity_id: Uuid,
             /// How to transform each repeated solid.
-            /// The total number of repetitions equals the size of this list.
+            /// The 0th transform will create the first copy of the entity.
+            /// The total number of (optional) repetitions equals the size of this list.
             pub transform: Vec<crate::shared::LinearTransform>,
         }
 
@@ -351,6 +352,17 @@ define_modeling_cmd_enum! {
             pub axis: Point3d<f64>,
             /// Point through which the mirror axis passes.
             pub point: Point3d<LengthUnit>,
+        }
+
+        /// Mirror the input entities over the specified edge. (Currently only supports sketches)
+        #[derive(
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
+        )]
+       pub struct EntityMirrorAcrossEdge {
+            /// ID of the mirror entities.
+            pub ids: Vec<Uuid>,
+            /// The edge to use as the mirror axis, must be linear and lie in the plane of the solid
+            pub edge_id: Uuid,
         }
 
         /// Enter edit mode
@@ -794,6 +806,16 @@ define_modeling_cmd_enum! {
 
             /// IDs of the vertices for which to obtain curve ids from
             pub vertex_ids: Vec<Uuid>,
+        }
+
+        /// Obtain curve id by index
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct PathGetCurveUuid {
+            /// Which path to query
+            pub path_id: Uuid,
+
+            /// IDs of the vertices for which to obtain curve ids from
+            pub index: u32,
         }
 
         /// Obtain vertex ids for a path
