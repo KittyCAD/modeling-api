@@ -255,11 +255,11 @@ define_ok_modeling_cmd_response_enum! {
             pub vertex_ids: Vec<Uuid>,
         }
 
-        /// The response from the `PathGetSketchSurfaceUuid` command.
+        /// The response from the `PathGetSketchTargetUuid` command.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
-        pub struct PathGetSketchSurfaceUuid {
-            /// The UUID of the sketch surface entity.
-            pub surface_id: Option<Uuid>,
+        pub struct PathGetSketchTargetUuid {
+            /// The UUID of the sketch target.
+            pub target_id: Option<Uuid>,
         }
 
         /// Endpoints of a curve
