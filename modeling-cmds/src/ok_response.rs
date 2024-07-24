@@ -68,6 +68,13 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_ids: Vec<Uuid>,
         }
 
+        /// The response from the `EntityGetSketchPaths` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityGetSketchPaths {
+            /// The UUIDs of the sketch paths.
+            pub entity_ids: Vec<Uuid>,
+        }
+
         /// The response from the `ClosePath` command.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct ClosePath {
@@ -246,6 +253,13 @@ define_ok_modeling_cmd_response_enum! {
         pub struct PathGetVertexUuids {
             /// The UUIDs of the vertex entities.
             pub vertex_ids: Vec<Uuid>,
+        }
+
+        /// The response from the `PathGetSketchTargetUuid` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        pub struct PathGetSketchTargetUuid {
+            /// The UUID of the sketch target.
+            pub target_id: Option<Uuid>,
         }
 
         /// Endpoints of a curve
