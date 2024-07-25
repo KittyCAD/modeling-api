@@ -41,3 +41,12 @@ impl Default for EngineParams {
         }
     }
 }
+
+impl EngineParams {
+    fn default_with_grid() -> Self {
+        Self {
+            show_grid: true,
+            ..Self::default()
+        }
+    }
+}
