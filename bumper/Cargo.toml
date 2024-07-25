@@ -14,7 +14,7 @@ anyhow = "1.0.81"
 clap = { version = "4.5.10", features = ["derive"] }
 semver = "1.0.22"
 serde = "1.0.204"
-toml_edit = "0.22.16"
+toml_edit = "0.22.17"
 
 [lints]
 workspace = true
