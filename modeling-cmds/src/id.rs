@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 /// All commands have unique IDs. These should be randomly generated.
 #[derive(Debug, Clone, Copy, Hash, Ord, PartialOrd, Eq, PartialEq, JsonSchema, Serialize)]
-#[cfg_attr(feature = "test", derive(Default))]
+#[cfg_attr(test, derive(Default))]
 pub struct ModelingCmdId(pub Uuid);
 
 // In order to force our own UUID requirements, we need to intercept /
