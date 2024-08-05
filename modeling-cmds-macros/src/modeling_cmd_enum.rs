@@ -61,7 +61,7 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
         /// Commands that the KittyCAD engine can execute.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
         #[serde(rename_all = "snake_case", tag = "type")]
-        #[cfg_attr(not(unstable_exhaustive), non_exhaustive)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub enum ModelingCmd {#(
             #[doc = #docs]
             #variants(kittycad_modeling_cmds::each_cmd::#variants),
@@ -69,7 +69,7 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
         /// Each modeling command (no parameters or fields).
         #[derive(Serialize, Deserialize, Debug, PartialEq, Clone, ::parse_display::Display)]
         #[serde(rename_all = "snake_case")]
-        #[cfg_attr(not(unstable_exhaustive), non_exhaustive)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub enum ModelingCmdEndpoint{#(
             #[doc = #docs]
             #variants,
