@@ -44,6 +44,7 @@ impl Default for EngineParams {
 
 impl EngineParams {
     /// Returns a default EngineParams with the grid enabled.
+    /// This is primarily useful for engine testing.
     pub fn default_with_grid() -> Self {
         Self {
             show_grid: true,
