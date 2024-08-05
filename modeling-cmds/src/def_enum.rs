@@ -1016,7 +1016,8 @@ define_modeling_cmd_enum! {
             /// Which objects to fit camera to; if empty, fit to all non-default objects. Defaults to empty vector.
             #[serde(default = "default_uuid_vector")]
             pub object_ids: Vec<Uuid>,
-            /// How much to pad the view frame by.
+            /// How much to pad the view frame by, as a fraction of the object(s) bounding box size.
+            /// e.g. padding = 0.2 means the view will span 120% of the object(s) bounding box.
             pub padding: f32,
         }
 
