@@ -1018,7 +1018,8 @@ define_modeling_cmd_enum! {
             pub object_ids: Vec<Uuid>,
             /// How much to pad the view frame by, as a fraction of the object(s) bounding box size.
             /// Negative padding will crop the view of the object proportionally.
-            /// e.g. padding = 0.2 means the view will span 120% of the object(s) bounding box.
+            /// e.g. padding = 0.2 means the view will span 120% of the object(s) bounding box,
+            /// and padding = -0.2 means the view will span 80% of the object(s) bounding box.
             pub padding: f32,
         }
 
