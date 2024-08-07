@@ -21,6 +21,7 @@ pub mod import {
        
     )]
     #[display("split_closed_faces: {split_closed_faces}")]
+    #[serde(default, rename = "SldprtImportOptions")]
     pub struct Options {
         /// Splits all closed faces into two open faces.
         ///

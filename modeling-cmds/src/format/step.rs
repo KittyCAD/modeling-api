@@ -24,7 +24,7 @@ pub mod import {
         FromStr,
     )]
     #[display("split_closed_faces: {split_closed_faces}")]
-    #[serde(rename = "StepImportOptions")]
+    #[serde(default, rename = "StepImportOptions")]
     pub struct Options {
         /// Splits all closed faces into two open faces.
         ///
