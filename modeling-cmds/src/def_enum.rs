@@ -1062,82 +1062,6 @@ define_modeling_cmd_enum! {
         )]
         pub struct GetNumObjects;
 
-        ///Set the position of an object
-        #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
-        )]
-        pub struct SetObjectPosition
-        {
-            /// The object whose position is to be set
-            pub object_id: Uuid,
-            /// Position
-            pub position: Point3d
-        }
-
-        ///Translate an object (this is an offset from the current position, to set object to a
-        ///specific position use SetObjectPosition)
-        #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
-        )]
-        pub struct TranslateObject
-        {
-            /// The object to be translated
-            pub object_id: Uuid,
-            /// Translation
-            pub position: Point3d
-        }
-
-        ///Set the scale of an object
-        #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
-        )]
-        pub struct SetObjectScale
-        {
-            /// The object whose scale is to be set
-            pub object_id: Uuid,
-            /// Scale
-            pub scale: Point3d
-        }
-
-        ///Scale an object (this is an offset from the current scale, to set object to a
-        ///specific scale use SetObjectScale)
-        #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
-        )]
-        pub struct ScaleObject
-        {
-            /// The object to be scaled
-            pub object_id: Uuid,
-            /// Scale
-            pub scale: Point3d
-        }
-
-        ///Set the rotation of an object, the rotation is set using roll (x-axis) pitch (y-axis)
-        ///and yaw (z-axis)
-        #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
-        )]
-        pub struct SetObjectRotation
-        {
-            /// The object whose rotation is to be set
-            pub object_id: Uuid,
-            /// Roll, Pitch, Yaw values
-            pub rpy: Point3d
-        }
-
-        ///Rotate an object (this is an offset from the current rotation, to set object to a
-        ///specific rotation use SetObjectRotation)
-        #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
-        )]
-        pub struct RotateObject
-        {
-            /// The object whose rotation is to be set
-            pub object_id: Uuid,
-            /// Roll, Pitch, Yaw values
-            pub rpy: Point3d
-        }
-
         ///Set the parent object of an object
         #[derive(
             Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
@@ -1148,6 +1072,31 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
             /// Id of the new parent, if null will unset any parent of object_id
             pub parent_id: Option<Uuid>
+        }
+
+        #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize)]
+        struct TransformBy<T> {
+            /// The scale, or rotation, or translation.
+            property: T,
+            /// If true, overwrite the previous value with this.
+            /// If false, the object will be scaled, or translated, or rotated, etc.
+            set: bool,
+        }
+
+        ///Set the transform of an object.
+        #[derive(
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
+        )]
+        pub struct SetObjectTransform
+        {
+            ///Id of the object whose transform is to be set
+            pub object_id: Uuid,
+            #[serde(default)]
+            translate: Option<TransformBy<Point3d>>,
+            #[serde(default)]
+            rotate: Option<TransformBy<Point3d>>,
+            #[serde(default)]
+            scale: Option<TransformBy<Point3d>>,
         }
     }
 }
