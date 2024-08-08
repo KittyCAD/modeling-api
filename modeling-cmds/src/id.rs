@@ -1,7 +1,7 @@
+use std::{fmt, str::FromStr};
+
 use schemars::JsonSchema;
 use serde::{de, de::Visitor, Deserialize, Deserializer, Serialize};
-use std::fmt;
-use std::str::FromStr;
 use uuid::Uuid;
 
 /// All commands have unique IDs. These should be randomly generated.
