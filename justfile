@@ -31,7 +31,7 @@ start-release pkg bump='patch':
     git checkout -b release/{{pkg}}/$next_version
     git add --all
     git commit -m "Release {{pkg}} $next_version"
-    git push
+    git push --set-upstream origin release/{{pkg}}/$next_version
     
 # e.g. `just finish-release modeling-cmds`
 # Assumes you just merged the PR from the `start-release` recipe.
