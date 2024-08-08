@@ -15,7 +15,7 @@ missing_docs = "deny"
 dbg_macro = "deny"
 
 [workspace.dependencies]
-kittycad = { version = "0.3.9", features = ["requests"] }
+kittycad = { version = "0.3.10", features = ["requests"] }
 kittycad-modeling-cmds = { path = "modeling-cmds", version = "0.2.0" }
 kittycad-modeling-cmds-macros = { path = "modeling-cmds-macros", version = "0.1.7" }
 kittycad-modeling-session = { path = "modeling-session", version = "0.1.2" }
