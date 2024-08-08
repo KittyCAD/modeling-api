@@ -1075,12 +1075,12 @@ define_modeling_cmd_enum! {
         }
 
         #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize)]
-        struct TransformBy<T> {
+        pub struct TransformBy<T> {
             /// The scale, or rotation, or translation.
-            property: T,
+            pub property: T,
             /// If true, overwrite the previous value with this.
             /// If false, the object will be scaled, or translated, or rotated, etc.
-            set: bool,
+            pub set: bool,
         }
 
         ///Set the transform of an object.
@@ -1091,12 +1091,15 @@ define_modeling_cmd_enum! {
         {
             ///Id of the object whose transform is to be set
             pub object_id: Uuid,
+            ///Optional translation value
             #[serde(default)]
-            translate: Option<TransformBy<Point3d>>,
+            pub translate: Option<TransformBy<Point3d>>,
+            ///Optional rotate value
             #[serde(default)]
-            rotate: Option<TransformBy<Point3d>>,
+            pub rotate: Option<TransformBy<Point3d>>,
+            ///Optional scale value
             #[serde(default)]
-            scale: Option<TransformBy<Point3d>>,
+            pub scale: Option<TransformBy<Point3d>>,
         }
     }
 }
