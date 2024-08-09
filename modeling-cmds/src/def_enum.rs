@@ -22,6 +22,7 @@ define_modeling_cmd_enum! {
             length_unit::LengthUnit,
             shared::{
                 Angle,
+                TransformBy,
                 CutType,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
@@ -1061,6 +1062,38 @@ define_modeling_cmd_enum! {
             Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct GetNumObjects;
+
+        ///Set the parent object of an object
+        #[derive(
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
+        )]
+        pub struct SetObjectParent
+        {
+            ///The object (child) whose parent will be set
+            pub object_id: Uuid,
+            /// Id of the new parent, if null will unset any parent of object_id
+            pub parent_id: Option<Uuid>
+        }
+
+
+        ///Set the transform of an object.
+        #[derive(
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
+        )]
+        pub struct SetObjectTransform
+        {
+            ///Id of the object whose transform is to be set
+            pub object_id: Uuid,
+            ///Optional translation value
+            #[serde(default)]
+            pub translate: Option<TransformBy<Point3d>>,
+            ///Optional rotate value
+            #[serde(default)]
+            pub rotate: Option<TransformBy<Point3d>>,
+            ///Optional scale value
+            #[serde(default)]
+            pub scale: Option<TransformBy<Point3d>>,
+        }
     }
 }
 

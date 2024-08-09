@@ -1,4 +1,3 @@
-
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -53,9 +52,7 @@ pub enum OutputFormat {
 }
 
 /// Input format specifier.
-#[derive(
-    Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
-)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum InputFormat {
