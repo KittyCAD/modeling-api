@@ -22,6 +22,7 @@ define_modeling_cmd_enum! {
             length_unit::LengthUnit,
             shared::{
                 Angle,
+                TransformBy,
                 CutType,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
@@ -1074,14 +1075,6 @@ define_modeling_cmd_enum! {
             pub parent_id: Option<Uuid>
         }
 
-        #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize)]
-        pub struct TransformBy<T> {
-            /// The scale, or rotation, or translation.
-            pub property: T,
-            /// If true, overwrite the previous value with this.
-            /// If false, the object will be scaled, or translated, or rotated, etc.
-            pub set: bool,
-        }
 
         ///Set the transform of an object.
         #[derive(
