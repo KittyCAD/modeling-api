@@ -213,6 +213,27 @@ pub struct SuccessWebSocketResponse {
     /// The data sent with a successful response.
     /// This will be flattened into a 'type' and 'data' field.
     pub resp: OkWebSocketResponseData,
+    /// Additional information for the client.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub messages: Vec<Message>,
+}
+
+/// What type of message is this for the client?
+#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Severity {
+    /// The user should stop doing this.
+    Warning,
+}
+
+/// A message for the client.
+#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct Message {
+    /// What kind of messages is this?
+    pub severity: Severity,
+    /// Message contents.
+    pub contents: String,
 }
 
 /// Unsuccessful Websocket response.
@@ -227,6 +248,9 @@ pub struct FailureWebSocketResponse {
     pub request_id: Option<Uuid>,
     /// The errors that occurred.
     pub errors: Vec<ApiError>,
+    /// Messages for the client.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub messages: Vec<Message>,
 }
 
 /// Websocket responses can either be successful or unsuccessful.
@@ -259,20 +283,22 @@ pub enum BatchResponse {
 
 impl WebSocketResponse {
     /// Make a new success response.
-    pub fn success(request_id: Option<Uuid>, resp: OkWebSocketResponseData) -> Self {
+    pub fn success(request_id: Option<Uuid>, resp: OkWebSocketResponseData, messages: Vec<Message>) -> Self {
         Self::Success(SuccessWebSocketResponse {
             success: true,
             request_id,
             resp,
+            messages,
         })
     }
 
     /// Make a new failure response.
-    pub fn failure(request_id: Option<Uuid>, errors: Vec<ApiError>) -> Self {
+    pub fn failure(request_id: Option<Uuid>, errors: Vec<ApiError>, messages: Vec<Message>) -> Self {
         Self::Failure(FailureWebSocketResponse {
             success: false,
             request_id,
             errors,
+            messages,
         })
     }
 
@@ -776,6 +802,7 @@ mod tests {
                     control_points: vec![],
                 }),
             },
+            messages: Vec::new(),
         });
         let expected = serde_json::json!({
             "success": true,
@@ -799,6 +826,7 @@ mod tests {
             success: true,
             request_id: Some(REQ_ID),
             resp: OkWebSocketResponseData::IceServerInfo { ice_servers: vec![] },
+            messages: Vec::new(),
         });
         let expected = serde_json::json!({
             "success": true,
@@ -819,6 +847,7 @@ mod tests {
             success: true,
             request_id: Some(REQ_ID),
             resp: OkWebSocketResponseData::Export { files: vec![] },
+            messages: Vec::new(),
         });
         let expected = serde_json::json!({
             "success": true,
@@ -836,6 +865,7 @@ mod tests {
         let actual = WebSocketResponse::Failure(FailureWebSocketResponse {
             success: false,
             request_id: Some(REQ_ID),
+            messages: Vec::new(),
             errors: vec![ApiError {
                 error_code: ErrorCode::InternalApi,
                 message: "you fucked up!".to_owned(),
