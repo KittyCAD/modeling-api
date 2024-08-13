@@ -22,7 +22,7 @@ http = "0.2.9"
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
 measurements = "0.11.0"
-parse-display = "0.9.1"
+parse-display = "0.10.0"
 parse-display-derive = "0.9.0"
 schemars = { version = "0.8.16", features = [
   "bigdecimal04",
