@@ -30,6 +30,16 @@ pub struct LinearTransform {
     /// Defaults to (1, 1, 1) (i.e. the same size as the original).
     #[serde(default = "same_scale")]
     pub scale: Point3d<f64>,
+    /// Rotation axis of the replica.
+    /// Defaults to (0, 0, 1) (i.e. the Z axis).
+    #[serde(default = "z_axis")]
+    pub axis: Point3d<f64>,
+    /// Rotate the replica this far about the rotation axis.
+    /// Defaults to zero (i.e. no rotation).
+    #[serde(default)]
+    pub angle: Angle,
+    /// Origin of the rotation. If one isn't provided, the replica will rotate about its own bounding box center.
+    pub rotation_origin: Option<Point3d<LengthUnit>>,
     /// Whether to replicate the original solid in this instance.
     #[serde(default = "bool_true")]
     pub replicate: bool,
@@ -785,4 +795,8 @@ fn bool_true() -> bool {
 fn same_scale() -> Point3d<f64> {
     let p = 1.0;
     Point3d { x: p, y: p, z: p }
+}
+
+fn z_axis() -> Point3d<f64> {
+    Point3d { x: 0.0, y: 0.0, z: 1.0 }
 }
