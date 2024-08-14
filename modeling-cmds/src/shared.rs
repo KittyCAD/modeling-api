@@ -39,7 +39,7 @@ pub struct LinearTransform {
     #[serde(default)]
     pub angle: Angle,
     /// Origin of the rotation. If one isn't provided, the replica will rotate about its own bounding box center.
-    pub rotation_origin: Option<Point3d<LengthUnit>>,
+    pub rotation_origin: OriginType,
     /// Whether to replicate the original solid in this instance.
     #[serde(default = "bool_true")]
     pub replicate: bool,
@@ -98,6 +98,28 @@ pub enum DistanceType {
         /// Global axis
         axis: GlobalAxis,
     },
+}
+
+/// The type of origin
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case", tag = "type")]
+pub enum OriginType {
+    /// Local Origin (center of object bounding box).
+    Local {},
+    /// Global Origin (0, 0, 0).
+    Global {},
+    /// Custom Origin (user specified point).
+    Custom {
+        /// Custom origin point.
+        point: Point3d,
+    },
+}
+
+impl Default for OriginType {
+    /// Local Bounding Box Origin
+    fn default() -> Self {
+        Self::Local {}
+    }
 }
 
 /// An RGBA color
