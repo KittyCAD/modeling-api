@@ -806,6 +806,7 @@ impl_extern_type! {
     // Utils
     EngineErrorCode = "Enums::_ErrorCode"
     GlobalAxis = "Enums::_GlobalAxis"
+    OriginType = "Enums::_OriginType"
 
     // Graphics engine
     PostEffectType = "Enums::_PostEffectType"
