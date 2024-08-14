@@ -11,9 +11,9 @@ publish = false
 
 [dependencies]
 anyhow = "1.0.81"
-clap = { version = "4.5.10", features = ["derive"] }
+clap = { version = "4.5.15", features = ["derive"] }
 semver = "1.0.22"
-serde = "1.0.204"
+serde = "1.0.207"
 toml_edit = "0.22.16"
 
 [lints]

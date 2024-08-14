@@ -27,14 +27,14 @@ pub mod import {
         /// mass, etc.
         ///
         /// Defaults to meters.
-        pub units: crate::units::UnitLength,
+        pub units: UnitLength,
     }
 
     impl Default for Options {
         fn default() -> Self {
             Self {
                 coords: *coord::KITTYCAD,
-                units: crate::units::UnitLength::Meters,
+                units: UnitLength::Meters,
             }
         }
     }

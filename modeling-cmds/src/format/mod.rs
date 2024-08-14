@@ -46,7 +46,7 @@ pub enum OutputFormat {
     Ply(ply::export::Options),
     /// ISO 10303-21 (STEP) format.
     #[display("{}: {0}")]
-    Step(step::ExportOptions),
+    Step(step::export::Options),
     /// **ST**ereo**L**ithography format.
     #[display("{}: {0}")]
     Stl(stl::export::Options),
@@ -78,7 +78,7 @@ pub enum InputFormat {
     Sldprt(sldprt::import::Options),
     /// ISO 10303-21 (STEP) format.
     #[display("{}: {0}")]
-    Step(step::ImportOptions),
+    Step(step::import::Options),
     /// **ST**ereo**L**ithography format.
     #[display("{}: {0}")]
     Stl(stl::import::Options),

@@ -20,6 +20,12 @@ pub mod import {
         FromStr,
        
     )]
-    #[display("")]
-    pub struct Options {}
+    #[display("split_closed_faces: {split_closed_faces}")]
+    #[serde(default, rename = "SldprtImportOptions")]
+    pub struct Options {
+        /// Splits all closed faces into two open faces.
+        ///
+        /// Defaults to `false` but is implicitly `true` when importing into the engine.
+        pub split_closed_faces: bool,
+    }
 }
