@@ -111,7 +111,7 @@ pub enum OriginType {
     /// Custom Origin (user specified point).
     Custom {
         /// Custom origin point.
-        point: Point3d,
+        point: Point3d<f64>,
     },
 }
 
