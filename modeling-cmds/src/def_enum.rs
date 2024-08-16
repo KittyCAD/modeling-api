@@ -152,6 +152,8 @@ define_modeling_cmd_enum! {
             pub bez_approximate_rational: Point3d<f64>,
             /// This can be set to override the automatically determined topological base curve, which is usually the first section encountered.
             pub base_curve_index: Option<u32>,
+            /// Tolerance
+            pub tolerance: LengthUnit,
         }
 
 
