@@ -75,6 +75,13 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_ids: Vec<Uuid>,
         }
 
+        /// The response from the `Loft` command.
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        pub struct Loft {
+            ///The UUID of the newly created solid loft.
+            pub solid_id: Uuid,
+        }
+
         /// The response from the `ClosePath` command.
         #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
         pub struct ClosePath {
