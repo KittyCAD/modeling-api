@@ -149,7 +149,7 @@ define_modeling_cmd_enum! {
             /// Attempt to approximate rational curves (such as arcs) using a bezier.
             /// This will remove banding around interpolations between arcs and non-arcs.  It may produce errors in other scenarios
             /// Over time, this field won't be necessary.
-            pub bez_approximate_rational: Point3d<f64>,
+            pub bez_approximate_rational: bool,
             /// This can be set to override the automatically determined topological base curve, which is usually the first section encountered.
             pub base_curve_index: Option<u32>,
             /// Tolerance
