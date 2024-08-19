@@ -22,16 +22,16 @@ pub enum CutType {
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
 pub struct Rotation {
-    /// Rotation axis of the replica.
+    /// Rotation axis.
     /// Defaults to (0, 0, 1) (i.e. the Z axis).
     #[serde(default = "z_axis")]
     pub axis: Point3d<f64>,
-    /// Rotate the replica this far about the rotation axis.
+    /// Rotate this far about the rotation axis.
     /// Defaults to zero (i.e. no rotation).
     #[serde(default)]
     pub angle: Angle,
-    /// Origin of the rotation. If one isn't provided, the replica will rotate about its own bounding box center.
-    pub rotation_origin: OriginType,
+    /// Origin of the rotation. If one isn't provided, the object will rotate about its own bounding box center.
+    pub origin: OriginType,
 }
 
 /// Ways to transform each solid being replicated in a repeating pattern.
