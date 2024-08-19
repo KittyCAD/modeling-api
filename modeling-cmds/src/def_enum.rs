@@ -287,13 +287,13 @@ define_modeling_cmd_enum! {
 
         /// Create a pattern using this entity by specifying the transform for each desired repetition.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
-        pub struct EntityLinearPatternTransform {
+        pub struct EntityTransformPattern {
             /// ID of the entity being copied.
             pub entity_id: Uuid,
             /// How to transform each repeated solid.
             /// The 0th transform will create the first copy of the entity.
             /// The total number of (optional) repetitions equals the size of this list.
-            pub transform: Vec<crate::shared::LinearTransform>,
+            pub transform: Vec<crate::shared::Transform>,
         }
 
         /// Create a linear pattern using this entity.

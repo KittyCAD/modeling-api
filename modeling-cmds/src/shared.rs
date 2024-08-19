@@ -37,7 +37,7 @@ pub struct Rotation {
 /// Ways to transform each solid being replicated in a repeating pattern.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
-pub struct LinearTransform {
+pub struct Transform {
     /// Translate the replica this far along each dimension.
     /// Defaults to zero vector (i.e. same position as the original).
     #[serde(default)]
