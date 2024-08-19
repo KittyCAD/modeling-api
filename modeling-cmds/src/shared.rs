@@ -18,6 +18,22 @@ pub enum CutType {
     Chamfer,
 }
 
+/// A rotation defined by an axis, origin of rotation, and an angle.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
+#[serde(rename_all = "snake_case")]
+pub struct Rotation {
+    /// Rotation axis of the replica.
+    /// Defaults to (0, 0, 1) (i.e. the Z axis).
+    #[serde(default = "z_axis")]
+    pub axis: Point3d<f64>,
+    /// Rotate the replica this far about the rotation axis.
+    /// Defaults to zero (i.e. no rotation).
+    #[serde(default)]
+    pub angle: Angle,
+    /// Origin of the rotation. If one isn't provided, the replica will rotate about its own bounding box center.
+    pub rotation_origin: OriginType,
+}
+
 /// Ways to transform each solid being replicated in a repeating pattern.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
@@ -30,16 +46,10 @@ pub struct LinearTransform {
     /// Defaults to (1, 1, 1) (i.e. the same size as the original).
     #[serde(default = "same_scale")]
     pub scale: Point3d<f64>,
-    /// Rotation axis of the replica.
-    /// Defaults to (0, 0, 1) (i.e. the Z axis).
-    #[serde(default = "z_axis")]
-    pub axis: Point3d<f64>,
-    /// Rotate the replica this far about the rotation axis.
-    /// Defaults to zero (i.e. no rotation).
+    /// Rotate the replica about the specified rotation axis and origin.
+    /// Defaults to no rotation.
     #[serde(default)]
-    pub angle: Angle,
-    /// Origin of the rotation. If one isn't provided, the replica will rotate about its own bounding box center.
-    pub rotation_origin: OriginType,
+    pub rotation: Rotation,
     /// Whether to replicate the original solid in this instance.
     #[serde(default = "bool_true")]
     pub replicate: bool,
@@ -114,13 +124,6 @@ pub enum OriginType {
         /// Custom origin point.
         origin: Point3d<f64>,
     },
-}
-
-impl Default for OriginType {
-    /// Local Bounding Box Origin
-    fn default() -> Self {
-        Self::Local {}
-    }
 }
 
 /// An RGBA color
