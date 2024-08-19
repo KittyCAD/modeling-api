@@ -105,7 +105,8 @@ pub enum DistanceType {
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum OriginType {
     /// Local Origin (center of object bounding box).
-    Local {},
+    #[default]
+    Local,
     /// Global Origin (0, 0, 0).
     Global {},
     /// Custom Origin (user specified point).
