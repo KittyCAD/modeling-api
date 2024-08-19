@@ -259,6 +259,53 @@ pub struct Point4d<T = f32> {
     pub w: T,
 }
 
+impl<T> Point2d<T>
+where
+    T: Copy,
+{
+    /// Make a point where all components have the given value.
+    pub fn uniform(value: T) -> Self {
+        Self { x: value, y: value }
+    }
+}
+impl<T> Point3d<T>
+where
+    T: Copy,
+{
+    /// Make a point where all components have the given value.
+    pub fn uniform(value: T) -> Self {
+        Self {
+            x: value,
+            y: value,
+            z: value,
+        }
+    }
+}
+impl<T> Point4d<T>
+where
+    T: Copy,
+{
+    /// Make a point where all components have the given value.
+    pub fn uniform(value: T) -> Self {
+        Self {
+            x: value,
+            y: value,
+            z: value,
+            w: value,
+        }
+    }
+    /// Make a point where the X, Y and Z components have the same value,
+    /// but the W component has a different one.
+    pub fn uniform_3d(xyz: T, w: T) -> Self {
+        Self {
+            x: xyz,
+            y: xyz,
+            z: xyz,
+            w,
+        }
+    }
+}
+
 impl From<euler::Vec3> for Point3d<f32> {
     fn from(v: euler::Vec3) -> Self {
         Self { x: v.x, y: v.y, z: v.z }
