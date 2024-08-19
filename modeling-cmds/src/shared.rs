@@ -101,18 +101,18 @@ pub enum DistanceType {
 }
 
 /// The type of origin
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum OriginType {
     /// Local Origin (center of object bounding box).
     #[default]
     Local,
     /// Global Origin (0, 0, 0).
-    Global {},
+    Global,
     /// Custom Origin (user specified point).
     Custom {
         /// Custom origin point.
-        point: Point3d<f64>,
+        origin: Point3d<f64>,
     },
 }
 
