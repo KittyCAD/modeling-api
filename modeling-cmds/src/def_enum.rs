@@ -142,7 +142,7 @@ define_modeling_cmd_enum! {
         )]
         pub struct Loft {
             /// The closed section curves to create a lofted solid from.
-            /// Currently, these must be Solid2D's
+            /// Currently, these must be Solid2Ds
             pub section_ids: Vec<Uuid>,
             /// Degree of the interpolation.  Pass 2 for quadratic, and 3 for cubic interpolation in the V direction.
             pub v_degree: u32,
