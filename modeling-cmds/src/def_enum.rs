@@ -144,8 +144,9 @@ define_modeling_cmd_enum! {
             /// The closed section curves to create a lofted solid from.
             /// Currently, these must be Solid2Ds
             pub section_ids: Vec<Uuid>,
-            /// Degree of the interpolation.  Pass 2 for quadratic, and 3 for cubic interpolation in the V direction.
-            pub v_degree: u32,
+            /// Degree of the interpolation. Must be greater than zero.
+            /// For example, use 2 for quadratic, or 3 for cubic interpolation in the V direction.
+            pub v_degree: std::num::NonZeroU32,
             /// Attempt to approximate rational curves (such as arcs) using a bezier.
             /// This will remove banding around interpolations between arcs and non-arcs.  It may produce errors in other scenarios
             /// Over time, this field won't be necessary.
