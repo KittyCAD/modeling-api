@@ -119,7 +119,8 @@ define_modeling_cmd_enum! {
             /// Smaller values mean a thinner shell.
             pub shell_thickness: LengthUnit,
             /// If true, the Solid3D is made hollow instead of removing the selected faces
-            pub hollow: Option<bool>,
+            #[serde(default)]
+            pub hollow: bool,
         }
 
         /// Command for revolving a solid 2d about a brep edge
