@@ -25,6 +25,10 @@ pub struct EngineParams {
     pub pool: Option<String>,
     /// If true, will show the grid at the start of the session.
     pub show_grid: bool,
+    /// If given, when the session ends, the modeling commands sent during
+    /// the session will be written out to this filename.
+    /// For debugging.
+    pub replay: Option<String>,
 }
 
 impl Default for EngineParams {
@@ -38,6 +42,7 @@ impl Default for EngineParams {
             webrtc: true,
             pool: None,
             show_grid: false,
+            replay: None,
         }
     }
 }
