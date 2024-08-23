@@ -34,6 +34,17 @@ pub struct Rotation {
     pub origin: OriginType,
 }
 
+impl Default for Rotation {
+    /// z-axis, 0 degree angle, and local origin.
+    fn default() -> Self {
+        Self {
+            axis: z_axis(),
+            angle: Angle::default(),
+            origin: OriginType::Local,
+        }
+    }
+}
+
 /// Ways to transform each solid being replicated in a repeating pattern.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
