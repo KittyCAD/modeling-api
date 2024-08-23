@@ -19,16 +19,14 @@ pub enum CutType {
 }
 
 /// A rotation defined by an axis, origin of rotation, and an angle.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub struct Rotation {
     /// Rotation axis.
     /// Defaults to (0, 0, 1) (i.e. the Z axis).
-    #[serde(default = "z_axis")]
     pub axis: Point3d<f64>,
     /// Rotate this far about the rotation axis.
     /// Defaults to zero (i.e. no rotation).
-    #[serde(default)]
     pub angle: Angle,
     /// Origin of the rotation. If one isn't provided, the object will rotate about its own bounding box center.
     pub origin: OriginType,
