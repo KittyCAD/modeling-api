@@ -196,6 +196,12 @@ pub enum OkWebSocketResponseData {
     /// Request a collection of metrics, to include WebRTC.
     MetricsRequest {},
 
+    /// Data about the Modeling Session (application-level).
+    ModelingSessionData {
+        /// Data about the Modeling Session (application-level).
+        session: ModelingSessionData,
+    },
+
     /// Pong response to a Ping message.
     Pong {},
 }
@@ -757,6 +763,14 @@ impl From<RtcSdpType> for webrtc::peer_connection::sdp::sdp_type::RTCSdpType {
             RtcSdpType::Unspecified => Self::Unspecified,
         }
     }
+}
+/// Successful Websocket response.
+#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct ModelingSessionData {
+    /// ID of the API call this modeling session is using.
+    /// Useful for tracing and debugging.
+    pub api_call_id: String,
 }
 
 #[cfg(test)]
