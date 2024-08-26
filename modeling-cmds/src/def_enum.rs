@@ -106,7 +106,7 @@ define_modeling_cmd_enum! {
             pub tolerance: LengthUnit,
         }
 
-        /// Command for revolving a solid 2d.
+        /// Command for shelling a solid3d face
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
         )]
@@ -138,6 +138,28 @@ define_modeling_cmd_enum! {
             /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }
+
+        /// Command for lofting sections to create a solid
+        #[derive(
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+        )]
+        pub struct Loft {
+            /// The closed section curves to create a lofted solid from.
+            /// Currently, these must be Solid2Ds
+            pub section_ids: Vec<Uuid>,
+            /// Degree of the interpolation. Must be greater than zero.
+            /// For example, use 2 for quadratic, or 3 for cubic interpolation in the V direction.
+            pub v_degree: std::num::NonZeroU32,
+            /// Attempt to approximate rational curves (such as arcs) using a bezier.
+            /// This will remove banding around interpolations between arcs and non-arcs.  It may produce errors in other scenarios
+            /// Over time, this field won't be necessary.
+            pub bez_approximate_rational: bool,
+            /// This can be set to override the automatically determined topological base curve, which is usually the first section encountered.
+            pub base_curve_index: Option<u32>,
+            /// Tolerance
+            pub tolerance: LengthUnit,
+        }
+
 
         /// Closes a path, converting it to a 2D solid.
         #[derive(
