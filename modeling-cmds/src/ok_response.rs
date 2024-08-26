@@ -76,7 +76,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Loft` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput, Clone)]
         pub struct Loft {
             ///The UUID of the newly created solid loft.
             pub solid_id: Uuid,
