@@ -141,7 +141,7 @@ define_modeling_cmd_enum! {
 
         /// Command for lofting sections to create a solid
         #[derive(
-            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant
         )]
         pub struct Loft {
             /// The closed section curves to create a lofted solid from.
