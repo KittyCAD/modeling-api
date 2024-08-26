@@ -1,10 +1,10 @@
 use schemars::JsonSchema;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::shared::PostEffectType;
 
 /// Params for starting the engine.
-#[derive(Debug, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(default)]
 pub struct EngineParams {
     /// Width of the video feed. Must be a multiple of 4.
