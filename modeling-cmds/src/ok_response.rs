@@ -411,6 +411,14 @@ define_ok_modeling_cmd_response_enum! {
             pub max_distance: LengthUnit,
         }
 
+        /// The response from the `EntityLinearPatternTransform` command.
+        /// Deprecated in favor of `EntityTransformPattern`.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityLinearPatternTransform {
+            /// The UUIDs of the entities that were created.
+            pub entity_ids: Vec<Uuid>,
+        }
+
         /// The response from the `EntityTransformPattern` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityTransformPattern {
