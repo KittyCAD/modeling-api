@@ -68,7 +68,7 @@ pub struct ModelingCmdReq {
 }
 
 /// The websocket messages the server receives.
-#[derive(Serialize, Deserialize, JsonSchema, Debug)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum WebSocketRequest {
     /// The trickle ICE candidate request.
@@ -103,7 +103,7 @@ pub enum WebSocketRequest {
 }
 
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
-#[derive(Serialize, Deserialize, JsonSchema, Debug)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct ModelingBatch {
     /// A sequence of modeling requests. If any request fails, following requests will not be tried.
@@ -144,7 +144,7 @@ impl ModelingBatch {
 /// Representation of an ICE server used for STUN/TURN
 /// Used to initiate WebRTC connections
 /// based on <https://developer.mozilla.org/en-US/docs/Web/API/RTCIceServer>
-#[derive(serde::Serialize, serde::Deserialize, Debug, JsonSchema)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, JsonSchema, Clone)]
 pub struct IceServer {
     /// URLs for a given STUN/TURN server.
     /// IceServer urls can either be a string or an array of strings
@@ -157,7 +157,7 @@ pub struct IceServer {
 }
 
 /// The websocket messages this server sends.
-#[derive(Serialize, Deserialize, JsonSchema, Debug)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
 #[serde(tag = "type", content = "data", rename_all = "snake_case")]
 pub enum OkWebSocketResponseData {
     /// Information about the ICE servers.
@@ -196,12 +196,18 @@ pub enum OkWebSocketResponseData {
     /// Request a collection of metrics, to include WebRTC.
     MetricsRequest {},
 
+    /// Data about the Modeling Session (application-level).
+    ModelingSessionData {
+        /// Data about the Modeling Session (application-level).
+        session: ModelingSessionData,
+    },
+
     /// Pong response to a Ping message.
     Pong {},
 }
 
 /// Successful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct SuccessWebSocketResponse {
     /// Always true
@@ -242,7 +248,7 @@ pub enum WebSocketResponse {
 
 /// Websocket responses can either be successful or unsuccessful.
 /// Slightly different schemas in either case.
-#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "snake_case", untagged)]
 pub enum BatchResponse {
     /// Response sent when a request succeeded.
@@ -297,7 +303,7 @@ impl WebSocketResponse {
 
 /// A raw file with unencoded contents to be passed over binary websockets.
 /// When raw files come back for exports it is sent as binary/bson, not text/json.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
 pub struct RawFile {
     /// The name of the file.
     pub name: String,
@@ -339,7 +345,7 @@ impl KV for LoggableApiError {
 }
 
 /// An error.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Eq, PartialEq, Clone)]
 pub struct ApiError {
     /// The error code.
     pub error_code: ErrorCode,
@@ -757,6 +763,14 @@ impl From<RtcSdpType> for webrtc::peer_connection::sdp::sdp_type::RTCSdpType {
             RtcSdpType::Unspecified => Self::Unspecified,
         }
     }
+}
+/// Successful Websocket response.
+#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "snake_case")]
+pub struct ModelingSessionData {
+    /// ID of the API call this modeling session is using.
+    /// Useful for tracing and debugging.
+    pub api_call_id: String,
 }
 
 #[cfg(test)]
