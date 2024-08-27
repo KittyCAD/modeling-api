@@ -412,7 +412,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityTransformPattern` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityTransformPattern {
             /// The UUIDs of the entities that were created.
             pub entity_ids: Vec<Uuid>,
