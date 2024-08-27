@@ -311,6 +311,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Create a pattern using this entity by specifying the transform for each desired repetition.
+        /// Transformations are performed in the following order (first applied to last applied): scale, rotate, translate.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EntityLinearPatternTransform {
             /// ID of the entity being copied.
