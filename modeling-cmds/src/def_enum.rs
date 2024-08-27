@@ -47,6 +47,12 @@ define_modeling_cmd_enum! {
         pub struct StartPath;
 
         /// Move the path's "pen".
+        /// If you're in sketch mode, these coordinates are in the local coordinate system,
+        /// not the world's coordinate system.
+        /// For example, say you're sketching on the plane {x: (1,0,0), y: (0,1,0), origin: (0, 0, 50)}.
+        /// In other words, the plane 50 units above the default XY plane. Then, moving the pen
+        /// to (1, 1, 0) with this command uses local coordinates. So, it would move the pen to
+        /// (1, 1, 50) in global coordinates.
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
         )]
