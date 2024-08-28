@@ -18,10 +18,35 @@ pub enum CutType {
     Chamfer,
 }
 
+/// A rotation defined by an axis, origin of rotation, and an angle.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub struct Rotation {
+    /// Rotation axis.
+    /// Defaults to (0, 0, 1) (i.e. the Z axis).
+    pub axis: Point3d<f64>,
+    /// Rotate this far about the rotation axis.
+    /// Defaults to zero (i.e. no rotation).
+    pub angle: Angle,
+    /// Origin of the rotation. If one isn't provided, the object will rotate about its own bounding box center.
+    pub origin: OriginType,
+}
+
+impl Default for Rotation {
+    /// z-axis, 0 degree angle, and local origin.
+    fn default() -> Self {
+        Self {
+            axis: z_axis(),
+            angle: Angle::default(),
+            origin: OriginType::Local,
+        }
+    }
+}
+
 /// Ways to transform each solid being replicated in a repeating pattern.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
-pub struct LinearTransform {
+pub struct Transform {
     /// Translate the replica this far along each dimension.
     /// Defaults to zero vector (i.e. same position as the original).
     #[serde(default)]
@@ -30,6 +55,10 @@ pub struct LinearTransform {
     /// Defaults to (1, 1, 1) (i.e. the same size as the original).
     #[serde(default = "same_scale")]
     pub scale: Point3d<f64>,
+    /// Rotate the replica about the specified rotation axis and origin.
+    /// Defaults to no rotation.
+    #[serde(default)]
+    pub rotation: Rotation,
     /// Whether to replicate the original solid in this instance.
     #[serde(default = "bool_true")]
     pub replicate: bool,
@@ -87,6 +116,22 @@ pub enum DistanceType {
     OnAxis {
         /// Global axis
         axis: GlobalAxis,
+    },
+}
+
+/// The type of origin
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
+#[serde(rename_all = "snake_case", tag = "type")]
+pub enum OriginType {
+    /// Local Origin (center of object bounding box).
+    #[default]
+    Local,
+    /// Global Origin (0, 0, 0).
+    Global,
+    /// Custom Origin (user specified point).
+    Custom {
+        /// Custom origin point.
+        origin: Point3d<f64>,
     },
 }
 
@@ -821,6 +866,7 @@ impl_extern_type! {
     // Utils
     EngineErrorCode = "Enums::_ErrorCode"
     GlobalAxis = "Enums::_GlobalAxis"
+    OriginType = "Enums::_OriginType"
 
     // Graphics engine
     PostEffectType = "Enums::_PostEffectType"
@@ -832,4 +878,8 @@ fn bool_true() -> bool {
 fn same_scale() -> Point3d<f64> {
     let p = 1.0;
     Point3d { x: p, y: p, z: p }
+}
+
+fn z_axis() -> Point3d<f64> {
+    Point3d { x: 0.0, y: 0.0, z: 1.0 }
 }

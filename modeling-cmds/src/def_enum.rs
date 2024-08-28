@@ -311,6 +311,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Create a pattern using this entity by specifying the transform for each desired repetition.
+        /// Transformations are performed in the following order (first applied to last applied): scale, rotate, translate.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EntityLinearPatternTransform {
             /// ID of the entity being copied.
@@ -318,7 +319,7 @@ define_modeling_cmd_enum! {
             /// How to transform each repeated solid.
             /// The 0th transform will create the first copy of the entity.
             /// The total number of (optional) repetitions equals the size of this list.
-            pub transform: Vec<crate::shared::LinearTransform>,
+            pub transform: Vec<crate::shared::Transform>,
         }
 
         /// Create a linear pattern using this entity.
