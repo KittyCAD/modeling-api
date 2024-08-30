@@ -266,6 +266,11 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.
             pub format: OutputFormat,
+            /// Chosen stem of the names of exported files.
+            ///
+            /// For example, setting `name` to `"foo"` when exporting standard glTF will produce
+            /// two files named foo.gltf and foo.bin.
+            pub name: Option<String>,
         }
 
         /// What is this entity's parent?
