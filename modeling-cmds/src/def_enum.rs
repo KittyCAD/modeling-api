@@ -587,7 +587,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Fillets the given edge with the specified radius.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct Solid3dFilletEdge {
             /// Which object is being filletted.
             pub object_id: Uuid,
