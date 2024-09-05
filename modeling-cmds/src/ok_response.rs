@@ -185,13 +185,6 @@ define_ok_modeling_cmd_response_enum! {
             pub edge: Option<Uuid>,
         }
 
-        /// The response of the `Solid3dFilletEdge` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct Solid3dFilletEdge {
-            /// The UUID of the newly created fillet face.
-            pub face: Uuid,
-        }
-
         /// The response from the `GetEntityType` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct GetEntityType {
