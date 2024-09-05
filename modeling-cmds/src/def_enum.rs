@@ -86,10 +86,6 @@ define_modeling_cmd_enum! {
             pub target: ModelingCmdId,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
-            /// Whether to cap the extrusion with a face, or not.
-            /// If true, the resulting solid will be closed on all sides, like a dice.
-            /// If false, it will be open on one side, like a drinking glass.
-            pub cap: bool,
         }
 
         /// Command for revolving a solid 2d.

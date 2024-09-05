@@ -105,7 +105,6 @@ async fn main() -> Result<()> {
         .run_command(
             random_id(),
             Extrude {
-                cap: true,
                 distance: CUBE_WIDTH * 2.0,
                 target: path,
             }

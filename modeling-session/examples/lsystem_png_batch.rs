@@ -135,7 +135,6 @@ async fn main() -> Result<()> {
     });
     sketch_batch.push(ModelingCmdReq {
         cmd: ModelingCmd::Extrude(Extrude {
-            cap: true,
             distance: LengthUnit(1.0),
             target: path,
         }),
