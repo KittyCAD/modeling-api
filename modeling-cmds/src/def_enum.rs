@@ -600,7 +600,7 @@ define_modeling_cmd_enum! {
             /// How to apply the cut.
             #[serde(default)]
             pub cut_type: CutType,
-            /// The UUID top use for the newly created fillet face.
+            /// The UUID to use for the newly created fillet face.
             pub face_id: Option<Uuid>,
         }
 
