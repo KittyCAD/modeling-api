@@ -600,6 +600,8 @@ define_modeling_cmd_enum! {
             /// How to apply the cut.
             #[serde(default)]
             pub cut_type: CutType,
+            /// The UUID top use for the newly created fillet face.
+            pub face_id: Option<Uuid>,
         }
 
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so
