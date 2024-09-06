@@ -596,7 +596,8 @@ define_modeling_cmd_enum! {
             /// How to apply the cut.
             #[serde(default)]
             pub cut_type: CutType,
-            /// The UUID to use for the newly created fillet face.
+            /// The ID to use for the newly created fillet face.
+            /// If not provided, the server will randomly generate one.
             #[serde(default)]
             pub face_id: Option<Uuid>,
         }
