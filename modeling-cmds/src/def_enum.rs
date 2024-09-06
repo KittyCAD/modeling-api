@@ -86,6 +86,7 @@ define_modeling_cmd_enum! {
             pub target: ModelingCmdId,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
+            pub cap: bool,
         }
 
         /// Command for revolving a solid 2d.
