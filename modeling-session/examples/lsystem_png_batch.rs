@@ -137,7 +137,6 @@ async fn main() -> Result<()> {
         cmd: ModelingCmd::Extrude(Extrude {
             distance: LengthUnit(1.0),
             target: path,
-            cap: true,
         }),
         cmd_id: random_id(),
     });

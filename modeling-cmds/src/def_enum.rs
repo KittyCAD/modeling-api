@@ -86,8 +86,6 @@ define_modeling_cmd_enum! {
             pub target: ModelingCmdId,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
-            /// If true, the extrusion is capped off with a solid face.
-            pub cap: bool,
         }
 
         /// Command for revolving a solid 2d.
@@ -1056,6 +1054,7 @@ define_modeling_cmd_enum! {
             /// and padding = -0.2 means the view will span 80% of the object(s) bounding box.
             pub padding: f32,
             /// Whether or not to animate the camera movement.
+            #[serde(default)]
             pub animated: bool,
         }
 
