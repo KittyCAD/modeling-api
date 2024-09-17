@@ -222,7 +222,7 @@ pub struct SuccessWebSocketResponse {
 }
 
 /// Unsuccessful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct FailureWebSocketResponse {
     /// Always false
@@ -237,7 +237,7 @@ pub struct FailureWebSocketResponse {
 
 /// Websocket responses can either be successful or unsuccessful.
 /// Slightly different schemas in either case.
-#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "snake_case", untagged)]
 pub enum WebSocketResponse {
     /// Response sent when a request succeeded.
