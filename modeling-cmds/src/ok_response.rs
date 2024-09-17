@@ -195,7 +195,7 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct CurveGetControlPoints {
             /// Control points in the curve.
-            pub control_points: Vec<Point3d>,
+            pub control_points: Vec<Point3d<f64>>,
         }
 
         /// The response from the `CurveGetType` command.

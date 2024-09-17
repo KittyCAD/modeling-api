@@ -380,6 +380,34 @@ impl<T: PartialEq> PartialEq for Point2d<T> {
     }
 }
 
+macro_rules! impl_arithmetic {
+    ($typ:ident, $op:ident, $method:ident, $($i:ident),*) => {
+        impl<T> std::ops::$op<$typ<T>> for $typ<T>
+        where
+            T: std::ops::$op<Output = T>,
+        {
+            type Output = $typ<T>;
+
+            fn $method(self, rhs: $typ<T>) -> Self::Output {
+                Self {
+                    $(
+                        $i: self.$i.$method(rhs.$i),
+                    )*
+                }
+            }
+        }
+    };
+}
+
+impl_arithmetic!(Point2d, Add, add, x, y);
+impl_arithmetic!(Point3d, Add, add, x, y, z);
+impl_arithmetic!(Point2d, Sub, sub, x, y);
+impl_arithmetic!(Point3d, Sub, sub, x, y, z);
+impl_arithmetic!(Point2d, Mul, mul, x, y);
+impl_arithmetic!(Point3d, Mul, mul, x, y, z);
+impl_arithmetic!(Point2d, Div, div, x, y);
+impl_arithmetic!(Point3d, Div, div, x, y, z);
+
 impl<T> Point2d<T> {
     /// Add the given `z` component to a 2D point to produce a 3D point.
     pub fn with_z(self, z: T) -> Point3d<T> {
@@ -882,4 +910,16 @@ fn same_scale() -> Point3d<f64> {
 
 fn z_axis() -> Point3d<f64> {
     Point3d { x: 0.0, y: 0.0, z: 1.0 }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_math() {
+        let actual = Point2d { x: 1.0, y: 2.0 } + Point2d { x: 10.0, y: 20.0 };
+        let expected = Point2d { x: 11.0, y: 22.0 };
+        assert_eq!(actual, expected);
+    }
 }
