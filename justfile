@@ -8,6 +8,7 @@ check-typos:
 
 test:
     cargo nextest run --all-features 
+    cargo test --doc
 
 # Run unit tests, output coverage to `lcov.info`.
 test-with-coverage:

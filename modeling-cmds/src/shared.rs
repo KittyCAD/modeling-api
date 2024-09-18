@@ -190,6 +190,24 @@ impl<T> Point3d<T> {
     pub fn from_2d(Point2d { x, y }: Point2d<T>, z: T) -> Self {
         Self { x, y, z }
     }
+    /// Takes some closure, and calls it on each component of this point.
+    /// # Examples
+    /// ```
+    /// use kittycad_modeling_cmds::shared::Point3d;
+    /// let p0 = Point3d{x: 1.0, y: 1.0, z: 1.0};
+    /// assert_eq!(p0.map(|n| n*2.0), Point3d{x: 2.0, y: 2.0, z:2.0});
+    /// ```
+    pub fn map<U, F>(self, mut f: F) -> Point3d<U>
+    where
+        F: FnMut(T) -> U,
+    {
+        let Self { x, y, z } = self;
+        Point3d {
+            x: f(x),
+            y: f(y),
+            z: f(z),
+        }
+    }
 }
 
 /// Annotation line end type
@@ -326,6 +344,28 @@ where
         }
     }
 }
+
+impl<T> Point4d<T> {
+    /// Takes some closure, and calls it on each component of this point.
+    /// # Examples
+    /// ```
+    /// use kittycad_modeling_cmds::shared::Point4d;
+    /// let p0 = Point4d{x: 1.0, y: 1.0, z: 1.0, w: 1.0};
+    /// assert_eq!(p0.map(|n| n*2.0), Point4d{x: 2.0, y: 2.0, z: 2.0, w: 2.0});
+    /// ```
+    pub fn map<U, F>(self, mut f: F) -> Point4d<U>
+    where
+        F: FnMut(T) -> U,
+    {
+        let Self { x, y, z, w } = self;
+        Point4d {
+            x: f(x),
+            y: f(y),
+            z: f(z),
+            w: f(w),
+        }
+    }
+}
 impl<T> Point4d<T>
 where
     T: Copy,
@@ -425,6 +465,21 @@ impl<T> Point2d<T> {
     pub fn with_z(self, z: T) -> Point3d<T> {
         let Self { x, y } = self;
         Point3d { x, y, z }
+    }
+
+    /// Takes some closure, and calls it on each component of this point.
+    /// # Examples
+    /// ```
+    /// use kittycad_modeling_cmds::shared::Point2d;
+    /// let p0 = Point2d{x: 1.0, y: 1.0};
+    /// assert_eq!(p0.map(|n| n*2.0), Point2d{x: 2.0, y: 2.0});
+    /// ```
+    pub fn map<U, F>(self, mut f: F) -> Point2d<U>
+    where
+        F: FnMut(T) -> U,
+    {
+        let Self { x, y } = self;
+        Point2d { x: f(x), y: f(y) }
     }
 }
 
