@@ -357,6 +357,12 @@ impl From<euler::Vec3> for Point3d<f32> {
     }
 }
 
+impl<T> From<[T; 3]> for Point3d<T> {
+    fn from([x, y, z]: [T; 3]) -> Self {
+        Self { x, y, z }
+    }
+}
+
 impl<T: PartialEq> PartialEq for Point4d<T> {
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y && self.z == other.z && self.w == other.w
@@ -377,6 +383,12 @@ pub struct Point2d<T = f32> {
 impl<T: PartialEq> PartialEq for Point2d<T> {
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y
+    }
+}
+
+impl<T> From<[T; 2]> for Point2d<T> {
+    fn from([x, y]: [T; 2]) -> Self {
+        Self { x, y }
     }
 }
 
@@ -456,14 +468,14 @@ impl Angle {
         }
     }
     /// Create an angle in degrees.
-    pub fn from_degrees(value: f64) -> Self {
+    pub const fn from_degrees(value: f64) -> Self {
         Self {
             unit: UnitAngle::Degrees,
             value,
         }
     }
     /// Create an angle in radians.
-    pub fn from_radians(value: f64) -> Self {
+    pub const fn from_radians(value: f64) -> Self {
         Self {
             unit: UnitAngle::Radians,
             value,
@@ -473,16 +485,20 @@ impl Angle {
 
 impl Angle {
     /// 360 degrees.
-    pub fn turn() -> Self {
+    pub const fn turn() -> Self {
         Self::from_degrees(360.0)
     }
     /// 180 degrees.
-    pub fn half_circle() -> Self {
+    pub const fn half_circle() -> Self {
         Self::from_degrees(180.0)
     }
     /// 90 degrees.
-    pub fn quarter_circle() -> Self {
+    pub const fn quarter_circle() -> Self {
         Self::from_degrees(90.0)
+    }
+    /// 0 degrees.
+    pub const fn zero() -> Self {
+        Self::from_degrees(0.0)
     }
 }
 
