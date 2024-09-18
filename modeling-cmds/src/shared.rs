@@ -433,7 +433,7 @@ impl<T> From<[T; 2]> for Point2d<T> {
 }
 
 macro_rules! impl_arithmetic {
-    ($typ:ident, $op:ident, $method:ident, $($i:ident),*) => {
+    ($typ:ident, $op:ident, $op_assign:ident, $method:ident, $method_assign:ident, $($i:ident),*) => {
         impl<T> std::ops::$op<$typ<T>> for $typ<T>
         where
             T: std::ops::$op<Output = T>,
@@ -448,17 +448,28 @@ macro_rules! impl_arithmetic {
                 }
             }
         }
+        impl<T> std::ops::$op_assign for $typ<T>
+        where
+            T: std::ops::$op_assign<T>,
+        {
+
+            fn $method_assign(&mut self, other: Self) {
+                $(
+                    self.$i.$method_assign(other.$i);
+                )*
+            }
+        }
     };
 }
 
-impl_arithmetic!(Point2d, Add, add, x, y);
-impl_arithmetic!(Point3d, Add, add, x, y, z);
-impl_arithmetic!(Point2d, Sub, sub, x, y);
-impl_arithmetic!(Point3d, Sub, sub, x, y, z);
-impl_arithmetic!(Point2d, Mul, mul, x, y);
-impl_arithmetic!(Point3d, Mul, mul, x, y, z);
-impl_arithmetic!(Point2d, Div, div, x, y);
-impl_arithmetic!(Point3d, Div, div, x, y, z);
+impl_arithmetic!(Point2d, Add, AddAssign, add, add_assign, x, y);
+impl_arithmetic!(Point3d, Add, AddAssign, add, add_assign, x, y, z);
+impl_arithmetic!(Point2d, Sub, SubAssign, sub, sub_assign, x, y);
+impl_arithmetic!(Point3d, Sub, SubAssign, sub, sub_assign, x, y, z);
+impl_arithmetic!(Point2d, Mul, MulAssign, mul, mul_assign, x, y);
+impl_arithmetic!(Point3d, Mul, MulAssign, mul, mul_assign, x, y, z);
+impl_arithmetic!(Point2d, Div, DivAssign, div, div_assign, x, y);
+impl_arithmetic!(Point3d, Div, DivAssign, div, div_assign, x, y, z);
 
 impl<T> Point2d<T> {
     /// Add the given `z` component to a 2D point to produce a 3D point.
@@ -992,5 +1003,12 @@ mod tests {
         let actual = Point2d { x: 1.0, y: 2.0 } + Point2d { x: 10.0, y: 20.0 };
         let expected = Point2d { x: 11.0, y: 22.0 };
         assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_math_assign() {
+        let mut p = Point2d { x: 1.0, y: 2.0 };
+        p += Point2d { x: 10.0, y: 20.0 };
+        let expected = Point2d { x: 11.0, y: 22.0 };
+        assert_eq!(p, expected);
     }
 }
