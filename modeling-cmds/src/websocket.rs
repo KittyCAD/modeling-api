@@ -492,6 +492,7 @@ pub struct RtcIceCandidate {
     pub tcp_type: String,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::ice_transport::ice_candidate::RTCIceCandidate> for RtcIceCandidate {
     fn from(candidate: webrtc::ice_transport::ice_candidate::RTCIceCandidate) -> Self {
         Self {
@@ -510,6 +511,7 @@ impl From<webrtc::ice_transport::ice_candidate::RTCIceCandidate> for RtcIceCandi
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl From<RtcIceCandidate> for webrtc::ice_transport::ice_candidate::RTCIceCandidate {
     fn from(candidate: RtcIceCandidate) -> Self {
         Self {
@@ -563,6 +565,7 @@ pub enum RtcIceCandidateType {
     Relay,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::ice_transport::ice_candidate_type::RTCIceCandidateType> for RtcIceCandidateType {
     fn from(candidate_type: webrtc::ice_transport::ice_candidate_type::RTCIceCandidateType) -> Self {
         match candidate_type {
@@ -577,6 +580,7 @@ impl From<webrtc::ice_transport::ice_candidate_type::RTCIceCandidateType> for Rt
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl From<RtcIceCandidateType> for webrtc::ice_transport::ice_candidate_type::RTCIceCandidateType {
     fn from(candidate_type: RtcIceCandidateType) -> Self {
         match candidate_type {
@@ -607,6 +611,7 @@ pub enum RtcIceProtocol {
     Tcp,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::ice_transport::ice_protocol::RTCIceProtocol> for RtcIceProtocol {
     fn from(protocol: webrtc::ice_transport::ice_protocol::RTCIceProtocol) -> Self {
         match protocol {
@@ -617,6 +622,7 @@ impl From<webrtc::ice_transport::ice_protocol::RTCIceProtocol> for RtcIceProtoco
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl From<RtcIceProtocol> for webrtc::ice_transport::ice_protocol::RTCIceProtocol {
     fn from(protocol: RtcIceProtocol) -> Self {
         match protocol {
@@ -646,6 +652,7 @@ pub struct RtcIceCandidateInit {
     pub username_fragment: Option<String>,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::ice_transport::ice_candidate::RTCIceCandidateInit> for RtcIceCandidateInit {
     fn from(candidate: webrtc::ice_transport::ice_candidate::RTCIceCandidateInit) -> Self {
         Self {
@@ -657,6 +664,7 @@ impl From<webrtc::ice_transport::ice_candidate::RTCIceCandidateInit> for RtcIceC
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl From<RtcIceCandidateInit> for webrtc::ice_transport::ice_candidate::RTCIceCandidateInit {
     fn from(candidate: RtcIceCandidateInit) -> Self {
         Self {
@@ -679,6 +687,7 @@ pub struct RtcSessionDescription {
     pub sdp: String,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::peer_connection::sdp::session_description::RTCSessionDescription> for RtcSessionDescription {
     fn from(desc: webrtc::peer_connection::sdp::session_description::RTCSessionDescription) -> Self {
         Self {
@@ -688,6 +697,7 @@ impl From<webrtc::peer_connection::sdp::session_description::RTCSessionDescripti
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl TryFrom<RtcSessionDescription> for webrtc::peer_connection::sdp::session_description::RTCSessionDescription {
     type Error = anyhow::Error;
 
@@ -741,6 +751,7 @@ pub enum RtcSdpType {
     Rollback,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::peer_connection::sdp::sdp_type::RTCSdpType> for RtcSdpType {
     fn from(sdp_type: webrtc::peer_connection::sdp::sdp_type::RTCSdpType) -> Self {
         match sdp_type {
@@ -753,6 +764,7 @@ impl From<webrtc::peer_connection::sdp::sdp_type::RTCSdpType> for RtcSdpType {
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl From<RtcSdpType> for webrtc::peer_connection::sdp::sdp_type::RTCSdpType {
     fn from(sdp_type: RtcSdpType) -> Self {
         match sdp_type {

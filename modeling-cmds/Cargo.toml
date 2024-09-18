@@ -44,7 +44,8 @@ workspace = true
 default = []
 slog = ["dep:slog"]
 cxx = ["dep:cxx"]
-websocket = ["dep:webrtc", "dep:serde_json"]
+websocket = ["dep:serde_json"]
+webrtc = ["dep:webrtc"]
 unstable_exhaustive = []
 
 [dev-dependencies]
