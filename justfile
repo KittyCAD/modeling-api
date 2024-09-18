@@ -1,7 +1,12 @@
+clippy-flags := "--workspace --tests --benches --examples"
+
 lint:
-    cargo clippy --workspace --tests --benches --examples --no-default-features -- -D warnings
-    cargo clippy --workspace --tests --benches --examples                       -- -D warnings
-    cargo clippy --workspace --tests --benches --examples --all-features        -- -D warnings
+    cargo clippy {{clippy-flags}} --no-default-features -- -D warnings
+    cargo clippy {{clippy-flags}}                       -- -D warnings
+    cargo clippy {{clippy-flags}} --all-features        -- -D warnings
+
+check-wasm:
+    cargo check -p kittycad-modeling-cmds --target wasm32-unknown-unknown --features websocket
 
 check-typos:
     codespell --config .codespellrc

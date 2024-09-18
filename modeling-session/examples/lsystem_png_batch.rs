@@ -17,7 +17,7 @@ use kittycad_modeling_session::{Session, SessionBuilder};
 use lsystem::{LSystem, MapRules};
 use uuid::Uuid;
 
-#[tokio::main]
+#[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
     // Set up the API client.
     let kittycad_api_token = env::var("KITTYCAD_API_TOKEN").context("You must set $KITTYCAD_API_TOKEN")?;

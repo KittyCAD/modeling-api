@@ -18,7 +18,7 @@ use uuid::Uuid;
 
 const CUBE_WIDTH: LengthUnit = LengthUnit(100.0);
 
-#[tokio::main]
+#[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
     // Set up the API client.
     let kittycad_api_token = env::var("KITTYCAD_API_TOKEN").context("You must set $KITTYCAD_API_TOKEN")?;
