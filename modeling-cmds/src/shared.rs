@@ -190,6 +190,13 @@ impl<T> Point3d<T> {
     pub fn from_2d(Point2d { x, y }: Point2d<T>, z: T) -> Self {
         Self { x, y, z }
     }
+
+    /// Add the given `w` component to a 3D point to produce a 4D point.
+    pub fn with_w(self, w: T) -> Point4d<T> {
+        let Self { x, y, z } = self;
+        Point4d { x, y, z, w }
+    }
+
     /// Takes some closure, and calls it on each component of this point.
     /// # Examples
     /// ```
