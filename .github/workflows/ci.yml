@@ -54,6 +54,21 @@ jobs:
 
         - name: Check lints
           run: just lint
+
+    check-wasm:
+      name: Check wasm
+      runs-on: ubuntu-latest-8-cores
+      steps:
+        - uses: actions/checkout@v4
+        - uses: taiki-e/install-action@just
+        - name: Install Rust
+          uses: dtolnay/rust-toolchain@stable
+          with:
+            targets: wasm32-unknown-unknown
+        - uses: Swatinem/rust-cache@v2.7.3
+
+        - name: Check lints
+          run: just check-wasm
  
     cargo-fmt:
         name: cargo fmt

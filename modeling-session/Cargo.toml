@@ -25,7 +25,7 @@ uuid = { version = "1.10.0", features = ["v4"] }
 [dev-dependencies]
 color-eyre = "0.6"
 image = "0.25.1"
-tokio = { version = "1", features = ["rt", "macros", "rt-multi-thread"] }
+tokio = { version = "1", features = ["rt", "macros"] }
 
 [lints]
 workspace = true
