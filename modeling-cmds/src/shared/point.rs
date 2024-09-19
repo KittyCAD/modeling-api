@@ -1,0 +1,248 @@
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
+
+/// A point in 2D space
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
+#[serde(rename = "Point2d")]
+#[serde(rename_all = "snake_case")]
+pub struct Point2d<T = f32> {
+    #[allow(missing_docs)]
+    pub x: T,
+    #[allow(missing_docs)]
+    pub y: T,
+}
+
+impl<T: PartialEq> PartialEq for Point2d<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
+}
+
+impl<T> From<[T; 2]> for Point2d<T> {
+    fn from([x, y]: [T; 2]) -> Self {
+        Self { x, y }
+    }
+}
+
+impl<T> Point2d<T> {
+    /// Add the given `z` component to a 2D point to produce a 3D point.
+    pub fn with_z(self, z: T) -> Point3d<T> {
+        let Self { x, y } = self;
+        Point3d { x, y, z }
+    }
+
+    /// Takes some closure, and calls it on each component of this point.
+    /// # Examples
+    /// ```
+    /// use kittycad_modeling_cmds::shared::Point2d;
+    /// let p0 = Point2d{x: 1.0, y: 1.0};
+    /// assert_eq!(p0.map(|n| n*2.0), Point2d{x: 2.0, y: 2.0});
+    /// ```
+    pub fn map<U, F>(self, mut f: F) -> Point2d<U>
+    where
+        F: FnMut(T) -> U,
+    {
+        let Self { x, y } = self;
+        Point2d { x: f(x), y: f(y) }
+    }
+}
+
+/// A point in 3D space
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq, Default)]
+#[serde(rename = "Point3d")]
+#[serde(rename_all = "snake_case")]
+pub struct Point3d<T = f32> {
+    #[allow(missing_docs)]
+    pub x: T,
+    #[allow(missing_docs)]
+    pub y: T,
+    #[allow(missing_docs)]
+    pub z: T,
+}
+
+impl From<euler::Vec3> for Point3d<f32> {
+    fn from(v: euler::Vec3) -> Self {
+        Self { x: v.x, y: v.y, z: v.z }
+    }
+}
+
+impl<T> From<[T; 3]> for Point3d<T> {
+    fn from([x, y, z]: [T; 3]) -> Self {
+        Self { x, y, z }
+    }
+}
+
+impl<T> Point3d<T> {
+    /// Add the given `z` component to a 2D point to produce a 3D point.
+    pub fn from_2d(Point2d { x, y }: Point2d<T>, z: T) -> Self {
+        Self { x, y, z }
+    }
+
+    /// Add the given `w` component to a 3D point to produce a 4D point.
+    pub fn with_w(self, w: T) -> Point4d<T> {
+        let Self { x, y, z } = self;
+        Point4d { x, y, z, w }
+    }
+
+    /// Takes some closure, and calls it on each component of this point.
+    /// # Examples
+    /// ```
+    /// use kittycad_modeling_cmds::shared::Point3d;
+    /// let p0 = Point3d{x: 1.0, y: 1.0, z: 1.0};
+    /// assert_eq!(p0.map(|n| n*2.0), Point3d{x: 2.0, y: 2.0, z:2.0});
+    /// ```
+    pub fn map<U, F>(self, mut f: F) -> Point3d<U>
+    where
+        F: FnMut(T) -> U,
+    {
+        let Self { x, y, z } = self;
+        Point3d {
+            x: f(x),
+            y: f(y),
+            z: f(z),
+        }
+    }
+}
+impl<T> Point2d<T>
+where
+    T: Copy,
+{
+    /// Make a point where all components have the given value.
+    pub fn uniform(value: T) -> Self {
+        Self { x: value, y: value }
+    }
+}
+impl<T> Point3d<T>
+where
+    T: Copy,
+{
+    /// Make a point where all components have the given value.
+    pub fn uniform(value: T) -> Self {
+        Self {
+            x: value,
+            y: value,
+            z: value,
+        }
+    }
+}
+
+/// A point in homogeneous (4D) space
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[serde(rename = "Point4d")]
+#[serde(rename_all = "snake_case")]
+pub struct Point4d<T = f32> {
+    #[allow(missing_docs)]
+    pub x: T,
+    #[allow(missing_docs)]
+    pub y: T,
+    #[allow(missing_docs)]
+    pub z: T,
+    #[allow(missing_docs)]
+    pub w: T,
+}
+
+impl<T> Point4d<T> {
+    /// Takes some closure, and calls it on each component of this point.
+    /// # Examples
+    /// ```
+    /// use kittycad_modeling_cmds::shared::Point4d;
+    /// let p0 = Point4d{x: 1.0, y: 1.0, z: 1.0, w: 1.0};
+    /// assert_eq!(p0.map(|n| n*2.0), Point4d{x: 2.0, y: 2.0, z: 2.0, w: 2.0});
+    /// ```
+    pub fn map<U, F>(self, mut f: F) -> Point4d<U>
+    where
+        F: FnMut(T) -> U,
+    {
+        let Self { x, y, z, w } = self;
+        Point4d {
+            x: f(x),
+            y: f(y),
+            z: f(z),
+            w: f(w),
+        }
+    }
+}
+impl<T> Point4d<T>
+where
+    T: Copy,
+{
+    /// Make a point where all components have the given value.
+    pub fn uniform(value: T) -> Self {
+        Self {
+            x: value,
+            y: value,
+            z: value,
+            w: value,
+        }
+    }
+    /// Make a point where the X, Y and Z components have the same value,
+    /// but the W component has a different one.
+    pub fn uniform_3d(xyz: T, w: T) -> Self {
+        Self {
+            x: xyz,
+            y: xyz,
+            z: xyz,
+            w,
+        }
+    }
+}
+
+///A quaternion
+pub type Quaternion = Point4d;
+
+impl Default for Quaternion {
+    /// (0, 0, 0, 1)
+    fn default() -> Self {
+        Self {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            w: 1.0,
+        }
+    }
+}
+
+impl<T: PartialEq> PartialEq for Point4d<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y && self.z == other.z && self.w == other.w
+    }
+}
+
+macro_rules! impl_arithmetic {
+    ($typ:ident, $op:ident, $op_assign:ident, $method:ident, $method_assign:ident, $($i:ident),*) => {
+        impl<T> std::ops::$op<$typ<T>> for $typ<T>
+        where
+            T: std::ops::$op<Output = T>,
+        {
+            type Output = $typ<T>;
+
+            fn $method(self, rhs: $typ<T>) -> Self::Output {
+                Self {
+                    $(
+                        $i: self.$i.$method(rhs.$i),
+                    )*
+                }
+            }
+        }
+        impl<T> std::ops::$op_assign for $typ<T>
+        where
+            T: std::ops::$op_assign<T>,
+        {
+
+            fn $method_assign(&mut self, other: Self) {
+                $(
+                    self.$i.$method_assign(other.$i);
+                )*
+            }
+        }
+    };
+}
+
+impl_arithmetic!(Point2d, Add, AddAssign, add, add_assign, x, y);
+impl_arithmetic!(Point3d, Add, AddAssign, add, add_assign, x, y, z);
+impl_arithmetic!(Point2d, Sub, SubAssign, sub, sub_assign, x, y);
+impl_arithmetic!(Point3d, Sub, SubAssign, sub, sub_assign, x, y, z);
+impl_arithmetic!(Point2d, Mul, MulAssign, mul, mul_assign, x, y);
+impl_arithmetic!(Point3d, Mul, MulAssign, mul, mul_assign, x, y, z);
+impl_arithmetic!(Point2d, Div, DivAssign, div, div_assign, x, y);
+impl_arithmetic!(Point3d, Div, DivAssign, div, div_assign, x, y, z);
