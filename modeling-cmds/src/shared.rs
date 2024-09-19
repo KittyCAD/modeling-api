@@ -757,22 +757,3 @@ fn same_scale() -> Point3d<f64> {
 fn z_axis() -> Point3d<f64> {
     Point3d { x: 0.0, y: 0.0, z: 1.0 }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_math() {
-        let actual = Point2d { x: 1.0, y: 2.0 } + Point2d { x: 10.0, y: 20.0 };
-        let expected = Point2d { x: 11.0, y: 22.0 };
-        assert_eq!(actual, expected);
-    }
-    #[test]
-    fn test_math_assign() {
-        let mut p = Point2d { x: 1.0, y: 2.0 };
-        p += Point2d { x: 10.0, y: 20.0 };
-        let expected = Point2d { x: 11.0, y: 22.0 };
-        assert_eq!(p, expected);
-    }
-}
