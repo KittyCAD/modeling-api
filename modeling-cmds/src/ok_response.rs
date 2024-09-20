@@ -346,6 +346,7 @@ define_ok_modeling_cmd_response_enum! {
 
         /// The mass response.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
         pub struct Mass {
             /// The mass.
             pub mass: f64,
@@ -355,6 +356,7 @@ define_ok_modeling_cmd_response_enum! {
 
         /// The volume response.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
         pub struct Volume {
             /// The volume.
             pub volume: f64,
@@ -364,6 +366,7 @@ define_ok_modeling_cmd_response_enum! {
 
         /// The density response.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
         pub struct Density {
             /// The density.
             pub density: f64,
@@ -373,6 +376,7 @@ define_ok_modeling_cmd_response_enum! {
 
         /// The surface area response.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
         pub struct SurfaceArea {
             /// The surface area.
             pub surface_area: f64,
@@ -382,6 +386,7 @@ define_ok_modeling_cmd_response_enum! {
 
         /// The center of mass response.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
         pub struct CenterOfMass {
             /// The center of mass.
             pub center_of_mass: Point3d<f64>,

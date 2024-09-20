@@ -4,6 +4,8 @@
 //! Why? Because we use this primarily for KittyCAD server and clients, where we are on top of all changes.
 
 pub mod base64;
+#[cfg(feature = "convert_client_crate")]
+mod convert_client_crate;
 /// Various coordinate systems.
 pub mod coord;
 /// chrono wrapper for datetimes.

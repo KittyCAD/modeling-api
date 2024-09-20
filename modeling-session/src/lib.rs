@@ -58,10 +58,11 @@ impl Session {
     ) -> Result<Self, ApiError> {
         // TODO: establish WebRTC connections for the user.
         let webrtc = Some(false);
-        let ws = client
+        let (ws, _headers) = client
             .modeling()
             .commands_ws(
                 fps,
+                None,
                 None,
                 None,
                 show_grid,
