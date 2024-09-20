@@ -60,6 +60,12 @@ pub struct Point3d<T = f32> {
     pub z: T,
 }
 
+impl std::fmt::Display for Point3d<f64> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({}, {}, {})", self.x, self.y, self.z)
+    }
+}
+
 impl From<euler::Vec3> for Point3d<f32> {
     fn from(v: euler::Vec3) -> Self {
         Self { x: v.x, y: v.y, z: v.z }
