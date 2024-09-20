@@ -114,7 +114,7 @@ where
     T: Copy,
 {
     /// Make a point where all components have the given value.
-    pub fn uniform(value: T) -> Self {
+    pub const fn uniform(value: T) -> Self {
         Self { x: value, y: value }
     }
 }
@@ -123,7 +123,7 @@ where
     T: Copy,
 {
     /// Make a point where all components have the given value.
-    pub fn uniform(value: T) -> Self {
+    pub const fn uniform(value: T) -> Self {
         Self {
             x: value,
             y: value,
@@ -173,7 +173,7 @@ where
     T: Copy,
 {
     /// Make a point where all components have the given value.
-    pub fn uniform(value: T) -> Self {
+    pub const fn uniform(value: T) -> Self {
         Self {
             x: value,
             y: value,
@@ -183,7 +183,7 @@ where
     }
     /// Make a point where the X, Y and Z components have the same value,
     /// but the W component has a different one.
-    pub fn uniform_3d(xyz: T, w: T) -> Self {
+    pub const fn uniform_3d(xyz: T, w: T) -> Self {
         Self {
             x: xyz,
             y: xyz,

@@ -336,7 +336,7 @@ impl Angle {
 impl Default for Angle {
     /// 0 degrees.
     fn default() -> Self {
-        Self::from_degrees(0.0)
+        Self::zero()
     }
 }
 
