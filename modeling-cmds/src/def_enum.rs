@@ -10,7 +10,7 @@ define_modeling_cmd_enum! {
         use std::collections::HashSet;
 
         use crate::{self as kittycad_modeling_cmds};
-        use kittycad_modeling_cmds_macros::{ModelingCmdVariant, ModelingCmdVariantEmpty};
+        use kittycad_modeling_cmds_macros::{ModelingCmdVariant};
         use parse_display_derive::{Display, FromStr};
         use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
@@ -42,7 +42,7 @@ define_modeling_cmd_enum! {
 
         /// Start a new path.
         #[derive(
-            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         pub struct StartPath;
 
@@ -54,7 +54,7 @@ define_modeling_cmd_enum! {
         /// to (1, 1, 0) with this command uses local coordinates. So, it would move the pen to
         /// (1, 1, 50) in global coordinates.
         #[derive(
-            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         pub struct MovePathPen {
             /// The ID of the command which created the path.
@@ -66,7 +66,7 @@ define_modeling_cmd_enum! {
         /// Extend a path by adding a new segment which starts at the path's "pen".
         /// If no "pen" location has been set before (via `MovePen`), then the pen is at the origin.
         #[derive(
-            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         pub struct ExtendPath {
             /// The ID of the command which created the path.
@@ -78,7 +78,7 @@ define_modeling_cmd_enum! {
 
         /// Command for extruding a solid 2d.
         #[derive(
-            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         pub struct Extrude {
             /// Which sketch to extrude.
@@ -90,7 +90,7 @@ define_modeling_cmd_enum! {
 
         /// Command for revolving a solid 2d.
         #[derive(
-            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         pub struct Revolve {
             /// Which sketch to revolve.
@@ -110,7 +110,7 @@ define_modeling_cmd_enum! {
 
         /// Command for shelling a solid3d face
         #[derive(
-            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         pub struct Solid3dShellFace {
             /// Which Solid3D is being shelled.
@@ -127,7 +127,7 @@ define_modeling_cmd_enum! {
 
         /// Command for revolving a solid 2d about a brep edge
         #[derive(
-            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         pub struct RevolveAboutEdge {
             /// Which sketch to revolve.
@@ -173,7 +173,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Camera drag started.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct CameraDragStart {
             /// The type of camera drag interaction.
             pub interaction: CameraDragInteractionType,
@@ -209,7 +209,7 @@ define_modeling_cmd_enum! {
         pub struct DefaultCameraGetSettings;
 
         /// Change what the default camera is looking at.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct DefaultCameraLookAt {
             /// Where the camera is positioned
             pub vantage: Point3d,
@@ -225,7 +225,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Change what the default camera is looking at.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct DefaultCameraPerspectiveSettings {
             /// Where the camera is positioned
             pub vantage: Point3d,
@@ -357,7 +357,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Create a helix using the input cylinder and other specified parameters.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EntityMakeHelix {
             /// ID of the cylinder.
             pub cylinder_id: Uuid,
@@ -372,7 +372,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Mirror the input entities over the specified axis. (Currently only supports sketches)
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EntityMirror {
             /// ID of the mirror entities.
             pub ids: Vec<Uuid>,
@@ -384,7 +384,7 @@ define_modeling_cmd_enum! {
 
         /// Mirror the input entities over the specified edge. (Currently only supports sketches)
         #[derive(
-            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty,
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
        pub struct EntityMirrorAcrossEdge {
             /// ID of the mirror entities.
@@ -394,7 +394,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Enter edit mode
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EditModeEnter {
             /// The edit target
             pub target: Uuid,
@@ -411,25 +411,25 @@ define_modeling_cmd_enum! {
         }
 
         /// Adds one or more entities (by UUID) to the selection.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SelectAdd {
             /// Which entities to select
             pub entities: Vec<Uuid>,
         }
 
         /// Removes one or more entities (by UUID) from the selection.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SelectRemove {
             /// Which entities to unselect
             pub entities: Vec<Uuid>,
         }
 
         /// Removes all of the Objects in the scene
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SceneClearAll;
 
         /// Replaces current selection with these entities (by UUID).
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SelectReplace {
             /// Which entities to select
             pub entities: Vec<Uuid>,
@@ -449,14 +449,14 @@ define_modeling_cmd_enum! {
         }
 
         /// Changes the current highlighted entity to these entities.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct HighlightSetEntities {
             /// Highlight these entities.
             pub entities: Vec<Uuid>,
         }
 
         /// Create a new annotation
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct NewAnnotation {
             /// What should the annotation contain?
             pub options: AnnotationOptions,
@@ -467,7 +467,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Update an annotation
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct UpdateAnnotation {
             /// Which annotation to update
             pub annotation_id: Uuid,
@@ -477,14 +477,14 @@ define_modeling_cmd_enum! {
         }
 
         /// Changes visibility of scene-wide edge lines on brep solids
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EdgeLinesVisible {
             /// Whether or not the edge lines should be hidden.
             pub hidden: bool,
         }
 
         /// Hide or show an object
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct ObjectVisible {
             /// Which object to change
             pub object_id: Uuid,
@@ -493,14 +493,14 @@ define_modeling_cmd_enum! {
         }
 
         /// Bring an object to the front of the scene
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct ObjectBringToFront {
             /// Which object to change
             pub object_id: Uuid,
         }
 
         /// Set the material properties of an object
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct ObjectSetMaterialParamsPbr {
             /// Which object to change
             pub object_id: Uuid,
@@ -530,7 +530,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Add a hole to a Solid2d object before extruding it.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct Solid2dAddHole {
             /// Which object to add the hole to.
             pub object_id: Uuid,
@@ -583,7 +583,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Fillets the given edge with the specified radius.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct Solid3dFilletEdge {
             /// Which object is being filletted.
             pub object_id: Uuid,
@@ -637,7 +637,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Send object to front or back.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SendObject {
             /// Which object is being changed.
             pub object_id: Uuid,
@@ -645,7 +645,7 @@ define_modeling_cmd_enum! {
             pub front: bool,
         }
         /// Set opacity of the entity.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EntitySetOpacity {
             /// Which entity is being changed.
             pub entity_id: Uuid,
@@ -656,7 +656,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Fade entity in or out.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EntityFade {
             /// Which entity is being changed.
             pub entity_id: Uuid,
@@ -668,7 +668,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Make a new plane
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct MakePlane {
             /// Origin of the plane
             pub origin: Point3d<LengthUnit>,
@@ -687,7 +687,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Set the color of a plane.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct PlaneSetColor {
             /// Which plane is being changed.
             pub plane_id: Uuid,
@@ -696,14 +696,14 @@ define_modeling_cmd_enum! {
         }
 
         /// Set the current tool.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SetTool {
             /// What tool should be active.
             pub tool: SceneToolType,
         }
 
         /// Send a mouse move event
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct MouseMove {
             /// Where the mouse is
             pub window: Point2d,
@@ -725,7 +725,7 @@ define_modeling_cmd_enum! {
         /// Disable sketch mode.
         /// If you are sketching on a face, be sure to not disable sketch mode until you have extruded.
         /// Otherwise, your object will not be fused with the face.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SketchModeDisable;
 
         /// Get the plane for sketch mode.
@@ -733,7 +733,7 @@ define_modeling_cmd_enum! {
         pub struct GetSketchModePlane;
 
         /// Get the plane for sketch mode.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct CurveSetConstraint {
             /// Which curve to constrain.
             pub object_id: Uuid,
@@ -744,7 +744,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Sketch on some entity (e.g. a plane, a face).
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EnableSketchMode {
             /// Which entity to sketch on.
             pub entity_id: Uuid,
@@ -761,21 +761,21 @@ define_modeling_cmd_enum! {
         }
 
         /// Set the background color of the scene.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SetBackgroundColor {
             /// The color to set the background to.
             pub color: Color,
         }
 
         /// Set the properties of the tool lines for the scene.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SetCurrentToolProperties {
             /// The color to set the tool line to.
             pub color: Option<Color>,
         }
 
         /// Set the default system properties used when a specific property isn't set.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SetDefaultSystemProperties {
             /// The default system color.
             pub color: Option<Color>,
@@ -814,7 +814,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Add a gizmo showing the axes.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct MakeAxesGizmo {
             /// If true, axes gizmo will be placed in the corner of the screen.
             /// If false, it will be placed at the origin of the scene.
@@ -865,14 +865,14 @@ define_modeling_cmd_enum! {
         }
 
         /// Start dragging the mouse.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct HandleMouseDragStart {
             /// The mouse position.
             pub window: Point2d,
         }
 
         /// Continue dragging the mouse.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct HandleMouseDragMove {
             /// The mouse position.
             pub window: Point2d,
@@ -884,14 +884,14 @@ define_modeling_cmd_enum! {
         }
 
         /// Stop dragging the mouse.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct HandleMouseDragEnd {
             /// The mouse position.
             pub window: Point2d,
         }
 
         /// Remove scene objects.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct RemoveSceneObjects {
             /// Objects to remove.
             pub object_ids: HashSet<Uuid>,
@@ -915,7 +915,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Reconfigure the stream.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct ReconfigureStream {
             /// Width of the stream.
             pub width: u32,
@@ -936,7 +936,7 @@ define_modeling_cmd_enum! {
 
         /// Set the units of the scene.
         /// For all following commands, the units will be interpreted as the given units.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariantEmpty)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SetSceneUnits {
             /// Which units the scene uses.
             pub unit: units::UnitLength,
@@ -1002,7 +1002,7 @@ define_modeling_cmd_enum! {
 
         /// Focus the default camera upon an object in the scene.
         #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct DefaultCameraFocusOn {
             /// UUID of object to focus on.
@@ -1010,7 +1010,7 @@ define_modeling_cmd_enum! {
         }
         /// When you select some entity with the current tool, what should happen to the entity?
         #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct SetSelectionType {
             /// What type of selection should occur when you select something?
@@ -1019,7 +1019,7 @@ define_modeling_cmd_enum! {
 
         /// What kind of entities can be selected?
         #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct SetSelectionFilter {
             /// If vector is empty, clear all filters.
@@ -1029,13 +1029,13 @@ define_modeling_cmd_enum! {
 
         /// Use orthographic projection.
         #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct DefaultCameraSetOrthographic;
 
         /// Use perspective projection.
         #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct DefaultCameraSetPerspective {
             /// If this is not given, use the same parameters as last time the perspective camera was used.
@@ -1077,13 +1077,13 @@ define_modeling_cmd_enum! {
 
         /// Exit edit mode
         #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct EditModeExit;
 
         /// Clear the selection
         #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct SelectClear;
 

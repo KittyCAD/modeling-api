@@ -23,6 +23,270 @@ define_ok_modeling_cmd_response_enum! {
             units,
         };
 
+        /// The response from the `StartPath` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct StartPath {
+        }
+
+        /// The response from the `MovePathPen` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct MovePathPen {
+        }
+
+        /// The response from the `ExtendPath` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct ExtendPath {
+        }
+
+        /// The response from the `Extrude` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Extrude {
+        }
+
+        /// The response from the `Revolve` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Revolve {
+        }
+
+        /// The response from the `Solid3dShellFace` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dShellFace {
+        }
+
+        /// The response from the `RevolveAboutEdge` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct RevolveAboutEdge {
+        }
+
+        /// The response from the `CameraDragStart` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct CameraDragStart {
+        }
+
+        /// The response from the `DefaultCameraLookAt` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct DefaultCameraLookAt {
+        }
+
+        /// The response from the `DefaultCameraPerspectiveSettings` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct DefaultCameraPerspectiveSettings {
+        }
+
+        /// The response from the `EntityMakeHelix` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityMakeHelix {
+        }
+
+        /// The response from the `EntityMirror` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityMirror {
+        }
+
+        /// The response from the `EntityMirrorAcrossEdge` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityMirrorAcrossEdge {
+        }
+
+        /// The response from the `EditModeEnter` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EditModeEnter {
+        }
+
+        /// The response from the `SelectAdd` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SelectAdd {
+        }
+        /// The response from the `SelectRemove` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SelectRemove {
+        }
+
+        /// The response from the `SceneClearAll` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SceneClearAll {
+        }
+
+        /// The response from the `SelectReplace` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SelectReplace {
+        }
+
+        /// The response from the `HighlightSetEntities` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct HighlightSetEntities {
+        }
+
+        /// The response from the `NewAnnotation` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct NewAnnotation {
+        }
+
+        /// The response from the `UpdateAnnotation` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct UpdateAnnotation {
+        }
+
+        /// The response from the `EdgeLinesVisible` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EdgeLinesVisible {
+        }
+
+        /// The response from the `ObjectVisible` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct ObjectVisible {
+        }
+
+        /// The response from the `ObjectBringToFront` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct ObjectBringToFront {
+        }
+
+        /// The response from the `ObjectSetMaterialParamsPbr` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct ObjectSetMaterialParamsPbr {
+        }
+
+        /// The response from the `Solid2dAddHole` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid2dAddHole {
+        }
+
+        /// The response from the `Solid3dFilletEdge` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dFilletEdge {
+        }
+
+        /// The response from the `SendObject` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SendObject {
+        }
+
+        /// The response from the `EntitySetOpacity` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntitySetOpacity {
+        }
+
+        /// The response from the `EntityFade` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityFade {
+        }
+
+        /// The response from the `MakePlane` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct MakePlane {
+        }
+
+        /// The response from the `PlaneSetColor` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct PlaneSetColor {
+        }
+
+        /// The response from the `SetTool` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetTool {
+        }
+
+        /// The response from the `MouseMove` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct MouseMove {
+        }
+
+        /// The response from the `SketchModeDisable` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SketchModeDisable {
+        }
+
+        /// The response from the `CurveSetConstraint` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct CurveSetConstraint {
+        }
+
+        /// The response from the `EnableSketchMode` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EnableSketchMode {
+        }
+
+        /// The response from the `SetBackgroundColor` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetBackgroundColor {
+        }
+
+        /// The response from the `SetCurrentToolProperties` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetCurrentToolProperties {
+        }
+
+        /// The response from the `SetDefaultSystemProperties` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetDefaultSystemProperties {
+        }
+
+        /// The response from the `MakeAxesGizmo` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct MakeAxesGizmo {
+        }
+
+        /// The response from the `HandleMouseDragStart` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct HandleMouseDragStart {
+        }
+
+        /// The response from the `HandleMouseDragMove` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct HandleMouseDragMove {
+        }
+
+        /// The response from the `HandleMouseDragEnd` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct HandleMouseDragEnd {
+        }
+
+        /// The response from the `RemoveSceneObjects` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct RemoveSceneObjects {
+        }
+
+        /// The response from the `ReconfigureStream` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct ReconfigureStream {
+        }
+
+        /// The response from the `SetSceneUnits` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetSceneUnits {
+        }
+
+        /// The response from the `SetSelectionType` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetSelectionType {
+        }
+
+        /// The response from the `SetSelectionFilter` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetSelectionFilter {
+        }
+
+        /// The response from the `DefaultCameraSetOrthographic` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct DefaultCameraSetOrthographic {
+        }
+
+        /// The response from the `DefaultCameraSetPerspective` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct DefaultCameraSetPerspective {
+        }
+
+        /// The response from the `EditModeExit` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EditModeExit {
+        }
+
+        /// The response from the `SelectClear` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SelectClear {
+        }
+
         /// The response from the `Export` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Export {

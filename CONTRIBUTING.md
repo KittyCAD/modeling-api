@@ -1,13 +1,8 @@
 # Adding a new modeling command
 
  - In `def_enum.rs`, under the `mod each_cmd`, add your new `struct MyNewCommand` with one field for each parameter the command has.
- - If your command responds with data:
-   - In `output.rs`, add a `struct MyNewCommand` following the existing examples.
-   - Then scroll to the end of the file and `impl ModelingCmdOutput for MyNewCommand {}`
-   - In `ok_response.rs` add your new type to the `build_enum!` macro.
-   - Derive `ModelingCmdVariant` on your struct in `def_enum.rs`.
- - Otherwise, if it doesn't respond with data:
-   - Derive `ModelingCmdVariantEmpty` on your struct in `def_enum.rs`.
+ - In `ok_response.rs` add the response struct, in the `define_ok_modeling_cmd_response_enum!` macro.
+   - If your command doesn't respond with any data, create a struct with no fields.
 
 # Releasing a crate
 
@@ -16,7 +11,7 @@ This repo uses a `justfile`. Be sure to [install `just`](https://github.com/case
  - Create a release branch: `just start-release modeling-cmds`.
  - Open a PR (hint: `just start-release` output should include a link to GitHub which will open a release PR).
  - Merge the PR
- - Run `just finish-release modeling-cmds`.
+ - Check out latest main, then run `just finish-release modeling-cmds`.
 
 The `just` scripts above accept any workspace member as their first argument. For example, you could replace `modeling-cmds` with `modeling-cmds-macros` there.
 
