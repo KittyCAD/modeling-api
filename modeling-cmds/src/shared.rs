@@ -48,7 +48,7 @@ impl Default for Rotation {
 }
 
 /// Ways to transform each solid being replicated in a repeating pattern.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub struct Transform {
     /// Translate the replica this far along each dimension.
@@ -66,6 +66,17 @@ pub struct Transform {
     /// Whether to replicate the original solid in this instance.
     #[serde(default = "bool_true")]
     pub replicate: bool,
+}
+
+impl Default for Transform {
+    fn default() -> Self {
+        Self {
+            scale: same_scale(),
+            replicate: true,
+            translate: Default::default(),
+            rotation: Rotation::default(),
+        }
+    }
 }
 
 /// Options for annotations
@@ -311,9 +322,6 @@ impl Angle {
             value,
         }
     }
-}
-
-impl Angle {
     /// 360 degrees.
     pub const fn turn() -> Self {
         Self::from_degrees(360.0)
@@ -750,8 +758,7 @@ fn bool_true() -> bool {
     true
 }
 fn same_scale() -> Point3d<f64> {
-    let p = 1.0;
-    Point3d { x: p, y: p, z: p }
+    Point3d::uniform(1.0)
 }
 
 fn z_axis() -> Point3d<f64> {
