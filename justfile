@@ -1,4 +1,5 @@
 clippy-flags := "--workspace --tests --benches --examples"
+macros-impl := "kittycad-modeling-cmds-macros-impl"
 
 lint:
     cargo clippy {{clippy-flags}} --no-default-features -- -D warnings
@@ -18,6 +19,12 @@ test:
 # Run unit tests, output coverage to `lcov.info`.
 test-with-coverage:
     cargo llvm-cov nextest --all-features --workspace --lcov --output-path lcov.info
+
+# Flamegraph our benchmarks
+flamegraph:
+    cargo flamegraph -p {{macros-impl}} --root --bench my_benchmark
+bench:
+    cargo criterion -p {{macros-impl}} --bench my_benchmark 
 
 # e.g. `just start-release modeling-cmds`
 # Opens a release PR for a package in this workspace
