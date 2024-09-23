@@ -6,8 +6,18 @@ macro_rules! impl_only {
         where
             T: Default,
         {
-            /// Set only the given component.
-            /// All other components have their default value
+            #[doc = concat!("Set the `", stringify!($component), "` component to the given value, and all other components to their default.\n")]
+            #[doc = "```\n"]
+            #[doc = concat!("use kittycad_modeling_cmds::shared::", stringify!($typ), ";")]
+            #[doc = concat!("let expected = ", stringify!($typ), "{")]
+            #[doc = concat!("\t", stringify!($component), ": 8,")]
+                    $(
+            #[doc = concat!("\t", stringify!($i), ": 0,")]
+                    )*
+            #[doc = "};"]
+            #[doc = concat!("let actual = ", stringify!($typ), "::only_", stringify!($component), "(8);")]
+            #[doc = "assert_eq!(actual, expected);"]
+            #[doc = "```\n"]
             pub fn $method($component: T) -> Self {
                 Self {
                     $component,
