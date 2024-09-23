@@ -1,6 +1,8 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+mod only;
+
 /// A point in 2D space
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename = "Point2d")]
@@ -10,6 +12,12 @@ pub struct Point2d<T = f32> {
     pub x: T,
     #[allow(missing_docs)]
     pub y: T,
+}
+
+impl std::fmt::Display for Point2d<f64> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
+    }
 }
 
 impl<T: PartialEq> PartialEq for Point2d<T> {
@@ -145,6 +153,12 @@ pub struct Point4d<T = f32> {
     pub z: T,
     #[allow(missing_docs)]
     pub w: T,
+}
+
+impl std::fmt::Display for Point4d<f64> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({}, {}, {}, {})", self.x, self.y, self.z, self.w)
+    }
 }
 
 impl<T> Point4d<T> {
