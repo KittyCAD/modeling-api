@@ -7,26 +7,17 @@ pub fn generate(input: ItemMod) -> TokenStream {
 
     // Parse all items from the module, to discover which enum variants should exist.
     // Also, create the doc for each enum variant.
-    let (variants, docs): (Vec<_>, Vec<_>) = input
-        .content
-        .iter()
-        .next()
-        .unwrap()
-        .1
+    let items = &input.content.as_ref().unwrap().1;
+    let variants = items
         .iter()
         .filter_map(|item| {
             // All modeling commands are public structs.
-            let syn::Item::Struct(item) = item else {
-                return None;
-            };
-            let syn::Visibility::Public(_) = item.vis else {
-                return None;
-            };
-
-            let doc = format!("The response to the '{}' endpoint", item.ident);
-            Some((&item.ident, doc))
+            match item {
+                syn::Item::Struct(item) if matches!(item.vis, syn::Visibility::Public(_)) => Some(&item.ident),
+                _ => None,
+            }
         })
-        .unzip();
+        .collect::<Vec<_>>();
 
     // Output the generated enum.
     quote_spanned! {span=>
@@ -41,7 +32,7 @@ pub fn generate(input: ItemMod) -> TokenStream {
             /// An empty response, used for any command that does not explicitly have a response
             /// defined here.
             Empty,
-            #(#[doc = #docs] #variants(output::#variants),)*
+            #(#[doc = concat!("The response to the '", stringify!(#variants), "' endpoint.")] #variants(output::#variants),)*
         }
 
         // Loop over `variants`, generate N different `From` impls on the enum,
