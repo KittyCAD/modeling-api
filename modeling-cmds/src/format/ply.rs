@@ -1,5 +1,7 @@
-
+#[cfg(not(feature = "json-schema"))]
+use kittycad_modeling_cmds_macros::JsonSchema;
 use parse_display::{Display, FromStr};
+#[cfg(feature = "json-schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -10,9 +12,7 @@ pub mod import {
     use super::*;
 
     /// Options for importing PLY.
-    #[derive(
-        Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
-    )]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "PlyImportOptions")]
     pub struct Options {

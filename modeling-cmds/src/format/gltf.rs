@@ -1,5 +1,7 @@
-
+#[cfg(not(feature = "json-schema"))]
+use kittycad_modeling_cmds_macros::JsonSchema;
 use parse_display::{Display, FromStr};
+#[cfg(feature = "json-schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -8,20 +10,7 @@ pub mod import {
     use super::*;
 
     /// Options for importing glTF 2.0.
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        Hash,
-        PartialEq,
-        Serialize,
-        Deserialize,
-        JsonSchema,
-        Display,
-        FromStr,
-       
-    )]
+    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
     #[display("")]
     #[serde(rename = "GltfImportOptions")]
     pub struct Options {}

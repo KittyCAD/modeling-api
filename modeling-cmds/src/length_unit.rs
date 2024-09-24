@@ -88,6 +88,7 @@ impl Point4d<f64> {
     }
 }
 
+#[cfg(feature = "json-schema")]
 impl schemars::JsonSchema for LengthUnit {
     fn schema_name() -> String {
         "LengthUnit".to_string()

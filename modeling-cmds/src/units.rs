@@ -1,5 +1,8 @@
+#[cfg(not(feature = "json-schema"))]
+use kittycad_modeling_cmds_macros::JsonSchema;
 use kittycad_unit_conversion_derive::UnitConversion;
 use parse_display_derive::{Display, FromStr};
+#[cfg(feature = "json-schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
