@@ -1,5 +1,6 @@
 //! Proc-macros for implementing kittycad-modeling-cmds traits.
 
+use kittycad_modeling_cmds_macros_impl::json_schema;
 use kittycad_modeling_cmds_macros_impl::modeling_cmd_enum;
 use kittycad_modeling_cmds_macros_impl::modeling_cmd_output;
 use kittycad_modeling_cmds_macros_impl::modeling_cmd_variant;
@@ -19,6 +20,13 @@ pub fn derive_modeling_cmd_variant_nonempty(input: TokenStream) -> TokenStream {
     // It's idiomatic to make your proc macros a thin wrapper around an "impl" function, because it
     // simplifies unit testing. This is recommended in The Rust Book.
     TokenStream::from(modeling_cmd_variant::derive_nonempty(input))
+}
+/// This will derive the trait `schemars::JsonSchema`,
+/// if the 'json-schema' cargo feature is enabled.
+#[proc_macro_derive(JsonSchema)]
+pub fn derive_json_schema_conditional(input: TokenStream) -> TokenStream {
+    let input: DeriveInput = syn::parse2(input.into()).unwrap();
+    TokenStream::from(json_schema::derive(input))
 }
 
 /// Generates the ModelingCmd enum from all its variants.

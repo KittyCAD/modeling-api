@@ -1,10 +1,10 @@
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 mod only;
 
 /// A point in 2D space
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename = "Point2d")]
 #[serde(rename_all = "snake_case")]
 pub struct Point2d<T = f32> {
@@ -56,7 +56,8 @@ impl<T> Point2d<T> {
 }
 
 /// A point in 3D space
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq, Default)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename = "Point3d")]
 #[serde(rename_all = "snake_case")]
 pub struct Point3d<T = f32> {
@@ -141,7 +142,8 @@ where
 }
 
 /// A point in homogeneous (4D) space
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename = "Point4d")]
 #[serde(rename_all = "snake_case")]
 pub struct Point4d<T = f32> {

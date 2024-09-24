@@ -1,6 +1,4 @@
-
 use parse_display::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::{coord, units::UnitLength};
@@ -10,9 +8,8 @@ pub mod import {
     use super::*;
 
     /// Options for importing OBJ.
-    #[derive(
-        Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
-    )]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "ObjImportOptions")]
     pub struct Options {
@@ -45,7 +42,8 @@ pub mod export {
     use super::*;
 
     /// Options for exporting OBJ.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "ObjExportOptions")]
     pub struct Options {

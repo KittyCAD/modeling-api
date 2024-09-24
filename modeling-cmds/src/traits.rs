@@ -1,4 +1,3 @@
-use schemars::JsonSchema;
 use serde::{de::DeserializeOwned, Serialize};
 
 use crate::ModelingCmd;
@@ -13,8 +12,12 @@ pub trait ModelingCmdVariant: Serialize {
     fn name() -> &'static str;
 }
 
+#[cfg(not(feature = "json-schema"))]
 /// Anything that can be a ModelingCmd output.
-pub trait ModelingCmdOutput: std::fmt::Debug + Serialize + DeserializeOwned + JsonSchema {}
+pub trait ModelingCmdOutput: std::fmt::Debug + Serialize + DeserializeOwned {}
+#[cfg(feature = "json-schema")]
+/// Anything that can be a ModelingCmd output.
+pub trait ModelingCmdOutput: std::fmt::Debug + Serialize + DeserializeOwned + schemars::JsonSchema {}
 
 impl<CmdVariant> From<CmdVariant> for ModelingCmd
 where

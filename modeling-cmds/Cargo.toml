@@ -25,7 +25,7 @@ kittycad-unit-conversion-derive = "0.1.0"
 measurements = "0.11.0"
 parse-display = "0.9.1"
 parse-display-derive = "0.9.0"
-schemars = { version = "0.8.16", features = [
+schemars = { version = "0.8.16", optional = true, features = [
   "bigdecimal04",
   "chrono",
   "url",
@@ -46,6 +46,7 @@ workspace = true
 default = []
 tabled = ["dep:tabled"]
 slog = ["dep:slog"]
+json-schema = ["dep:schemars"]
 cxx = ["dep:cxx"]
 convert_client_crate = ["dep:kittycad"]
 websocket = ["dep:serde_json"]

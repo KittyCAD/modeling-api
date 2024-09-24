@@ -1,6 +1,4 @@
-
 use parse_display::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::{coord, format::Selection, units::UnitLength};
@@ -10,9 +8,8 @@ pub mod import {
     use super::*;
 
     /// Options for importing PLY.
-    #[derive(
-        Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
-    )]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "PlyImportOptions")]
     pub struct Options {
@@ -45,7 +42,8 @@ pub mod export {
     use super::*;
 
     /// Options for exporting PLY.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display("coords: {coords}, selection: {selection}, storage: {storage}, units: {units}")]
     #[serde(rename = "PlyExportOptions")]
     pub struct Options {
@@ -80,7 +78,8 @@ pub mod export {
     }
 
     /// The storage for the output PLY file.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Default)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr, Default)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display(style = "snake_case")]
     #[serde(rename = "PlyStorage", rename_all = "snake_case")]
     pub enum Storage {

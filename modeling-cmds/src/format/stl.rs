@@ -1,6 +1,4 @@
-
 use parse_display::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::{coord, format::Selection, units::UnitLength};
@@ -10,9 +8,8 @@ pub mod import {
     use super::*;
 
     /// Options for importing STL.
-    #[derive(
-        Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
-    )]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "StlImportOptions")]
     pub struct Options {
@@ -44,7 +41,8 @@ pub mod export {
     use super::*;
 
     /// Options for exporting STL.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display("coords: {coords}, selection: {selection}, storage: {storage}, units: {units}")]
     #[serde(rename = "StlExportOptions")]
     pub struct Options {
@@ -79,9 +77,8 @@ pub mod export {
     }
 
     /// Export storage.
-    #[derive(
-        Clone, Copy, Debug, Default, Deserialize, Display, Eq, FromStr, Hash, JsonSchema, PartialEq, Serialize,
-    )]
+    #[derive(Clone, Copy, Debug, Default, Deserialize, Display, Eq, FromStr, Hash, PartialEq, Serialize)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display(style = "snake_case")]
     #[serde(rename = "StlStorage", rename_all = "snake_case")]
     pub enum Storage {

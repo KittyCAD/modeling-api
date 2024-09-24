@@ -1,5 +1,4 @@
 use parse_display_derive::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::shared::{FileExportFormat, FileImportFormat};
@@ -24,7 +23,8 @@ pub mod stl;
 pub mod sldprt;
 
 /// Output format specifier.
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum OutputFormat {
@@ -52,7 +52,8 @@ pub enum OutputFormat {
 }
 
 /// Input format specifier.
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum InputFormat {
@@ -82,7 +83,8 @@ pub enum InputFormat {
 }
 
 /// Data item selection.
-#[derive(Clone, Debug, Default, Display, Eq, FromStr, Hash, PartialEq, JsonSchema, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Display, Eq, FromStr, Hash, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[display(style = "snake_case")]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum Selection {

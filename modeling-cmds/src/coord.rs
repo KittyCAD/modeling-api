@@ -1,5 +1,4 @@
 use parse_display::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 /// Co-ordinate axis specifier.
@@ -7,7 +6,8 @@ use serde::{Deserialize, Serialize};
 /// See [cglearn.eu] for background reading.
 ///
 /// [cglearn.eu]: https://cglearn.eu/pub/computer-graphics/introduction-to-geometry#material-coordinate-systems-1
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum Axis {
@@ -18,7 +18,8 @@ pub enum Axis {
 }
 
 /// Specifies the sign of a co-ordinate axis.
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum Direction {
@@ -40,7 +41,8 @@ impl std::ops::Mul for Direction {
 }
 
 /// An [`Axis`] paired with a [`Direction`].
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[display("({axis}, {direction})")]
 pub struct AxisDirectionPair {
     /// Axis specifier.
@@ -57,7 +59,8 @@ pub struct AxisDirectionPair {
 /// See [cglearn.eu] for background reading.
 ///
 /// [cglearn.eu](https://cglearn.eu/pub/computer-graphics/introduction-to-geometry#material-coordinate-systems-1)
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[display("forward: {forward}, up: {up}")]
 pub struct System {
     /// Axis the front face of a model looks along.

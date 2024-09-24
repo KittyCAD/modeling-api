@@ -1,6 +1,5 @@
 use kittycad_unit_conversion_derive::UnitConversion;
 use parse_display_derive::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 /// The valid types of length units.
@@ -12,7 +11,6 @@ use serde::{Deserialize, Serialize};
     Eq,
     PartialEq,
     Debug,
-    JsonSchema,
     Deserialize,
     Serialize,
     Clone,
@@ -21,6 +19,7 @@ use serde::{Deserialize, Serialize};
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 pub enum UnitLength {
@@ -67,20 +66,9 @@ impl UnitLength {
 
 /// The valid types of angle formats.
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Clone,
-    Ord,
-    PartialOrd,
-    UnitConversion,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Clone, Ord, PartialOrd, UnitConversion,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
@@ -99,7 +87,6 @@ pub enum UnitAngle {
     Eq,
     PartialEq,
     Debug,
-    JsonSchema,
     Deserialize,
     Serialize,
     Clone,
@@ -109,6 +96,7 @@ pub enum UnitAngle {
     Default,
     Hash,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
@@ -172,7 +160,6 @@ impl UnitArea {
     Eq,
     PartialEq,
     Debug,
-    JsonSchema,
     Deserialize,
     Serialize,
     Clone,
@@ -182,6 +169,7 @@ impl UnitArea {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 pub enum UnitDensity {
@@ -216,7 +204,6 @@ impl UnitDensity {
     Eq,
     PartialEq,
     Debug,
-    JsonSchema,
     Deserialize,
     Serialize,
     Clone,
@@ -226,6 +213,7 @@ impl UnitDensity {
     Hash,
 )]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum UnitMass {
@@ -264,7 +252,6 @@ impl UnitMass {
     Eq,
     PartialEq,
     Debug,
-    JsonSchema,
     Deserialize,
     Serialize,
     Clone,
@@ -274,6 +261,7 @@ impl UnitMass {
     Hash,
 )]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[display(style = "snake_case")]
 pub enum UnitVolume {
     /// Cubic centimeters (cc or cm³) <https://en.wikipedia.org/wiki/Cubic_centimeter>

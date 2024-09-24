@@ -1,6 +1,4 @@
-
 use parse_display::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::coord;
@@ -10,19 +8,8 @@ pub mod import {
     use super::*;
 
     /// Options for importing STEP format.
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        Hash,
-        PartialEq,
-        Serialize,
-        Deserialize,
-        JsonSchema,
-        Display,
-        FromStr,
-    )]
+    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display("split_closed_faces: {split_closed_faces}")]
     #[serde(default, rename = "StepImportOptions")]
     pub struct Options {
@@ -38,7 +25,8 @@ pub mod export {
     use super::*;
 
     /// Options for exporting STEP format.
-    #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[serde(rename = "StepExportOptions")]
     pub struct Options {
         /// Co-ordinate system of output data.

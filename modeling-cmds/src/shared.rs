@@ -1,6 +1,5 @@
 use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "cxx")]
@@ -12,7 +11,8 @@ pub use point::{Point2d, Point3d, Point4d, Quaternion};
 mod point;
 
 /// What kind of cut to do
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum CutType {
     /// Round off an edge.
@@ -23,7 +23,8 @@ pub enum CutType {
 }
 
 /// A rotation defined by an axis, origin of rotation, and an angle.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Rotation {
     /// Rotation axis.
@@ -48,7 +49,8 @@ impl Default for Rotation {
 }
 
 /// Ways to transform each solid being replicated in a repeating pattern.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Transform {
     /// Translate the replica this far along each dimension.
@@ -80,7 +82,8 @@ impl Default for Transform {
 }
 
 /// Options for annotations
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct AnnotationOptions {
     /// Text displayed on the annotation
@@ -96,7 +99,8 @@ pub struct AnnotationOptions {
 }
 
 /// Options for annotation text
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct AnnotationLineEndOptions {
     /// How to style the start of the annotation line.
@@ -106,7 +110,8 @@ pub struct AnnotationLineEndOptions {
 }
 
 /// Options for annotation text
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct AnnotationTextOptions {
     /// Alignment along the X axis
@@ -122,7 +127,8 @@ pub struct AnnotationTextOptions {
 /// The type of distance
 /// Distances can vary depending on
 /// the objects used as input.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum DistanceType {
     /// Euclidean Distance.
@@ -135,7 +141,8 @@ pub enum DistanceType {
 }
 
 /// The type of origin
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Default)]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum OriginType {
     /// Local Origin (center of object bounding box).
@@ -151,7 +158,8 @@ pub enum OriginType {
 }
 
 /// An RGBA color
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Color {
     /// Red
     pub r: f32,
@@ -165,9 +173,8 @@ pub struct Color {
 
 /// Horizontal Text alignment
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 pub enum AnnotationTextAlignmentX {
     Left,
@@ -177,9 +184,8 @@ pub enum AnnotationTextAlignmentX {
 
 /// Vertical Text alignment
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 pub enum AnnotationTextAlignmentY {
     Bottom,
@@ -189,9 +195,8 @@ pub enum AnnotationTextAlignmentY {
 
 /// Annotation line end type
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 pub enum AnnotationLineEnd {
     None,
@@ -199,9 +204,8 @@ pub enum AnnotationLineEnd {
 }
 
 /// The type of annotation
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 pub enum AnnotationType {
     /// 2D annotation type (screen or planar space)
@@ -211,9 +215,8 @@ pub enum AnnotationType {
 }
 
 /// The type of camera drag interaction.
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 pub enum CameraDragInteractionType {
     /// Camera pan
@@ -226,7 +229,8 @@ pub enum CameraDragInteractionType {
 
 /// A segment of a path.
 /// Paths are composed of many segments.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum PathSegment {
     /// A straight line segment.
@@ -285,7 +289,8 @@ pub enum PathSegment {
 }
 
 /// An angle, with a specific unit.
-#[derive(Clone, Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Clone, Copy, PartialEq, Debug, Deserialize, Serialize)]
 pub struct Angle {
     /// What unit is the measurement?
     pub unit: UnitAngle,
@@ -373,9 +378,8 @@ impl std::ops::AddAssign for Angle {
 }
 
 /// The type of scene selection change
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 pub enum SceneSelectionType {
     /// Replaces the selection
@@ -388,9 +392,8 @@ pub enum SceneSelectionType {
 
 /// The type of scene's active tool
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub enum SceneToolType {
     CameraRevolve,
@@ -405,21 +408,9 @@ pub enum SceneToolType {
 /// The path component constraint bounds type
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
-    Default,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd, Default,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub enum PathComponentConstraintBound {
     #[default]
@@ -431,21 +422,9 @@ pub enum PathComponentConstraintBound {
 /// The path component constraint type
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
-    Default,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd, Default,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub enum PathComponentConstraintType {
     #[default]
@@ -459,9 +438,8 @@ pub enum PathComponentConstraintType {
 
 /// The path component command type (within a Path)
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub enum PathCommand {
     MoveTo,
@@ -473,9 +451,8 @@ pub enum PathCommand {
 
 /// The type of entity
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[repr(u8)]
 pub enum EntityType {
@@ -493,9 +470,8 @@ pub enum EntityType {
 
 /// The type of Curve (embedded within path)
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub enum CurveType {
     Line,
@@ -504,7 +480,8 @@ pub enum CurveType {
 }
 
 /// A file to be exported to the client.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ExportFile {
     /// The name of the file.
     pub name: String,
@@ -513,9 +490,8 @@ pub struct ExportFile {
 }
 
 /// The valid types of output file formats.
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[display(style = "lowercase")]
 pub enum FileExportFormat {
@@ -552,9 +528,8 @@ pub enum FileExportFormat {
 }
 
 /// The valid types of source file formats.
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[display(style = "lowercase")]
 pub enum FileImportFormat {
@@ -577,7 +552,8 @@ pub enum FileImportFormat {
 }
 
 /// The type of error sent by the KittyCAD graphics engine.
-#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Clone, Ord, PartialOrd)]
 #[serde(rename_all = "snake_case")]
 pub enum EngineErrorCode {
     /// User requested something geometrically or graphically impossible.
@@ -598,7 +574,8 @@ impl From<EngineErrorCode> for http::StatusCode {
 }
 
 /// Camera settings including position, center, fov etc
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CameraSettings {
     ///Camera position (vantage)
     pub pos: Point3d,
@@ -654,7 +631,8 @@ impl From<CameraSettings> for crate::output::ViewIsometric {
 }
 
 /// Defines a perspective view.
-#[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[derive(Copy, PartialEq, Debug, Deserialize, Serialize, Clone, PartialOrd, Default)]
 #[serde(rename_all = "snake_case")]
 pub struct PerspectiveCameraParameters {
     /// Camera frustum vertical field of view.
@@ -666,9 +644,8 @@ pub struct PerspectiveCameraParameters {
 }
 
 /// The global axes.
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 pub enum GlobalAxis {
     /// The X axis
@@ -680,9 +657,8 @@ pub enum GlobalAxis {
 }
 
 /// Possible types of faces which can be extruded from a 3D solid.
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[repr(u8)]
 pub enum ExtrusionFaceCapType {
@@ -697,21 +673,9 @@ pub enum ExtrusionFaceCapType {
 /// Post effect type
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
-    Default,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd, Default,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 pub enum PostEffectType {
     Phosphor,

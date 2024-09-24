@@ -1,6 +1,4 @@
-
 use parse_display::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 /// Import models in KittyCAD's GLTF format.
@@ -8,20 +6,8 @@ pub mod import {
     use super::*;
 
     /// Options for importing glTF 2.0.
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        Hash,
-        PartialEq,
-        Serialize,
-        Deserialize,
-        JsonSchema,
-        Display,
-        FromStr,
-       
-    )]
+    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display("")]
     #[serde(rename = "GltfImportOptions")]
     pub struct Options {}
@@ -31,7 +17,8 @@ pub mod import {
 pub mod export {
     use super::*;
     /// Options for exporting glTF 2.0.
-    #[derive(Default, Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(Default, Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display("storage: {storage}, presentation: {presentation}")]
     #[serde(rename = "GltfExportOptions")]
     pub struct Options {
@@ -42,9 +29,8 @@ pub mod export {
     }
 
     /// Describes the storage format of a glTF 2.0 scene.
-    #[derive(
-        Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
-    )]
+    #[derive(Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display(style = "snake_case")]
     #[serde(rename = "GltfStorage", rename_all = "snake_case")]
     pub enum Storage {
@@ -70,9 +56,8 @@ pub mod export {
     }
 
     /// Describes the presentation style of the glTF JSON.
-    #[derive(
-        Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
-    )]
+    #[derive(Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display(style = "snake_case")]
     #[serde(rename = "GltfPresentation", rename_all = "snake_case")]
     pub enum Presentation {
