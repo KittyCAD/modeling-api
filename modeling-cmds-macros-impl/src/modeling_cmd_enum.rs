@@ -54,7 +54,8 @@ pub fn generate(input: ItemMod) -> TokenStream {
         /// Definition of each modeling command.
         #input
         /// Commands that the KittyCAD engine can execute.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+        #[derive(Debug, Clone, Serialize, Deserialize)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[serde(rename_all = "snake_case", tag = "type")]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub enum ModelingCmd {#(
