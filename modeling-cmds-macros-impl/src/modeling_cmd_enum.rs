@@ -7,13 +7,8 @@ pub fn generate(input: ItemMod) -> TokenStream {
 
     // Parse all items from the module, to discover which enum variants should exist.
     // Also, find the doc for each enum variant.
-    let (variants, docs): (Vec<_>, Vec<_>) = input
-        .content
-        .iter()
-        .next()
-        .unwrap()
-        .1
-        .iter()
+    let items = input.content.as_ref().unwrap().1.iter();
+    let (variants, docs): (Vec<_>, Vec<_>) = items
         .filter_map(|item| {
             // All modeling commands are public structs.
             let syn::Item::Struct(item) = item else {
