@@ -2,6 +2,8 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 mod only;
+mod uniform;
+mod zero;
 
 /// A point in 2D space
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
@@ -117,28 +119,6 @@ impl<T> Point3d<T> {
         }
     }
 }
-impl<T> Point2d<T>
-where
-    T: Copy,
-{
-    /// Make a point where all components have the given value.
-    pub const fn uniform(value: T) -> Self {
-        Self { x: value, y: value }
-    }
-}
-impl<T> Point3d<T>
-where
-    T: Copy,
-{
-    /// Make a point where all components have the given value.
-    pub const fn uniform(value: T) -> Self {
-        Self {
-            x: value,
-            y: value,
-            z: value,
-        }
-    }
-}
 
 /// A point in homogeneous (4D) space
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
@@ -186,15 +166,6 @@ impl<T> Point4d<T>
 where
     T: Copy,
 {
-    /// Make a point where all components have the given value.
-    pub const fn uniform(value: T) -> Self {
-        Self {
-            x: value,
-            y: value,
-            z: value,
-            w: value,
-        }
-    }
     /// Make a point where the X, Y and Z components have the same value,
     /// but the W component has a different one.
     pub const fn uniform_3d(xyz: T, w: T) -> Self {
