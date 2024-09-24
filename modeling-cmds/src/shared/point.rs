@@ -56,7 +56,7 @@ impl<T> Point2d<T> {
 }
 
 /// A point in 3D space
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq, Default)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Default)]
 #[serde(rename = "Point3d")]
 #[serde(rename_all = "snake_case")]
 pub struct Point3d<T = f32> {

@@ -3,7 +3,6 @@
 use std::{borrow::Cow, collections::HashMap};
 
 use parse_display_derive::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "slog")]
 use slog::{Record, Serializer, KV};
@@ -17,7 +16,7 @@ use crate::{
 };
 
 /// The type of error sent by the KittyCAD API.
-#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Clone, Ord, PartialOrd)]
 #[serde(rename_all = "snake_case")]
 pub enum ErrorCode {
     /// Graphics engine failed to complete request, consider retrying
@@ -59,7 +58,7 @@ impl From<EngineErrorCode> for ErrorCode {
 }
 
 /// A graphics command submitted to the KittyCAD engine via the Modeling API.
-#[derive(Debug, Clone, JsonSchema, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ModelingCmdReq {
     /// Which command to submit to the Kittycad engine.
     pub cmd: ModelingCmd,
@@ -68,7 +67,7 @@ pub struct ModelingCmdReq {
 }
 
 /// The websocket messages the server receives.
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum WebSocketRequest {
     /// The trickle ICE candidate request.
@@ -103,7 +102,7 @@ pub enum WebSocketRequest {
 }
 
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct ModelingBatch {
     /// A sequence of modeling requests. If any request fails, following requests will not be tried.
@@ -144,7 +143,7 @@ impl ModelingBatch {
 /// Representation of an ICE server used for STUN/TURN
 /// Used to initiate WebRTC connections
 /// based on <https://developer.mozilla.org/en-US/docs/Web/API/RTCIceServer>
-#[derive(serde::Serialize, serde::Deserialize, Debug, JsonSchema, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 pub struct IceServer {
     /// URLs for a given STUN/TURN server.
     /// IceServer urls can either be a string or an array of strings
@@ -157,7 +156,7 @@ pub struct IceServer {
 }
 
 /// The websocket messages this server sends.
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type", content = "data", rename_all = "snake_case")]
 pub enum OkWebSocketResponseData {
     /// Information about the ICE servers.
@@ -207,7 +206,7 @@ pub enum OkWebSocketResponseData {
 }
 
 /// Successful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct SuccessWebSocketResponse {
     /// Always true
@@ -222,7 +221,7 @@ pub struct SuccessWebSocketResponse {
 }
 
 /// Unsuccessful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct FailureWebSocketResponse {
     /// Always false
@@ -237,7 +236,7 @@ pub struct FailureWebSocketResponse {
 
 /// Websocket responses can either be successful or unsuccessful.
 /// Slightly different schemas in either case.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "snake_case", untagged)]
 pub enum WebSocketResponse {
     /// Response sent when a request succeeded.
@@ -248,7 +247,7 @@ pub enum WebSocketResponse {
 
 /// Websocket responses can either be successful or unsuccessful.
 /// Slightly different schemas in either case.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "snake_case", untagged)]
 pub enum BatchResponse {
     /// Response sent when a request succeeded.
@@ -303,7 +302,7 @@ impl WebSocketResponse {
 
 /// A raw file with unencoded contents to be passed over binary websockets.
 /// When raw files come back for exports it is sent as binary/bson, not text/json.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RawFile {
     /// The name of the file.
     pub name: String,
@@ -325,7 +324,7 @@ impl From<ExportFile> for RawFile {
 }
 
 /// An error with an internal message for logging.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct LoggableApiError {
     /// The error shown to users
     pub error: ApiError,
@@ -345,7 +344,7 @@ impl KV for LoggableApiError {
 }
 
 /// An error.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Eq, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
 pub struct ApiError {
     /// The error code.
     pub error_code: ErrorCode,
@@ -392,7 +391,7 @@ impl ApiError {
 
 /// Serde serializes Result into JSON as "Ok" and "Err", but we want "ok" and "err".
 /// So, create a new enum that serializes as lowercase.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case", rename = "SnakeCaseResult")]
 pub enum SnakeCaseResult<T, E> {
     /// The result is Ok.
@@ -420,7 +419,7 @@ impl<T, E> From<Result<T, E>> for SnakeCaseResult<T, E> {
 }
 
 /// ClientMetrics contains information regarding the state of the peer.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ClientMetrics {
     /// Counter of the number of WebRTC frames the client has dropped during
     /// this session.
@@ -466,7 +465,7 @@ pub struct ClientMetrics {
 }
 
 /// ICECandidate represents a ice candidate
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RtcIceCandidate {
     /// The stats ID.
     pub stats_id: String,
@@ -531,7 +530,7 @@ impl From<RtcIceCandidate> for webrtc::ice_transport::ice_candidate::RTCIceCandi
 }
 
 /// ICECandidateType represents the type of the ICE candidate used.
-#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum RtcIceCandidateType {
     /// Unspecified indicates that the candidate type is unspecified.
@@ -597,7 +596,7 @@ impl From<RtcIceCandidateType> for webrtc::ice_transport::ice_candidate_type::RT
 
 /// ICEProtocol indicates the transport protocol type that is used in the
 /// ice.URL structure.
-#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum RtcIceProtocol {
     /// Unspecified indicates that the protocol is unspecified.
@@ -634,7 +633,7 @@ impl From<RtcIceProtocol> for webrtc::ice_transport::ice_protocol::RTCIceProtoco
 }
 
 /// ICECandidateInit is used to serialize ice candidates
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 // These HAVE to be camel case as per the RFC.
 pub struct RtcIceCandidateInit {
@@ -677,7 +676,7 @@ impl From<RtcIceCandidateInit> for webrtc::ice_transport::ice_candidate::RTCIceC
 }
 
 /// SessionDescription is used to expose local and remote session descriptions.
-#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct RtcSessionDescription {
     /// SDP type.
     #[serde(rename = "type")]
@@ -721,7 +720,7 @@ impl TryFrom<RtcSessionDescription> for webrtc::peer_connection::sdp::session_de
 }
 
 /// SDPType describes the type of an SessionDescription.
-#[derive(Default, Debug, PartialEq, Eq, Copy, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, PartialEq, Eq, Copy, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum RtcSdpType {
     /// Unspecified indicates that the type is unspecified.
@@ -777,7 +776,7 @@ impl From<RtcSdpType> for webrtc::peer_connection::sdp::sdp_type::RTCSdpType {
     }
 }
 /// Successful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct ModelingSessionData {
     /// ID of the API call this modeling session is using.
