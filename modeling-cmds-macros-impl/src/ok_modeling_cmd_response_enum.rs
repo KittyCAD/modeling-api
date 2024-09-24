@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote_spanned;
 use syn::{spanned::Spanned, ItemMod};
 
-pub(crate) fn generate(input: ItemMod) -> TokenStream {
+pub fn generate(input: ItemMod) -> TokenStream {
     let span = input.span();
 
     // Parse all items from the module, to discover which enum variants should exist.

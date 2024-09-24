@@ -1,9 +1,9 @@
 //! Proc-macros for implementing kittycad-modeling-cmds traits.
 
-mod modeling_cmd_enum;
-mod modeling_cmd_output;
-mod modeling_cmd_variant;
-mod ok_modeling_cmd_response_enum;
+use kittycad_modeling_cmds_macros_impl::modeling_cmd_enum;
+use kittycad_modeling_cmds_macros_impl::modeling_cmd_output;
+use kittycad_modeling_cmds_macros_impl::modeling_cmd_variant;
+use kittycad_modeling_cmds_macros_impl::ok_modeling_cmd_response_enum;
 
 use proc_macro::TokenStream;
 use syn::{DeriveInput, ItemMod};
