@@ -122,7 +122,6 @@ impl Serialize for Base64Data {
     }
 }
 
-#[cfg(feature = "json-schema")]
 impl schemars::JsonSchema for Base64Data {
     fn schema_name() -> String {
         "Base64Data".to_string()

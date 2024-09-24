@@ -1,6 +1,3 @@
-#[cfg(not(feature = "json-schema"))]
-use kittycad_modeling_cmds_macros::JsonSchema;
-#[cfg(feature = "json-schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 

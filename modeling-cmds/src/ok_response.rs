@@ -1,7 +1,4 @@
 use kittycad_modeling_cmds_macros::define_ok_modeling_cmd_response_enum;
-#[cfg(not(feature = "json-schema"))]
-use kittycad_modeling_cmds_macros::JsonSchema;
-#[cfg(feature = "json-schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -12,7 +9,7 @@ define_ok_modeling_cmd_response_enum! {
     pub mod output {
 
         use kittycad_modeling_cmds_macros::ModelingCmdOutput;
-        use super::JsonSchema;
+        use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
         use uuid::Uuid;
         use crate::shared::CameraSettings;

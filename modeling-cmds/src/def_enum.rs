@@ -1,7 +1,4 @@
 use kittycad_modeling_cmds_macros::define_modeling_cmd_enum;
-#[cfg(not(feature = "json-schema"))]
-use kittycad_modeling_cmds_macros::JsonSchema;
-#[cfg(feature = "json-schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -15,7 +12,7 @@ define_modeling_cmd_enum! {
         use crate::{self as kittycad_modeling_cmds};
         use kittycad_modeling_cmds_macros::{ModelingCmdVariant};
         use parse_display_derive::{Display, FromStr};
-        use super::JsonSchema;
+        use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
         use uuid::Uuid;
 
