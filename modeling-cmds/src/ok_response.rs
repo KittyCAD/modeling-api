@@ -192,6 +192,16 @@ define_ok_modeling_cmd_response_enum! {
         pub struct SketchModeDisable {
         }
 
+        /// The response from the `EnableDryRun` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EnableDryRun {
+        }
+
+        /// The response from the `DisableDryRun` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct DisableDryRun {
+        }
+
         /// The response from the `CurveSetConstraint` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct CurveSetConstraint {

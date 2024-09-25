@@ -753,6 +753,14 @@ define_modeling_cmd_enum! {
             pub planar_normal: Option<Point3d<f64>>,
         }
 
+        /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct EnableDryRun;
+
+        /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct DisableDryRun;
+
         /// Set the background color of the scene.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SetBackgroundColor {
