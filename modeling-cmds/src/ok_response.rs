@@ -88,11 +88,6 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityMirrorAcrossEdge {
         }
 
-        /// The response from the `EditModeEnter` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct EditModeEnter {
-        }
-
         /// The response from the `SelectAdd` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SelectAdd {
@@ -275,11 +270,6 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `DefaultCameraSetPerspective` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct DefaultCameraSetPerspective {
-        }
-
-        /// The response from the `EditModeExit` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct EditModeExit {
         }
 
         /// The response from the `SelectClear` endpoint.

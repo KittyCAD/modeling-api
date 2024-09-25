@@ -393,13 +393,6 @@ define_modeling_cmd_enum! {
             pub edge_id: Uuid,
         }
 
-        /// Enter edit mode
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
-        pub struct EditModeEnter {
-            /// The edit target
-            pub target: Uuid,
-        }
-
         /// Modifies the selection by simulating a "mouse click" at the given x,y window coordinate
         /// Returns ID of whatever was selected.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
@@ -1074,12 +1067,6 @@ define_modeling_cmd_enum! {
             /// Any edge that lies on the extrusion base path.
             pub edge_id: Uuid,
         }
-
-        /// Exit edit mode
-        #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
-        )]
-        pub struct EditModeExit;
 
         /// Clear the selection
         #[derive(
