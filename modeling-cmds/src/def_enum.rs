@@ -754,10 +754,14 @@ define_modeling_cmd_enum! {
         }
 
         /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
+        /// In a dry run, successful commands won't actually change the model.
+        /// This is useful for catching errors before actually making the change.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EnableDryRun;
 
         /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
+        /// In a dry run, successful commands won't actually change the model.
+        /// This is useful for catching errors before actually making the change.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct DisableDryRun;
 
