@@ -1,6 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+mod convert;
 mod only;
 mod uniform;
 mod zero;
@@ -25,12 +26,6 @@ impl std::fmt::Display for Point2d<f64> {
 impl<T: PartialEq> PartialEq for Point2d<T> {
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y
-    }
-}
-
-impl<T> From<[T; 2]> for Point2d<T> {
-    fn from([x, y]: [T; 2]) -> Self {
-        Self { x, y }
     }
 }
 
@@ -79,12 +74,6 @@ impl std::fmt::Display for Point3d<f64> {
 impl From<euler::Vec3> for Point3d<f32> {
     fn from(v: euler::Vec3) -> Self {
         Self { x: v.x, y: v.y, z: v.z }
-    }
-}
-
-impl<T> From<[T; 3]> for Point3d<T> {
-    fn from([x, y, z]: [T; 3]) -> Self {
-        Self { x, y, z }
     }
 }
 
@@ -140,7 +129,6 @@ impl std::fmt::Display for Point4d<f64> {
         write!(f, "({}, {}, {}, {})", self.x, self.y, self.z, self.w)
     }
 }
-
 impl<T> Point4d<T> {
     /// Takes some closure, and calls it on each component of this point.
     /// # Examples
