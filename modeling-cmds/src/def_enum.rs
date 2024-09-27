@@ -393,13 +393,6 @@ define_modeling_cmd_enum! {
             pub edge_id: Uuid,
         }
 
-        /// Enter edit mode
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
-        pub struct EditModeEnter {
-            /// The edit target
-            pub target: Uuid,
-        }
-
         /// Modifies the selection by simulating a "mouse click" at the given x,y window coordinate
         /// Returns ID of whatever was selected.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
@@ -760,6 +753,18 @@ define_modeling_cmd_enum! {
             pub planar_normal: Option<Point3d<f64>>,
         }
 
+        /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
+        /// In a dry run, successful commands won't actually change the model.
+        /// This is useful for catching errors before actually making the change.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct EnableDryRun;
+
+        /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
+        /// In a dry run, successful commands won't actually change the model.
+        /// This is useful for catching errors before actually making the change.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct DisableDryRun;
+
         /// Set the background color of the scene.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct SetBackgroundColor {
@@ -1074,12 +1079,6 @@ define_modeling_cmd_enum! {
             /// Any edge that lies on the extrusion base path.
             pub edge_id: Uuid,
         }
-
-        /// Exit edit mode
-        #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
-        )]
-        pub struct EditModeExit;
 
         /// Clear the selection
         #[derive(
