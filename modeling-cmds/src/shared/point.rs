@@ -34,6 +34,12 @@ impl<T> From<[T; 2]> for Point2d<T> {
     }
 }
 
+impl<T> From<Point2d<T>> for [T; 2] {
+    fn from(Point2d { x, y }: Point2d<T>) -> Self {
+        [x, y]
+    }
+}
+
 impl<T> Point2d<T> {
     /// Add the given `z` component to a 2D point to produce a 3D point.
     pub fn with_z(self, z: T) -> Point3d<T> {
@@ -85,6 +91,12 @@ impl From<euler::Vec3> for Point3d<f32> {
 impl<T> From<[T; 3]> for Point3d<T> {
     fn from([x, y, z]: [T; 3]) -> Self {
         Self { x, y, z }
+    }
+}
+
+impl<T> From<Point3d<T>> for [T; 3] {
+    fn from(Point3d { x, y, z }: Point3d<T>) -> Self {
+        [x, y, z]
     }
 }
 
@@ -140,7 +152,16 @@ impl std::fmt::Display for Point4d<f64> {
         write!(f, "({}, {}, {}, {})", self.x, self.y, self.z, self.w)
     }
 }
-
+impl<T> From<[T; 4]> for Point4d<T> {
+    fn from([x, y, z, w]: [T; 4]) -> Self {
+        Self { x, y, z, w }
+    }
+}
+impl<T> From<Point4d<T>> for [T; 4] {
+    fn from(Point4d { x, y, z, w }: Point4d<T>) -> Self {
+        [x, y, z, w]
+    }
+}
 impl<T> Point4d<T> {
     /// Takes some closure, and calls it on each component of this point.
     /// # Examples
