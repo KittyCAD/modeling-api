@@ -1,6 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+mod convert;
 mod only;
 mod uniform;
 mod zero;
@@ -25,18 +26,6 @@ impl std::fmt::Display for Point2d<f64> {
 impl<T: PartialEq> PartialEq for Point2d<T> {
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y
-    }
-}
-
-impl<T> From<[T; 2]> for Point2d<T> {
-    fn from([x, y]: [T; 2]) -> Self {
-        Self { x, y }
-    }
-}
-
-impl<T> From<Point2d<T>> for [T; 2] {
-    fn from(Point2d { x, y }: Point2d<T>) -> Self {
-        [x, y]
     }
 }
 
@@ -85,18 +74,6 @@ impl std::fmt::Display for Point3d<f64> {
 impl From<euler::Vec3> for Point3d<f32> {
     fn from(v: euler::Vec3) -> Self {
         Self { x: v.x, y: v.y, z: v.z }
-    }
-}
-
-impl<T> From<[T; 3]> for Point3d<T> {
-    fn from([x, y, z]: [T; 3]) -> Self {
-        Self { x, y, z }
-    }
-}
-
-impl<T> From<Point3d<T>> for [T; 3] {
-    fn from(Point3d { x, y, z }: Point3d<T>) -> Self {
-        [x, y, z]
     }
 }
 
@@ -150,16 +127,6 @@ pub struct Point4d<T = f32> {
 impl std::fmt::Display for Point4d<f64> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}, {}, {}, {})", self.x, self.y, self.z, self.w)
-    }
-}
-impl<T> From<[T; 4]> for Point4d<T> {
-    fn from([x, y, z, w]: [T; 4]) -> Self {
-        Self { x, y, z, w }
-    }
-}
-impl<T> From<Point4d<T>> for [T; 4] {
-    fn from(Point4d { x, y, z, w }: Point4d<T>) -> Self {
-        [x, y, z, w]
     }
 }
 impl<T> Point4d<T> {
