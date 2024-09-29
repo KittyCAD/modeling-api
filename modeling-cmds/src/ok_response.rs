@@ -1,5 +1,4 @@
 use kittycad_modeling_cmds_macros::define_ok_modeling_cmd_response_enum;
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 impl crate::ModelingCmdOutput for () {}
