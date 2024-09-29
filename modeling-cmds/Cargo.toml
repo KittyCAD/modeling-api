@@ -44,6 +44,7 @@ workspace = true
 
 [features]
 default = []
+derive-jsonschema-on-enums = []
 tabled = ["dep:tabled"]
 slog = ["dep:slog"]
 cxx = ["dep:cxx"]
