@@ -59,7 +59,8 @@ impl From<EngineErrorCode> for ErrorCode {
 }
 
 /// A graphics command submitted to the KittyCAD engine via the Modeling API.
-#[derive(Debug, Clone, JsonSchema, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 pub struct ModelingCmdReq {
     /// Which command to submit to the Kittycad engine.
     pub cmd: ModelingCmd,
@@ -68,7 +69,8 @@ pub struct ModelingCmdReq {
 }
 
 /// The websocket messages the server receives.
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum WebSocketRequest {
     /// The trickle ICE candidate request.
@@ -103,7 +105,8 @@ pub enum WebSocketRequest {
 }
 
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub struct ModelingBatch {
     /// A sequence of modeling requests. If any request fails, following requests will not be tried.
@@ -157,7 +160,8 @@ pub struct IceServer {
 }
 
 /// The websocket messages this server sends.
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(tag = "type", content = "data", rename_all = "snake_case")]
 pub enum OkWebSocketResponseData {
     /// Information about the ICE servers.
@@ -207,7 +211,8 @@ pub enum OkWebSocketResponseData {
 }
 
 /// Successful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub struct SuccessWebSocketResponse {
     /// Always true
@@ -237,7 +242,8 @@ pub struct FailureWebSocketResponse {
 
 /// Websocket responses can either be successful or unsuccessful.
 /// Slightly different schemas in either case.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", untagged)]
 pub enum WebSocketResponse {
     /// Response sent when a request succeeded.
@@ -248,7 +254,8 @@ pub enum WebSocketResponse {
 
 /// Websocket responses can either be successful or unsuccessful.
 /// Slightly different schemas in either case.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", untagged)]
 pub enum BatchResponse {
     /// Response sent when a request succeeded.
