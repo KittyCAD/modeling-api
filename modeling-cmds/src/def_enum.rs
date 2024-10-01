@@ -1047,6 +1047,13 @@ define_modeling_cmd_enum! {
             pub parameters: Option<PerspectiveCameraParameters>,
         }
 
+        ///Updates the camera to center to the center of the current selection
+        ///(or the origin if nothing is selected)
+        #[derive(
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        pub struct DefaultCameraCenterToSelection;
+
         /// Fit the view to the specified object(s).
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct ZoomToFit {
