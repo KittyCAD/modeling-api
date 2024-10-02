@@ -577,7 +577,7 @@ define_modeling_cmd_enum! {
 
         /// Gets the shared edge between these two faces if it exists
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
-        pub struct Solid3DGetCommonEdge {
+        pub struct Solid3dGetCommonEdge {
             /// Which object is being queried.
             pub object_id: Uuid,
             /// The faces being queried (must be an array of length 2)
