@@ -575,6 +575,15 @@ define_modeling_cmd_enum! {
             pub face_id: Uuid,
         }
 
+        /// Gets the shared edge between these two faces if it exists
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct Solid3DGetCommonEdge {
+            /// Which object is being queried.
+            pub object_id: Uuid,
+            /// The faces being queried (must be an array of length 2)
+            pub face_ids: Vec<Uuid>,
+        }
+
         /// Fillets the given edge with the specified radius.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct Solid3dFilletEdge {
