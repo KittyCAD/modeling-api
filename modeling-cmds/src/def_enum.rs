@@ -581,7 +581,7 @@ define_modeling_cmd_enum! {
             /// Which object is being queried.
             pub object_id: Uuid,
             /// The faces being queried (must be an array of length 2)
-            pub face_ids: Vec<Uuid>,
+            pub face_ids: [Uuid; 2]
         }
 
         /// Fillets the given edge with the specified radius.
