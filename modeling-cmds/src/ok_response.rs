@@ -453,6 +453,13 @@ define_ok_modeling_cmd_response_enum! {
             pub edge: Option<Uuid>,
         }
 
+        /// The response from the `Solid3DGetCommonEdge` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dGetCommonEdge {
+            /// The UUID of the common edge, if any.
+            pub edge: Option<Uuid>,
+        }
+
         /// The response from the `GetEntityType` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct GetEntityType {
