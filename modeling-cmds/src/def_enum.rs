@@ -580,7 +580,7 @@ define_modeling_cmd_enum! {
         pub struct Solid3dGetCommonEdge {
             /// Which object is being queried.
             pub object_id: Uuid,
-            /// The faces being queried (must be an array of length 2)
+            /// The faces being queried
             pub face_ids: [Uuid; 2]
         }
 
