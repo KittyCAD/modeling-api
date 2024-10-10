@@ -35,6 +35,8 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `ExtendPath` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct ExtendPath {
+            ///The end position of the path after the operation (if missing, then the end pos was already explicitly provided)
+            pub end_pos: Option<Point2d<LengthUnit>>,
         }
 
         /// The response from the `Extrude` endpoint.
