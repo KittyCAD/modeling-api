@@ -816,7 +816,8 @@ define_modeling_cmd_enum! {
             pub entity_id: Uuid,
             /// Which plane to project entity_id onto.
             pub plane_id: Uuid,
-            /// If true: the projected points are returned in the plane_id's coordinate system.
+            /// If true: the projected points are returned in the plane_id's coordinate system,
+            /// else: the projected points are returned in the world coordinate system.
             pub use_plane_coords: bool,
 
         }
