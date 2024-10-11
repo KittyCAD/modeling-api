@@ -473,6 +473,13 @@ define_ok_modeling_cmd_response_enum! {
             pub control_points: Vec<Point3d<f64>>,
         }
 
+        /// The response from the `ProjectEntityToPlane` command.
+        #[derive(Debug, Serialize, Deserialze, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct ProjectEntityToPlane {
+            /// Projected points.
+            pub projected_points: Vec<Point3d<f64>>,
+        }
+
         /// The response from the `CurveGetType` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, Eq, PartialEq, ModelingCmdOutput)]
         pub struct CurveGetType {

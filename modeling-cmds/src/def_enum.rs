@@ -809,6 +809,18 @@ define_modeling_cmd_enum! {
             pub curve_id: Uuid,
         }
 
+        /// Project an entity on to a plane.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct ProjectEntityToPlane {
+            /// Which entity to project (vertex or edge).
+            pub entity_id: Uuid,
+            /// Which plane to project entity_id onto.
+            pub plane_id: Uuid,
+            /// If true: the projected points are returned in the plane_id's coordinate system.
+            pub use_plane_coords: bool,
+
+        }
+
         /// Enum containing the variety of image formats snapshots may be exported to.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, FromStr, Display)]
         #[serde(rename_all = "snake_case")]
