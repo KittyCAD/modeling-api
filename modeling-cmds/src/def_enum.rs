@@ -44,8 +44,7 @@ define_modeling_cmd_enum! {
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
-        pub struct EngineUtilEvaluatePath
-        {
+        pub struct EngineUtilEvaluatePath {
             /// The path in json form (the serialized result of the kcl Sketch/Path object
             pub path_json: String,
 
