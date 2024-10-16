@@ -21,7 +21,7 @@ kittycad-modeling-cmds = { path = "modeling-cmds", version = "0.2.0" }
 kittycad-modeling-cmds-macros = { path = "modeling-cmds-macros", version = "0.1.11" }
 kittycad-modeling-cmds-macros-impl = { path = "modeling-cmds-macros-impl", version = "0.1.12" }
 kittycad-modeling-session = { path = "modeling-session", version = "0.1.2" }
-proc-macro2 = "1.0.87"
+proc-macro2 = "1.0.88"
 quote = "1.0.37"
 syn = "2.0.79"
 
