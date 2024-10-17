@@ -1052,7 +1052,7 @@ define_modeling_cmd_enum! {
             /// Negative padding will crop the view of the object proportionally.
             /// e.g. padding = 0.2 means the view will span 120% of the object(s) bounding box,
             /// and padding = -0.2 means the view will span 80% of the object(s) bounding box.
-            #[serde(default = "f32::default")]
+            #[serde(default)]
             pub padding: f32,
             /// Whether or not to animate the camera movement.
             #[serde(default)]
