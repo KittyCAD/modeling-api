@@ -22,6 +22,13 @@ define_ok_modeling_cmd_response_enum! {
             units,
         };
 
+        /// The response of the `EngineUtilEvaluatePath` endpoint
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EngineUtilEvaluatePath {
+            /// The evaluated path curve position
+            pub pos: Point3d<LengthUnit>,
+        }
+
         /// The response from the `StartPath` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct StartPath {

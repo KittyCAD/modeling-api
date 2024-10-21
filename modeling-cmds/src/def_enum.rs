@@ -40,6 +40,18 @@ define_modeling_cmd_enum! {
             Vec::new()
         }
 
+        /// Evaluates the position of a path in one shot (engine utility for kcl executor)
+        #[derive(
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+        )]
+        pub struct EngineUtilEvaluatePath {
+            /// The path in json form (the serialized result of the kcl Sketch/Path object
+            pub path_json: String,
+
+            /// The evaluation parameter (path curve parameter in the normalized domain [0, 1])
+            pub t: f64,
+        }
+
         /// Start a new path.
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
