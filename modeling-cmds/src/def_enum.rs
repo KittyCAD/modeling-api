@@ -48,7 +48,7 @@ define_modeling_cmd_enum! {
             /// The path in json form (the serialized result of the kcl Sketch/Path object
             pub path_json: String,
 
-            /// The evaluation parameter
+            /// The evaluation parameter (path curve parameter in the normalized domain [0, 1])
             pub t: f64,
         }
 
