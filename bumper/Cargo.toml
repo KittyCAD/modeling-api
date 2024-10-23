@@ -13,7 +13,7 @@ publish = false
 anyhow = "1.0.90"
 clap = { version = "4.5.20", features = ["derive"] }
 semver = "1.0.22"
-serde = "1.0.211"
+serde = "1.0.213"
 toml_edit = "0.22.16"
 
 [lints]
