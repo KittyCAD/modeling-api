@@ -282,6 +282,15 @@ pub enum PathSegment {
         /// 0 will be interpreted as none/null.
         angle_snap_increment: Option<Angle>,
     },
+    ///Adds an arc from the current position that goes through the given interior point and ends at the given end position
+    ArcTo {
+        /// Interior point of the arc
+        interior: Point3d<LengthUnit>,
+        /// End point of the arc.
+        end: Point3d<LengthUnit>,
+        ///Whether or not this line is a relative offset
+        relative: bool,
+    },
 }
 
 /// An angle, with a specific unit.
