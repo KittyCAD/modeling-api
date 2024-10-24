@@ -284,11 +284,11 @@ pub enum PathSegment {
     },
     ///Adds an arc from the current position that goes through the given interior point and ends at the given end position
     ArcTo {
-        /// Interior point of the arc
+        /// Interior point of the arc.
         interior: Point3d<LengthUnit>,
         /// End point of the arc.
         end: Point3d<LengthUnit>,
-        ///Whether or not this line is a relative offset
+        ///Whether or not interior and end are relative to the previous path position
         relative: bool,
     },
 }
