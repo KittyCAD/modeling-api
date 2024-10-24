@@ -401,6 +401,13 @@ define_ok_modeling_cmd_response_enum! {
             pub settings: CameraSettings
         }
 
+        /// The response from the `OrientToFace` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct OrientToFace {
+            /// Camera settings
+            pub settings: CameraSettings
+        }
+
         /// The response from the `ViewIsometric` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct ViewIsometric {
