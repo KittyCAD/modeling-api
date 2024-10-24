@@ -1092,18 +1092,18 @@ define_modeling_cmd_enum! {
             pub animated: bool,
         }
 
-        /// Looks along the normal of the specified face (if it is flat!), and fits the view to it.
+        /// Looks along the normal of the specified face (if it is planar!), and fits the view to it.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct OrientToFace {
             /// Which face to orient camera to.
-            pub face_id: Vec<Uuid>,
+            pub face_id: Uuid,
             /// How much to pad the view frame by, as a fraction of the face bounding box size.
             /// Negative padding will crop the view of the face proportionally.
             /// e.g. padding = 0.2 means the view will span 120% of the face bounding box,
             /// and padding = -0.2 means the view will span 80% of the face bounding box.
             #[serde(default)]
             pub padding: f32,
-            /// How many seconds the animation should take. If set to zero, no animation will occur.
+            /// How many seconds the animation should take. If set to a non-positive value, no animation will occur.
             #[serde(default = "default_animation_seconds")]
             pub duration_seconds: f32,
         }
