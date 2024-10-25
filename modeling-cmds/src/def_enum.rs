@@ -336,6 +336,20 @@ define_modeling_cmd_enum! {
             pub transform: Vec<crate::shared::Transform>,
         }
 
+        /// Create a pattern using this entity by specifying the transforms for each desired repetition.
+        /// Individual transformations are performed in the following order (first applied to last applied): scale, rotate, translate.
+        /// If an object has multiple transforms, they are applied in the order they are provided. (i.e. the 0th transform is applied to the geometry first)
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct EntityPatternMultipleTransforms {
+            /// ID of the entity being copied.
+            pub entity_id: Uuid,
+            /// How to transform each repeated solid.
+            /// Each instance will accept one list of transforms.
+            /// The 0th list of transforms will create the first copy of the entity.
+            /// The total number of (optional) repetitions equals the size of this list.
+            pub transform: Vec<Vec<crate::shared::Transform>>,
+        }
+
         /// Create a linear pattern using this entity.
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         pub struct EntityLinearPattern {

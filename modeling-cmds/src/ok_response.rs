@@ -705,6 +705,13 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_ids: Vec<Uuid>,
         }
 
+        /// The response from the `EntityPatternMultipleTransforms` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityPatternMultipleTransforms {
+            /// The UUIDs of the entities that were created.
+            pub entity_ids: Vec<Uuid>,
+        }
+
         /// The response from the `EntityLinearPattern` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityLinearPattern {
