@@ -1073,7 +1073,21 @@ define_modeling_cmd_enum! {
         #[derive(
             Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
-        pub struct DefaultCameraCenterToSelection;
+        pub struct DefaultCameraCenterToSelection {
+            /// If true actually moves the camera position based on its distance from the current center.
+            /// Otherwise, the camera will orbit around the new center from its current position
+            pub adjust_vantage: bool,
+        }
+
+        ///Updates the camera to center to the center of the current scene's bounds
+        #[derive(
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        pub struct DefaultCameraCenterToScene {
+            /// If true actually moves the camera position based on its distance from the current center.
+            /// Otherwise, the camera will orbit around the new center from its current position
+            pub adjust_vantage: bool,
+        }
 
         /// Fit the view to the specified object(s).
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
