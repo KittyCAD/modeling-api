@@ -21,7 +21,7 @@ proc-macro = true
 
 [dev-dependencies]
 anyhow = "1.0.91"
-insta = "1.40.0"
+insta = "1.41.0"
 regex = "1.11.1"
 rustfmt-wrapper = "0.2.1"
 
