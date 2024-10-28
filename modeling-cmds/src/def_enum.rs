@@ -23,6 +23,7 @@ define_modeling_cmd_enum! {
             shared::{
                 Angle,
                 CutType,
+                CameraMovement,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, SceneSelectionType, SceneToolType,
@@ -1074,9 +1075,10 @@ define_modeling_cmd_enum! {
             Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct DefaultCameraCenterToSelection {
-            /// If true actually moves the camera position based on its distance from the current center.
-            /// Otherwise, the camera will orbit around the new center from its current position
-            pub adjust_vantage: bool,
+            /// Dictates whether or not the camera position should be adjusted during this operation
+            /// If no movement is requested, the camera will orbit around the new center from its current position
+            #[serde(default)]
+            pub camera_movement: CameraMovement,
         }
 
         ///Updates the camera to center to the center of the current scene's bounds
@@ -1084,9 +1086,10 @@ define_modeling_cmd_enum! {
             Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct DefaultCameraCenterToScene {
-            /// If true actually moves the camera position based on its distance from the current center.
-            /// Otherwise, the camera will orbit around the new center from its current position
-            pub adjust_vantage: bool,
+            /// Dictates whether or not the camera position should be adjusted during this operation
+            /// If no movement is requested, the camera will orbit around the new center from its current position
+            #[serde(default)]
+            pub camera_movement: CameraMovement,
         }
 
         /// Fit the view to the specified object(s).
