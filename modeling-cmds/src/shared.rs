@@ -676,15 +676,28 @@ pub struct PerspectiveCameraParameters {
 
 /// A type of camera movement applied after certain camera operations
 #[derive(
-    Default, Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
+    Default,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
 )]
 #[serde(rename_all = "snake_case")]
 pub enum CameraMovement {
-  /// Adjusts the camera position during the camera operation
-  #[default]
-  Vantage,
-  /// Keeps the camera position in place
-  None,
+    /// Adjusts the camera position during the camera operation
+    #[default]
+    Vantage,
+    /// Keeps the camera position in place
+    None,
 }
 
 /// The global axes.
