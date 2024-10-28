@@ -949,7 +949,7 @@ define_modeling_cmd_enum! {
             pub height: u32,
             /// Frames per second.
             pub fps: u32,
-            /// Video bitrate (CBR)
+            /// Video feed's constant bitrate (CBR)
             pub bitrate: Option<u32>,
         }
 
