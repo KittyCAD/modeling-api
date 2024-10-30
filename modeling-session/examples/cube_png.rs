@@ -107,6 +107,7 @@ async fn main() -> Result<()> {
             Extrude {
                 distance: CUBE_WIDTH * 2.0,
                 target: path,
+                faces: None,
             }
             .into(),
         )

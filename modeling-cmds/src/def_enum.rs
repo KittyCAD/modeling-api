@@ -24,6 +24,7 @@ define_modeling_cmd_enum! {
                 Angle,
                 CutType,
                 CameraMovement,
+                ExtrudedFaceInfo,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, SceneSelectionType, SceneToolType,
@@ -99,6 +100,10 @@ define_modeling_cmd_enum! {
             pub target: ModelingCmdId,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
+            /// Which IDs should the new faces have?
+            /// If this isn't given, the engine will generate IDs.
+            #[serde(default)]
+            pub faces: Option<ExtrudedFaceInfo>,
         }
 
         /// Command for revolving a solid 2d.
