@@ -293,6 +293,11 @@ define_ok_modeling_cmd_response_enum! {
         pub struct DefaultCameraCenterToSelection {
         }
 
+        /// The response from the `DefaultCameraCenterToScene` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct DefaultCameraCenterToScene {
+        }
+
         /// The response from the `SelectClear` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SelectClear {
