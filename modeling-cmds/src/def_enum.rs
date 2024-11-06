@@ -348,7 +348,7 @@ define_modeling_cmd_enum! {
             /// Each instance will accept one list of transforms.
             /// The 0th list of transforms will create the first copy of the entity.
             /// The total number of (optional) repetitions equals the size of this list.
-            pub transform: Vec<Vec<crate::shared::Transform>>,
+            pub transforms: Vec<Vec<crate::shared::Transform>>,
         }
 
         /// Create a linear pattern using this entity.
