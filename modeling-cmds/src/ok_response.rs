@@ -419,6 +419,14 @@ define_ok_modeling_cmd_response_enum! {
             /// The number of objects in the scene.
             pub num_objects: u32,
         }
+
+        /// The response from the `MakeOffsetPath` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct MakeOffsetPath {
+            /// The UUIDs of the paths that were created.
+            pub entity_ids: Vec<Uuid>,
+        }
+
         /// The response from the `DefaultCameraFocusOn` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct DefaultCameraFocusOn { }

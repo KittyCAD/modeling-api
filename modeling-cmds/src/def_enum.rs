@@ -1147,6 +1147,19 @@ define_modeling_cmd_enum! {
             Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct GetNumObjects;
+
+        /// Make a new path by offsetting an object by a given distance.
+        #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
+        pub struct MakeOffsetPath {
+            /// The object that will be offset (can be a path, sketch, or the face of a solid)
+            pub object_id: Uuid,
+            /// If the object is a face, this is the ID of the face
+            pub face_id: Option<Uuid>,
+            /// The distance to offset the path (+ve for outset, -ve for inset)
+            pub offset: f64,
+            /// Id of the newly generated offset path
+            pub new_path_id: Uuid,
+        }
     }
 }
 
