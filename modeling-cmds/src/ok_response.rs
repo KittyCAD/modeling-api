@@ -424,7 +424,9 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct MakeOffsetPath {
             /// If the offset path splits into multiple paths, this will contain the UUIDs of the
-            /// new paths, else it will be empty.
+            /// new paths.
+            /// If the offset path remains as a single path, this will be empty, and the resulting ID
+            /// of the (single) new path will be the ID of the `MakeOffsetPath` command.
             pub entity_ids: Vec<Uuid>,
         }
 
