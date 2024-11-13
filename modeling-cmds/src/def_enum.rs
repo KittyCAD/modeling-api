@@ -1161,7 +1161,7 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             pub face_id: Option<Uuid>,
             /// The distance to offset the path (positive for outset, negative for inset)
-            pub offset: f64,
+            pub offset: LengthUnit,
         }
     }
 }
