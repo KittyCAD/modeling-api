@@ -727,6 +727,8 @@ pub enum ExtrusionFaceCapType {
     Top,
     /// Capped below.
     Bottom,
+    /// Capped on both ends.
+    Both,
 }
 
 /// Post effect type
