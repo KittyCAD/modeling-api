@@ -20,7 +20,7 @@ syn = { workspace = true, features = ["extra-traits", "full"] }
 proc-macro = true
 
 [dev-dependencies]
-anyhow = "1.0.92"
+anyhow = "1.0.93"
 insta = "1.41.1"
 regex = "1.11.1"
 rustfmt-wrapper = "0.2.1"
