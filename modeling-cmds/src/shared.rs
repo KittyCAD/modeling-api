@@ -282,6 +282,15 @@ pub enum PathSegment {
         /// 0 will be interpreted as none/null.
         angle_snap_increment: Option<Angle>,
     },
+    ///Adds an arc from the current position that goes through the given interior point and ends at the given end position
+    ArcTo {
+        /// Interior point of the arc.
+        interior: Point3d<LengthUnit>,
+        /// End point of the arc.
+        end: Point3d<LengthUnit>,
+        ///Whether or not interior and end are relative to the previous path position
+        relative: bool,
+    },
 }
 
 /// An angle, with a specific unit.
@@ -668,6 +677,32 @@ pub struct PerspectiveCameraParameters {
     pub z_near: Option<f32>,
     /// Camera frustum far plane.
     pub z_far: Option<f32>,
+}
+
+/// A type of camera movement applied after certain camera operations
+#[derive(
+    Default,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum CameraMovement {
+    /// Adjusts the camera position during the camera operation
+    #[default]
+    Vantage,
+    /// Keeps the camera position in place
+    None,
 }
 
 /// The global axes.

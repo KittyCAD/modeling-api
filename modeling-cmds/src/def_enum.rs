@@ -23,6 +23,7 @@ define_modeling_cmd_enum! {
             shared::{
                 Angle,
                 CutType,
+                CameraMovement,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, SceneSelectionType, SceneToolType,
@@ -949,6 +950,9 @@ define_modeling_cmd_enum! {
             pub height: u32,
             /// Frames per second.
             pub fps: u32,
+            /// Video feed's constant bitrate (CBR)
+            #[serde(default)]
+            pub bitrate: Option<u32>,
         }
 
         /// Import files to the current model.
@@ -1073,7 +1077,23 @@ define_modeling_cmd_enum! {
         #[derive(
             Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
-        pub struct DefaultCameraCenterToSelection;
+        pub struct DefaultCameraCenterToSelection {
+            /// Dictates whether or not the camera position should be adjusted during this operation
+            /// If no movement is requested, the camera will orbit around the new center from its current position
+            #[serde(default)]
+            pub camera_movement: CameraMovement,
+        }
+
+        ///Updates the camera to center to the center of the current scene's bounds
+        #[derive(
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        pub struct DefaultCameraCenterToScene {
+            /// Dictates whether or not the camera position should be adjusted during this operation
+            /// If no movement is requested, the camera will orbit around the new center from its current position
+            #[serde(default)]
+            pub camera_movement: CameraMovement,
+        }
 
         /// Fit the view to the specified object(s).
         #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
