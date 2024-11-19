@@ -55,7 +55,6 @@ unstable_exhaustive = []
 
 [dev-dependencies]
 bson = "2.13.0"
-serde_json = "1"
 
 [package.metadata.docs.rs]
 all-features = true

@@ -26,7 +26,7 @@ define_modeling_cmd_enum! {
                 CameraMovement,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
-                Point2d, Point3d, SceneSelectionType, SceneToolType, ScalarOrVec,
+                Point2d, Point3d, SceneSelectionType, SceneToolType,
             },
             units,
         };
@@ -334,7 +334,7 @@ define_modeling_cmd_enum! {
             /// How to transform each repeated solid.
             /// The 0th transform will create the first copy of the entity.
             /// The total number of (optional) repetitions equals the size of this list.
-            pub transform: Vec<ScalarOrVec<crate::shared::Transform>>,
+            pub transform: Vec<crate::shared::Transform>,
         }
 
         /// Create a linear pattern using this entity.
