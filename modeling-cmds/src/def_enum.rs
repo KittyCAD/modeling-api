@@ -101,6 +101,22 @@ define_modeling_cmd_enum! {
             pub distance: LengthUnit,
         }
 
+        /// Extrude the object along a path.
+        #[derive(
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        pub struct Sweep {
+            /// Which sketch to sweep.
+            /// Must be a closed 2D solid.
+            pub target: ModelingCmdId,
+            /// Path along which to sweep.
+            pub trajectory: ModelingCmdId,
+            /// If true, the sweep will be broken up into sub-sweeps (extrusions, revolves, sweeps) based on the trajectory path components.
+            pub sectional: bool,
+            /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+        }
+
         /// Command for revolving a solid 2d.
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
@@ -1147,6 +1163,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct GetNumObjects;
+
     }
 }
 
