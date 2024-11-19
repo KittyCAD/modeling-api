@@ -23,7 +23,7 @@ pub enum CutType {
 }
 
 /// A rotation defined by an axis, origin of rotation, and an angle.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub struct Rotation {
     /// Rotation axis.
@@ -46,9 +46,52 @@ impl Default for Rotation {
         }
     }
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn deser_transform() {
+        // This JSON deserializes into a Transform.
+        let json = r#"{
+            "translate": [3, 4, 5]
+        }"#;
+        let _t0: Transform = serde_json::from_str(json).unwrap();
+        // It also deserializes into a ScalarOrVec of transform.
+        // Specifically, a scalar though.
+        let t1: ScalarOrVec<Transform> = serde_json::from_str(json).unwrap();
+        assert_eq!(
+            t1,
+            ScalarOrVec::Single(Transform {
+                translate: Point3d { x: 3.0, y: 4.0, z: 5.0 }.map(LengthUnit),
+                ..Default::default()
+            })
+        )
+    }
+}
+
+/// Either a scalar value, or a vector of those values.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
+#[serde(rename_all = "snake_case")]
+#[serde(untagged)]
+pub enum ScalarOrVec<T> {
+    /// Scalar (just one of something)
+    Single(T),
+    /// Vector (many of something)
+    Many(Vec<T>),
+}
+
+impl<T> From<ScalarOrVec<T>> for Vec<T> {
+    fn from(value: ScalarOrVec<T>) -> Self {
+        match value {
+            ScalarOrVec::Single(t) => vec![t],
+            ScalarOrVec::Many(vec) => vec,
+        }
+    }
+}
 
 /// Ways to transform each solid being replicated in a repeating pattern.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub struct Transform {
     /// Translate the replica this far along each dimension.
@@ -135,7 +178,7 @@ pub enum DistanceType {
 }
 
 /// The type of origin
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default, PartialEq)]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum OriginType {
     /// Local Origin (center of object bounding box).
