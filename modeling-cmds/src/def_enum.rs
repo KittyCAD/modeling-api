@@ -334,7 +334,13 @@ define_modeling_cmd_enum! {
             /// How to transform each repeated solid.
             /// The 0th transform will create the first copy of the entity.
             /// The total number of (optional) repetitions equals the size of this list.
+            #[serde(default)]
             pub transform: Vec<crate::shared::Transform>,
+            /// Alternatively, you could set this key instead.
+            /// If you want to use multiple transforms per item.
+            /// If this is non-empty then the `transform` key must be empty, and vice-versa.
+            #[serde(default)]
+            pub transforms: Vec<Vec<crate::shared::Transform>>,
         }
 
         /// Create a linear pattern using this entity.
