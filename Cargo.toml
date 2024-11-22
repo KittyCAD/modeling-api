@@ -23,7 +23,7 @@ kittycad-modeling-cmds-macros-impl = { path = "modeling-cmds-macros-impl", versi
 kittycad-modeling-session = { path = "modeling-session", version = "0.1.2" }
 proc-macro2 = "1.0.91"
 quote = "1.0.37"
-syn = "2.0.87"
+syn = "2.0.89"
 
 [profile.bench]
 debug = true
