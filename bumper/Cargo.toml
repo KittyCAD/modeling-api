@@ -10,10 +10,10 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.91"
-clap = { version = "4.5.20", features = ["derive"] }
+anyhow = "1.0.93"
+clap = { version = "4.5.21", features = ["derive"] }
 semver = "1.0.22"
-serde = "1.0.214"
+serde = "1.0.215"
 toml_edit = "0.22.16"
 
 [lints]

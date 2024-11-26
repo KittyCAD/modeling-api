@@ -32,7 +32,7 @@ jobs:
             RUST_BACKTRACE: 1
   
         - name: Upload to codecov.io
-          uses: codecov/codecov-action@v3
+          uses: codecov/codecov-action@v5
           with:
             token: ${{secrets.CODECOV_TOKEN}}
             fail_ci_if_error: true
@@ -100,7 +100,7 @@ jobs:
           uses: actions/checkout@v4
         - uses: taiki-e/install-action@just
         - name: Install the latest version of uv
-          uses: astral-sh/setup-uv@v3
+          uses: astral-sh/setup-uv@v4
         - name: Install codespell
           run: |
               uv venv .venv
