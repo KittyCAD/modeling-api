@@ -357,6 +357,17 @@ impl Default for Angle {
     }
 }
 
+impl PartialOrd for Angle {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match (self.unit, other.unit) {
+            // Avoid unnecessary floating point operations.
+            (UnitAngle::Degrees, UnitAngle::Degrees) => self.value.partial_cmp(&other.value),
+            (UnitAngle::Radians, UnitAngle::Radians) => self.value.partial_cmp(&other.value),
+            _ => self.to_degrees().partial_cmp(&other.to_degrees()),
+        }
+    }
+}
+
 impl std::ops::Add for Angle {
     type Output = Self;
 
@@ -732,6 +743,8 @@ pub enum ExtrusionFaceCapType {
     Top,
     /// Capped below.
     Bottom,
+    /// Capped on both ends.
+    Both,
 }
 
 /// Post effect type
@@ -803,4 +816,33 @@ fn same_scale() -> Point3d<f64> {
 
 fn z_axis() -> Point3d<f64> {
     Point3d { x: 0.0, y: 0.0, z: 1.0 }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_angle_comparison() {
+        let a = Angle::from_degrees(90.0);
+        assert!(a < Angle::from_degrees(91.0));
+        assert!(a > Angle::from_degrees(89.0));
+        assert!(a <= Angle::from_degrees(90.0));
+        assert!(a >= Angle::from_degrees(90.0));
+        let b = Angle::from_radians(std::f64::consts::FRAC_PI_4);
+        assert!(b < Angle::from_radians(std::f64::consts::FRAC_PI_2));
+        assert!(b > Angle::from_radians(std::f64::consts::FRAC_PI_8));
+        assert!(b <= Angle::from_radians(std::f64::consts::FRAC_PI_4));
+        assert!(b >= Angle::from_radians(std::f64::consts::FRAC_PI_4));
+        // Mixed units.
+        assert!(a > b);
+        assert!(a >= b);
+        assert!(b < a);
+        assert!(b <= a);
+        let c = Angle::from_radians(std::f64::consts::FRAC_PI_2 * 3.0);
+        assert!(a < c);
+        assert!(a <= c);
+        assert!(c > a);
+        assert!(c >= a);
+    }
 }
