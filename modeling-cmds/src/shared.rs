@@ -219,8 +219,10 @@ pub enum AnnotationType {
 pub enum CameraDragInteractionType {
     /// Camera pan
     Pan,
-    /// Camera rotate (revolve/orbit)
+    /// Camera rotate (spherical camera revolve/orbit)
     Rotate,
+    /// Camera rotate (trackball with 3 degrees of freedom)
+    RotateTrackball,
     /// Camera zoom (increase or decrease distance to reference point center)
     Zoom,
 }
