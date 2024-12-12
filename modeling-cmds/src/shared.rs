@@ -2,6 +2,7 @@ use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
@@ -617,6 +618,29 @@ impl From<EngineErrorCode> for http::StatusCode {
             EngineErrorCode::InternalEngine => Self::INTERNAL_SERVER_ERROR,
         }
     }
+}
+
+/// IDs for the extruded faces.
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+pub struct ExtrudedFaceInfo {
+    /// The face made from the original 2D shape being extruded.
+    /// If the solid is extruded from a shape which already has an ID
+    /// (e.g. extruding something which was sketched on a face), this
+    /// doesn't need to be sent.
+    pub bottom: Option<Uuid>,
+    /// Top face of the extrusion (parallel and further away from the original 2D shape being extruded).
+    pub top: Uuid,
+    /// Any intermediate sides between the top and bottom.
+    pub sides: Vec<SideFace>,
+}
+
+/// IDs for a side face, extruded from the path of some sketch/2D shape.
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+pub struct SideFace {
+    /// ID of the path this face is being extruded from.
+    pub path_id: Uuid,
+    /// Desired ID for the resulting face.
+    pub face_id: Uuid,
 }
 
 /// Camera settings including position, center, fov etc
