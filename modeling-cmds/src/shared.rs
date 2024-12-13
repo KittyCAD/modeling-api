@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
-use crate::{length_unit::LengthUnit, units::UnitAngle};
+use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle};
 
 pub use point::{Point2d, Point3d, Point4d, Quaternion};
 
@@ -837,6 +837,35 @@ fn same_scale() -> Point3d<f64> {
 
 fn z_axis() -> Point3d<f64> {
     Point3d { x: 0.0, y: 0.0, z: 1.0 }
+}
+
+impl ExtrudedFaceInfo {
+    /// Converts from the representation used in the Extrude modeling command,
+    /// to a flat representation.
+    pub fn list_faces(faces: ExtrudedFaceInfo) -> Vec<ExtrusionFaceInfo> {
+        let mut face_infos: Vec<_> = faces
+            .sides
+            .into_iter()
+            .map(|side| ExtrusionFaceInfo {
+                curve_id: Some(side.path_id),
+                face_id: Some(side.face_id),
+                cap: ExtrusionFaceCapType::None,
+            })
+            .collect();
+        face_infos.push(ExtrusionFaceInfo {
+            curve_id: None,
+            face_id: Some(faces.top),
+            cap: ExtrusionFaceCapType::Top,
+        });
+        if let Some(bottom) = faces.bottom {
+            face_infos.push(ExtrusionFaceInfo {
+                curve_id: None,
+                face_id: Some(bottom),
+                cap: ExtrusionFaceCapType::Bottom,
+            });
+        }
+        face_infos
+    }
 }
 
 #[cfg(test)]
