@@ -842,8 +842,8 @@ fn z_axis() -> Point3d<f64> {
 impl ExtrudedFaceInfo {
     /// Converts from the representation used in the Extrude modeling command,
     /// to a flat representation.
-    pub fn list_faces(faces: ExtrudedFaceInfo) -> Vec<ExtrusionFaceInfo> {
-        let mut face_infos: Vec<_> = faces
+    pub fn list_faces(self) -> Vec<ExtrusionFaceInfo> {
+        let mut face_infos: Vec<_> = self
             .sides
             .into_iter()
             .map(|side| ExtrusionFaceInfo {
@@ -854,10 +854,10 @@ impl ExtrudedFaceInfo {
             .collect();
         face_infos.push(ExtrusionFaceInfo {
             curve_id: None,
-            face_id: Some(faces.top),
+            face_id: Some(self.top),
             cap: ExtrusionFaceCapType::Top,
         });
-        if let Some(bottom) = faces.bottom {
+        if let Some(bottom) = self.bottom {
             face_infos.push(ExtrusionFaceInfo {
                 curve_id: None,
                 face_id: Some(bottom),
