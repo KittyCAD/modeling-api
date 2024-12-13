@@ -106,6 +106,18 @@ define_modeling_cmd_enum! {
             pub faces: Option<ExtrudedFaceInfo>,
         }
 
+        /// Command for extruding a solid 2d.
+        #[derive(
+            Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+        )]
+        pub struct MultiExtrude {
+            /// Which sketches to extrude.
+            /// Must be a closed 2D solid.
+            pub target_ids: Vec<Uuid>,
+            /// How far off the plane to extrude
+            pub distance: LengthUnit,
+        }
+
         /// Extrude the object along a path.
         #[derive(
             Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
