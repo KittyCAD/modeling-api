@@ -49,6 +49,11 @@ define_ok_modeling_cmd_response_enum! {
         pub struct Extrude {
         }
 
+        /// The response from the `MultiExtrude` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct MultiExtrude {
+        }
+
         /// The response from the `Sweep` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Sweep {
