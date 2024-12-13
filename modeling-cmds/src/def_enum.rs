@@ -42,6 +42,10 @@ define_modeling_cmd_enum! {
             Vec::new()
         }
 
+        fn default_angle() -> Angle {
+            Angle::from_degrees(0.0)
+        }
+
         /// Evaluates the position of a path in one shot (engine utility for kcl executor)
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
@@ -403,12 +407,33 @@ define_modeling_cmd_enum! {
             pub cylinder_id: Uuid,
             /// Number of revolutions.
             pub revolutions: f64,
-            /// Start angle (in degrees).
+            /// Start angle.
+            #[serde(default = "default_angle")]
             pub start_angle: Angle,
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
             /// Length of the helix.
             pub length: LengthUnit,
+        }
+
+        /// Create a helix using the specified parameters.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct EntityMakeHelixFromParams {
+            /// Radius of the helix.
+            pub radius: f64,
+            /// Length of the helix.
+            pub length: LengthUnit,
+            /// Number of revolutions.
+            pub revolutions: f64,
+            /// Start angle.
+            #[serde(default = "default_angle")]
+            pub start_angle: Angle,
+            /// Is the helix rotation clockwise?
+            pub is_clockwise: bool,
+            /// Center of the helix at the base of the helix.
+            pub center: Point3d<LengthUnit>,
+            /// Axis of the helix. The helix will be created around and in the direction of this axis.
+            pub axis: Point3d<f64>,
         }
 
         /// Mirror the input entities over the specified axis. (Currently only supports sketches)
