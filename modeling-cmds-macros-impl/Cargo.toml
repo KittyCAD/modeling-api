@@ -16,7 +16,7 @@ quote = { workspace = true }
 syn = { workspace = true, features = ["extra-traits", "full"] }
 
 [dev-dependencies]
-anyhow = "1.0.93"
+anyhow = "1.0.94"
 criterion = { version = "0.5", features = ["html_reports"] }
 insta = "1.41.1"
 regex = "1.11.1"
