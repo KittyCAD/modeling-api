@@ -42,10 +42,6 @@ define_modeling_cmd_enum! {
             Vec::new()
         }
 
-        fn default_angle() -> Angle {
-            Angle::from_degrees(0.0)
-        }
-
         /// Evaluates the position of a path in one shot (engine utility for kcl executor)
         #[derive(
             Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
@@ -408,7 +404,7 @@ define_modeling_cmd_enum! {
             /// Number of revolutions.
             pub revolutions: f64,
             /// Start angle.
-            #[serde(default = "default_angle")]
+            #[serde(default)]
             pub start_angle: Angle,
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
@@ -426,7 +422,7 @@ define_modeling_cmd_enum! {
             /// Number of revolutions.
             pub revolutions: f64,
             /// Start angle.
-            #[serde(default = "default_angle")]
+            #[serde(default)]
             pub start_angle: Angle,
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
