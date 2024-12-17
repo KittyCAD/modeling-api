@@ -1,17 +1,30 @@
+clippy-flags := "--workspace --tests --benches --examples"
+macros-impl := "kittycad-modeling-cmds-macros-impl"
+
 lint:
-    cargo clippy --workspace --tests --benches --examples --no-default-features -- -D warnings
-    cargo clippy --workspace --tests --benches --examples                       -- -D warnings
-    cargo clippy --workspace --tests --benches --examples --all-features        -- -D warnings
+    cargo clippy {{clippy-flags}} --no-default-features -- -D warnings
+    cargo clippy {{clippy-flags}}                       -- -D warnings
+    cargo clippy {{clippy-flags}} --all-features        -- -D warnings
+
+check-wasm:
+    cargo check -p kittycad-modeling-cmds --target wasm32-unknown-unknown --features websocket
 
 check-typos:
     codespell --config .codespellrc
 
 test:
     cargo nextest run --all-features 
+    cargo test --doc
 
 # Run unit tests, output coverage to `lcov.info`.
 test-with-coverage:
     cargo llvm-cov nextest --all-features --workspace --lcov --output-path lcov.info
+
+# Flamegraph our benchmarks
+flamegraph:
+    cargo flamegraph -p {{macros-impl}} --root --bench my_benchmark
+bench:
+    cargo criterion -p {{macros-impl}} --bench my_benchmark 
 
 # e.g. `just start-release modeling-cmds`
 # Opens a release PR for a package in this workspace

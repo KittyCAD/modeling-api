@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-modeling-cmds"
-version = "0.2.42"
+version = "0.2.77"
 edition = "2021"
 authors = ["KittyCAD, Inc."]
 description = "Commands in the KittyCAD Modeling API"
@@ -11,14 +11,15 @@ license = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.75"
+anyhow = "1.0.93"
 chrono = "0.4.35"
 cxx = { version = "1.0", optional = true }
 data-encoding = "2.5.0"
 enum-iterator = "2.1.0"
 enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
-http = "0.2.9"
+http = "1.1.0"
+kittycad = { version = "0.3.22", optional = true }
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
 measurements = "0.11.0"
@@ -30,11 +31,12 @@ schemars = { version = "0.8.16", features = [
   "url",
   "uuid1",
 ] }
-serde = { version = "1.0.204", features = ["derive"] }
+serde = { version = "1.0.215", features = ["derive"] }
 serde_bytes = "0.11.15"
-serde_json = { version = "1.0.120", optional = true }
+serde_json = { version = "1.0.133", optional = true }
 slog = { version = "2.7.0", optional = true }
-uuid = { version = "1.10.0", features = ["serde"] }
+tabled = { version = "0.16", optional = true }
+uuid = { version = "1.11.0", features = ["serde", "v4", "js"] }
 webrtc = { version = "0.11", optional = true }
 
 [lints]
@@ -42,13 +44,17 @@ workspace = true
 
 [features]
 default = []
+derive-jsonschema-on-enums = []
+tabled = ["dep:tabled"]
 slog = ["dep:slog"]
 cxx = ["dep:cxx"]
-websocket = ["dep:webrtc", "dep:serde_json"]
+convert_client_crate = ["dep:kittycad"]
+websocket = ["dep:serde_json"]
+webrtc = ["dep:webrtc"]
 unstable_exhaustive = []
 
 [dev-dependencies]
-bson = "2.11.0"
+bson = "2.13.0"
 
 [package.metadata.docs.rs]
 all-features = true

@@ -2,18 +2,13 @@ use proc_macro2::TokenStream;
 use quote::quote_spanned;
 use syn::{spanned::Spanned, ItemMod};
 
-pub(crate) fn generate(input: ItemMod) -> TokenStream {
+pub fn generate(input: ItemMod) -> TokenStream {
     let span = input.span();
 
     // Parse all items from the module, to discover which enum variants should exist.
     // Also, find the doc for each enum variant.
-    let (variants, docs): (Vec<_>, Vec<_>) = input
-        .content
-        .iter()
-        .next()
-        .unwrap()
-        .1
-        .iter()
+    let items = input.content.as_ref().unwrap().1.iter();
+    let (variants, docs): (Vec<_>, Vec<_>) = items
         .filter_map(|item| {
             // All modeling commands are public structs.
             let syn::Item::Struct(item) = item else {
@@ -59,7 +54,8 @@ pub(crate) fn generate(input: ItemMod) -> TokenStream {
         /// Definition of each modeling command.
         #input
         /// Commands that the KittyCAD engine can execute.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+        #[derive(Debug, Clone, Serialize, Deserialize)]
+        #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
         #[serde(rename_all = "snake_case", tag = "type")]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub enum ModelingCmd {#(

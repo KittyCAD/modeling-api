@@ -13,9 +13,9 @@ proc-macro = true
 
 [dependencies]
 inflections = "1"
-proc-macro2 = "1.0.86"
-quote = "1.0.28"
-syn = { version = "2.0.72", features = ["derive", "fold"] }
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true, features = ["derive", "fold"] }
 
 [dev-dependencies]
 pretty_assertions = "1"

@@ -59,7 +59,8 @@ impl From<EngineErrorCode> for ErrorCode {
 }
 
 /// A graphics command submitted to the KittyCAD engine via the Modeling API.
-#[derive(Debug, Clone, JsonSchema, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 pub struct ModelingCmdReq {
     /// Which command to submit to the Kittycad engine.
     pub cmd: ModelingCmd,
@@ -68,7 +69,8 @@ pub struct ModelingCmdReq {
 }
 
 /// The websocket messages the server receives.
-#[derive(Serialize, Deserialize, JsonSchema, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum WebSocketRequest {
     /// The trickle ICE candidate request.
@@ -103,7 +105,8 @@ pub enum WebSocketRequest {
 }
 
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
-#[derive(Serialize, Deserialize, JsonSchema, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub struct ModelingBatch {
     /// A sequence of modeling requests. If any request fails, following requests will not be tried.
@@ -144,7 +147,7 @@ impl ModelingBatch {
 /// Representation of an ICE server used for STUN/TURN
 /// Used to initiate WebRTC connections
 /// based on <https://developer.mozilla.org/en-US/docs/Web/API/RTCIceServer>
-#[derive(serde::Serialize, serde::Deserialize, Debug, JsonSchema)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, JsonSchema, Clone)]
 pub struct IceServer {
     /// URLs for a given STUN/TURN server.
     /// IceServer urls can either be a string or an array of strings
@@ -157,7 +160,8 @@ pub struct IceServer {
 }
 
 /// The websocket messages this server sends.
-#[derive(Serialize, Deserialize, JsonSchema, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(tag = "type", content = "data", rename_all = "snake_case")]
 pub enum OkWebSocketResponseData {
     /// Information about the ICE servers.
@@ -196,12 +200,19 @@ pub enum OkWebSocketResponseData {
     /// Request a collection of metrics, to include WebRTC.
     MetricsRequest {},
 
+    /// Data about the Modeling Session (application-level).
+    ModelingSessionData {
+        /// Data about the Modeling Session (application-level).
+        session: ModelingSessionData,
+    },
+
     /// Pong response to a Ping message.
     Pong {},
 }
 
 /// Successful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub struct SuccessWebSocketResponse {
     /// Always true
@@ -216,7 +227,7 @@ pub struct SuccessWebSocketResponse {
 }
 
 /// Unsuccessful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct FailureWebSocketResponse {
     /// Always false
@@ -231,7 +242,8 @@ pub struct FailureWebSocketResponse {
 
 /// Websocket responses can either be successful or unsuccessful.
 /// Slightly different schemas in either case.
-#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", untagged)]
 pub enum WebSocketResponse {
     /// Response sent when a request succeeded.
@@ -242,7 +254,8 @@ pub enum WebSocketResponse {
 
 /// Websocket responses can either be successful or unsuccessful.
 /// Slightly different schemas in either case.
-#[derive(JsonSchema, Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", untagged)]
 pub enum BatchResponse {
     /// Response sent when a request succeeded.
@@ -297,7 +310,7 @@ impl WebSocketResponse {
 
 /// A raw file with unencoded contents to be passed over binary websockets.
 /// When raw files come back for exports it is sent as binary/bson, not text/json.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
 pub struct RawFile {
     /// The name of the file.
     pub name: String,
@@ -339,7 +352,7 @@ impl KV for LoggableApiError {
 }
 
 /// An error.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Eq, PartialEq, Clone)]
 pub struct ApiError {
     /// The error code.
     pub error_code: ErrorCode,
@@ -486,6 +499,7 @@ pub struct RtcIceCandidate {
     pub tcp_type: String,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::ice_transport::ice_candidate::RTCIceCandidate> for RtcIceCandidate {
     fn from(candidate: webrtc::ice_transport::ice_candidate::RTCIceCandidate) -> Self {
         Self {
@@ -504,6 +518,7 @@ impl From<webrtc::ice_transport::ice_candidate::RTCIceCandidate> for RtcIceCandi
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl From<RtcIceCandidate> for webrtc::ice_transport::ice_candidate::RTCIceCandidate {
     fn from(candidate: RtcIceCandidate) -> Self {
         Self {
@@ -557,6 +572,7 @@ pub enum RtcIceCandidateType {
     Relay,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::ice_transport::ice_candidate_type::RTCIceCandidateType> for RtcIceCandidateType {
     fn from(candidate_type: webrtc::ice_transport::ice_candidate_type::RTCIceCandidateType) -> Self {
         match candidate_type {
@@ -571,6 +587,7 @@ impl From<webrtc::ice_transport::ice_candidate_type::RTCIceCandidateType> for Rt
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl From<RtcIceCandidateType> for webrtc::ice_transport::ice_candidate_type::RTCIceCandidateType {
     fn from(candidate_type: RtcIceCandidateType) -> Self {
         match candidate_type {
@@ -601,6 +618,7 @@ pub enum RtcIceProtocol {
     Tcp,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::ice_transport::ice_protocol::RTCIceProtocol> for RtcIceProtocol {
     fn from(protocol: webrtc::ice_transport::ice_protocol::RTCIceProtocol) -> Self {
         match protocol {
@@ -611,6 +629,7 @@ impl From<webrtc::ice_transport::ice_protocol::RTCIceProtocol> for RtcIceProtoco
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl From<RtcIceProtocol> for webrtc::ice_transport::ice_protocol::RTCIceProtocol {
     fn from(protocol: RtcIceProtocol) -> Self {
         match protocol {
@@ -640,6 +659,7 @@ pub struct RtcIceCandidateInit {
     pub username_fragment: Option<String>,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::ice_transport::ice_candidate::RTCIceCandidateInit> for RtcIceCandidateInit {
     fn from(candidate: webrtc::ice_transport::ice_candidate::RTCIceCandidateInit) -> Self {
         Self {
@@ -651,6 +671,7 @@ impl From<webrtc::ice_transport::ice_candidate::RTCIceCandidateInit> for RtcIceC
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl From<RtcIceCandidateInit> for webrtc::ice_transport::ice_candidate::RTCIceCandidateInit {
     fn from(candidate: RtcIceCandidateInit) -> Self {
         Self {
@@ -673,6 +694,7 @@ pub struct RtcSessionDescription {
     pub sdp: String,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::peer_connection::sdp::session_description::RTCSessionDescription> for RtcSessionDescription {
     fn from(desc: webrtc::peer_connection::sdp::session_description::RTCSessionDescription) -> Self {
         Self {
@@ -682,6 +704,7 @@ impl From<webrtc::peer_connection::sdp::session_description::RTCSessionDescripti
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl TryFrom<RtcSessionDescription> for webrtc::peer_connection::sdp::session_description::RTCSessionDescription {
     type Error = anyhow::Error;
 
@@ -735,6 +758,7 @@ pub enum RtcSdpType {
     Rollback,
 }
 
+#[cfg(feature = "webrtc")]
 impl From<webrtc::peer_connection::sdp::sdp_type::RTCSdpType> for RtcSdpType {
     fn from(sdp_type: webrtc::peer_connection::sdp::sdp_type::RTCSdpType) -> Self {
         match sdp_type {
@@ -747,6 +771,7 @@ impl From<webrtc::peer_connection::sdp::sdp_type::RTCSdpType> for RtcSdpType {
     }
 }
 
+#[cfg(feature = "webrtc")]
 impl From<RtcSdpType> for webrtc::peer_connection::sdp::sdp_type::RTCSdpType {
     fn from(sdp_type: RtcSdpType) -> Self {
         match sdp_type {
@@ -757,6 +782,14 @@ impl From<RtcSdpType> for webrtc::peer_connection::sdp::sdp_type::RTCSdpType {
             RtcSdpType::Unspecified => Self::Unspecified,
         }
     }
+}
+/// Successful Websocket response.
+#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "snake_case")]
+pub struct ModelingSessionData {
+    /// ID of the API call this modeling session is using.
+    /// Useful for tracing and debugging.
+    pub api_call_id: String,
 }
 
 #[cfg(test)]

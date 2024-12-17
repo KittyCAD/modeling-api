@@ -20,7 +20,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
         - uses: taiki-e/install-action@cargo-llvm-cov
         - uses: taiki-e/install-action@nextest
-        - uses: Swatinem/rust-cache@v2.7.3
+        - uses: Swatinem/rust-cache@v2.7.5
         - uses: taiki-e/install-action@just
 
         - name: cargo test
@@ -32,7 +32,7 @@ jobs:
             RUST_BACKTRACE: 1
   
         - name: Upload to codecov.io
-          uses: codecov/codecov-action@v3
+          uses: codecov/codecov-action@v5
           with:
             token: ${{secrets.CODECOV_TOKEN}}
             fail_ci_if_error: true
@@ -50,10 +50,25 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
           with:
             components: clippy
-        - uses: Swatinem/rust-cache@v2.7.3
+        - uses: Swatinem/rust-cache@v2.7.5
 
         - name: Check lints
           run: just lint
+
+    check-wasm:
+      name: Check wasm
+      runs-on: ubuntu-latest-8-cores
+      steps:
+        - uses: actions/checkout@v4
+        - uses: taiki-e/install-action@just
+        - name: Install Rust
+          uses: dtolnay/rust-toolchain@stable
+          with:
+            targets: wasm32-unknown-unknown
+        - uses: Swatinem/rust-cache@v2.7.5
+
+        - name: Check lints
+          run: just check-wasm
  
     cargo-fmt:
         name: cargo fmt
@@ -84,10 +99,14 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v4
         - uses: taiki-e/install-action@just
-        - name: Set up Python
-          uses: actions/setup-python@v5 
+        - name: Install the latest version of uv
+          uses: astral-sh/setup-uv@v3
         - name: Install codespell
-          run: python -m pip install codespell
+          run: |
+              uv venv .venv
+              echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
+              echo "$PWD/.venv/bin" >> $GITHUB_PATH
+              uv pip install codespell
         - name: Run codespell
           # Edit this file to tweak the typo list and other configuration.
           run: just check-typos

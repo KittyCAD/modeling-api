@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote_spanned;
 use syn::{spanned::Spanned, DeriveInput};
 
-pub(crate) fn derive(input: DeriveInput) -> TokenStream {
+pub fn derive(input: DeriveInput) -> TokenStream {
     // Where in the input source code is this type defined?
     let span = input.span();
     // Name of type that is deriving the trait.

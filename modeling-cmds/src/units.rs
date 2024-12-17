@@ -21,6 +21,7 @@ use serde::{Deserialize, Serialize};
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 pub enum UnitLength {
     /// Centimeters <https://en.wikipedia.org/wiki/Centimeter>
@@ -80,6 +81,7 @@ impl UnitLength {
     PartialOrd,
     UnitConversion,
 )]
+#[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum UnitAngle {
@@ -107,6 +109,7 @@ pub enum UnitAngle {
     Default,
     Hash,
 )]
+#[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum UnitArea {
@@ -179,6 +182,7 @@ impl UnitArea {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 pub enum UnitDensity {
     /// Pounds per cubic feet.
@@ -221,6 +225,7 @@ impl UnitDensity {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 pub enum UnitMass {
@@ -268,6 +273,7 @@ impl UnitMass {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 pub enum UnitVolume {
     /// Cubic centimeters (cc or cm³) <https://en.wikipedia.org/wiki/Cubic_centimeter>

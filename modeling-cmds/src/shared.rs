@@ -7,6 +7,10 @@ use serde::{Deserialize, Serialize};
 use crate::impl_extern_type;
 use crate::{length_unit::LengthUnit, units::UnitAngle};
 
+pub use point::{Point2d, Point3d, Point4d, Quaternion};
+
+mod point;
+
 /// What kind of cut to do
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
@@ -18,10 +22,35 @@ pub enum CutType {
     Chamfer,
 }
 
-/// Ways to transform each solid being replicated in a repeating pattern.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
+/// A rotation defined by an axis, origin of rotation, and an angle.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-pub struct LinearTransform {
+pub struct Rotation {
+    /// Rotation axis.
+    /// Defaults to (0, 0, 1) (i.e. the Z axis).
+    pub axis: Point3d<f64>,
+    /// Rotate this far about the rotation axis.
+    /// Defaults to zero (i.e. no rotation).
+    pub angle: Angle,
+    /// Origin of the rotation. If one isn't provided, the object will rotate about its own bounding box center.
+    pub origin: OriginType,
+}
+
+impl Default for Rotation {
+    /// z-axis, 0 degree angle, and local origin.
+    fn default() -> Self {
+        Self {
+            axis: z_axis(),
+            angle: Angle::default(),
+            origin: OriginType::Local,
+        }
+    }
+}
+
+/// Ways to transform each solid being replicated in a repeating pattern.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub struct Transform {
     /// Translate the replica this far along each dimension.
     /// Defaults to zero vector (i.e. same position as the original).
     #[serde(default)]
@@ -30,9 +59,24 @@ pub struct LinearTransform {
     /// Defaults to (1, 1, 1) (i.e. the same size as the original).
     #[serde(default = "same_scale")]
     pub scale: Point3d<f64>,
+    /// Rotate the replica about the specified rotation axis and origin.
+    /// Defaults to no rotation.
+    #[serde(default)]
+    pub rotation: Rotation,
     /// Whether to replicate the original solid in this instance.
     #[serde(default = "bool_true")]
     pub replicate: bool,
+}
+
+impl Default for Transform {
+    fn default() -> Self {
+        Self {
+            scale: same_scale(),
+            replicate: true,
+            translate: Default::default(),
+            rotation: Rotation::default(),
+        }
+    }
 }
 
 /// Options for annotations
@@ -90,6 +134,22 @@ pub enum DistanceType {
     },
 }
 
+/// The type of origin
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
+#[serde(rename_all = "snake_case", tag = "type")]
+pub enum OriginType {
+    /// Local Origin (center of object bounding box).
+    #[default]
+    Local,
+    /// Global Origin (0, 0, 0).
+    Global,
+    /// Custom Origin (user specified point).
+    Custom {
+        /// Custom origin point.
+        origin: Point3d<f64>,
+    },
+}
+
 /// An RGBA color
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
 pub struct Color {
@@ -125,26 +185,6 @@ pub enum AnnotationTextAlignmentY {
     Bottom,
     Center,
     Top,
-}
-
-/// A point in 3D space
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq, Default)]
-#[serde(rename = "Point3d")]
-#[serde(rename_all = "snake_case")]
-pub struct Point3d<T = f32> {
-    #[allow(missing_docs)]
-    pub x: T,
-    #[allow(missing_docs)]
-    pub y: T,
-    #[allow(missing_docs)]
-    pub z: T,
-}
-
-impl<T> Point3d<T> {
-    /// Add the given `z` component to a 2D point to produce a 3D point.
-    pub fn from_2d(Point2d { x, y }: Point2d<T>, z: T) -> Self {
-        Self { x, y, z }
-    }
 }
 
 /// Annotation line end type
@@ -242,73 +282,15 @@ pub enum PathSegment {
         /// 0 will be interpreted as none/null.
         angle_snap_increment: Option<Angle>,
     },
-}
-
-/// A point in homogeneous (4D) space
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
-#[serde(rename = "Point4d")]
-#[serde(rename_all = "snake_case")]
-pub struct Point4d<T = f32> {
-    #[allow(missing_docs)]
-    pub x: T,
-    #[allow(missing_docs)]
-    pub y: T,
-    #[allow(missing_docs)]
-    pub z: T,
-    #[allow(missing_docs)]
-    pub w: T,
-}
-
-impl From<euler::Vec3> for Point3d<f32> {
-    fn from(v: euler::Vec3) -> Self {
-        Self { x: v.x, y: v.y, z: v.z }
-    }
-}
-
-impl<T: PartialEq> PartialEq for Point4d<T> {
-    fn eq(&self, other: &Self) -> bool {
-        self.x == other.x && self.y == other.y && self.z == other.z && self.w == other.w
-    }
-}
-
-/// A point in 2D space
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
-#[serde(rename = "Point2d")]
-#[serde(rename_all = "snake_case")]
-pub struct Point2d<T = f32> {
-    #[allow(missing_docs)]
-    pub x: T,
-    #[allow(missing_docs)]
-    pub y: T,
-}
-
-impl<T: PartialEq> PartialEq for Point2d<T> {
-    fn eq(&self, other: &Self) -> bool {
-        self.x == other.x && self.y == other.y
-    }
-}
-
-impl<T> Point2d<T> {
-    /// Add the given `z` component to a 2D point to produce a 3D point.
-    pub fn with_z(self, z: T) -> Point3d<T> {
-        let Self { x, y } = self;
-        Point3d { x, y, z }
-    }
-}
-
-///A quaternion
-pub type Quaternion = Point4d;
-
-impl Default for Quaternion {
-    /// (0, 0, 0, 1)
-    fn default() -> Self {
-        Self {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-            w: 1.0,
-        }
-    }
+    ///Adds an arc from the current position that goes through the given interior point and ends at the given end position
+    ArcTo {
+        /// Interior point of the arc.
+        interior: Point3d<LengthUnit>,
+        /// End point of the arc.
+        end: Point3d<LengthUnit>,
+        ///Whether or not interior and end are relative to the previous path position
+        relative: bool,
+    },
 }
 
 /// An angle, with a specific unit.
@@ -336,33 +318,34 @@ impl Angle {
         }
     }
     /// Create an angle in degrees.
-    pub fn from_degrees(value: f64) -> Self {
+    pub const fn from_degrees(value: f64) -> Self {
         Self {
             unit: UnitAngle::Degrees,
             value,
         }
     }
     /// Create an angle in radians.
-    pub fn from_radians(value: f64) -> Self {
+    pub const fn from_radians(value: f64) -> Self {
         Self {
             unit: UnitAngle::Radians,
             value,
         }
     }
-}
-
-impl Angle {
     /// 360 degrees.
-    pub fn turn() -> Self {
+    pub const fn turn() -> Self {
         Self::from_degrees(360.0)
     }
     /// 180 degrees.
-    pub fn half_circle() -> Self {
+    pub const fn half_circle() -> Self {
         Self::from_degrees(180.0)
     }
     /// 90 degrees.
-    pub fn quarter_circle() -> Self {
+    pub const fn quarter_circle() -> Self {
         Self::from_degrees(90.0)
+    }
+    /// 0 degrees.
+    pub const fn zero() -> Self {
+        Self::from_degrees(0.0)
     }
 }
 
@@ -370,7 +353,18 @@ impl Angle {
 impl Default for Angle {
     /// 0 degrees.
     fn default() -> Self {
-        Self::from_degrees(0.0)
+        Self::zero()
+    }
+}
+
+impl PartialOrd for Angle {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match (self.unit, other.unit) {
+            // Avoid unnecessary floating point operations.
+            (UnitAngle::Degrees, UnitAngle::Degrees) => self.value.partial_cmp(&other.value),
+            (UnitAngle::Radians, UnitAngle::Radians) => self.value.partial_cmp(&other.value),
+            _ => self.to_degrees().partial_cmp(&other.to_degrees()),
+        }
     }
 }
 
@@ -530,7 +524,7 @@ pub enum CurveType {
 }
 
 /// A file to be exported to the client.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
 pub struct ExportFile {
     /// The name of the file.
     pub name: String,
@@ -624,7 +618,7 @@ impl From<EngineErrorCode> for http::StatusCode {
 }
 
 /// Camera settings including position, center, fov etc
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
 pub struct CameraSettings {
     ///Camera position (vantage)
     pub pos: Point3d,
@@ -691,6 +685,32 @@ pub struct PerspectiveCameraParameters {
     pub z_far: Option<f32>,
 }
 
+/// A type of camera movement applied after certain camera operations
+#[derive(
+    Default,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum CameraMovement {
+    /// Adjusts the camera position during the camera operation
+    #[default]
+    Vantage,
+    /// Keeps the camera position in place
+    None,
+}
+
 /// The global axes.
 #[derive(
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
@@ -718,6 +738,8 @@ pub enum ExtrusionFaceCapType {
     Top,
     /// Capped below.
     Bottom,
+    /// Capped on both ends.
+    Both,
 }
 
 /// Post effect type
@@ -774,6 +796,7 @@ impl_extern_type! {
     // Utils
     EngineErrorCode = "Enums::_ErrorCode"
     GlobalAxis = "Enums::_GlobalAxis"
+    OriginType = "Enums::_OriginType"
 
     // Graphics engine
     PostEffectType = "Enums::_PostEffectType"
@@ -783,8 +806,40 @@ fn bool_true() -> bool {
     true
 }
 fn same_scale() -> Point3d<f64> {
-    let p = 1.0;
-    Point3d { x: p, y: p, z: p }
+    Point3d::uniform(1.0)
+}
+
+fn z_axis() -> Point3d<f64> {
+    Point3d { x: 0.0, y: 0.0, z: 1.0 }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_angle_comparison() {
+        let a = Angle::from_degrees(90.0);
+        assert!(a < Angle::from_degrees(91.0));
+        assert!(a > Angle::from_degrees(89.0));
+        assert!(a <= Angle::from_degrees(90.0));
+        assert!(a >= Angle::from_degrees(90.0));
+        let b = Angle::from_radians(std::f64::consts::FRAC_PI_4);
+        assert!(b < Angle::from_radians(std::f64::consts::FRAC_PI_2));
+        assert!(b > Angle::from_radians(std::f64::consts::FRAC_PI_8));
+        assert!(b <= Angle::from_radians(std::f64::consts::FRAC_PI_4));
+        assert!(b >= Angle::from_radians(std::f64::consts::FRAC_PI_4));
+        // Mixed units.
+        assert!(a > b);
+        assert!(a >= b);
+        assert!(b < a);
+        assert!(b <= a);
+        let c = Angle::from_radians(std::f64::consts::FRAC_PI_2 * 3.0);
+        assert!(a < c);
+        assert!(a <= c);
+        assert!(c > a);
+        assert!(c >= a);
+    }
 }
 
 /// How a property of an object should be transformed.

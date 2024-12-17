@@ -1,5 +1,5 @@
 [package]
-name = "kittycad-modeling-cmds-macros"
+name = "kittycad-modeling-cmds-macros-impl"
 version = "0.1.12"
 edition = "2021"
 repository = "https://github.com/KittyCAD/modeling-api"
@@ -11,17 +11,18 @@ license = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-kittycad-modeling-cmds-macros-impl = { workspace = true }
 proc-macro2 = { workspace = true }
 quote = { workspace = true }
 syn = { workspace = true, features = ["extra-traits", "full"] }
 
-[lib]
-proc-macro = true
-
 [dev-dependencies]
 anyhow = "1.0.93"
+criterion = { version = "0.5", features = ["html_reports"] }
 insta = "1.41.1"
 regex = "1.11.1"
 rustfmt-wrapper = "0.2.1"
+
+[[bench]]
+name = "my_benchmark"
+harness = false
 

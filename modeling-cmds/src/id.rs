@@ -9,6 +9,12 @@ use uuid::Uuid;
 #[cfg_attr(test, derive(Default))]
 pub struct ModelingCmdId(pub Uuid);
 
+impl AsRef<Uuid> for ModelingCmdId {
+    fn as_ref(&self) -> &Uuid {
+        &self.0
+    }
+}
+
 // In order to force our own UUID requirements, we need to intercept /
 // implement our own serde deserializer for UUID essentially. We are
 // fortunate to have wrapped the UUID type already so we can do this.
