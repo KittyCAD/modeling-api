@@ -1171,22 +1171,9 @@ define_modeling_cmd_enum! {
         )]
         pub struct GetNumObjects;
 
-        ///Set the parent object of an object
-        #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
-        )]
-        pub struct SetObjectParent
-        {
-            ///The object (child) whose parent will be set
-            pub object_id: Uuid,
-            /// Id of the new parent, if null will unset any parent of object_id
-            pub parent_id: Option<Uuid>
-        }
-
-
         ///Set the transform of an object.
         #[derive(
-            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariantEmpty,
+            Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         pub struct SetObjectTransform
         {
@@ -1201,6 +1188,7 @@ define_modeling_cmd_enum! {
             ///Optional scale value
             #[serde(default)]
             pub scale: Option<TransformBy<Point3d>>,
+        }
         /// Make a new path by offsetting an object by a given distance.
         /// The new path's ID will be the ID of this command.
         #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
