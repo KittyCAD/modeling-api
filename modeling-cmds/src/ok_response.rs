@@ -94,16 +94,6 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityMakeHelixFromParams {
         }
 
-        /// The response from the `EntityMirror` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct EntityMirror {
-        }
-
-        /// The response from the `EntityMirrorAcrossEdge` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct EntityMirrorAcrossEdge {
-        }
-
         /// The response from the `SelectAdd` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SelectAdd {
@@ -743,6 +733,20 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityCircularPattern {
             /// The UUIDs of the entities that were created.
             pub entity_ids: Vec<Uuid>,
+        }
+
+        /// The response from the `EntityMirror` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityMirror {
+            /// The UUIDs of the entities that were created.
+            pub entity_ids: Vec<Uuid>
+        }
+
+        /// The response from the `EntityMirrorAcrossEdge` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityMirrorAcrossEdge {
+            /// The UUIDs of the entities that were created.
+            pub entity_ids: Vec<Uuid>
         }
 
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
