@@ -2,10 +2,11 @@ use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
-use crate::{length_unit::LengthUnit, units::UnitAngle};
+use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle};
 
 pub use point::{Point2d, Point3d, Point4d, Quaternion};
 
@@ -218,8 +219,10 @@ pub enum AnnotationType {
 pub enum CameraDragInteractionType {
     /// Camera pan
     Pan,
-    /// Camera rotate (revolve/orbit)
+    /// Camera rotate (spherical camera revolve/orbit)
     Rotate,
+    /// Camera rotate (trackball with 3 degrees of freedom)
+    RotateTrackball,
     /// Camera zoom (increase or decrease distance to reference point center)
     Zoom,
 }
@@ -617,6 +620,29 @@ impl From<EngineErrorCode> for http::StatusCode {
     }
 }
 
+/// IDs for the extruded faces.
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+pub struct ExtrudedFaceInfo {
+    /// The face made from the original 2D shape being extruded.
+    /// If the solid is extruded from a shape which already has an ID
+    /// (e.g. extruding something which was sketched on a face), this
+    /// doesn't need to be sent.
+    pub bottom: Option<Uuid>,
+    /// Top face of the extrusion (parallel and further away from the original 2D shape being extruded).
+    pub top: Uuid,
+    /// Any intermediate sides between the top and bottom.
+    pub sides: Vec<SideFace>,
+}
+
+/// IDs for a side face, extruded from the path of some sketch/2D shape.
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+pub struct SideFace {
+    /// ID of the path this face is being extruded from.
+    pub path_id: Uuid,
+    /// Desired ID for the resulting face.
+    pub face_id: Uuid,
+}
+
 /// Camera settings including position, center, fov etc
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
 pub struct CameraSettings {
@@ -811,6 +837,35 @@ fn same_scale() -> Point3d<f64> {
 
 fn z_axis() -> Point3d<f64> {
     Point3d { x: 0.0, y: 0.0, z: 1.0 }
+}
+
+impl ExtrudedFaceInfo {
+    /// Converts from the representation used in the Extrude modeling command,
+    /// to a flat representation.
+    pub fn list_faces(self) -> Vec<ExtrusionFaceInfo> {
+        let mut face_infos: Vec<_> = self
+            .sides
+            .into_iter()
+            .map(|side| ExtrusionFaceInfo {
+                curve_id: Some(side.path_id),
+                face_id: Some(side.face_id),
+                cap: ExtrusionFaceCapType::None,
+            })
+            .collect();
+        face_infos.push(ExtrusionFaceInfo {
+            curve_id: None,
+            face_id: Some(self.top),
+            cap: ExtrusionFaceCapType::Top,
+        });
+        if let Some(bottom) = self.bottom {
+            face_infos.push(ExtrusionFaceInfo {
+                curve_id: None,
+                face_id: Some(bottom),
+                cap: ExtrusionFaceCapType::Bottom,
+            });
+        }
+        face_infos
+    }
 }
 
 #[cfg(test)]

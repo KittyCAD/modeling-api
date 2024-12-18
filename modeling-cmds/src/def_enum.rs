@@ -25,6 +25,7 @@ define_modeling_cmd_enum! {
                 TransformBy,
                 CutType,
                 CameraMovement,
+                ExtrudedFaceInfo,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, SceneSelectionType, SceneToolType,
@@ -100,6 +101,10 @@ define_modeling_cmd_enum! {
             pub target: ModelingCmdId,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
+            /// Which IDs should the new faces have?
+            /// If this isn't given, the engine will generate IDs.
+            #[serde(default)]
+            pub faces: Option<ExtrudedFaceInfo>,
         }
 
         /// Extrude the object along a path.
@@ -399,12 +404,33 @@ define_modeling_cmd_enum! {
             pub cylinder_id: Uuid,
             /// Number of revolutions.
             pub revolutions: f64,
-            /// Start angle (in degrees).
+            /// Start angle.
+            #[serde(default)]
             pub start_angle: Angle,
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
             /// Length of the helix.
             pub length: LengthUnit,
+        }
+
+        /// Create a helix using the specified parameters.
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        pub struct EntityMakeHelixFromParams {
+            /// Radius of the helix.
+            pub radius: f64,
+            /// Length of the helix.
+            pub length: LengthUnit,
+            /// Number of revolutions.
+            pub revolutions: f64,
+            /// Start angle.
+            #[serde(default)]
+            pub start_angle: Angle,
+            /// Is the helix rotation clockwise?
+            pub is_clockwise: bool,
+            /// Center of the helix at the base of the helix.
+            pub center: Point3d<LengthUnit>,
+            /// Axis of the helix. The helix will be created around and in the direction of this axis.
+            pub axis: Point3d<f64>,
         }
 
         /// Mirror the input entities over the specified axis. (Currently only supports sketches)

@@ -1,4 +1,4 @@
-/// Derive helpers for implementing unit conversions for enum types.
+//! Derive helpers for implementing unit conversions for enum types.
 
 #[macro_use]
 extern crate quote;
