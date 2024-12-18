@@ -896,3 +896,15 @@ mod tests {
         assert!(c >= a);
     }
 }
+
+/// How a property of an object should be transformed.
+#[derive(Clone, Debug, Deserialize, JsonSchema, Serialize)]
+pub struct TransformBy<Property> {
+    /// The scale, or rotation, or translation.
+    pub property: Property,
+    /// If true, overwrite the previous value with this.
+    /// If false, the previous value will be modified.
+    /// E.g. when translating, `set=true` will set a new location,
+    /// and `set=false` will translate the current location by the given X/Y/Z.
+    pub set: bool,
+}
