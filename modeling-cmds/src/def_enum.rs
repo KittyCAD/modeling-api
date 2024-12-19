@@ -1211,6 +1211,15 @@ define_modeling_cmd_enum! {
             /// The distance to offset the path (positive for outset, negative for inset)
             pub offset: LengthUnit,
         }
+
+        /// Add a hole to a closed path by offsetting it a uniform distance inward.
+        #[derive(Clone, Debug, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
+        pub struct AddHoleFromOffset {
+            /// The closed path to add a hole to.
+            pub object_id: Uuid,
+            /// The distance to offset the path (positive for outset, negative for inset)
+            pub offset: LengthUnit,
+        }
     }
 }
 
