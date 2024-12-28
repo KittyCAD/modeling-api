@@ -15,6 +15,8 @@ mod point;
 /// What kind of cut to do
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum CutType {
     /// Round off an edge.
     #[default]
@@ -26,6 +28,8 @@ pub enum CutType {
 /// A rotation defined by an axis, origin of rotation, and an angle.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct Rotation {
     /// Rotation axis.
     /// Defaults to (0, 0, 1) (i.e. the Z axis).
@@ -51,6 +55,8 @@ impl Default for Rotation {
 /// Ways to transform each solid being replicated in a repeating pattern.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct Transform {
     /// Translate the replica this far along each dimension.
     /// Defaults to zero vector (i.e. same position as the original).
@@ -83,6 +89,8 @@ impl Default for Transform {
 /// Options for annotations
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct AnnotationOptions {
     /// Text displayed on the annotation
     pub text: Option<AnnotationTextOptions>,
@@ -99,6 +107,8 @@ pub struct AnnotationOptions {
 /// Options for annotation text
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct AnnotationLineEndOptions {
     /// How to style the start of the annotation line.
     pub start: AnnotationLineEnd,
@@ -109,6 +119,8 @@ pub struct AnnotationLineEndOptions {
 /// Options for annotation text
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct AnnotationTextOptions {
     /// Alignment along the X axis
     pub x: AnnotationTextAlignmentX,
@@ -125,9 +137,15 @@ pub struct AnnotationTextOptions {
 /// the objects used as input.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case", tag = "type")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum DistanceType {
     /// Euclidean Distance.
-    Euclidean {},
+    Euclidean {
+        #[cfg(feature = "ts-rs")]
+        /// Work around issue with ts-rs not allowing tag on an empty variant.
+        _fix_ts_rs: (),
+    },
     /// The distance between objects along the specified axis
     OnAxis {
         /// Global axis
@@ -138,6 +156,8 @@ pub enum DistanceType {
 /// The type of origin
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case", tag = "type")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum OriginType {
     /// Local Origin (center of object bounding box).
     #[default]
@@ -153,6 +173,8 @@ pub enum OriginType {
 
 /// An RGBA color
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct Color {
     /// Red
     pub r: f32,
@@ -170,6 +192,8 @@ pub struct Color {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum AnnotationTextAlignmentX {
     Left,
     Center,
@@ -182,6 +206,8 @@ pub enum AnnotationTextAlignmentX {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum AnnotationTextAlignmentY {
     Bottom,
     Center,
@@ -194,6 +220,8 @@ pub enum AnnotationTextAlignmentY {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum AnnotationLineEnd {
     None,
     Arrow,
@@ -204,6 +232,8 @@ pub enum AnnotationLineEnd {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum AnnotationType {
     /// 2D annotation type (screen or planar space)
     T2D,
@@ -216,6 +246,8 @@ pub enum AnnotationType {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum CameraDragInteractionType {
     /// Camera pan
     Pan,
@@ -231,6 +263,8 @@ pub enum CameraDragInteractionType {
 /// Paths are composed of many segments.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(rename_all = "snake_case", tag = "type")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum PathSegment {
     /// A straight line segment.
     /// Goes from the current path "pen" to the given endpoint.
@@ -298,6 +332,8 @@ pub enum PathSegment {
 
 /// An angle, with a specific unit.
 #[derive(Clone, Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct Angle {
     /// What unit is the measurement?
     pub unit: UnitAngle,
@@ -400,6 +436,8 @@ impl std::ops::AddAssign for Angle {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum SceneSelectionType {
     /// Replaces the selection
     Replace,
@@ -415,6 +453,8 @@ pub enum SceneSelectionType {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum SceneToolType {
     CameraRevolve,
     Select,
@@ -444,6 +484,8 @@ pub enum SceneToolType {
     Default,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum PathComponentConstraintBound {
     #[default]
     Unconstrained,
@@ -470,6 +512,8 @@ pub enum PathComponentConstraintBound {
     Default,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum PathComponentConstraintType {
     #[default]
     Unconstrained,
@@ -486,6 +530,8 @@ pub enum PathComponentConstraintType {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum PathCommand {
     MoveTo,
     LineTo,
@@ -500,6 +546,8 @@ pub enum PathCommand {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[repr(u8)]
 pub enum EntityType {
     Entity,
@@ -520,6 +568,8 @@ pub enum EntityType {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum CurveType {
     Line,
     Arc,
@@ -541,6 +591,8 @@ pub struct ExportFile {
 )]
 #[serde(rename_all = "lowercase")]
 #[display(style = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum FileExportFormat {
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
     Fbx,
@@ -580,6 +632,8 @@ pub enum FileExportFormat {
 )]
 #[serde(rename_all = "lowercase")]
 #[display(style = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum FileImportFormat {
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
     Fbx,
@@ -602,6 +656,8 @@ pub enum FileImportFormat {
 /// The type of error sent by the KittyCAD graphics engine.
 #[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum EngineErrorCode {
     /// User requested something geometrically or graphically impossible.
     /// Don't retry this request, as it's inherently impossible. Instead, read the error message
@@ -622,6 +678,8 @@ impl From<EngineErrorCode> for http::StatusCode {
 
 /// IDs for the extruded faces.
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct ExtrudedFaceInfo {
     /// The face made from the original 2D shape being extruded.
     /// If the solid is extruded from a shape which already has an ID
@@ -636,6 +694,8 @@ pub struct ExtrudedFaceInfo {
 
 /// IDs for a side face, extruded from the path of some sketch/2D shape.
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct SideFace {
     /// ID of the path this face is being extruded from.
     pub path_id: Uuid,
@@ -645,6 +705,8 @@ pub struct SideFace {
 
 /// Camera settings including position, center, fov etc
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct CameraSettings {
     ///Camera position (vantage)
     pub pos: Point3d,
@@ -702,6 +764,8 @@ impl From<CameraSettings> for crate::output::ViewIsometric {
 /// Defines a perspective view.
 #[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd, Default)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct PerspectiveCameraParameters {
     /// Camera frustum vertical field of view.
     pub fov_y: Option<f32>,
@@ -729,6 +793,8 @@ pub struct PerspectiveCameraParameters {
     PartialOrd,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum CameraMovement {
     /// Adjusts the camera position during the camera operation
     #[default]
@@ -742,6 +808,8 @@ pub enum CameraMovement {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum GlobalAxis {
     /// The X axis
     X,
@@ -756,6 +824,8 @@ pub enum GlobalAxis {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[repr(u8)]
 pub enum ExtrusionFaceCapType {
     /// Uncapped.
@@ -787,6 +857,8 @@ pub enum ExtrusionFaceCapType {
     Default,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum PostEffectType {
     Phosphor,
     Ssao,
