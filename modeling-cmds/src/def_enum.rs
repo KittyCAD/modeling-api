@@ -58,11 +58,16 @@ define_modeling_cmd_enum! {
 
         /// Start a new path.
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+            Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct StartPath;
+        pub struct StartPath {
+            #[cfg(feature = "ts-rs")]
+            /// Work around issue with ts-rs not allowing tag on an empty variant.
+            #[serde(default, skip)]
+            _fix_ts_rs: (),
+        }
 
         /// Move the path's "pen".
         /// If you're in sketch mode, these coordinates are in the local coordinate system,
@@ -267,10 +272,15 @@ define_modeling_cmd_enum! {
         }
 
         /// Gets the default camera's camera settings
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct DefaultCameraGetSettings;
+        pub struct DefaultCameraGetSettings {
+            #[cfg(feature = "ts-rs")]
+            /// Work around issue with ts-rs not allowing tag on an empty variant.
+            #[serde(default, skip)]
+            _fix_ts_rs: (),
+        }
 
         /// Change what the default camera is looking at.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
@@ -549,10 +559,15 @@ define_modeling_cmd_enum! {
         }
 
         /// Removes all of the Objects in the scene
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct SceneClearAll;
+        pub struct SceneClearAll {
+            #[cfg(feature = "ts-rs")]
+            /// Work around issue with ts-rs not allowing tag on an empty variant.
+            #[serde(default, skip)]
+            _fix_ts_rs: (),
+        }
 
         /// Replaces current selection with these entities (by UUID).
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
@@ -920,16 +935,26 @@ define_modeling_cmd_enum! {
         /// Disable sketch mode.
         /// If you are sketching on a face, be sure to not disable sketch mode until you have extruded.
         /// Otherwise, your object will not be fused with the face.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct SketchModeDisable;
+        pub struct SketchModeDisable {
+            #[cfg(feature = "ts-rs")]
+            /// Work around issue with ts-rs not allowing tag on an empty variant.
+            #[serde(default, skip)]
+            _fix_ts_rs: (),
+        }
 
         /// Get the plane for sketch mode.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct GetSketchModePlane;
+        pub struct GetSketchModePlane {
+            #[cfg(feature = "ts-rs")]
+            /// Work around issue with ts-rs not allowing tag on an empty variant.
+            #[serde(default, skip)]
+            _fix_ts_rs: (),
+        }
 
         /// Get the plane for sketch mode.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
@@ -966,18 +991,28 @@ define_modeling_cmd_enum! {
         /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
         /// In a dry run, successful commands won't actually change the model.
         /// This is useful for catching errors before actually making the change.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct EnableDryRun;
+        pub struct EnableDryRun {
+            #[cfg(feature = "ts-rs")]
+            /// Work around issue with ts-rs not allowing tag on an empty variant.
+            #[serde(default, skip)]
+            _fix_ts_rs: (),
+        }
 
         /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
         /// In a dry run, successful commands won't actually change the model.
         /// This is useful for catching errors before actually making the change.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct DisableDryRun;
+        pub struct DisableDryRun {
+            #[cfg(feature = "ts-rs")]
+            /// Work around issue with ts-rs not allowing tag on an empty variant.
+            #[serde(default, skip)]
+            _fix_ts_rs: (),
+        }
 
         /// Set the background color of the scene.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
@@ -1311,11 +1346,16 @@ define_modeling_cmd_enum! {
 
         /// Use orthographic projection.
         #[derive(
-            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct DefaultCameraSetOrthographic;
+        pub struct DefaultCameraSetOrthographic {
+            #[cfg(feature = "ts-rs")]
+            /// Work around issue with ts-rs not allowing tag on an empty variant.
+            #[serde(default, skip)]
+            _fix_ts_rs: (),
+        }
 
         /// Use perspective projection.
         #[derive(
@@ -1399,24 +1439,39 @@ define_modeling_cmd_enum! {
         }
 
         /// Clear the selection
-        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
+        #[derive(Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct SelectClear;
+        pub struct SelectClear {
+            #[cfg(feature = "ts-rs")]
+            /// Work around issue with ts-rs not allowing tag on an empty variant.
+            #[serde(default, skip)]
+            _fix_ts_rs: (),
+        }
 
         /// Find all IDs of selected entities
-        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
+        #[derive(Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct SelectGet;
+        pub struct SelectGet {
+            #[cfg(feature = "ts-rs")]
+            /// Work around issue with ts-rs not allowing tag on an empty variant.
+            #[serde(default, skip)]
+            _fix_ts_rs: (),
+        }
 
         /// Get the number of objects in the scene
         #[derive(
-            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct GetNumObjects;
+        pub struct GetNumObjects {
+            #[cfg(feature = "ts-rs")]
+            /// Work around issue with ts-rs not allowing tag on an empty variant.
+            #[serde(default, skip)]
+            _fix_ts_rs: (),
+        }
 
         /// Make a new path by offsetting an object by a given distance.
         /// The new path's ID will be the ID of this command.

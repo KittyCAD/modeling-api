@@ -144,6 +144,7 @@ pub enum DistanceType {
     Euclidean {
         #[cfg(feature = "ts-rs")]
         /// Work around issue with ts-rs not allowing tag on an empty variant.
+        #[serde(default, skip)]
         _fix_ts_rs: (),
     },
     /// The distance between objects along the specified axis
