@@ -44,7 +44,7 @@ async fn main() -> Result<()> {
     let path_id = Uuid::new_v4();
     let path = path_id.into();
     session
-        .run_command(path, ModelingCmd::StartPath(StartPath {}))
+        .run_command(path, ModelingCmd::StartPath(StartPath::default()))
         .await
         .context("could not create path")?;
 

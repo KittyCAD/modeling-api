@@ -10,6 +10,8 @@ mod zero;
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename = "Point2d")]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct Point2d<T = f32> {
     #[allow(missing_docs)]
     pub x: T,
@@ -56,6 +58,8 @@ impl<T> Point2d<T> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq, Default)]
 #[serde(rename = "Point3d")]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct Point3d<T = f32> {
     #[allow(missing_docs)]
     pub x: T,
@@ -113,6 +117,8 @@ impl<T> Point3d<T> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
 #[serde(rename = "Point4d")]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct Point4d<T = f32> {
     #[allow(missing_docs)]
     pub x: T,

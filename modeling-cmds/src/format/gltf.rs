@@ -24,6 +24,8 @@ pub mod import {
     )]
     #[display("")]
     #[serde(rename = "GltfImportOptions")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {}
 }
 
@@ -34,6 +36,8 @@ pub mod export {
     #[derive(Default, Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
     #[display("storage: {storage}, presentation: {presentation}")]
     #[serde(rename = "GltfExportOptions")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Specifies which kind of glTF 2.0 will be exported.
         pub storage: Storage,
@@ -47,6 +51,8 @@ pub mod export {
     )]
     #[display(style = "snake_case")]
     #[serde(rename = "GltfStorage", rename_all = "snake_case")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub enum Storage {
         /// Binary glTF 2.0.
         ///
@@ -75,6 +81,8 @@ pub mod export {
     )]
     #[display(style = "snake_case")]
     #[serde(rename = "GltfPresentation", rename_all = "snake_case")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub enum Presentation {
         /// Condense the JSON into the smallest possible size.
         Compact,

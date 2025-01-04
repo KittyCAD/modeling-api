@@ -23,6 +23,8 @@ use serde::{Deserialize, Serialize};
 )]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum UnitLength {
     /// Centimeters <https://en.wikipedia.org/wiki/Centimeter>
     #[serde(rename = "cm")]
@@ -84,6 +86,8 @@ impl UnitLength {
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum UnitAngle {
     /// Degrees <https://en.wikipedia.org/wiki/Degree_(angle)>
     Degrees,
@@ -112,6 +116,8 @@ pub enum UnitAngle {
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum UnitArea {
     /// Square centimeters <https://en.wikipedia.org/wiki/Square_centimeter>
     #[serde(rename = "cm2")]
@@ -184,6 +190,8 @@ impl UnitArea {
 )]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum UnitDensity {
     /// Pounds per cubic feet.
     #[serde(rename = "lb:ft3")]
@@ -228,6 +236,8 @@ impl UnitDensity {
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum UnitMass {
     /// Grams <https://en.wikipedia.org/wiki/Gram>
     #[default]
@@ -275,6 +285,8 @@ impl UnitMass {
 )]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum UnitVolume {
     /// Cubic centimeters (cc or cm³) <https://en.wikipedia.org/wiki/Cubic_centimeter>
     #[serde(rename = "cm3")]

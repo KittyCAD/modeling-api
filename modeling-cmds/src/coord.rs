@@ -10,6 +10,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum Axis {
     /// 'Y' axis.
     Y = 1,
@@ -21,6 +23,8 @@ pub enum Axis {
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum Direction {
     /// Increasing numbers.
     Positive = 1,
@@ -42,6 +46,8 @@ impl std::ops::Mul for Direction {
 /// An [`Axis`] paired with a [`Direction`].
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
 #[display("({axis}, {direction})")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct AxisDirectionPair {
     /// Axis specifier.
     pub axis: Axis,
@@ -59,6 +65,8 @@ pub struct AxisDirectionPair {
 /// [cglearn.eu](https://cglearn.eu/pub/computer-graphics/introduction-to-geometry#material-coordinate-systems-1)
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
 #[display("forward: {forward}, up: {up}")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct System {
     /// Axis the front face of a model looks along.
     pub forward: AxisDirectionPair,
