@@ -907,4 +907,7 @@ pub struct TransformBy<Property> {
     /// E.g. when translating, `set=true` will set a new location,
     /// and `set=false` will translate the current location by the given X/Y/Z.
     pub set: bool,
+    /// If true, the transform is applied in local space.
+    /// If false, the transform is applied in global space.
+    pub is_local: bool,
 }
