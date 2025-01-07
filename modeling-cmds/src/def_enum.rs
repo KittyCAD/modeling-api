@@ -22,7 +22,6 @@ define_modeling_cmd_enum! {
             length_unit::LengthUnit,
             shared::{
                 Angle,
-                TransformBy,
                 ComponentTransform,
                 CutType,
                 CameraMovement,
