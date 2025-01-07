@@ -12,6 +12,8 @@ pub mod import {
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "PlyImportOptions")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Co-ordinate system of input data.
         ///
@@ -45,6 +47,8 @@ pub mod export {
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
     #[display("coords: {coords}, selection: {selection}, storage: {storage}, units: {units}")]
     #[serde(rename = "PlyExportOptions")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Co-ordinate system of output data.
         ///
@@ -80,6 +84,8 @@ pub mod export {
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Default)]
     #[display(style = "snake_case")]
     #[serde(rename = "PlyStorage", rename_all = "snake_case")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub enum Storage {
         /// Write numbers in their ascii representation (e.g. -13, 6.28, etc.). Properties are separated by spaces and elements are separated by line breaks.
         #[default]

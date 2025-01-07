@@ -45,7 +45,7 @@ async fn main() -> Result<()> {
     let path_id = Uuid::new_v4();
     let path = path_id.into();
     session
-        .run_command(path, StartPath {}.into())
+        .run_command(path, StartPath::default().into())
         .await
         .context("could not create path")?;
 

@@ -9,6 +9,8 @@ pub mod import {
     #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
     #[display("split_closed_faces: {split_closed_faces}")]
     #[serde(default, rename = "SldprtImportOptions")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Splits all closed faces into two open faces.
         ///

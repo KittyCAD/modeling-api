@@ -12,6 +12,8 @@ pub mod import {
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "StlImportOptions")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Co-ordinate system of input data.
         ///
@@ -44,6 +46,8 @@ pub mod export {
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
     #[display("coords: {coords}, selection: {selection}, storage: {storage}, units: {units}")]
     #[serde(rename = "StlExportOptions")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Co-ordinate system of output data.
         ///
@@ -81,6 +85,8 @@ pub mod export {
     )]
     #[display(style = "snake_case")]
     #[serde(rename = "StlStorage", rename_all = "snake_case")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub enum Storage {
         /// Plaintext encoding.
         Ascii,
