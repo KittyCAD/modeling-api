@@ -987,16 +987,33 @@ pub struct TransformBy<Property> {
     pub is_local: bool,
 }
 
+/// How a property of an object should be transformed in 3D.
+#[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+pub struct TransformByPoint3d(#[cfg_attr(feature = "ts-rs", ts(flatten))] pub TransformBy<Point3d>);
+
+impl From<TransformBy<Point3d>> for TransformByPoint3d {
+    fn from(value: TransformBy<Point3d>) -> Self {
+        Self(value)
+    }
+}
+
+impl From<TransformByPoint3d> for TransformBy<Point3d> {
+    fn from(value: TransformByPoint3d) -> Self {
+        value.0
+    }
+}
+
 /// Container that holds a translate, rotate and scale.
 #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct ComponentTransform {
     /// Translate component of the transform.
-    pub translate: Option<TransformBy<Point3d>>,
+    pub translate: Option<TransformByPoint3d>,
     /// Rotate component of the transform.
     /// The rotation is specified as a roll, pitch, yaw.
-    pub rotate: Option<TransformBy<Point3d>>,
+    pub rotate: Option<TransformByPoint3d>,
     /// Scale component of the transform.
-    pub scale: Option<TransformBy<Point3d>>,
+    pub scale: Option<TransformByPoint3d>,
 }
