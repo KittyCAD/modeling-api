@@ -141,12 +141,7 @@ pub struct AnnotationTextOptions {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum DistanceType {
     /// Euclidean Distance.
-    Euclidean {
-        #[cfg(feature = "ts-rs")]
-        /// Work around issue with ts-rs not allowing tag on an empty variant.
-        #[serde(default, skip)]
-        _fix_ts_rs: (),
-    },
+    Euclidean {},
     /// The distance between objects along the specified axis
     OnAxis {
         /// Global axis
