@@ -1,4 +1,3 @@
-
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -10,19 +9,7 @@ pub mod import {
     use super::*;
 
     /// Options for importing STEP format.
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        Hash,
-        PartialEq,
-        Serialize,
-        Deserialize,
-        JsonSchema,
-        Display,
-        FromStr,
-    )]
+    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
     #[display("split_closed_faces: {split_closed_faces}")]
     #[serde(default, rename = "StepImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
