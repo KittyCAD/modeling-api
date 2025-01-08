@@ -500,8 +500,8 @@ define_modeling_cmd_enum! {
         pub struct EntityMakeHelixFromEdge {
             /// Radius of the helix.
             pub radius: f64,
-            /// Length of the helix.
-            pub length: LengthUnit,
+            /// Length of the helix. If None, the length of the edge will be used instead.
+            pub length: Option<LengthUnit>,
             /// Number of revolutions.
             pub revolutions: f64,
             /// Start angle.
