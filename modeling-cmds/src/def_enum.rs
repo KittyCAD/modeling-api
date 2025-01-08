@@ -219,6 +219,8 @@ define_modeling_cmd_enum! {
             pub base_curve_index: Option<u32>,
             /// Tolerance
             pub tolerance: LengthUnit,
+            /// If specified, the returned newly created loft id will match it.
+            pub new_loft_id: Option<Uuid>,
         }
 
 
