@@ -420,6 +420,10 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_ids: Vec<Uuid>,
         }
 
+        /// The response from the `SetObjectTransform` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetObjectTransform {}
+
         /// The response from the `AddHoleFromOffset` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct AddHoleFromOffset {

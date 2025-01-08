@@ -22,6 +22,7 @@ define_modeling_cmd_enum! {
             length_unit::LengthUnit,
             shared::{
                 Angle,
+                ComponentTransform,
                 CutType,
                 CameraMovement,
                 ExtrudedFaceInfo,
@@ -1418,6 +1419,19 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct GetNumObjects {}
 
+        ///Set the transform of an object.
+        #[derive(
+            Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct SetObjectTransform
+        {
+            /// Id of the object whose transform is to be set.
+            pub object_id: Uuid,
+            /// List of transforms to be applied to the object.
+            pub transforms: Vec<ComponentTransform>,
+        }
         /// Make a new path by offsetting an object by a given distance.
         /// The new path's ID will be the ID of this command.
         #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
