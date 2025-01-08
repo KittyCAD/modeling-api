@@ -974,9 +974,28 @@ mod tests {
 #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub struct TransformBy<Property> {
+pub struct TransformByPoint3d {
     /// The scale, or rotation, or translation.
-    pub property: Property,
+    pub property: Point3d,
+    /// If true, overwrite the previous value with this.
+    /// If false, the previous value will be modified.
+    /// E.g. when translating, `set=true` will set a new location,
+    /// and `set=false` will translate the current location by the given X/Y/Z.
+    pub set: bool,
+    /// If true, the transform is applied in local space.
+    /// If false, the transform is applied in global space.
+    pub is_local: bool,
+}
+
+/// How a property of an object should be transformed.
+/// This is a 4D version of the `TransformByPoint3d` (Used when wanting to specify a rotation with
+/// an angle and axis instead of roll pitch yaw).
+#[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct TransformByPoint4d {
+    /// The scale, or rotation, or translation.
+    pub property: Point4d,
     /// If true, overwrite the previous value with this.
     /// If false, the previous value will be modified.
     /// E.g. when translating, `set=true` will set a new location,
@@ -993,10 +1012,14 @@ pub struct TransformBy<Property> {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct ComponentTransform {
     /// Translate component of the transform.
-    pub translate: Option<TransformBy<Point3d>>,
+    pub translate: Option<TransformByPoint3d>,
     /// Rotate component of the transform.
     /// The rotation is specified as a roll, pitch, yaw.
-    pub rotate: Option<TransformBy<Point3d>>,
+    pub rotate_rpy: Option<TransformByPoint3d>,
+    /// Rotate component of the transform.
+    /// The rotation is specified as an axis and an angle (xyz are the components of the axis, w is
+    /// the angle in degrees).
+    pub rotate_angle_axis: Option<TransformByPoint4d>,
     /// Scale component of the transform.
-    pub scale: Option<TransformBy<Point3d>>,
+    pub scale: Option<TransformByPoint3d>,
 }
