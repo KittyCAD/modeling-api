@@ -493,6 +493,26 @@ define_modeling_cmd_enum! {
             pub axis: Point3d<f64>,
         }
 
+        /// Create a helix using the specified parameters.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct EntityMakeHelixFromEdge {
+            /// Radius of the helix.
+            pub radius: f64,
+            /// Length of the helix. If None, the length of the edge will be used instead.
+            pub length: Option<LengthUnit>,
+            /// Number of revolutions.
+            pub revolutions: f64,
+            /// Start angle.
+            #[serde(default)]
+            pub start_angle: Angle,
+            /// Is the helix rotation clockwise?
+            pub is_clockwise: bool,
+            /// Edge about which to make the helix.
+            pub edge_id: Uuid,
+        }
+
         /// Mirror the input entities over the specified axis. (Currently only supports sketches)
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]

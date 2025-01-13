@@ -756,15 +756,16 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `EntityMakeHelix` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityMakeHelix {
-            /// The UUID of the helix that was created.
-            pub helix_id: Uuid
         }
 
         /// The response from the `EntityMakeHelixFromParams` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityMakeHelixFromParams {
-            /// The UUID of the helix that was created.
-            pub helix_id: Uuid
+        }
+
+        /// The response from the `EntityMakeHelixFromEdge` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityMakeHelixFromEdge {
         }
 
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
