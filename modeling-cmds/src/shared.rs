@@ -971,7 +971,7 @@ mod tests {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct TransformByPoint3d {
     /// The scale, or rotation, or translation.
-    pub property: Point3d,
+    pub property: Point3d<LengthUnit>,
     /// If true, overwrite the previous value with this.
     /// If false, the previous value will be modified.
     /// E.g. when translating, `set=true` will set a new location,
