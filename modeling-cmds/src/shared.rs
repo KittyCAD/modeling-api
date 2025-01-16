@@ -969,6 +969,7 @@ mod tests {
 #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[allow(non_camel_case_types)]
 pub struct TransformBy<T> {
     /// The scale, or rotation, or translation.
     pub property: T,
