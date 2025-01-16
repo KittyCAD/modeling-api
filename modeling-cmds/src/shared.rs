@@ -1,19 +1,22 @@
 use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
-use schemars::JsonSchema;
+use schemars::{schema::SchemaObject, JsonSchema};
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
-use crate::{length_unit::LengthUnit, units::UnitAngle};
+use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle};
 
 pub use point::{Point2d, Point3d, Point4d, Quaternion};
 
 mod point;
 
 /// What kind of cut to do
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum CutType {
     /// Round off an edge.
     #[default]
@@ -23,8 +26,10 @@ pub enum CutType {
 }
 
 /// A rotation defined by an axis, origin of rotation, and an angle.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct Rotation {
     /// Rotation axis.
     /// Defaults to (0, 0, 1) (i.e. the Z axis).
@@ -48,8 +53,10 @@ impl Default for Rotation {
 }
 
 /// Ways to transform each solid being replicated in a repeating pattern.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct Transform {
     /// Translate the replica this far along each dimension.
     /// Defaults to zero vector (i.e. same position as the original).
@@ -80,8 +87,10 @@ impl Default for Transform {
 }
 
 /// Options for annotations
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct AnnotationOptions {
     /// Text displayed on the annotation
     pub text: Option<AnnotationTextOptions>,
@@ -96,8 +105,10 @@ pub struct AnnotationOptions {
 }
 
 /// Options for annotation text
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct AnnotationLineEndOptions {
     /// How to style the start of the annotation line.
     pub start: AnnotationLineEnd,
@@ -106,8 +117,10 @@ pub struct AnnotationLineEndOptions {
 }
 
 /// Options for annotation text
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct AnnotationTextOptions {
     /// Alignment along the X axis
     pub x: AnnotationTextAlignmentX,
@@ -122,8 +135,10 @@ pub struct AnnotationTextOptions {
 /// The type of distance
 /// Distances can vary depending on
 /// the objects used as input.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case", tag = "type")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum DistanceType {
     /// Euclidean Distance.
     Euclidean {},
@@ -135,8 +150,10 @@ pub enum DistanceType {
 }
 
 /// The type of origin
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case", tag = "type")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum OriginType {
     /// Local Origin (center of object bounding box).
     #[default]
@@ -151,7 +168,9 @@ pub enum OriginType {
 }
 
 /// An RGBA color
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct Color {
     /// Red
     pub r: f32,
@@ -169,6 +188,8 @@ pub struct Color {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum AnnotationTextAlignmentX {
     Left,
     Center,
@@ -181,6 +202,8 @@ pub enum AnnotationTextAlignmentX {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum AnnotationTextAlignmentY {
     Bottom,
     Center,
@@ -193,6 +216,8 @@ pub enum AnnotationTextAlignmentY {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum AnnotationLineEnd {
     None,
     Arrow,
@@ -203,6 +228,8 @@ pub enum AnnotationLineEnd {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum AnnotationType {
     /// 2D annotation type (screen or planar space)
     T2D,
@@ -215,6 +242,8 @@ pub enum AnnotationType {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum CameraDragInteractionType {
     /// Camera pan
     Pan,
@@ -230,6 +259,8 @@ pub enum CameraDragInteractionType {
 /// Paths are composed of many segments.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(rename_all = "snake_case", tag = "type")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum PathSegment {
     /// A straight line segment.
     /// Goes from the current path "pen" to the given endpoint.
@@ -297,6 +328,8 @@ pub enum PathSegment {
 
 /// An angle, with a specific unit.
 #[derive(Clone, Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct Angle {
     /// What unit is the measurement?
     pub unit: UnitAngle,
@@ -399,6 +432,8 @@ impl std::ops::AddAssign for Angle {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum SceneSelectionType {
     /// Replaces the selection
     Replace,
@@ -414,6 +449,8 @@ pub enum SceneSelectionType {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum SceneToolType {
     CameraRevolve,
     Select,
@@ -443,6 +480,8 @@ pub enum SceneToolType {
     Default,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum PathComponentConstraintBound {
     #[default]
     Unconstrained,
@@ -469,6 +508,8 @@ pub enum PathComponentConstraintBound {
     Default,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum PathComponentConstraintType {
     #[default]
     Unconstrained,
@@ -485,6 +526,8 @@ pub enum PathComponentConstraintType {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum PathCommand {
     MoveTo,
     LineTo,
@@ -499,6 +542,8 @@ pub enum PathCommand {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[repr(u8)]
 pub enum EntityType {
     Entity,
@@ -519,6 +564,8 @@ pub enum EntityType {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum CurveType {
     Line,
     Arc,
@@ -540,6 +587,8 @@ pub struct ExportFile {
 )]
 #[serde(rename_all = "lowercase")]
 #[display(style = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum FileExportFormat {
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
     Fbx,
@@ -579,6 +628,8 @@ pub enum FileExportFormat {
 )]
 #[serde(rename_all = "lowercase")]
 #[display(style = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum FileImportFormat {
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
     Fbx,
@@ -601,6 +652,8 @@ pub enum FileImportFormat {
 /// The type of error sent by the KittyCAD graphics engine.
 #[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum EngineErrorCode {
     /// User requested something geometrically or graphically impossible.
     /// Don't retry this request, as it's inherently impossible. Instead, read the error message
@@ -619,8 +672,37 @@ impl From<EngineErrorCode> for http::StatusCode {
     }
 }
 
+/// IDs for the extruded faces.
+#[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct ExtrudedFaceInfo {
+    /// The face made from the original 2D shape being extruded.
+    /// If the solid is extruded from a shape which already has an ID
+    /// (e.g. extruding something which was sketched on a face), this
+    /// doesn't need to be sent.
+    pub bottom: Option<Uuid>,
+    /// Top face of the extrusion (parallel and further away from the original 2D shape being extruded).
+    pub top: Uuid,
+    /// Any intermediate sides between the top and bottom.
+    pub sides: Vec<SideFace>,
+}
+
+/// IDs for a side face, extruded from the path of some sketch/2D shape.
+#[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct SideFace {
+    /// ID of the path this face is being extruded from.
+    pub path_id: Uuid,
+    /// Desired ID for the resulting face.
+    pub face_id: Uuid,
+}
+
 /// Camera settings including position, center, fov etc
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct CameraSettings {
     ///Camera position (vantage)
     pub pos: Point3d,
@@ -683,6 +765,8 @@ impl From<CameraSettings> for crate::output::ViewIsometric {
 /// Defines a perspective view.
 #[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd, Default)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct PerspectiveCameraParameters {
     /// Camera frustum vertical field of view.
     pub fov_y: Option<f32>,
@@ -710,6 +794,8 @@ pub struct PerspectiveCameraParameters {
     PartialOrd,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum CameraMovement {
     /// Adjusts the camera position during the camera operation
     #[default]
@@ -723,6 +809,8 @@ pub enum CameraMovement {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum GlobalAxis {
     /// The X axis
     X,
@@ -737,6 +825,8 @@ pub enum GlobalAxis {
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[repr(u8)]
 pub enum ExtrusionFaceCapType {
     /// Uncapped.
@@ -768,6 +858,8 @@ pub enum ExtrusionFaceCapType {
     Default,
 )]
 #[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum PostEffectType {
     Phosphor,
     Ssao,
@@ -820,6 +912,35 @@ fn z_axis() -> Point3d<f64> {
     Point3d { x: 0.0, y: 0.0, z: 1.0 }
 }
 
+impl ExtrudedFaceInfo {
+    /// Converts from the representation used in the Extrude modeling command,
+    /// to a flat representation.
+    pub fn list_faces(self) -> Vec<ExtrusionFaceInfo> {
+        let mut face_infos: Vec<_> = self
+            .sides
+            .into_iter()
+            .map(|side| ExtrusionFaceInfo {
+                curve_id: Some(side.path_id),
+                face_id: Some(side.face_id),
+                cap: ExtrusionFaceCapType::None,
+            })
+            .collect();
+        face_infos.push(ExtrusionFaceInfo {
+            curve_id: None,
+            face_id: Some(self.top),
+            cap: ExtrusionFaceCapType::Top,
+        });
+        if let Some(bottom) = self.bottom {
+            face_infos.push(ExtrusionFaceInfo {
+                curve_id: None,
+                face_id: Some(bottom),
+                cap: ExtrusionFaceCapType::Bottom,
+            });
+        }
+        face_infos
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -847,4 +968,57 @@ mod tests {
         assert!(c > a);
         assert!(c >= a);
     }
+}
+
+/// How a property of an object should be transformed.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct TransformBy<T> {
+    /// The scale, or rotation, or translation.
+    pub property: T,
+    /// If true, overwrite the previous value with this.
+    /// If false, the previous value will be modified.
+    /// E.g. when translating, `set=true` will set a new location,
+    /// and `set=false` will translate the current location by the given X/Y/Z.
+    pub set: bool,
+    /// If true, the transform is applied in local space.
+    /// If false, the transform is applied in global space.
+    pub is_local: bool,
+}
+
+impl<T: JsonSchema> JsonSchema for TransformBy<T> {
+    fn schema_name() -> String {
+        format!("TransformByFor{}", T::schema_name())
+    }
+
+    fn schema_id() -> std::borrow::Cow<'static, str> {
+        std::borrow::Cow::Owned(format!("{}::TransformBy<{}>", module_path!(), T::schema_id()))
+    }
+
+    fn json_schema(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+        SchemaObject {
+            instance_type: Some(schemars::schema::InstanceType::String.into()),
+            ..Default::default()
+        }
+        .into()
+    }
+}
+
+/// Container that holds a translate, rotate and scale.
+#[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct ComponentTransform {
+    /// Translate component of the transform.
+    pub translate: Option<TransformBy<Point3d<LengthUnit>>>,
+    /// Rotate component of the transform.
+    /// The rotation is specified as a roll, pitch, yaw.
+    pub rotate_rpy: Option<TransformBy<Point3d<f64>>>,
+    /// Rotate component of the transform.
+    /// The rotation is specified as an axis and an angle (xyz are the components of the axis, w is
+    /// the angle in degrees).
+    pub rotate_angle_axis: Option<TransformBy<Point4d<f64>>>,
+    /// Scale component of the transform.
+    pub scale: Option<TransformBy<Point3d<f64>>>,
 }
