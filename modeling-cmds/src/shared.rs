@@ -1,6 +1,6 @@
 use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
-use schemars::JsonSchema;
+use schemars::{schema::SchemaObject, JsonSchema};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -966,12 +966,12 @@ mod tests {
 }
 
 /// How a property of an object should be transformed.
-#[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub struct TransformByPoint3d {
+pub struct TransformBy<T> {
     /// The scale, or rotation, or translation.
-    pub property: Point3d<LengthUnit>,
+    pub property: T,
     /// If true, overwrite the previous value with this.
     /// If false, the previous value will be modified.
     /// E.g. when translating, `set=true` will set a new location,
@@ -982,23 +982,22 @@ pub struct TransformByPoint3d {
     pub is_local: bool,
 }
 
-/// How a property of an object should be transformed.
-/// This is a 4D version of the `TransformByPoint3d` (Used when wanting to specify a rotation with
-/// an angle and axis instead of roll pitch yaw).
-#[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize)]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub struct TransformByPoint4d {
-    /// The scale, or rotation, or translation.
-    pub property: Point4d,
-    /// If true, overwrite the previous value with this.
-    /// If false, the previous value will be modified.
-    /// E.g. when translating, `set=true` will set a new location,
-    /// and `set=false` will translate the current location by the given X/Y/Z.
-    pub set: bool,
-    /// If true, the transform is applied in local space.
-    /// If false, the transform is applied in global space.
-    pub is_local: bool,
+impl<T: JsonSchema> JsonSchema for TransformBy<T> {
+    fn schema_name() -> String {
+        format!("TransformByFor{}", T::schema_name())
+    }
+
+    fn schema_id() -> std::borrow::Cow<'static, str> {
+        std::borrow::Cow::Owned(format!("{}::TransformBy<{}>", module_path!(), T::schema_id()))
+    }
+
+    fn json_schema(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+        SchemaObject {
+            instance_type: Some(schemars::schema::InstanceType::String.into()),
+            ..Default::default()
+        }
+        .into()
+    }
 }
 
 /// Container that holds a translate, rotate and scale.
@@ -1007,14 +1006,14 @@ pub struct TransformByPoint4d {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct ComponentTransform {
     /// Translate component of the transform.
-    pub translate: Option<TransformByPoint3d>,
+    pub translate: Option<TransformBy<Point3d<LengthUnit>>>,
     /// Rotate component of the transform.
     /// The rotation is specified as a roll, pitch, yaw.
-    pub rotate_rpy: Option<TransformByPoint3d>,
+    pub rotate_rpy: Option<TransformBy<Point3d<f64>>>,
     /// Rotate component of the transform.
     /// The rotation is specified as an axis and an angle (xyz are the components of the axis, w is
     /// the angle in degrees).
-    pub rotate_angle_axis: Option<TransformByPoint4d>,
+    pub rotate_angle_axis: Option<TransformBy<Point4d<f64>>>,
     /// Scale component of the transform.
-    pub scale: Option<TransformByPoint3d>,
+    pub scale: Option<TransformBy<Point3d<f64>>>,
 }
