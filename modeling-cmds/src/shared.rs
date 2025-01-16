@@ -1,6 +1,6 @@
 use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
-use schemars::JsonSchema;
+use schemars::{schema::SchemaObject, JsonSchema};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -966,10 +966,9 @@ mod tests {
 }
 
 /// How a property of an object should be transformed.
-#[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[serde(rename = "TransformBy")]
 pub struct TransformBy<T> {
     /// The scale, or rotation, or translation.
     pub property: T,
@@ -981,6 +980,24 @@ pub struct TransformBy<T> {
     /// If true, the transform is applied in local space.
     /// If false, the transform is applied in global space.
     pub is_local: bool,
+}
+
+impl<T: JsonSchema> JsonSchema for TransformBy<T> {
+    fn schema_name() -> String {
+        format!("TransformByFor{}", T::schema_name())
+    }
+
+    fn schema_id() -> std::borrow::Cow<'static, str> {
+        std::borrow::Cow::Owned(format!("{}::TransformBy<{}>", module_path!(), T::schema_id()))
+    }
+
+    fn json_schema(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+        SchemaObject {
+            instance_type: Some(schemars::schema::InstanceType::String.into()),
+            ..Default::default()
+        }
+        .into()
+    }
 }
 
 /// Container that holds a translate, rotate and scale.
