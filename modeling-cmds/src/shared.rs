@@ -1007,14 +1007,14 @@ pub struct TransformByPoint4d {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct ComponentTransform {
     /// Translate component of the transform.
-    pub translate: Option<TransformBy<LengthUnit>>,
+    pub translate: Option<TransformBy<Point3d<LengthUnit>>>,
     /// Rotate component of the transform.
     /// The rotation is specified as a roll, pitch, yaw.
-    pub rotate_rpy: Option<TransformBy<Point3d>>,
+    pub rotate_rpy: Option<TransformBy<Point3d<f32>>>,
     /// Rotate component of the transform.
     /// The rotation is specified as an axis and an angle (xyz are the components of the axis, w is
     /// the angle in degrees).
     pub rotate_angle_axis: Option<TransformByPoint4d>,
     /// Scale component of the transform.
-    pub scale: Option<TransformBy<Point3d>>,
+    pub scale: Option<TransformBy<Point3d<f32>>>,
 }
