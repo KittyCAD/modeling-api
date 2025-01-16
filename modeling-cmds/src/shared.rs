@@ -1009,11 +1009,11 @@ pub struct ComponentTransform {
     pub translate: Option<TransformBy<Point3d<LengthUnit>>>,
     /// Rotate component of the transform.
     /// The rotation is specified as a roll, pitch, yaw.
-    pub rotate_rpy: Option<TransformBy<Point3d<f32>>>,
+    pub rotate_rpy: Option<TransformBy<Point3d<f64>>>,
     /// Rotate component of the transform.
     /// The rotation is specified as an axis and an angle (xyz are the components of the axis, w is
     /// the angle in degrees).
-    pub rotate_angle_axis: Option<TransformBy<Point4d>>,
+    pub rotate_angle_axis: Option<TransformBy<Point4d<f64>>>,
     /// Scale component of the transform.
-    pub scale: Option<TransformBy<Point3d<f32>>>,
+    pub scale: Option<TransformBy<Point3d<f64>>>,
 }
