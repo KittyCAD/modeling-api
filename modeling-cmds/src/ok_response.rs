@@ -22,6 +22,13 @@ define_ok_modeling_cmd_response_enum! {
             units,
         };
 
+        /// The response of the `EngineUtilEvaluatePath` endpoint
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EngineUtilEvaluatePath {
+            /// The evaluated path curve position
+            pub pos: Point3d<LengthUnit>,
+        }
+
         /// The response from the `StartPath` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct StartPath {
@@ -40,6 +47,11 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `Extrude` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Extrude {
+        }
+
+        /// The response from the `Sweep` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Sweep {
         }
 
         /// The response from the `Revolve` endpoint.
@@ -70,21 +82,6 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `DefaultCameraPerspectiveSettings` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct DefaultCameraPerspectiveSettings {
-        }
-
-        /// The response from the `EntityMakeHelix` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct EntityMakeHelix {
-        }
-
-        /// The response from the `EntityMirror` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct EntityMirror {
-        }
-
-        /// The response from the `EntityMirrorAcrossEdge` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct EntityMirrorAcrossEdge {
         }
 
         /// The response from the `SelectAdd` endpoint.
@@ -286,6 +283,11 @@ define_ok_modeling_cmd_response_enum! {
         pub struct DefaultCameraCenterToSelection {
         }
 
+        /// The response from the `DefaultCameraCenterToScene` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct DefaultCameraCenterToScene {
+        }
+
         /// The response from the `SelectClear` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SelectClear {
@@ -407,6 +409,31 @@ define_ok_modeling_cmd_response_enum! {
             /// The number of objects in the scene.
             pub num_objects: u32,
         }
+
+        /// The response from the `MakeOffsetPath` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct MakeOffsetPath {
+            /// If the offset path splits into multiple paths, this will contain the UUIDs of the
+            /// new paths.
+            /// If the offset path remains as a single path, this will be empty, and the resulting ID
+            /// of the (single) new path will be the ID of the `MakeOffsetPath` command.
+            pub entity_ids: Vec<Uuid>,
+        }
+
+        /// The response from the `SetObjectTransform` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetObjectTransform {}
+
+        /// The response from the `AddHoleFromOffset` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct AddHoleFromOffset {
+            /// If the offset path splits into multiple paths, this will contain the UUIDs of the
+            /// new paths.
+            /// If the offset path remains as a single path, this will be empty, and the resulting ID
+            /// of the (single) new path will be the ID of the `AddHoleFromOffset` command.
+            pub entity_ids: Vec<Uuid>,
+        }
+
         /// The response from the `DefaultCameraFocusOn` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct DefaultCameraFocusOn { }
@@ -717,6 +744,35 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityCircularPattern {
             /// The UUIDs of the entities that were created.
             pub entity_ids: Vec<Uuid>,
+        }
+
+        /// The response from the `EntityMirror` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityMirror {
+            /// The UUIDs of the entities that were created.
+            pub entity_ids: Vec<Uuid>
+        }
+
+        /// The response from the `EntityMirrorAcrossEdge` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityMirrorAcrossEdge {
+            /// The UUIDs of the entities that were created.
+            pub entity_ids: Vec<Uuid>
+        }
+
+        /// The response from the `EntityMakeHelix` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityMakeHelix {
+        }
+
+        /// The response from the `EntityMakeHelixFromParams` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityMakeHelixFromParams {
+        }
+
+        /// The response from the `EntityMakeHelixFromEdge` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityMakeHelixFromEdge {
         }
 
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
