@@ -1046,7 +1046,9 @@ define_modeling_cmd_enum! {
         }
 
         /// Project an entity on to a plane.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, PartialEq)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ProjectEntityToPlane {
             /// Which entity to project (vertex or edge).
             pub entity_id: Uuid,
