@@ -1046,7 +1046,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Project an entity on to a plane.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, PartialEq)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ProjectEntityToPlane {
@@ -1057,7 +1057,20 @@ define_modeling_cmd_enum! {
             /// If true: the projected points are returned in the plane_id's coordinate system,
             /// else: the projected points are returned in the world coordinate system.
             pub use_plane_coords: bool,
+        }
 
+        /// Project a list of points on to a plane.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", th(export_to = "ModelingCmd.ts"))]
+        pub struct ProjectPointsToPlane {
+            /// The id of the plane used for the projection.
+            pub plane_id: Uuid,
+            /// The list of points that will be projected.
+            pub points: Vec<Point3d<f64>>,
+            /// If true: the projected points are returned in the plane_id's coordinate sysetm.
+            /// else: the projected points are returned in the world coordinate system.
+            pub use_plane_coords: bool,
         }
 
         /// Enum containing the variety of image formats snapshots may be exported to.
