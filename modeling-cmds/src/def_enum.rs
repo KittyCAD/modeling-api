@@ -477,7 +477,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityMakeHelixFromParams {
             /// Radius of the helix.
-            pub radius: f64,
+            pub radius: LengthUnit,
             /// Length of the helix.
             pub length: LengthUnit,
             /// Number of revolutions.
@@ -499,7 +499,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityMakeHelixFromEdge {
             /// Radius of the helix.
-            pub radius: f64,
+            pub radius: LengthUnit,
             /// Length of the helix. If None, the length of the edge will be used instead.
             pub length: Option<LengthUnit>,
             /// Number of revolutions.
