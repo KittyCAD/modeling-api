@@ -1396,7 +1396,9 @@ define_modeling_cmd_enum! {
         }
 
         /// Looks along the normal of the specified face (if it is planar!), and fits the view to it.
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct OrientToFace {
             /// Which face to orient camera to.
             pub face_id: Uuid,
