@@ -1062,7 +1062,7 @@ define_modeling_cmd_enum! {
         /// Project a list of points on to a plane.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-        #[cfg_attr(feature = "ts-rs", th(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ProjectPointsToPlane {
             /// The id of the plane used for the projection.
             pub plane_id: Uuid,
