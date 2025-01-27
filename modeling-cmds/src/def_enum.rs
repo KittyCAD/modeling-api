@@ -790,7 +790,7 @@ define_modeling_cmd_enum! {
             pub cut_type: CutType,
             /// The ID to use for the newly created fillet face.
             /// If not provided, the server will randomly generate one.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "Option::is_none")]
             pub face_id: Option<Uuid>,
         }
 
