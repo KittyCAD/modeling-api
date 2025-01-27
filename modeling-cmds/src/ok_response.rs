@@ -12,6 +12,7 @@ define_ok_modeling_cmd_response_enum! {
         use serde::{Deserialize, Serialize};
         use uuid::Uuid;
         use crate::shared::CameraSettings;
+        use crate::shared::CameraViewState;
 
         use crate::{self as kittycad_modeling_cmds};
         use crate::{
@@ -381,6 +382,17 @@ define_ok_modeling_cmd_response_enum! {
             /// Camera settings
             pub settings: CameraSettings
         }
+
+        /// The response from the `DefaultCameraGetView` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct DefaultCameraGetView {
+            /// Camera view state
+            pub view: CameraViewState
+        }
+
+        /// The response from the `DefaultCameraSetView` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct DefaultCameraSetView {}
 
         /// The response from the `DefaultCameraZoom` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
