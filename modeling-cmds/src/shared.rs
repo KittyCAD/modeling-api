@@ -726,6 +726,50 @@ pub struct CameraSettings {
     pub ortho: bool,
 }
 
+#[allow(missing_docs)]
+#[repr(u8)]
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq)]
+pub enum WorldCoordinateSystem {
+    #[default]
+    RightHandedUpZ,
+    RightHandedUpY,
+}
+
+#[allow(missing_docs)]
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct CameraViewState {
+    pub pivot_rotation: [f32; 4], // TODO(dr): Should match *storage* order of quat (i.e. xyzw)
+    pub pivot_position: [f32; 3],
+    pub eye_offset: f32,
+    pub fov_y: f32,
+    pub ortho_scale: f32,
+    pub ortho_eye_offset: f32,
+    pub is_ortho: bool,
+    pub world_coord_system: WorldCoordinateSystem,
+}
+
+impl Default for CameraViewState {
+    fn default() -> Self {
+        CameraViewState {
+            pivot_rotation: [0.0, 0.0, 0.0, 1.0],
+            pivot_position: [0.0, 0.0, 0.0],
+            eye_offset: 10.0,
+            fov_y: 45.0,
+            ortho_scale: 1.6,
+            ortho_eye_offset: 0.0,
+            is_ortho: false,
+            world_coord_system: WorldCoordinateSystem::default(),
+        }
+    }
+}
+
+#[cfg(feature = "cxx")]
+impl_extern_type! {
+    [Trivial]
+    CameraViewState = "Endpoints::CameraViewState"
+}
+
 impl From<CameraSettings> for crate::output::DefaultCameraZoom {
     fn from(settings: CameraSettings) -> Self {
         Self { settings }
