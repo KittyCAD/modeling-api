@@ -790,7 +790,7 @@ define_modeling_cmd_enum! {
             pub cut_type: CutType,
             /// The ID to use for the newly created fillet face.
             /// If not provided, the server will randomly generate one.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "Option::is_none")]
             pub face_id: Option<Uuid>,
         }
 
@@ -1221,6 +1221,8 @@ define_modeling_cmd_enum! {
 
         /// Set the units of the scene.
         /// For all following commands, the units will be interpreted as the given units.
+        /// Any previously executed commands will not be affected or have their units changed.
+        /// They will remain in the units they were originally executed in.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
