@@ -1400,7 +1400,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct OrientToFace {
-            /// Which face to orient camera to.
+            /// Which face to orient camera to. If the face is not planar, no action will occur.
             pub face_id: Uuid,
             /// How much to pad the view frame by, as a fraction of the face bounding box size.
             /// Negative padding will crop the view of the face proportionally.
@@ -1408,9 +1408,9 @@ define_modeling_cmd_enum! {
             /// and padding = -0.2 means the view will span 80% of the face bounding box.
             #[serde(default)]
             pub padding: f32,
-            /// How many seconds the animation should take. If set to a non-positive value, no animation will occur.
-            #[serde(default = "default_animation_seconds")]
-            pub duration_seconds: f32,
+            /// Whether or not to animate the camera movement. (Animation is currently not supported.)
+            #[serde(default)]
+            pub animated: bool,
         }
 
         /// Fit the view to the scene with an isometric view.
