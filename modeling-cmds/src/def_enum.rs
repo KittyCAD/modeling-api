@@ -15,6 +15,7 @@ define_modeling_cmd_enum! {
         use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
         use uuid::Uuid;
+        use crate::shared::CameraViewState;
 
         use crate::{
             format::OutputFormat,
@@ -272,6 +273,21 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraGetSettings {}
+
+        /// Gets the default camera's view state
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct DefaultCameraGetView {}
+
+        /// Sets the default camera's view state
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct DefaultCameraSetView {
+            /// Camera view state
+            pub view: CameraViewState,
+        }
 
         /// Change what the default camera is looking at.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]

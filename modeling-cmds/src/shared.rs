@@ -728,7 +728,9 @@ pub struct CameraSettings {
 
 #[allow(missing_docs)]
 #[repr(u8)]
-#[derive(Default, Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum WorldCoordinateSystem {
     #[default]
     RightHandedUpZ,
@@ -737,9 +739,11 @@ pub enum WorldCoordinateSystem {
 
 #[allow(missing_docs)]
 #[repr(C)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct CameraViewState {
-    pub pivot_rotation: [f32; 4], // TODO(dr): Should match *storage* order of quat (i.e. xyzw)
+    pub pivot_rotation: [f32; 4],
     pub pivot_position: [f32; 3],
     pub eye_offset: f32,
     pub fov_y: f32,
