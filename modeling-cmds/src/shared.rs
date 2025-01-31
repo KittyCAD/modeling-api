@@ -751,6 +751,11 @@ impl From<CameraSettings> for crate::output::ZoomToFit {
         Self { settings }
     }
 }
+impl From<CameraSettings> for crate::output::OrientToFace {
+    fn from(settings: CameraSettings) -> Self {
+        Self { settings }
+    }
+}
 impl From<CameraSettings> for crate::output::ViewIsometric {
     fn from(settings: CameraSettings) -> Self {
         Self { settings }
