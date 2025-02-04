@@ -1045,6 +1045,34 @@ define_modeling_cmd_enum! {
             pub curve_id: Uuid,
         }
 
+        /// Project an entity on to a plane.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct ProjectEntityToPlane {
+            /// Which entity to project (vertex or edge).
+            pub entity_id: Uuid,
+            /// Which plane to project entity_id onto.
+            pub plane_id: Uuid,
+            /// If true: the projected points are returned in the plane_id's coordinate system,
+            /// else: the projected points are returned in the world coordinate system.
+            pub use_plane_coords: bool,
+        }
+
+        /// Project a list of points on to a plane.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct ProjectPointsToPlane {
+            /// The id of the plane used for the projection.
+            pub plane_id: Uuid,
+            /// The list of points that will be projected.
+            pub points: Vec<Point3d<f64>>,
+            /// If true: the projected points are returned in the plane_id's coordinate sysetm.
+            /// else: the projected points are returned in the world coordinate system.
+            pub use_plane_coords: bool,
+        }
+
         /// Enum containing the variety of image formats snapshots may be exported to.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, FromStr, Display)]
         #[serde(rename_all = "snake_case")]

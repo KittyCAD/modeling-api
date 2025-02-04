@@ -1,5 +1,6 @@
 /target
 .vscode/
+.direnv/
 .idea/
 flamegraph.svg
 perf.data
