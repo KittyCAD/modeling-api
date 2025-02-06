@@ -168,10 +168,13 @@ pub const VULKAN: &System = &System {
 /// assert_eq!(b, [1.0, -2.0, 3.0]);
 /// ```
 #[inline]
-pub fn transform(a: [f32; 3], from: &System, to: &System) -> [f32; 3] {
+pub fn transform<T>(a: [T; 3], from: &System, to: &System) -> [T; 3]
+where
+    T: Copy + From<i32> + std::ops::Mul<Output = T>,
+{
     let mut b = a;
     b[to.forward.axis as usize] =
-        (from.forward.direction * to.forward.direction) as i32 as f32 * a[from.forward.axis as usize];
-    b[to.up.axis as usize] = (from.up.direction * to.up.direction) as i32 as f32 * a[from.up.axis as usize];
+        T::from((from.forward.direction * to.forward.direction) as i32) * a[from.forward.axis as usize];
+    b[to.up.axis as usize] = T::from((from.up.direction * to.up.direction) as i32) * a[from.up.axis as usize];
     b
 }
