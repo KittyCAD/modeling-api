@@ -21,11 +21,13 @@ pub mod import {
         ///
         /// [KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html
         pub coords: coord::System,
+
         /// The units of the input data.
+        ///
         /// This is very important for correct scaling and when calculating physics properties like
         /// mass, etc.
         ///
-        /// Defaults to meters.
+        /// Defaults to millimeters.
         pub units: UnitLength,
     }
 
@@ -33,7 +35,7 @@ pub mod import {
         fn default() -> Self {
             Self {
                 coords: *coord::KITTYCAD,
-                units: UnitLength::Meters,
+                units: UnitLength::Millimeters,
             }
         }
     }
@@ -59,7 +61,7 @@ pub mod export {
 
         /// Export length unit.
         ///
-        /// Defaults to meters.
+        /// Defaults to millimeters.
         pub units: UnitLength,
     }
 
@@ -67,7 +69,7 @@ pub mod export {
         fn default() -> Self {
             Self {
                 coords: *coord::KITTYCAD,
-                units: UnitLength::Meters,
+                units: UnitLength::Millimeters,
             }
         }
     }
