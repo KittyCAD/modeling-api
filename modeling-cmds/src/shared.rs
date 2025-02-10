@@ -622,6 +622,19 @@ pub enum FileExportFormat {
     Stl,
 }
 
+/// The valid types of 2D output file formats.
+#[derive(
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence,
+)]
+#[serde(rename_all = "lowercase")]
+#[display(style = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum FileExportFormat2d {
+    /// AutoCAD drawing interchange format.
+    Dxf,
+}
+
 /// The valid types of source file formats.
 #[derive(
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence,

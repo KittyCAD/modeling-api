@@ -2,8 +2,10 @@ use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::shared::{FileExportFormat, FileImportFormat};
+use crate::shared::{FileExportFormat, FileExportFormat2d, FileImportFormat};
 
+/// AutoCAD drawing interchange format.
+pub mod dxf;
 /// Autodesk Filmbox (FBX) format.
 pub mod fbx;
 /// glTF 2.0.
@@ -23,7 +25,19 @@ pub mod stl;
 /// SolidWorks part (SLDPRT) format.
 pub mod sldprt;
 
-/// Output format specifier.
+/// Output 2D format specifier.
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[serde(tag = "type", rename_all = "snake_case")]
+#[display(style = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum OutputFormat2d {
+    /// AutoCAD drawing interchange format.
+    #[display("{}: {0}")]
+    Dxf(dxf::export::Options),
+}
+
+/// Output 3D format specifier.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[display(style = "snake_case")]
@@ -167,6 +181,22 @@ impl From<OutputFormat> for FileExportFormat {
             OutputFormat::Ply(_) => Self::Ply,
             OutputFormat::Step(_) => Self::Step,
             OutputFormat::Stl(_) => Self::Stl,
+        }
+    }
+}
+
+impl From<OutputFormat2d> for FileExportFormat2d {
+    fn from(output_format: OutputFormat2d) -> Self {
+        match output_format {
+            OutputFormat2d::Dxf(_) => Self::Dxf,
+        }
+    }
+}
+
+impl From<FileExportFormat2d> for OutputFormat2d {
+    fn from(export_format: FileExportFormat2d) -> Self {
+        match export_format {
+            FileExportFormat2d::Dxf => OutputFormat2d::Dxf(Default::default()),
         }
     }
 }
