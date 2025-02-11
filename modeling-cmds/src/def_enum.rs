@@ -1425,6 +1425,24 @@ define_modeling_cmd_enum! {
             pub animated: bool,
         }
 
+        /// Looks along the normal of the specified face (if it is planar!), and fits the view to it.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct OrientToFace {
+            /// Which face to orient camera to. If the face is not planar, no action will occur.
+            pub face_id: Uuid,
+            /// How much to pad the view frame by, as a fraction of the face bounding box size.
+            /// Negative padding will crop the view of the face proportionally.
+            /// e.g. padding = 0.2 means the view will span 120% of the face bounding box,
+            /// and padding = -0.2 means the view will span 80% of the face bounding box.
+            #[serde(default)]
+            pub padding: f32,
+            /// Whether or not to animate the camera movement. (Animation is currently not supported.)
+            #[serde(default)]
+            pub animated: bool,
+        }
+
         /// Fit the view to the scene with an isometric view.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
