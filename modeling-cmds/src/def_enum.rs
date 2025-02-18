@@ -1259,7 +1259,7 @@ define_modeling_cmd_enum! {
             /// Files to import.
             pub files: Vec<super::ImportFile>,
             /// Input file format.
-            pub format: crate::format::InputFormat,
+            pub format: crate::format::InputFormat3d,
         }
 
         /// Set the units of the scene.
