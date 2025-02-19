@@ -1528,6 +1528,18 @@ define_modeling_cmd_enum! {
             /// The distance to offset the path (positive for outset, negative for inset)
             pub offset: LengthUnit,
         }
+
+        /// Align the grid with the specified plane.
+        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct SetGridReferencePlane {
+            /// The grid to be moved.
+            pub grid_id: Uuid,
+            /// The plane that the grid will be aligned to.
+            pub plane_id: Uuid,
+        }
+
     }
 }
 
