@@ -739,6 +739,11 @@ define_ok_modeling_cmd_response_enum! {
             pub max_distance: LengthUnit,
         }
 
+        /// The response from the `EntityClone` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityClone {
+        }
+
         /// The response from the `EntityLinearPatternTransform` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityLinearPatternTransform {

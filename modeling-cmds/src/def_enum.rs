@@ -402,6 +402,16 @@ define_modeling_cmd_enum! {
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct EntityClone {
+            /// ID of the entity being cloned.
+            pub entity_id: Uuid,
+        }
+
+        /// Create a pattern using this entity by specifying the transform for each desired repetition.
+        /// Transformations are performed in the following order (first applied to last applied): scale, rotate, translate.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityLinearPatternTransform {
             /// ID of the entity being copied.
             pub entity_id: Uuid,
