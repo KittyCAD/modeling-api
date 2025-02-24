@@ -9,7 +9,7 @@ pub mod export {
         Clone, Copy, Debug, Default, Deserialize, Display, Eq, FromStr, Hash, JsonSchema, PartialEq, Serialize,
     )]
     #[display(style = "snake_case")]
-    #[serde(rename = "StlStorage", rename_all = "snake_case")]
+    #[serde(rename = "DxfStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub enum Storage {
