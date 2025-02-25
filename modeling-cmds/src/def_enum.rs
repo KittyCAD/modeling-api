@@ -326,10 +326,6 @@ define_modeling_cmd_enum! {
             pub magnitude: f32,
         }
 
-        /// Alias for backward compatibility.
-        #[deprecated(since = "0.2.96", note = "use `Export3d` instead")]
-        pub type Export = Export3d;
-
         /// Export a sketch to a file.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -346,6 +342,17 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Export3d {
+            /// IDs of the entities to be exported. If this is empty, then all entities are exported.
+            pub entity_ids: Vec<Uuid>,
+            /// The file format to export to.
+            pub format: OutputFormat3d,
+        }
+
+        /// Export the scene to a file.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct Export {
             /// IDs of the entities to be exported. If this is empty, then all entities are exported.
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.

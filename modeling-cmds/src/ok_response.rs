@@ -293,10 +293,6 @@ define_ok_modeling_cmd_response_enum! {
         pub struct SelectClear {
         }
 
-        /// Alias for backward compatibility.
-        #[deprecated(since = "0.2.96", note = "use `Export3d` instead")]
-        pub type Export = Export3d;
-
         /// The response from the `Export2d` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Export2d {
@@ -307,6 +303,13 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `Export3d` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Export3d {
+            /// The files that were exported.
+            pub files: Vec<ExportFile>,
+        }
+
+        /// The response from the `Export` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Export {
             /// The files that were exported.
             pub files: Vec<ExportFile>,
         }
