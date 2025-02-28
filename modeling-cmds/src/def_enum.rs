@@ -18,7 +18,7 @@ define_modeling_cmd_enum! {
         use crate::shared::CameraViewState;
 
         use crate::{
-            format::OutputFormat,
+            format::{OutputFormat2d, OutputFormat3d},
             id::ModelingCmdId,
             length_unit::LengthUnit,
             shared::{
@@ -342,6 +342,28 @@ define_modeling_cmd_enum! {
             pub magnitude: f32,
         }
 
+        /// Export a sketch to a file.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct Export2d {
+            /// IDs of the entities to be exported.
+            pub entity_ids: Vec<Uuid>,
+            /// The file format to export to.
+            pub format: OutputFormat2d,
+        }
+
+        /// Export the scene to a file.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct Export3d {
+            /// IDs of the entities to be exported. If this is empty, then all entities are exported.
+            pub entity_ids: Vec<Uuid>,
+            /// The file format to export to.
+            pub format: OutputFormat3d,
+        }
+
         /// Export the scene to a file.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -350,7 +372,7 @@ define_modeling_cmd_enum! {
             /// IDs of the entities to be exported. If this is empty, then all entities are exported.
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.
-            pub format: OutputFormat,
+            pub format: OutputFormat3d,
         }
 
         /// What is this entity's parent?
@@ -1270,7 +1292,7 @@ define_modeling_cmd_enum! {
             /// Files to import.
             pub files: Vec<super::ImportFile>,
             /// Input file format.
-            pub format: crate::format::InputFormat,
+            pub format: crate::format::InputFormat3d,
         }
 
         /// Set the units of the scene.

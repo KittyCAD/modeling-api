@@ -125,26 +125,26 @@ mod format {
         }
     }
 
-    impl From<InputFormat> for kt::InputFormat {
-        fn from(format: InputFormat) -> kt::InputFormat {
+    impl From<InputFormat3d> for kt::InputFormat {
+        fn from(format: InputFormat3d) -> kt::InputFormat {
             match format {
-                InputFormat::Fbx(fbx::import::Options {}) => kt::InputFormat::Fbx {},
-                InputFormat::Gltf(gltf::import::Options {}) => kt::InputFormat::Gltf {},
-                InputFormat::Obj(obj::import::Options { coords, units }) => kt::InputFormat::Obj {
+                InputFormat3d::Fbx(fbx::import::Options {}) => kt::InputFormat::Fbx {},
+                InputFormat3d::Gltf(gltf::import::Options {}) => kt::InputFormat::Gltf {},
+                InputFormat3d::Obj(obj::import::Options { coords, units }) => kt::InputFormat::Obj {
                     coords: coords.into(),
                     units: units.into(),
                 },
-                InputFormat::Ply(ply::import::Options { coords, units }) => kt::InputFormat::Ply {
+                InputFormat3d::Ply(ply::import::Options { coords, units }) => kt::InputFormat::Ply {
                     coords: coords.into(),
                     units: units.into(),
                 },
-                InputFormat::Sldprt(sldprt::import::Options { split_closed_faces }) => {
+                InputFormat3d::Sldprt(sldprt::import::Options { split_closed_faces }) => {
                     kt::InputFormat::Sldprt { split_closed_faces }
                 }
-                InputFormat::Step(step::import::Options { split_closed_faces }) => {
+                InputFormat3d::Step(step::import::Options { split_closed_faces }) => {
                     kt::InputFormat::Step { split_closed_faces }
                 }
-                InputFormat::Stl(stl::import::Options { coords, units }) => kt::InputFormat::Stl {
+                InputFormat3d::Stl(stl::import::Options { coords, units }) => kt::InputFormat::Stl {
                     coords: coords.into(),
                     units: units.into(),
                 },
@@ -152,7 +152,7 @@ mod format {
         }
     }
 
-    impl From<kt::InputFormat> for InputFormat {
+    impl From<kt::InputFormat> for InputFormat3d {
         fn from(value: kt::InputFormat) -> Self {
             match value {
                 kt::InputFormat::Fbx {} => Self::Fbx(Default::default()),
