@@ -12,7 +12,7 @@ license = "MIT"
 
 [dependencies]
 anyhow = "1.0.96"
-chrono = "0.4.39"
+chrono = "0.4.40"
 cxx = { version = "1.0", optional = true }
 data-encoding = "2.8.0"
 enum-iterator = "2.1.0"
