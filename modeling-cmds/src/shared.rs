@@ -742,6 +742,7 @@ pub struct CameraSettings {
 #[allow(missing_docs)]
 #[repr(u8)]
 #[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum WorldCoordinateSystem {
