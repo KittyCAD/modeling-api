@@ -25,7 +25,7 @@ kittycad-unit-conversion-derive = "0.1.0"
 measurements = "0.11.0"
 parse-display = "0.9.1"
 parse-display-derive = "0.9.0"
-schemars = { version = "0.8.16", features = [
+schemars = { version = "0.8.22", features = [
   "bigdecimal04",
   "chrono",
   "url",
