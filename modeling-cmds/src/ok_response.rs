@@ -830,5 +830,9 @@ define_ok_modeling_cmd_response_enum! {
             pub cap: ExtrusionFaceCapType,
         }
 
+        /// The response from the 'SetGridReferencePlane'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetGridReferencePlane {}
+
     }
 }
