@@ -739,6 +739,55 @@ pub struct CameraSettings {
     pub ortho: bool,
 }
 
+#[allow(missing_docs)]
+#[repr(u8)]
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum WorldCoordinateSystem {
+    #[default]
+    RightHandedUpZ,
+    RightHandedUpY,
+}
+
+#[allow(missing_docs)]
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct CameraViewState {
+    pub pivot_rotation: [f32; 4],
+    pub pivot_position: [f32; 3],
+    pub eye_offset: f32,
+    pub fov_y: f32,
+    pub ortho_scale_factor: f32,
+    pub is_ortho: bool,
+    pub ortho_scale_enabled: bool,
+    pub world_coord_system: WorldCoordinateSystem,
+}
+
+impl Default for CameraViewState {
+    fn default() -> Self {
+        CameraViewState {
+            pivot_rotation: [0.0, 0.0, 0.0, 1.0],
+            pivot_position: Default::default(),
+            eye_offset: 10.0,
+            fov_y: 45.0,
+            ortho_scale_factor: 1.6,
+            is_ortho: false,
+            ortho_scale_enabled: true,
+            world_coord_system: WorldCoordinateSystem::default(),
+        }
+    }
+}
+
+#[cfg(feature = "cxx")]
+impl_extern_type! {
+    [Trivial]
+    CameraViewState = "Endpoints::CameraViewState"
+}
+
 impl From<CameraSettings> for crate::output::DefaultCameraZoom {
     fn from(settings: CameraSettings) -> Self {
         Self { settings }
