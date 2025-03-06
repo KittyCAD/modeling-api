@@ -771,7 +771,7 @@ impl Default for CameraViewState {
     fn default() -> Self {
         CameraViewState {
             pivot_rotation: [0.0, 0.0, 0.0, 1.0],
-            pivot_position: [0.0, 0.0, 0.0],
+            pivot_position: Default::default(),
             eye_offset: 10.0,
             fov_y: 45.0,
             ortho_scale_factor: 1.6,
