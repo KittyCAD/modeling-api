@@ -12,7 +12,7 @@ publish = false
 [dependencies]
 anyhow = "1.0.97"
 clap = { version = "4.5.31", features = ["derive"] }
-semver = "1.0.25"
+semver = "1.0.26"
 serde = "1.0.218"
 toml_edit = "0.22.16"
 
