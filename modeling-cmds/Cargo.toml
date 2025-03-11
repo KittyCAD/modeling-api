@@ -18,7 +18,7 @@ data-encoding = "2.8.0"
 enum-iterator = "2.1.0"
 enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
-http = "1.2.0"
+http = "1.3.0"
 kittycad = { version = "0.3.30", optional = true }
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
