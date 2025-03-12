@@ -3,7 +3,6 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::coord;
-use crate::datetime::DateTimeLocal;
 
 /// Import models in STEP format.
 pub mod import {
@@ -41,7 +40,7 @@ pub mod export {
         pub coords: coord::System,
 
         /// Timestamp override.
-        pub created: Option<DateTimeLocal>,
+        pub created: Option<chrono::DateTime<chrono::Utc>>,
     }
 
     impl Default for Options {

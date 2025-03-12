@@ -1,5 +1,3 @@
-use crate::datetime::DateTimeLocal;
-
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -30,7 +28,7 @@ pub mod export {
         pub storage: Storage,
 
         /// Timestamp override.
-        pub created: Option<DateTimeLocal>,
+        pub created: Option<chrono::DateTime<chrono::Utc>>,
     }
 
     impl std::fmt::Display for Options {
