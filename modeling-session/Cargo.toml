@@ -15,7 +15,7 @@ futures = "0.3.31"
 kittycad = { workspace = true }
 kittycad-modeling-cmds = { workspace = true, features = ["websocket"] }
 lsystem = "0.2.1"
-reqwest = "0.12.12"
+reqwest = "0.12.14"
 serde_json = "1.0.139"
 thiserror = "2.0.12"
 tokio = { version = "1", features = ["sync"] }
