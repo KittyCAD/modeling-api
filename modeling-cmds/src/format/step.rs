@@ -38,11 +38,8 @@ pub mod export {
         ///
         /// [KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html
         pub coords: coord::System,
+
         /// Timestamp override.
-        ///
-        /// This is intended for local integration testing only; it is not provided as an option
-        /// in the JSON schema.
-        #[serde(skip)]
         pub created: Option<chrono::DateTime<chrono::Utc>>,
     }
 
