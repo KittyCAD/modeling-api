@@ -30,10 +30,6 @@ pub mod export {
         pub storage: Storage,
 
         /// Timestamp override.
-        ///
-        /// This is intended for local integration testing only; it is not provided as an option
-        /// in the JSON schema.
-        #[serde(skip)]
         pub created: Option<DateTimeLocal>,
     }
 
