@@ -125,26 +125,26 @@ mod format {
         }
     }
 
-    impl From<InputFormat3d> for kt::InputFormat {
-        fn from(format: InputFormat3d) -> kt::InputFormat {
+    impl From<InputFormat3d> for kt::InputFormat3D {
+        fn from(format: InputFormat3d) -> kt::InputFormat3D {
             match format {
-                InputFormat3d::Fbx(fbx::import::Options {}) => kt::InputFormat::Fbx {},
-                InputFormat3d::Gltf(gltf::import::Options {}) => kt::InputFormat::Gltf {},
-                InputFormat3d::Obj(obj::import::Options { coords, units }) => kt::InputFormat::Obj {
+                InputFormat3d::Fbx(fbx::import::Options {}) => kt::InputFormat3D::Fbx {},
+                InputFormat3d::Gltf(gltf::import::Options {}) => kt::InputFormat3D::Gltf {},
+                InputFormat3d::Obj(obj::import::Options { coords, units }) => kt::InputFormat3D::Obj {
                     coords: coords.into(),
                     units: units.into(),
                 },
-                InputFormat3d::Ply(ply::import::Options { coords, units }) => kt::InputFormat::Ply {
+                InputFormat3d::Ply(ply::import::Options { coords, units }) => kt::InputFormat3D::Ply {
                     coords: coords.into(),
                     units: units.into(),
                 },
                 InputFormat3d::Sldprt(sldprt::import::Options { split_closed_faces }) => {
-                    kt::InputFormat::Sldprt { split_closed_faces }
+                    kt::InputFormat3D::Sldprt { split_closed_faces }
                 }
                 InputFormat3d::Step(step::import::Options { split_closed_faces }) => {
-                    kt::InputFormat::Step { split_closed_faces }
+                    kt::InputFormat3D::Step { split_closed_faces }
                 }
-                InputFormat3d::Stl(stl::import::Options { coords, units }) => kt::InputFormat::Stl {
+                InputFormat3d::Stl(stl::import::Options { coords, units }) => kt::InputFormat3D::Stl {
                     coords: coords.into(),
                     units: units.into(),
                 },
@@ -152,26 +152,26 @@ mod format {
         }
     }
 
-    impl From<kt::InputFormat> for InputFormat3d {
-        fn from(value: kt::InputFormat) -> Self {
+    impl From<kt::InputFormat3D> for InputFormat3d {
+        fn from(value: kt::InputFormat3D) -> Self {
             match value {
-                kt::InputFormat::Fbx {} => Self::Fbx(Default::default()),
-                kt::InputFormat::Gltf {} => Self::Gltf(Default::default()),
-                kt::InputFormat::Obj { coords, units } => Self::Obj(crate::format::obj::import::Options {
+                kt::InputFormat3D::Fbx {} => Self::Fbx(Default::default()),
+                kt::InputFormat3D::Gltf {} => Self::Gltf(Default::default()),
+                kt::InputFormat3D::Obj { coords, units } => Self::Obj(crate::format::obj::import::Options {
                     coords: coords.into(),
                     units: units.into(),
                 }),
-                kt::InputFormat::Ply { coords, units } => Self::Ply(crate::format::ply::import::Options {
+                kt::InputFormat3D::Ply { coords, units } => Self::Ply(crate::format::ply::import::Options {
                     coords: coords.into(),
                     units: units.into(),
                 }),
-                kt::InputFormat::Sldprt { split_closed_faces } => {
+                kt::InputFormat3D::Sldprt { split_closed_faces } => {
                     Self::Sldprt(crate::format::sldprt::import::Options { split_closed_faces })
                 }
-                kt::InputFormat::Step { split_closed_faces } => {
+                kt::InputFormat3D::Step { split_closed_faces } => {
                     Self::Step(crate::format::step::import::Options { split_closed_faces })
                 }
-                kt::InputFormat::Stl { coords, units } => Self::Stl(crate::format::stl::import::Options {
+                kt::InputFormat3D::Stl { coords, units } => Self::Stl(crate::format::stl::import::Options {
                     coords: coords.into(),
                     units: units.into(),
                 }),
