@@ -61,7 +61,7 @@ webrtc = ["dep:webrtc"]
 unstable_exhaustive = []
 
 [dev-dependencies]
-bson = "2.13.0"
+bson = "2.14.0"
 
 [package.metadata.docs.rs]
 all-features = true
