@@ -335,7 +335,7 @@ pub enum PathSegment {
         end_radius: LengthUnit,
         ///The angle to rotate the involute by. A value of zero will produce a curve with a tangent
         ///along the x-axis at the start point of the curve.
-        angle: f64,
+        angle: Angle,
         ///If reverse is true, the segment will start
         ///from the end of the involute, otherwise it will start from that start.
         reverse: bool,
