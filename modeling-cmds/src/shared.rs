@@ -329,10 +329,10 @@ pub enum PathSegment {
     CircularInvolute {
         ///The involute is described between two circles, start_radius is the radius of the inner
         ///circle.
-        start_radius: f64,
+        start_radius: LengthUnit,
         ///The involute is described between two circles, end_radius is the radius of the outer
         ///circle.
-        end_radius: f64,
+        end_radius: LengthUnit,
         ///The angle to rotate the involute by. A value of zero will produce a curve with a tangent
         ///along the x-axis at the start point of the curve.
         angle: f64,
