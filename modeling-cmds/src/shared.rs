@@ -324,6 +324,22 @@ pub enum PathSegment {
         ///Whether or not interior and end are relative to the previous path position
         relative: bool,
     },
+    ///Adds a circular involute from the current position that goes through the given end_radius
+    ///and is rotated around the current point by angle.
+    CircularInvolute {
+        ///The involute is described between two circles, start_radius is the radius of the inner
+        ///circle.
+        start_radius: LengthUnit,
+        ///The involute is described between two circles, end_radius is the radius of the outer
+        ///circle.
+        end_radius: LengthUnit,
+        ///The angle to rotate the involute by. A value of zero will produce a curve with a tangent
+        ///along the x-axis at the start point of the curve.
+        angle: f64,
+        ///If reverse is true, the segment will start
+        ///from the end of the involute, otherwise it will start from that start.
+        reverse: bool,
+    },
 }
 
 /// An angle, with a specific unit.
