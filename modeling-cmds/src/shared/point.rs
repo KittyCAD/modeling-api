@@ -7,6 +7,7 @@ mod uniform;
 mod zero;
 
 /// A point in 2D space
+#[repr(C)]
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename = "Point2d")]
 #[serde(rename_all = "snake_case")]
@@ -55,6 +56,7 @@ impl<T> Point2d<T> {
 }
 
 /// A point in 3D space
+#[repr(C)]
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq, Default)]
 #[serde(rename = "Point3d")]
 #[serde(rename_all = "snake_case")]
@@ -114,6 +116,7 @@ impl<T> Point3d<T> {
 }
 
 /// A point in homogeneous (4D) space
+#[repr(C)]
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
 #[serde(rename = "Point4d")]
 #[serde(rename_all = "snake_case")]
