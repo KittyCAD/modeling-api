@@ -773,8 +773,8 @@ pub enum WorldCoordinateSystem {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct CameraViewState {
-    pub pivot_rotation: [f32; 4],
-    pub pivot_position: [f32; 3],
+    pub pivot_rotation: Quaternion,
+    pub pivot_position: Point3d,
     pub eye_offset: f32,
     pub fov_y: f32,
     pub ortho_scale_factor: f32,
@@ -786,14 +786,14 @@ pub struct CameraViewState {
 impl Default for CameraViewState {
     fn default() -> Self {
         CameraViewState {
-            pivot_rotation: [0.0, 0.0, 0.0, 1.0],
+            pivot_rotation: Default::default(),
             pivot_position: Default::default(),
             eye_offset: 10.0,
             fov_y: 45.0,
             ortho_scale_factor: 1.6,
             is_ortho: false,
             ortho_scale_enabled: true,
-            world_coord_system: WorldCoordinateSystem::default(),
+            world_coord_system: Default::default(),
         }
     }
 }
