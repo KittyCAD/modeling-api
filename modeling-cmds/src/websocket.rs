@@ -429,47 +429,102 @@ impl<T, E> From<Result<T, E>> for SnakeCaseResult<T, E> {
 /// ClientMetrics contains information regarding the state of the peer.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct ClientMetrics {
-    /// Counter of the number of WebRTC frames the client has dropped during
-    /// this session.
+    /// Counter of the number of WebRTC frames the client has dropped from the
+    /// inbound video stream.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-framesdropped
     pub rtc_frames_dropped: u32,
 
     /// Counter of the number of WebRTC frames that the client has decoded
-    /// during this session.
+    /// from the inbound video stream.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-freezecount
     pub rtc_frames_decoded: u64,
 
     /// Counter of the number of WebRTC frames that the client has received
-    /// during this session.
+    /// from the inbound video stream.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-freezecount
     pub rtc_frames_received: u64,
 
-    /// Current number of frames being rendered per second. A good target
+    /// Current number of frames being rendered in the last second. A good target
     /// is 60 frames per second, but it can fluctuate depending on network
     /// conditions.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-freezecount
     pub rtc_frames_per_second: u8, // no way we're more than 255 fps :)
 
-    /// Number of times the WebRTC playback has frozen. This is usually due to
+    /// Number of times the inbound video playback has frozen. This is usually due to
     /// network conditions.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-freezecount
     pub rtc_freeze_count: u32,
 
-    /// Amount of "jitter" in the WebRTC session. Network latency is the time
+    /// Amount of "jitter" in the inbound video stream. Network latency is the time
     /// it takes a packet to traverse the network. The amount that the latency
     /// varies is the jitter. Video latency is the time it takes to render
     /// a frame sent by the server (including network latency). A low jitter
     /// means the video latency can be reduced without impacting smooth
     /// playback. High jitter means clients will increase video latency to
     /// ensure smooth playback.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcreceivedrtpstreamstats-jitter
     pub rtc_jitter_sec: f32,
 
-    /// Number of "key frames" decoded in the underlying h.264 stream. A
+    /// Number of "key frames" decoded in the inbound h.264 stream. A
     /// key frame is an expensive (bandwidth-wise) "full image" of the video
     /// frame. Data after the keyframe become -- effectively -- "diff"
     /// operations on that key frame. The Engine will only send a keyframe if
     /// required, which is an indication that some of the "diffs" have been
     /// lost, usually an indication of poor network conditions. We like this
     /// metric to understand times when the connection has had to recover.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-keyframesdecoded
     pub rtc_keyframes_decoded: u32,
 
     /// Number of seconds of frozen video the user has been subjected to.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-totalfreezesduration
     pub rtc_total_freezes_duration_sec: f32,
+
+    /// The height of the inbound video stream in pixels.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-frameheight
+    pub rtc_frame_height: u32,
+
+    /// The width of the inbound video stream in pixels.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-framewidth
+    pub rtc_frame_width: u32,
+
+    /// Amount of packets lost in the inbound video stream.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcreceivedrtpstreamstats-packetslost
+    pub rtc_packets_lost: u32,
+
+    ///  Count the total number of Picture Loss Indication (PLI) packets.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-plicount
+    pub rtc_pli_count: u32,
+
+    /// Count of the total number of video pauses experienced by this receiver.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-pausecount
+    pub rtc_pause_count: u32,
+
+    /// Count of the total number of video pauses experienced by this receiver.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-totalpausesduration
+    pub rtc_total_pauses_duration_sec: f32,
+
+    /// Total duration of pauses in seconds.
+    ///
+    /// This is the "ping" between the client and the STUN server. Not to be confused with the
+    /// E2E RTT documented
+    /// [here](https://www.w3.org/TR/webrtc-stats/#dom-rtcremoteinboundrtpstreamstats-roundtriptime)
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcicecandidatepairstats-currentroundtriptime
+    pub rtc_stun_rtt_sec: u32,
 }
 
 /// ICECandidate represents a ice candidate
