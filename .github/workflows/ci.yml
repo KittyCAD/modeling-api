@@ -20,7 +20,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
         - uses: taiki-e/install-action@cargo-llvm-cov
         - uses: taiki-e/install-action@nextest
-        - uses: Swatinem/rust-cache@v2.7.5
+        - uses: Swatinem/rust-cache@v2.7.8
         - uses: taiki-e/install-action@just
 
         - name: cargo test
@@ -50,7 +50,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
           with:
             components: clippy
-        - uses: Swatinem/rust-cache@v2.7.5
+        - uses: Swatinem/rust-cache@v2.7.8
 
         - name: Check lints
           run: just lint
@@ -65,7 +65,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
           with:
             targets: wasm32-unknown-unknown
-        - uses: Swatinem/rust-cache@v2.7.5
+        - uses: Swatinem/rust-cache@v2.7.8
 
         - name: Check lints
           run: just check-wasm
