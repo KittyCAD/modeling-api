@@ -954,6 +954,13 @@ mod tests {
                 rtc_jitter_sec: 6.7,
                 rtc_keyframes_decoded: 8,
                 rtc_total_freezes_duration_sec: 9.1,
+                rtc_frame_height: 100,
+                rtc_frame_width: 100,
+                rtc_packets_lost: 0,
+                rtc_pli_count: 0,
+                rtc_pause_count: 0,
+                rtc_total_pauses_duration_sec: 0.0,
+                rtc_stun_rtt_sec: 0.005,
             }),
         };
         let expected = serde_json::json!({
@@ -966,7 +973,14 @@ mod tests {
                 "rtc_freeze_count": 5,
                 "rtc_jitter_sec": 6.7,
                 "rtc_keyframes_decoded": 8,
-                "rtc_total_freezes_duration_sec": 9.1
+                "rtc_total_freezes_duration_sec": 9.1,
+                "rtc_frame_height": 100,
+                "rtc_frame_width": 100,
+                "rtc_packets_lost": 0,
+                "rtc_pli_count": 0,
+                "rtc_pause_count": 0,
+                "rtc_total_pauses_duration_sec": 0.0,
+                "rtc_stun_rtt_sec": 0.005,
             },
         });
         assert_json_eq(actual, expected);
