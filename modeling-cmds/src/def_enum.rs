@@ -116,6 +116,14 @@ define_modeling_cmd_enum! {
             /// If this isn't given, the engine will generate IDs.
             #[serde(default)]
             pub faces: Option<ExtrudedFaceInfo>,
+            /// If true, the extrusion will happen symmetrically around the sketch. Otherwise, the
+            /// extrusion will happen on only one side of the extrusion.
+            #[serde(default)]
+            pub symmetric: bool,
+            /// If specified, will also extrude in the opposite direction to 'distance' to the
+            /// specified distance. If 'symmetric' is true, this value is ignored.
+            #[serde(default)]
+            pub bidirectional_distance: Option<LengthUnit>,
         }
 
         /// Extrude the object along a path.
