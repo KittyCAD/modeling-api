@@ -524,7 +524,7 @@ pub struct ClientMetrics {
     /// [here](https://www.w3.org/TR/webrtc-stats/#dom-rtcremoteinboundrtpstreamstats-roundtriptime)
     ///
     /// https://www.w3.org/TR/webrtc-stats/#dom-rtcicecandidatepairstats-currentroundtriptime
-    pub rtc_stun_rtt_sec: u32,
+    pub rtc_stun_rtt_sec: f32,
 }
 
 /// ICECandidate represents a ice candidate
