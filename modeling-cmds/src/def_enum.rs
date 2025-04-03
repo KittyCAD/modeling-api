@@ -103,6 +103,8 @@ define_modeling_cmd_enum! {
         ///If bidirectional or symmetric operations are needed this enum encapsulates the required
         ///information.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub enum Opposite<T> {
             /// No opposite. The operation will only occur on one side.
             #[default]
