@@ -129,7 +129,7 @@ define_modeling_cmd_enum! {
             /// If this isn't given, the engine will generate IDs.
             #[serde(default)]
             pub faces: Option<ExtrudedFaceInfo>,
-            /// Should the extrusion also extrude in the opposite distance along the given axis?
+            /// Should the extrusion also extrude in the opposite direction?
             /// If so, this specifies its distance.
             #[serde(default)]
             pub opposite: Opposite<LengthUnit>,
