@@ -209,6 +209,14 @@ define_modeling_cmd_enum! {
             pub angle: Angle,
             /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
+            /// If true, the revolve will happen symmetrically around the sketch. Otherwise, the
+            /// revolve will happen on only one side of the sketch.
+            #[serde(default)]
+            pub symmetric: bool,
+            /// If specified, will also extrude in the opposite direction to 'distance' to the
+            /// specified distance. If 'symmetric' is true, this value is ignored.
+            #[serde(default)]
+            pub bidirectional_angle: Option<Angle>,
         }
 
         /// Command for lofting sections to create a solid
