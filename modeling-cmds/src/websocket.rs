@@ -429,47 +429,102 @@ impl<T, E> From<Result<T, E>> for SnakeCaseResult<T, E> {
 /// ClientMetrics contains information regarding the state of the peer.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct ClientMetrics {
-    /// Counter of the number of WebRTC frames the client has dropped during
-    /// this session.
-    pub rtc_frames_dropped: u32,
+    /// Counter of the number of WebRTC frames the client has dropped from the
+    /// inbound video stream.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-framesdropped
+    pub rtc_frames_dropped: Option<u32>,
 
     /// Counter of the number of WebRTC frames that the client has decoded
-    /// during this session.
-    pub rtc_frames_decoded: u64,
+    /// from the inbound video stream.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-freezecount
+    pub rtc_frames_decoded: Option<u64>,
 
     /// Counter of the number of WebRTC frames that the client has received
-    /// during this session.
-    pub rtc_frames_received: u64,
+    /// from the inbound video stream.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-freezecount
+    pub rtc_frames_received: Option<u64>,
 
-    /// Current number of frames being rendered per second. A good target
+    /// Current number of frames being rendered in the last second. A good target
     /// is 60 frames per second, but it can fluctuate depending on network
     /// conditions.
-    pub rtc_frames_per_second: u8, // no way we're more than 255 fps :)
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-freezecount
+    pub rtc_frames_per_second: Option<u8>, // no way we're more than 255 fps :)
 
-    /// Number of times the WebRTC playback has frozen. This is usually due to
+    /// Number of times the inbound video playback has frozen. This is usually due to
     /// network conditions.
-    pub rtc_freeze_count: u32,
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-freezecount
+    pub rtc_freeze_count: Option<u32>,
 
-    /// Amount of "jitter" in the WebRTC session. Network latency is the time
+    /// Amount of "jitter" in the inbound video stream. Network latency is the time
     /// it takes a packet to traverse the network. The amount that the latency
     /// varies is the jitter. Video latency is the time it takes to render
     /// a frame sent by the server (including network latency). A low jitter
     /// means the video latency can be reduced without impacting smooth
     /// playback. High jitter means clients will increase video latency to
     /// ensure smooth playback.
-    pub rtc_jitter_sec: f32,
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcreceivedrtpstreamstats-jitter
+    pub rtc_jitter_sec: Option<f64>,
 
-    /// Number of "key frames" decoded in the underlying h.264 stream. A
+    /// Number of "key frames" decoded in the inbound h.264 stream. A
     /// key frame is an expensive (bandwidth-wise) "full image" of the video
     /// frame. Data after the keyframe become -- effectively -- "diff"
     /// operations on that key frame. The Engine will only send a keyframe if
     /// required, which is an indication that some of the "diffs" have been
     /// lost, usually an indication of poor network conditions. We like this
     /// metric to understand times when the connection has had to recover.
-    pub rtc_keyframes_decoded: u32,
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-keyframesdecoded
+    pub rtc_keyframes_decoded: Option<u32>,
 
     /// Number of seconds of frozen video the user has been subjected to.
-    pub rtc_total_freezes_duration_sec: f32,
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-totalfreezesduration
+    pub rtc_total_freezes_duration_sec: Option<f32>,
+
+    /// The height of the inbound video stream in pixels.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-frameheight
+    pub rtc_frame_height: Option<u32>,
+
+    /// The width of the inbound video stream in pixels.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-framewidth
+    pub rtc_frame_width: Option<u32>,
+
+    /// Amount of packets lost in the inbound video stream.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcreceivedrtpstreamstats-packetslost
+    pub rtc_packets_lost: Option<u32>,
+
+    ///  Count the total number of Picture Loss Indication (PLI) packets.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-plicount
+    pub rtc_pli_count: Option<u32>,
+
+    /// Count of the total number of video pauses experienced by this receiver.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-pausecount
+    pub rtc_pause_count: Option<u32>,
+
+    /// Count of the total number of video pauses experienced by this receiver.
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-totalpausesduration
+    pub rtc_total_pauses_duration_sec: Option<f32>,
+
+    /// Total duration of pauses in seconds.
+    ///
+    /// This is the "ping" between the client and the STUN server. Not to be confused with the
+    /// E2E RTT documented
+    /// [here](https://www.w3.org/TR/webrtc-stats/#dom-rtcremoteinboundrtpstreamstats-roundtriptime)
+    ///
+    /// https://www.w3.org/TR/webrtc-stats/#dom-rtcicecandidatepairstats-currentroundtriptime
+    pub rtc_stun_rtt_sec: Option<f32>,
 }
 
 /// ICECandidate represents a ice candidate
@@ -891,14 +946,21 @@ mod tests {
     fn serialize_websocket_metrics() {
         let actual = WebSocketRequest::MetricsResponse {
             metrics: Box::new(ClientMetrics {
-                rtc_frames_dropped: 1,
-                rtc_frames_decoded: 2,
-                rtc_frames_per_second: 3,
-                rtc_frames_received: 4,
-                rtc_freeze_count: 5,
-                rtc_jitter_sec: 6.7,
-                rtc_keyframes_decoded: 8,
-                rtc_total_freezes_duration_sec: 9.1,
+                rtc_frames_dropped: Some(1),
+                rtc_frames_decoded: Some(2),
+                rtc_frames_per_second: Some(3),
+                rtc_frames_received: Some(4),
+                rtc_freeze_count: Some(5),
+                rtc_jitter_sec: Some(6.7),
+                rtc_keyframes_decoded: Some(8),
+                rtc_total_freezes_duration_sec: Some(9.1),
+                rtc_frame_height: Some(100),
+                rtc_frame_width: Some(100),
+                rtc_packets_lost: Some(0),
+                rtc_pli_count: Some(0),
+                rtc_pause_count: Some(0),
+                rtc_total_pauses_duration_sec: Some(0.0),
+                rtc_stun_rtt_sec: Some(0.005),
             }),
         };
         let expected = serde_json::json!({
@@ -911,7 +973,14 @@ mod tests {
                 "rtc_freeze_count": 5,
                 "rtc_jitter_sec": 6.7,
                 "rtc_keyframes_decoded": 8,
-                "rtc_total_freezes_duration_sec": 9.1
+                "rtc_total_freezes_duration_sec": 9.1,
+                "rtc_frame_height": 100,
+                "rtc_frame_width": 100,
+                "rtc_packets_lost": 0,
+                "rtc_pli_count": 0,
+                "rtc_pause_count": 0,
+                "rtc_total_pauses_duration_sec": 0.0,
+                "rtc_stun_rtt_sec": 0.005,
             },
         });
         assert_json_eq(actual, expected);
