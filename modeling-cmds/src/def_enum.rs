@@ -100,6 +100,19 @@ define_modeling_cmd_enum! {
             pub segment: PathSegment,
         }
 
+        ///If bidirectional or symmetric operations are needed this enum encapsulates the required
+        ///information.
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+        pub enum Opposite<T> {
+            /// No opposite. The operation will only occur on one side.
+            #[default]
+            None,
+            /// Operation will occur from both sides, with the same value.
+            Symmetric,
+            /// Operation will occur from both sides, with this value for the opposite.
+            Other(T),
+        }
+
         /// Command for extruding a solid 2d.
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
@@ -116,14 +129,10 @@ define_modeling_cmd_enum! {
             /// If this isn't given, the engine will generate IDs.
             #[serde(default)]
             pub faces: Option<ExtrudedFaceInfo>,
-            /// If true, the extrusion will happen symmetrically around the sketch. Otherwise, the
-            /// extrusion will happen on only one side of the sketch.
+            /// Should the extrusion also extrude in the opposite distance along the given axis?
+            /// If so, this specifies its distance.
             #[serde(default)]
-            pub symmetric: bool,
-            /// If specified, will also extrude in the opposite direction to 'distance' to the
-            /// specified distance. If 'symmetric' is true, this value is ignored.
-            #[serde(default)]
-            pub bidirectional_distance: Option<LengthUnit>,
+            pub opposite: Opposite<LengthUnit>,
         }
 
         /// Extrude the object along a path.
@@ -164,14 +173,10 @@ define_modeling_cmd_enum! {
             pub angle: Angle,
             /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
-            /// If true, the revolve will happen symmetrically around the sketch. Otherwise, the
-            /// revolve will happen on only one side of the sketch.
+            /// Should the revolution also revolve in the opposite direction along the given axis?
+            /// If so, this specifies its angle.
             #[serde(default)]
-            pub symmetric: bool,
-            /// If specified, will also revolve in the opposite direction to 'angle' to the
-            /// specified angle. If 'symmetric' is true, this value is ignored.
-            #[serde(default)]
-            pub bidirectional_angle: Option<Angle>,
+            pub opposite: Opposite<Angle>,
         }
 
         /// Command for shelling a solid3d face
@@ -209,14 +214,10 @@ define_modeling_cmd_enum! {
             pub angle: Angle,
             /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
-            /// If true, the revolve will happen symmetrically around the sketch. Otherwise, the
-            /// revolve will happen on only one side of the sketch.
+            /// Should the revolution also revolve in the opposite direction along the given axis?
+            /// If so, this specifies its angle.
             #[serde(default)]
-            pub symmetric: bool,
-            /// If specified, will also revolve in the opposite direction to 'angle' to the
-            /// specified angle. If 'symmetric' is true, this value is ignored.
-            #[serde(default)]
-            pub bidirectional_angle: Option<Angle>,
+            pub opposite: Opposite<Angle>,
         }
 
         /// Command for lofting sections to create a solid

@@ -99,8 +99,7 @@ async fn main() -> Result<()> {
             distance: CUBE_WIDTH * 2.0,
             target: path,
             faces: None,
-            symmetric: false,
-            bidirectional_distance: None,
+            opposite: Default::default(),
         }),
         cmd_id: random_id(),
     });
