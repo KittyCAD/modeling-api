@@ -168,8 +168,8 @@ define_modeling_cmd_enum! {
             /// revolve will happen on only one side of the sketch.
             #[serde(default)]
             pub symmetric: bool,
-            /// If specified, will also extrude in the opposite direction to 'distance' to the
-            /// specified distance. If 'symmetric' is true, this value is ignored.
+            /// If specified, will also revolve in the opposite direction to 'angle' to the
+            /// specified angle. If 'symmetric' is true, this value is ignored.
             #[serde(default)]
             pub bidirectional_angle: Option<Angle>,
         }
@@ -213,8 +213,8 @@ define_modeling_cmd_enum! {
             /// revolve will happen on only one side of the sketch.
             #[serde(default)]
             pub symmetric: bool,
-            /// If specified, will also extrude in the opposite direction to 'distance' to the
-            /// specified distance. If 'symmetric' is true, this value is ignored.
+            /// If specified, will also revolve in the opposite direction to 'angle' to the
+            /// specified angle. If 'symmetric' is true, this value is ignored.
             #[serde(default)]
             pub bidirectional_angle: Option<Angle>,
         }
