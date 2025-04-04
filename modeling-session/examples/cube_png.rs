@@ -108,6 +108,7 @@ async fn main() -> Result<()> {
                 distance: CUBE_WIDTH * 2.0,
                 target: path,
                 faces: None,
+                opposite: Default::default(),
             }
             .into(),
         )

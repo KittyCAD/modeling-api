@@ -138,6 +138,7 @@ async fn main() -> Result<()> {
             distance: LengthUnit(1.0),
             target: path,
             faces: None,
+            opposite: Default::default(),
         }),
         cmd_id: random_id(),
     });

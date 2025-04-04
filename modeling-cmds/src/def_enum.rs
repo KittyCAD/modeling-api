@@ -29,7 +29,7 @@ define_modeling_cmd_enum! {
                 ExtrudedFaceInfo,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
-                Point2d, Point3d, SceneSelectionType, SceneToolType,
+                Point2d, Point3d, SceneSelectionType, SceneToolType, Opposite,
             },
             units,
         };
@@ -100,6 +100,7 @@ define_modeling_cmd_enum! {
             pub segment: PathSegment,
         }
 
+
         /// Command for extruding a solid 2d.
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
@@ -116,6 +117,10 @@ define_modeling_cmd_enum! {
             /// If this isn't given, the engine will generate IDs.
             #[serde(default)]
             pub faces: Option<ExtrudedFaceInfo>,
+            /// Should the extrusion also extrude in the opposite direction?
+            /// If so, this specifies its distance.
+            #[serde(default)]
+            pub opposite: Opposite<LengthUnit>,
         }
 
         /// Extrude the object along a path.
@@ -156,6 +161,10 @@ define_modeling_cmd_enum! {
             pub angle: Angle,
             /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
+            /// Should the revolution also revolve in the opposite direction along the given axis?
+            /// If so, this specifies its angle.
+            #[serde(default)]
+            pub opposite: Opposite<Angle>,
         }
 
         /// Command for shelling a solid3d face
@@ -193,6 +202,10 @@ define_modeling_cmd_enum! {
             pub angle: Angle,
             /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
+            /// Should the revolution also revolve in the opposite direction along the given axis?
+            /// If so, this specifies its angle.
+            #[serde(default)]
+            pub opposite: Opposite<Angle>,
         }
 
         /// Command for lofting sections to create a solid
