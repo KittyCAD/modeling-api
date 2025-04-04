@@ -29,7 +29,7 @@ define_modeling_cmd_enum! {
                 ExtrudedFaceInfo,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
-                Point2d, Point3d, SceneSelectionType, SceneToolType,
+                Point2d, Point3d, SceneSelectionType, SceneToolType, Opposite,
             },
             units,
         };
@@ -100,20 +100,6 @@ define_modeling_cmd_enum! {
             pub segment: PathSegment,
         }
 
-        ///If bidirectional or symmetric operations are needed this enum encapsulates the required
-        ///information.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
-        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub enum Opposite<T> {
-            /// No opposite. The operation will only occur on one side.
-            #[default]
-            None,
-            /// Operation will occur from both sides, with the same value.
-            Symmetric,
-            /// Operation will occur from both sides, with this value for the opposite.
-            Other(T),
-        }
 
         /// Command for extruding a solid 2d.
         #[derive(

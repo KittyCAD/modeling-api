@@ -1100,3 +1100,36 @@ pub struct ComponentTransform {
     /// Scale component of the transform.
     pub scale: Option<TransformBy<Point3d<f64>>>,
 }
+
+///If bidirectional or symmetric operations are needed this enum encapsulates the required
+///information.
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum Opposite<T> {
+    /// No opposite. The operation will only occur on one side.
+    #[default]
+    None,
+    /// Operation will occur from both sides, with the same value.
+    Symmetric,
+    /// Operation will occur from both sides, with this value for the opposite.
+    Other(T),
+}
+
+impl<T: JsonSchema> JsonSchema for Opposite<T> {
+    fn schema_name() -> String {
+        format!("OppositeFor{}", T::schema_name())
+    }
+
+    fn schema_id() -> std::borrow::Cow<'static, str> {
+        std::borrow::Cow::Owned(format!("{}::Opposite<{}>", module_path!(), T::schema_id()))
+    }
+
+    fn json_schema(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+        SchemaObject {
+            instance_type: Some(schemars::schema::InstanceType::String.into()),
+            ..Default::default()
+        }
+        .into()
+    }
+}
