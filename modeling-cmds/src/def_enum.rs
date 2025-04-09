@@ -1592,7 +1592,7 @@ define_modeling_cmd_enum! {
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct BooleanIntersection
+        pub struct BooleanSubtract
         {
             /// Which solids to intersect together
             pub solid_ids: Vec<ModelingCmdId>,
