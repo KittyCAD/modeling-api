@@ -1567,7 +1567,8 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct BooleanUnion
         {
-            /// Which solids to union together
+            /// Which solids to union together.
+            /// Cannot be empty.
             pub solid_ids: Vec<Uuid>,
         }
 
