@@ -1557,6 +1557,47 @@ define_modeling_cmd_enum! {
             /// List of transforms to be applied to the object.
             pub transforms: Vec<ComponentTransform>,
         }
+
+        /// Create a new solid from combining other smaller solids.
+        /// In other words, every part of the input solids will be included in the output solid.
+        #[derive(
+            Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct BooleanUnion
+        {
+            /// Which solids to union together
+            pub solid_ids: Vec<ModelingCmdId>,
+        }
+
+        /// Create a new solid from intersecting several other solids.
+        /// In other words, the part of the input solids where they all overlap will be the output solid.
+        #[derive(
+            Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct BooleanIntersection
+        {
+            /// Which solids to intersect together
+            pub solid_ids: Vec<ModelingCmdId>,
+        }
+
+        /// Create a new solid from subtracting several other solids.
+        /// The 'target' is what will be cut from.
+        /// The 'tool' is what will be cut out from 'target'.
+        #[derive(
+            Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct BooleanIntersection
+        {
+            /// Which solids to intersect together
+            pub solid_ids: Vec<ModelingCmdId>,
+        }
+
         /// Make a new path by offsetting an object by a given distance.
         /// The new path's ID will be the ID of this command.
         #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
