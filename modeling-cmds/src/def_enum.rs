@@ -1594,8 +1594,10 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct BooleanSubtract
         {
-            /// Which solids to intersect together
-            pub solid_ids: Vec<ModelingCmdId>,
+            /// Geometry to cut out from.
+            pub target_ids: Vec<ModelingCmdId>,
+            /// Will be cut out from the 'target'.
+            pub tool_ids: Vec<ModelingCmdId>,
         }
 
         /// Make a new path by offsetting an object by a given distance.
