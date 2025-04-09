@@ -1568,7 +1568,7 @@ define_modeling_cmd_enum! {
         pub struct BooleanUnion
         {
             /// Which solids to union together
-            pub solid_ids: Vec<ModelingCmdId>,
+            pub solid_ids: Vec<Uuid>,
         }
 
         /// Create a new solid from intersecting several other solids.
@@ -1581,7 +1581,7 @@ define_modeling_cmd_enum! {
         pub struct BooleanIntersection
         {
             /// Which solids to intersect together
-            pub solid_ids: Vec<ModelingCmdId>,
+            pub solid_ids: Vec<Uuid>,
         }
 
         /// Create a new solid from subtracting several other solids.
@@ -1595,9 +1595,9 @@ define_modeling_cmd_enum! {
         pub struct BooleanSubtract
         {
             /// Geometry to cut out from.
-            pub target_ids: Vec<ModelingCmdId>,
+            pub target_ids: Vec<Uuid>,
             /// Will be cut out from the 'target'.
-            pub tool_ids: Vec<ModelingCmdId>,
+            pub tool_ids: Vec<Uuid>,
         }
 
         /// Make a new path by offsetting an object by a given distance.
