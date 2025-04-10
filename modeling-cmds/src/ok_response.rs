@@ -845,5 +845,18 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the 'SetGridReferencePlane'.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SetGridReferencePlane {}
+
+        /// The response from the 'BooleanUnion'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct BooleanUnion {}
+
+        /// The response from the 'BooleanIntersection'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct BooleanIntersection {}
+
+        /// The response from the 'BooleanSubtract'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct BooleanSubtract {}
+
     }
 }
