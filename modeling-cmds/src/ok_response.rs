@@ -848,15 +848,33 @@ define_ok_modeling_cmd_response_enum! {
 
         /// The response from the 'BooleanUnion'.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct BooleanUnion {}
+        pub struct BooleanUnion {
+            /// If the operation produced just one solid, then its ID will be the
+            /// ID of the modeling command request.
+            /// But if any extra solids are produced, then their IDs will be included
+            /// here.
+            pub extra_solid_ids: Vec<Uuid>,
+        }
 
         /// The response from the 'BooleanIntersection'.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct BooleanIntersection {}
+        pub struct BooleanIntersection {
+            /// If the operation produced just one solid, then its ID will be the
+            /// ID of the modeling command request.
+            /// But if any extra solids are produced, then their IDs will be included
+            /// here.
+            pub extra_solid_ids: Vec<Uuid>,
+        }
 
         /// The response from the 'BooleanSubtract'.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct BooleanSubtract {}
+        pub struct BooleanSubtract {
+            /// If the operation produced just one solid, then its ID will be the
+            /// ID of the modeling command request.
+            /// But if any extra solids are produced, then their IDs will be included
+            /// here.
+            pub extra_solid_ids: Vec<Uuid>,
+        }
 
     }
 }
