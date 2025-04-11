@@ -853,6 +853,7 @@ define_ok_modeling_cmd_response_enum! {
             /// ID of the modeling command request.
             /// But if any extra solids are produced, then their IDs will be included
             /// here.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
         }
 
@@ -863,6 +864,7 @@ define_ok_modeling_cmd_response_enum! {
             /// ID of the modeling command request.
             /// But if any extra solids are produced, then their IDs will be included
             /// here.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
         }
 
@@ -873,6 +875,7 @@ define_ok_modeling_cmd_response_enum! {
             /// ID of the modeling command request.
             /// But if any extra solids are produced, then their IDs will be included
             /// here.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
         }
 
