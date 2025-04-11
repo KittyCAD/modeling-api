@@ -1084,7 +1084,8 @@ impl<T: JsonSchema> JsonSchema for TransformBy<T> {
 }
 
 /// Container that holds a translate, rotate and scale.
-#[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize)]
+/// Defaults to no change, everything stays the same (i.e. the identity function).
+#[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, Default)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct ComponentTransform {
