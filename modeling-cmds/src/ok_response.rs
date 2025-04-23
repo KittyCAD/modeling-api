@@ -19,7 +19,7 @@ define_ok_modeling_cmd_response_enum! {
             base64::Base64Data,
             id::ModelingCmdId,
             length_unit::LengthUnit,
-            shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d},
+            shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, FaceEdgeInfo, PathCommand, Point2d, Point3d},
             units,
         };
 
@@ -804,7 +804,7 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityMirror {
             /// The UUIDs of the entities that were created.
-            pub entity_ids: Vec<Uuid>
+            pub entity_ids: Vec<Uuid>,
             /// The Face and Edge Ids of the mirrored entities.
             pub face_edge_ids: Vec<FaceEdgeInfo>,
         }
@@ -813,7 +813,7 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityMirrorAcrossEdge {
             /// The UUIDs of the entities that were created.
-            pub entity_ids: Vec<Uuid>
+            pub entity_ids: Vec<Uuid>,
             /// The Face and Edge Ids of the mirrored entities.
             pub face_edge_ids: Vec<FaceEdgeInfo>,
         }
