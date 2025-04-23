@@ -769,6 +769,8 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `EntityClone` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityClone {
+            /// The Face and Edge Ids of the cloned entity.
+            pub face_edge_ids: FaceEdgeInfo,
         }
 
         /// The response from the `EntityLinearPatternTransform` command.
@@ -776,6 +778,8 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityLinearPatternTransform {
             /// The UUIDs of the entities that were created.
             pub entity_ids: Vec<Uuid>,
+            /// The Face and Edge Ids of the patterned entities.
+            pub face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
         /// The response from the `EntityLinearPattern` command.
@@ -783,6 +787,8 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityLinearPattern {
             /// The UUIDs of the entities that were created.
             pub entity_ids: Vec<Uuid>,
+            /// The Face and Edge Ids of the patterned entities.
+            pub face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
         /// The response from the `EntityCircularPattern` command.
@@ -790,6 +796,8 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityCircularPattern {
             /// The UUIDs of the entities that were created.
             pub entity_ids: Vec<Uuid>,
+            /// The Face and Edge Ids of the patterned entities.
+            pub face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
         /// The response from the `EntityMirror` endpoint.
@@ -797,6 +805,8 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityMirror {
             /// The UUIDs of the entities that were created.
             pub entity_ids: Vec<Uuid>
+            /// The Face and Edge Ids of the mirrored entities.
+            pub face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
         /// The response from the `EntityMirrorAcrossEdge` endpoint.
@@ -804,6 +814,8 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityMirrorAcrossEdge {
             /// The UUIDs of the entities that were created.
             pub entity_ids: Vec<Uuid>
+            /// The Face and Edge Ids of the mirrored entities.
+            pub face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
         /// The response from the `EntityMakeHelix` endpoint.

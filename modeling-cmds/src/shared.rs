@@ -728,6 +728,17 @@ pub struct SideFace {
     pub face_id: Uuid,
 }
 
+/// IDs of faces and edges (most used in identifying geometry in patterned and mirrored objects).
+#[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct FaceEdgeInfo {
+    /// The faces of each object.
+    pub faces: Vec<Uuid>,
+    /// The edges of each object.
+    pub edges: Vec<Uuid>,
+}
+
 /// Camera settings including position, center, fov etc
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
