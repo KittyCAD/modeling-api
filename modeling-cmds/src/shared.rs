@@ -729,7 +729,7 @@ pub struct SideFace {
 }
 
 /// IDs of faces and edges (most used in identifying geometry in patterned and mirrored objects).
-#[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone, Default)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct FaceEdgeInfo {
