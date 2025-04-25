@@ -29,6 +29,8 @@ pub struct EngineParams {
     /// the session will be written out to this filename.
     /// For debugging.
     pub replay: Option<String>,
+    /// API Call ID associated with this request
+    pub api_call_id: Option<String>,
 }
 
 impl Default for EngineParams {
@@ -43,17 +45,7 @@ impl Default for EngineParams {
             pool: None,
             show_grid: false,
             replay: None,
-        }
-    }
-}
-
-impl EngineParams {
-    /// Returns a default EngineParams with the grid enabled.
-    /// This is primarily useful for engine testing.
-    pub fn default_with_grid() -> Self {
-        Self {
-            show_grid: true,
-            ..Self::default()
+            api_call_id: None,
         }
     }
 }
