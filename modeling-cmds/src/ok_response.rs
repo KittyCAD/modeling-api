@@ -19,7 +19,7 @@ define_ok_modeling_cmd_response_enum! {
             base64::Base64Data,
             id::ModelingCmdId,
             length_unit::LengthUnit,
-            shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, FaceEdgeInfo, PathCommand, Point2d, Point3d},
+            shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d},
             units,
         };
 
