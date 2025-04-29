@@ -766,6 +766,15 @@ define_ok_modeling_cmd_response_enum! {
             pub max_distance: LengthUnit,
         }
 
+        /// Faces and edges id info (most used in identifying geometry in patterned and mirrored objects).
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct FaceEdgeInfo {
+            /// The faces of each object.
+            pub faces: Vec<Uuid>,
+            /// The edges of each object.
+            pub edges: Vec<Uuid>,
+        }
+
         /// The response from the `EntityClone` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityClone {
