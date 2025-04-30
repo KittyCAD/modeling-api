@@ -769,6 +769,8 @@ define_ok_modeling_cmd_response_enum! {
         /// Faces and edges id info (most used in identifying geometry in patterned and mirrored objects).
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct FaceEdgeInfo {
+            /// The UUID of the object.
+            pub object_id: Uuid,
             /// The faces of each object.
             pub faces: Vec<Uuid>,
             /// The edges of each object.
