@@ -97,6 +97,9 @@ pub enum WebSocketRequest {
         metrics: Box<ClientMetrics>,
     },
 
+    /// Return information about the connected instance
+    Debug {},
+
     /// Authentication header request.
     Headers {
         /// The authentication header.
@@ -208,6 +211,12 @@ pub enum OkWebSocketResponseData {
 
     /// Pong response to a Ping message.
     Pong {},
+
+    /// Information about the connected instance
+    Debug {
+        /// Instance name. This may or may not mean something.
+        name: String,
+    },
 }
 
 /// Successful Websocket response.
