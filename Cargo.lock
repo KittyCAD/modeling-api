@@ -2042,7 +2042,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds"
-version = "0.2.114"
+version = "0.2.115"
 dependencies = [
  "anyhow",
  "bson",
