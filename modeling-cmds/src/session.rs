@@ -29,6 +29,8 @@ pub struct EngineParams {
     /// the session will be written out to this filename.
     /// For debugging.
     pub replay: Option<String>,
+    /// API Call ID for distributed tracing
+    pub api_call_id: Option<String>,
 }
 
 impl Default for EngineParams {
@@ -43,6 +45,7 @@ impl Default for EngineParams {
             pool: None,
             show_grid: false,
             replay: None,
+            api_call_id: None,
         }
     }
 }
