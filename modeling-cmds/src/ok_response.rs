@@ -868,7 +868,7 @@ define_ok_modeling_cmd_response_enum! {
             pub top_cap_id: Option<Uuid>,
 
             /// UUID for bottom cap.
-            pub botom_cap_id: Option<Uuid>,
+            pub bottom_cap_id: Option<Uuid>,
 
             /// A map containing the common faces for all edges.
             pub common_edges: HashMap<Uuid, Vec<Uuid>>,
