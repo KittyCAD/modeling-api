@@ -727,6 +727,7 @@ pub struct SideFace {
     /// Desired ID for the resulting face.
     pub face_id: Uuid,
 }
+
 /// Camera settings including position, center, fov etc
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
