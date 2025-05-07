@@ -781,6 +781,7 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityClone {
             /// The Face and Edge Ids of the cloned entity.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
