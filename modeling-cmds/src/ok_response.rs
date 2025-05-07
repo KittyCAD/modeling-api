@@ -766,44 +766,81 @@ define_ok_modeling_cmd_response_enum! {
             pub max_distance: LengthUnit,
         }
 
+        /// Faces and edges id info (most used in identifying geometry in patterned and mirrored objects).
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct FaceEdgeInfo {
+            /// The UUID of the object.
+            pub object_id: Uuid,
+            /// The faces of each object.
+            pub faces: Vec<Uuid>,
+            /// The edges of each object.
+            pub edges: Vec<Uuid>,
+        }
+
         /// The response from the `EntityClone` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityClone {
+            /// The UUIDs of the entities that were created.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub entity_ids: Vec<Uuid>,
+            /// The Face and Edge Ids of the cloned entity.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
         /// The response from the `EntityLinearPatternTransform` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityLinearPatternTransform {
             /// The UUIDs of the entities that were created.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub entity_ids: Vec<Uuid>,
+            /// The Face, edge, and entity ids of the patterned entities.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
         /// The response from the `EntityLinearPattern` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityLinearPattern {
             /// The UUIDs of the entities that were created.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub entity_ids: Vec<Uuid>,
+            /// The Face, edge, and entity ids of the patterned entities.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
         /// The response from the `EntityCircularPattern` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityCircularPattern {
             /// The UUIDs of the entities that were created.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub entity_ids: Vec<Uuid>,
+            /// The Face, edge, and entity ids of the patterned entities.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
         /// The response from the `EntityMirror` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityMirror {
             /// The UUIDs of the entities that were created.
-            pub entity_ids: Vec<Uuid>
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub entity_ids: Vec<Uuid>,
+            /// The Face, edge, and entity ids of the patterned entities.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
         /// The response from the `EntityMirrorAcrossEdge` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityMirrorAcrossEdge {
             /// The UUIDs of the entities that were created.
-            pub entity_ids: Vec<Uuid>
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub entity_ids: Vec<Uuid>,
+            /// The Face, edge, and entity ids of the patterned entities.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
         /// The response from the `EntityMakeHelix` endpoint.
