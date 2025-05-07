@@ -789,6 +789,7 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityLinearPatternTransform {
             /// The Face, edge, and entity ids of the patterned entities.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
