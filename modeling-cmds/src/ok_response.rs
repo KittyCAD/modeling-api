@@ -843,7 +843,7 @@ define_ok_modeling_cmd_response_enum! {
             pub cap: ExtrusionFaceCapType,
         }
 
-        /// Struct to contain the edge infomation of a wall of an extrude/rotate/loft/sweep.
+        /// Struct to contain the edge information of a wall of an extrude/rotate/loft/sweep.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct ComplementaryEdges {
             /// The opposite edge has no common vertices with the original edge. A wall may not
