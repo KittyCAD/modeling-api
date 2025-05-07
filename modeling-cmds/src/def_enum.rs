@@ -1524,6 +1524,16 @@ define_modeling_cmd_enum! {
             pub edge_id: Uuid,
         }
 
+        /// Get a concise description of all of solids edges.
+        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct Solid3dGetInfo {
+            /// The Solid3d object whose info is being queried.
+            pub object_id: Uuid,
+        }
+
+
         /// Clear the selection
         #[derive(Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
