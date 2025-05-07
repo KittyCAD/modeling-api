@@ -1134,3 +1134,21 @@ impl<T: JsonSchema> JsonSchema for Opposite<T> {
         .into()
     }
 }
+
+/// What strategy (algorithm) should be used for cutting?
+/// Defaults to Automatic.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum CutStrategy {
+    /// Basic fillet cut. This has limitations, like the filletted edges
+    /// can't touch each other. But it's very fast and simple.
+    Basic,
+    /// More complicated fillet cut. It works for more use-cases, like
+    /// edges that touch each other. But it's slower than the Basic method.
+    Csg,
+    /// Tries the Basic method, and if that doesn't work, tries the CSG strategy.
+    #[default]
+    Automatic,
+}

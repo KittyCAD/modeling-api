@@ -25,6 +25,7 @@ define_modeling_cmd_enum! {
                 Angle,
                 ComponentTransform,
                 CutType,
+                CutStrategy,
                 CameraMovement,
                 ExtrudedFaceInfo,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
@@ -841,7 +842,11 @@ define_modeling_cmd_enum! {
             /// Which object is being filletted.
             pub object_id: Uuid,
             /// Which edge you want to fillet.
-            pub edge_id: Uuid,
+            #[serde(default)]
+            pub edge_id: Option<Uuid>,
+            /// Which edges you want to fillet.
+            #[serde(default)]
+            pub edge_ids: Vec<Uuid>,
             /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
             pub radius: LengthUnit,
             /// The maximum acceptable surface gap computed between the filleted surfaces. Must be positive (i.e. greater than zero).
@@ -849,6 +854,18 @@ define_modeling_cmd_enum! {
             /// How to apply the cut.
             #[serde(default)]
             pub cut_type: CutType,
+            /// Which cutting algorithm to use.
+            #[serde(default)]
+            pub strategy: CutStrategy,
+            /// What IDs should the resulting faces have?
+            /// If you've only passed one edge ID, its ID will
+            /// be the command ID used to send this command, and this
+            /// field should be empty.
+            /// If you've passed `n` IDs (to fillet `n` edges), then
+            /// this should be length `n-1`, and the first edge will use
+            /// the command ID used to send this command.
+            #[serde(default)]
+            pub extra_face_ids: Vec<Uuid>,
         }
 
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so
