@@ -6,6 +6,7 @@ impl crate::ModelingCmdOutput for () {}
 define_ok_modeling_cmd_response_enum! {
     /// Output from Modeling API commands.
     pub mod output {
+        use std::collections::HashMap;
 
         use kittycad_modeling_cmds_macros::ModelingCmdOutput;
         use schemars::JsonSchema;
@@ -877,6 +878,40 @@ define_ok_modeling_cmd_response_enum! {
             /// Whether or not this extrusion face is a top/bottom cap face or not.
             /// Note that top/bottom cap faces will not have associated curve IDs.
             pub cap: ExtrusionFaceCapType,
+        }
+
+        /// Struct to contain the edge information of a wall of an extrude/rotate/loft/sweep.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct ComplementaryEdges {
+            /// The opposite edge has no common vertices with the original edge. A wall may not
+            /// have an opposite edge (i.e. a revolve that touches the axis of rotation).
+            pub opposite_id: Option<Uuid>,
+            /// Every edge that shared one common vertex with the original edge.
+            pub adjacent_ids: Vec<Uuid>,
+        }
+
+        /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dGetInfo {
+            /// Details of each face.
+            pub info: SolidInfo,
+        }
+
+        /// Solid info struct (useful for maintaining mappings between edges and faces and
+        /// adjacent/opposite edges).
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SolidInfo {
+            /// UUID for top cap.
+            pub top_cap_id: Option<Uuid>,
+
+            /// UUID for bottom cap.
+            pub bottom_cap_id: Option<Uuid>,
+
+            /// A map containing the common faces for all edges.
+            pub common_edges: HashMap<Uuid, Vec<Uuid>>,
+
+            /// A map containing the adjacent and opposite edge ids of each wall face.
+            pub complementary_edges: HashMap<Uuid, ComplementaryEdges>,
         }
 
         /// The response from the 'SetGridReferencePlane'.
