@@ -484,7 +484,11 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetInfo {
             /// Details of each face.
-            pub faces: Vec<Uuid>,
+            pub edges: Vec<Uuid>,
+            /// List of opposite edges
+            pub opposite_edges: Vec<Uuid>,
+            /// List of adjacent edges
+            pub adjacent_edges: Vec<Uuid>,
         }
         /// The response from the `Solid3dGetAllEdgeFaces` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
