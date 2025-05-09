@@ -1548,6 +1548,8 @@ define_modeling_cmd_enum! {
         pub struct Solid3dGetInfo {
             /// The Solid3d object whose info is being queried.
             pub object_id: Uuid,
+            /// Any edge that lies on the extrusion base path.
+            pub edge_id: Uuid,
         }
 
 

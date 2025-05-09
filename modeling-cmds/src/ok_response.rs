@@ -480,6 +480,12 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_ids: Vec<Uuid>,
         }
 
+        /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dGetInfo {
+            /// Details of each face.
+            pub faces: Vec<Uuid>,
+        }
         /// The response from the `Solid3dGetAllEdgeFaces` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetAllEdgeFaces {
@@ -890,12 +896,6 @@ define_ok_modeling_cmd_response_enum! {
             pub adjacent_ids: Vec<Uuid>,
         }
 
-        /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct Solid3dGetInfo {
-            /// Details of each face.
-            pub info: SolidInfo,
-        }
 
         /// Solid info struct (useful for maintaining mappings between edges and faces and
         /// adjacent/opposite edges).
