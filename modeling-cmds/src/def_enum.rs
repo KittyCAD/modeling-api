@@ -966,6 +966,9 @@ define_modeling_cmd_enum! {
             pub clobber: bool,
             /// If true, the plane will be created but hidden initially.
             pub hide: Option<bool>,
+            // If true, the plane is made a default object. Default objects like axis planes do not get
+            // included in scene bounding box calculations.
+            pub is_default_object: Option<bool>,
         }
 
         /// Set the color of a plane.
