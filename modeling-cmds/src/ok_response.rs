@@ -6,8 +6,6 @@ impl crate::ModelingCmdOutput for () {}
 define_ok_modeling_cmd_response_enum! {
     /// Output from Modeling API commands.
     pub mod output {
-        use std::collections::HashMap;
-
         use kittycad_modeling_cmds_macros::ModelingCmdOutput;
         use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
@@ -483,17 +481,10 @@ define_ok_modeling_cmd_response_enum! {
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetInfo {
-            /// Details of each face.
-            pub edges: Vec<Uuid>,
-            /// List of opposite edges
-            pub opposite_edges: Vec<Uuid>,
-            /// List of adjacent edges
-            pub adjacent_edges: Vec<Uuid>,
-            /// List of opposite faces (two per opposite edge)
-            pub opposite_faces: Vec<Uuid>,
-            /// List of adjacent faces (two per adjacent face)
-            pub adjacent_faces: Vec<Uuid>,
+            /// Details of each edge.
+            pub edges: Vec<EdgeInfo>,
         }
+
         /// The response from the `Solid3dGetAllEdgeFaces` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetAllEdgeFaces {
@@ -905,21 +896,24 @@ define_ok_modeling_cmd_response_enum! {
         }
 
 
-        /// Solid info struct (useful for maintaining mappings between edges and faces and
+        /// Edge info struct (useful for maintaining mappings between edges and faces and
         /// adjacent/opposite edges).
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct SolidInfo {
-            /// UUID for top cap.
-            pub top_cap_id: Option<Uuid>,
-
-            /// UUID for bottom cap.
-            pub bottom_cap_id: Option<Uuid>,
-
-            /// A map containing the common faces for all edges.
-            pub common_edges: HashMap<Uuid, Vec<Uuid>>,
-
-            /// A map containing the adjacent and opposite edge ids of each wall face.
-            pub complementary_edges: HashMap<Uuid, ComplementaryEdges>,
+        pub struct EdgeInfo {
+            /// Edge id.
+            pub edge_id: Uuid,
+            /// Opposite edge id.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub opposite_edge_id: Option<Uuid>,
+            /// Adjacent edge id.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub adjacent_edge_id: Option<Uuid>,
+            /// Opposite face ids.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub opposite_face_ids: Vec<Uuid>,
+            /// Adjacent face ids.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub adjacent_face_ids: Vec<Uuid>,
         }
 
         /// The response from the 'SetGridReferencePlane'.
