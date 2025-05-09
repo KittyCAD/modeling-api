@@ -489,6 +489,10 @@ define_ok_modeling_cmd_response_enum! {
             pub opposite_edges: Vec<Uuid>,
             /// List of adjacent edges
             pub adjacent_edges: Vec<Uuid>,
+            /// List of opposite faces (two per opposite edge)
+            pub opposite_faces: Vec<Uuid>,
+            /// List of adjacent faces (two per adjacent face)
+            pub adjacent_faces: Vec<Uuid>,
         }
         /// The response from the `Solid3dGetAllEdgeFaces` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
