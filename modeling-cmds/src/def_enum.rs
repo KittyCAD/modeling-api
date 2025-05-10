@@ -1545,7 +1545,7 @@ define_modeling_cmd_enum! {
         #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct Solid3dGetInfo {
+        pub struct Solid3dGetAdjancencyInfo {
             /// The Solid3d object whose info is being queried.
             pub object_id: Uuid,
             /// Any edge that lies on the extrusion base path.
