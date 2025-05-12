@@ -481,7 +481,7 @@ define_ok_modeling_cmd_response_enum! {
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
         /// This includes the opposite and adjacent faces and edges.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct Solid3dGetAdjancencyInfo {
+        pub struct Solid3dGetAdjacencyInfo {
             /// Details of each edge.
             pub edges: Vec<AdjacencyInfo>,
         }
