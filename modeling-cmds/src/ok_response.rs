@@ -910,8 +910,9 @@ define_ok_modeling_cmd_response_enum! {
         /// adjacent/opposite edges).
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct AdjacencyInfo {
-            /// Edge id.
-            pub edge_id: Uuid,
+            /// Original edge id and face info.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub original_info: Option<EdgeInfo>,
             /// Opposite edge and face info.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub opposite_info: Option<EdgeInfo>,
