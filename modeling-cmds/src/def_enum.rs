@@ -24,6 +24,7 @@ define_modeling_cmd_enum! {
             shared::{
                 Angle,
                 ComponentTransform,
+                RelativeTo,
                 CutType,
                 CutStrategy,
                 CameraMovement,
@@ -140,6 +141,9 @@ define_modeling_cmd_enum! {
             pub sectional: bool,
             /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
+            /// What is this sweep relative to?
+            #[serde(default)]
+            pub relative_to: RelativeTo,
         }
 
         /// Command for revolving a solid 2d.
