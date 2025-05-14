@@ -1159,9 +1159,9 @@ pub enum CutStrategy {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum RelativeTo {
-    /// Local/relative to a position centered within the XY plane
+    /// Local/relative to a position centered within the plane being sketched on
     #[default]
-    XYPlane,
+    SketchPlane,
     /// Local/relative to the trajectory curve
     TrajectoryCurve,
 }
