@@ -796,9 +796,6 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `EntityClone` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityClone {
-            /// The UUIDs of the entities that were created.
-            #[serde(default, skip_serializing_if = "Vec::is_empty")]
-            pub entity_ids: Vec<Uuid>,
             /// The Face and Edge Ids of the cloned entity.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub face_edge_ids: Vec<FaceEdgeInfo>,
@@ -807,9 +804,6 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `EntityLinearPatternTransform` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityLinearPatternTransform {
-            /// The UUIDs of the entities that were created.
-            #[serde(default, skip_serializing_if = "Vec::is_empty")]
-            pub entity_ids: Vec<Uuid>,
             /// The Face, edge, and entity ids of the patterned entities.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
@@ -818,9 +812,6 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `EntityLinearPattern` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityLinearPattern {
-            /// The UUIDs of the entities that were created.
-            #[serde(default, skip_serializing_if = "Vec::is_empty")]
-            pub entity_ids: Vec<Uuid>,
             /// The Face, edge, and entity ids of the patterned entities.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
@@ -829,9 +820,6 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `EntityCircularPattern` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityCircularPattern {
-            /// The UUIDs of the entities that were created.
-            #[serde(default, skip_serializing_if = "Vec::is_empty")]
-            pub entity_ids: Vec<Uuid>,
             /// The Face, edge, and entity ids of the patterned entities.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
@@ -840,9 +828,6 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `EntityMirror` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityMirror {
-            /// The UUIDs of the entities that were created.
-            #[serde(default, skip_serializing_if = "Vec::is_empty")]
-            pub entity_ids: Vec<Uuid>,
             /// The Face, edge, and entity ids of the patterned entities.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
@@ -851,9 +836,6 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `EntityMirrorAcrossEdge` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityMirrorAcrossEdge {
-            /// The UUIDs of the entities that were created.
-            #[serde(default, skip_serializing_if = "Vec::is_empty")]
-            pub entity_ids: Vec<Uuid>,
             /// The Face, edge, and entity ids of the patterned entities.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
