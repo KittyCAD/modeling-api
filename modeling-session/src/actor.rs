@@ -124,6 +124,7 @@ pub async fn start(
 /// Given the text from a WebSocket, deserialize its JSON.
 /// Returns OK if the WebSocket's JSON represents a successful response.
 /// Returns an error if the WebSocket's JSON represented a failure response.
+#[allow(clippy::result_large_err)]
 fn decode_websocket_text(text: &str) -> Result<WebSocketResponse> {
     let resp = serde_json::from_str(text)?;
     Ok(resp)
