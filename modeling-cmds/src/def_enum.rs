@@ -1680,7 +1680,16 @@ define_modeling_cmd_enum! {
             /// If a face, it must be planar to succeed.
             pub reference_id: Uuid,
         }
-
+        /// Camera drag ended
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct SetGridScale {
+            /// Distance between grid lines represents this much distance.
+            pub value: f32,
+            /// Which units the `value` field uses.
+            pub units: units::UnitLength,
+        }
     }
 }
 
