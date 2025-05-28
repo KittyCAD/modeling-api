@@ -340,6 +340,29 @@ pub enum PathSegment {
         ///from the end of the involute, otherwise it will start from that start.
         reverse: bool,
     },
+    ///Adds an elliptical arc segment.
+    Ellipse {
+        /// The center point of the ellipse.
+        center: Point3d<LengthUnit>,
+        /// Major radius of the ellipse (along the x axis).
+        major_radius: LengthUnit,
+        /// Minor radius of the ellipse (along the y axis).
+        minor_radius: LengthUnit,
+        /// Start of the path along the perimeter of the ellipse.
+        start_angle: Angle,
+        /// End of the path along the perimeter of the ellipse.
+        end_angle: Angle,
+    },
+    ///Adds an elliptical arc segment from the current position that goes through the given
+    ///interior point and ends at the given end point.
+    EllipseTo {
+        /// Interior point of the ellispe.
+        interior: Point3d<LengthUnit>,
+        /// End point of the ellipse.
+        end: Point3d<LengthUnit>,
+        /// Whether or not the interior and end po are relative to the previous path position.
+        relative: bool,
+    }
 }
 
 /// An angle, with a specific unit.
