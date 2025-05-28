@@ -343,7 +343,7 @@ pub enum PathSegment {
     ///Adds an elliptical arc segment.
     Ellipse {
         /// The center point of the ellipse.
-        center: Point3d<LengthUnit>,
+        center: Point2d<LengthUnit>,
         /// Major radius of the ellipse (along the x axis).
         major_radius: LengthUnit,
         /// Minor radius of the ellipse (along the y axis).
@@ -362,7 +362,7 @@ pub enum PathSegment {
         end: Point3d<LengthUnit>,
         /// Whether or not the interior and end po are relative to the previous path position.
         relative: bool,
-    }
+    },
 }
 
 /// An angle, with a specific unit.
