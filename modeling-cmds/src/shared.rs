@@ -1175,3 +1175,16 @@ pub enum CutStrategy {
     #[default]
     Automatic,
 }
+
+/// What is the given geometry relative to?
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum RelativeTo {
+    /// Local/relative to a position centered within the plane being sketched on
+    #[default]
+    SketchPlane,
+    /// Local/relative to the trajectory curve
+    TrajectoryCurve,
+}
