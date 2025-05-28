@@ -1680,7 +1680,8 @@ define_modeling_cmd_enum! {
             /// If a face, it must be planar to succeed.
             pub reference_id: Uuid,
         }
-        /// Camera drag ended
+
+        /// Set the scale of the grid lines in the video feed.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1689,6 +1690,13 @@ define_modeling_cmd_enum! {
             pub value: f32,
             /// Which units the `value` field uses.
             pub units: units::UnitLength,
+        }
+        /// Set the grid lines to auto scale. The grid will get larger the further you zoom out,
+        /// and smaller the more you zoom in.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct SetGridAutoScale {
         }
     }
 }

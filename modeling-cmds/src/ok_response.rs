@@ -944,5 +944,8 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SetGridScale {}
 
+        /// The response from the 'SetGridScale'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetGridAutoScale {}
     }
 }
