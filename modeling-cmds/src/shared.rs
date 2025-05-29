@@ -360,7 +360,22 @@ pub enum PathSegment {
         interior: Point3d<LengthUnit>,
         /// End point of the ellipse.
         end: Point3d<LengthUnit>,
-        /// Whether or not the interior and end po are relative to the previous path position.
+        /// Whether or not the interior and end points are relative to the previous path position.
+        relative: bool,
+    },
+
+    ///Adds a generic conic section specfied by the end point, interior point and tangents at the
+    ///start and end of the section.
+    ConicTo {
+        /// Interior point that lies on the conic.
+        interior: Point2d<LengthUnit>,
+        /// End point of the conic.
+        end: Point2d<LengthUnit>,
+        /// Tangent at the start of the conic.
+        start_tangent: Point2d<LengthUnit>,
+        /// Tangent at the end of the conic.
+        end_tangent: Point2d<LengthUnit>,
+        /// Whether or not the interior and end points are relative to the previous path position.
         relative: bool,
     },
 }
