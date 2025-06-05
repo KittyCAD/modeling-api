@@ -940,5 +940,12 @@ define_ok_modeling_cmd_response_enum! {
             pub extra_solid_ids: Vec<Uuid>,
         }
 
+        /// The response from the 'SetGridScale'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetGridScale {}
+
+        /// The response from the 'SetGridScale'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetGridAutoScale {}
     }
 }
