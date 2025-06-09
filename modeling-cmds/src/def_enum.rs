@@ -31,7 +31,7 @@ define_modeling_cmd_enum! {
                 ExtrudedFaceInfo,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
-                Point2d, Point3d, SceneSelectionType, SceneToolType, Opposite,
+                Point2d, Point3d, SceneSelectionType, SceneToolType, Opposite, BoundingBox
             },
             units,
         };
@@ -640,6 +640,15 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SceneClearAll {}
+
+        /// Gets the scene's bounds
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct GetSceneBounds {
+            /// The axis aligned bounding box of the scene
+            pub aabb: BoundingBox,
+        }
 
         /// Replaces current selection with these entities (by UUID).
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]

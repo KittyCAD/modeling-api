@@ -1165,3 +1165,22 @@ pub enum RelativeTo {
     /// Local/relative to the trajectory curve
     TrajectoryCurve,
 }
+
+
+#[allow(missing_docs)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct BoundingBox {
+    pub min: [Point3d; 3],
+    pub max: [Point3d; 3],
+}
+
+impl Default for BoundingBox {
+    fn default() -> Self {
+        BoundingBox {
+            min: Default::default(),
+            max: Default::default(),
+        }
+    }
+}

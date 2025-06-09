@@ -12,6 +12,7 @@ define_ok_modeling_cmd_response_enum! {
         use uuid::Uuid;
         use crate::shared::CameraSettings;
         use crate::shared::CameraViewState;
+        use crate::shared::BoundingBox;
 
         use crate::{self as kittycad_modeling_cmds};
         use crate::{
@@ -96,6 +97,13 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `SceneClearAll` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SceneClearAll {
+        }
+
+        /// The response from the `GetSceneBounds` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct GetSceneBounds {
+            /// The axis aligned bounding box of the scene
+            pub aabb: BoundingBox,
         }
 
         /// The response from the `SelectReplace` endpoint.
