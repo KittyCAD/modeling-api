@@ -150,9 +150,9 @@ define_modeling_cmd_enum! {
             pub center_2d: Point2d<f64>,
             /// Total rotation of the section
             pub total_rotation_angle: Angle,
-            ///Section interval (converted to whole number degrees and bounded between 4° and 90°)
+            ///Angle step interval (converted to whole number degrees and bounded between 4° and 90°)
             #[serde(default = "default_twist_extrude_section_interval")]
-            pub section_interval: Angle,
+            pub angle_step_size: Angle,
             ///The twisted surface loft tolerance
             pub tolerance: LengthUnit,
         }
