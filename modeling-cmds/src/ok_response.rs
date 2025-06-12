@@ -49,6 +49,11 @@ define_ok_modeling_cmd_response_enum! {
         pub struct Extrude {
         }
 
+        /// The response from the `TwistExtrude` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct TwistExtrude {
+        }
+
         /// The response from the `Sweep` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Sweep {
