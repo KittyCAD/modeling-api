@@ -125,6 +125,38 @@ define_modeling_cmd_enum! {
             pub opposite: Opposite<LengthUnit>,
         }
 
+        fn default_twist_extrude_section_interval() -> Angle {
+            Angle::from_degrees(15.0)
+        }
+
+        /// Command for twist extruding a solid 2d.
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct TwistExtrude {
+            /// Which sketch to extrude.
+            /// Must be a closed 2D solid.
+            pub target: ModelingCmdId,
+            /// How far off the plane to extrude
+            pub distance: LengthUnit,
+            /// Which IDs should the new faces have?
+            /// If this isn't given, the engine will generate IDs.
+            #[serde(default)]
+            pub faces: Option<ExtrudedFaceInfo>,
+            /// Center to twist about (relative to 2D sketch)
+            #[serde(default)]
+            pub center_2d: Point2d<f64>,
+            /// Total rotation of the section
+            pub total_rotation_angle: Angle,
+            ///Angle step interval (converted to whole number degrees and bounded between 4° and 90°)
+            #[serde(default = "default_twist_extrude_section_interval")]
+            pub angle_step_size: Angle,
+            ///The twisted surface loft tolerance
+            pub tolerance: LengthUnit,
+        }
+
         /// Extrude the object along a path.
         #[derive(
             Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
