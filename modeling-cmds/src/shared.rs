@@ -1100,6 +1100,8 @@ pub struct ComponentTransform {
     pub rotate_angle_axis: Option<TransformBy<Point4d<f64>>>,
     /// Scale component of the transform.
     pub scale: Option<TransformBy<Point3d<f64>>>,
+    /// Origin of the rotation.
+    pub origin: Option<TransformBy<Point3d<LengthUnit>>>,
 }
 
 ///If bidirectional or symmetric operations are needed this enum encapsulates the required
