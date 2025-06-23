@@ -1100,7 +1100,8 @@ pub struct ComponentTransform {
     pub rotate_angle_axis: Option<TransformBy<Point4d<f64>>>,
     /// Scale component of the transform.
     pub scale: Option<TransformBy<Point3d<f64>>>,
-    /// Origin of the rotation.
+    /// Origin of the rotation. This will default to the world origin, [0, 0, 0].
+    #[serde(default)]
     pub origin: Option<TransformBy<Point3d<LengthUnit>>>,
 }
 
