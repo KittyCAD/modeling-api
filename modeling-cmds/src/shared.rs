@@ -1021,10 +1021,15 @@ impl ExtrudedFaceInfo {
 
 #[cfg(test)]
 mod tests {
+    use schemars::schema_for;
+
     use super::*;
 
     #[test]
     fn check_transformby_deprecated() {
+        let s = schema_for!(TransformBy<Point3d>);
+        let pretty = serde_json::to_string_pretty(&s).unwrap();
+        println!("{pretty}");
         let tests: Vec<(OriginType, TransformBy<Point3d>)> = vec![
             // get_origin should fall back to `is_local`, because `origin` is none.
             (
@@ -1096,7 +1101,8 @@ mod tests {
 }
 
 /// How a property of an object should be transformed.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
+#[schemars(rename = "TransformByFor{T}")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct TransformBy<T> {
@@ -1135,56 +1141,6 @@ impl<T> TransformBy<T> {
         } else {
             OriginType::Global
         }
-    }
-}
-
-impl<T: JsonSchema> JsonSchema for TransformBy<T> {
-    fn schema_name() -> String {
-        format!("TransformByFor{}", T::schema_name())
-    }
-
-    fn schema_id() -> std::borrow::Cow<'static, str> {
-        std::borrow::Cow::Owned(format!("{}::TransformBy<{}>", module_path!(), T::schema_id()))
-    }
-
-    fn json_schema(generator: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
-        // ATTENTION PROGRAMMERS:
-        // You will need to manually update this in the future if you ever change its JSON schema (by adding/deleting/changing a field, or maybe through some serde annotations).
-        // The way I originally generated this was to copy TransformBy's struct definition, change the name to something like AdamsFakeStruct, and **derive JsonSchema** instead of manually implementing it.
-        // Then I used cargo-expand (via VSCode, use "expand macro recursively" feature) to look at what that
-        // derive did. Then I copied its output into here.
-        schemars::_private::metadata::add_description(
-            {
-                let mut schema_object = schemars::schema::SchemaObject {
-                    instance_type: Some(schemars::schema::InstanceType::Object.into()),
-                    ..Default::default()
-                };
-                let object_validation = schema_object.object();
-                {
-                    schemars::_private::insert_object_property::<T>(
-                        object_validation,
-                        "property",
-                        false,
-                        false,
-                        schemars::_private::metadata::add_description(
-                            generator.subschema_for::<T>(),
-                            "The scale, or rotation, or translation.",
-                        ),
-                    );
-                }
-                {
-                    schemars::_private::insert_object_property:: <bool>(object_validation,"set",false,false,schemars::_private::metadata::add_description(generator.subschema_for:: <bool>(),"If true, overwrite the previous value with this. If false, the previous value will be modified. E.g. when translating, `set=true` will set a new location, and `set=false` will translate the current location by the given X/Y/Z."));
-                }
-                {
-                    schemars::_private::insert_object_property:: <bool>(object_validation,"is_local",false,false,schemars::_private::metadata::add_deprecated(schemars::_private::metadata::add_description(generator.subschema_for:: <bool>(),"If true, the transform is applied in local space. If false, the transform is applied in global space."),true));
-                }
-                {
-                    schemars::_private::insert_object_property:: <Option<OriginType> >(object_validation,"origin",true,false,schemars::_private::metadata::add_default(schemars::_private::metadata::add_description(generator.subschema_for:: <Option<OriginType> >(),"What to use as the origin for the transformation. If not provided, will fall back to local or global origin, depending on whatever the `is_local` field was set to."),Some(<Option<OriginType> > ::default()).and_then(|d|schemars::_schemars_maybe_to_value!(d))));
-                }
-                schemars::schema::Schema::Object(schema_object)
-            },
-            "How a property of an object should be transformed.",
-        )
     }
 }
 
