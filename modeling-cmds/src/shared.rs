@@ -1024,6 +1024,22 @@ mod tests {
     use super::*;
 
     #[test]
+    fn is_local_deser() {
+        let tests = [
+            ("true", IsLocal::Local(true)),
+            ("false", IsLocal::Local(false)),
+            (
+                r#"{"x": 1.0,"y":2.0,"z":3.0}"#,
+                IsLocal::Custom(Point3d { x: 1.0, y: 2.0, z: 3.0 }),
+            ),
+        ];
+        for (json_str, expected) in tests {
+            let actual: IsLocal = serde_json::from_str(json_str).unwrap();
+            assert_eq!(actual, expected);
+        }
+    }
+
+    #[test]
     fn test_angle_comparison() {
         let a = Angle::from_degrees(90.0);
         assert!(a < Angle::from_degrees(91.0));
@@ -1062,7 +1078,20 @@ pub struct TransformBy<T> {
     pub set: bool,
     /// If true, the transform is applied in local space.
     /// If false, the transform is applied in global space.
-    pub is_local: bool,
+    pub is_local: IsLocal,
+}
+
+/// Describes the origin of a transformation.
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[serde(untagged)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum IsLocal {
+    /// If true, the transform is applied in local space.
+    /// If false, the transform is applied in global space.
+    Local(bool),
+    /// Origin is at this given point.
+    Custom(Point3d<f64>),
 }
 
 impl<T: JsonSchema> JsonSchema for TransformBy<T> {
@@ -1100,9 +1129,6 @@ pub struct ComponentTransform {
     pub rotate_angle_axis: Option<TransformBy<Point4d<f64>>>,
     /// Scale component of the transform.
     pub scale: Option<TransformBy<Point3d<f64>>>,
-    /// Origin of the rotation. This will default to the world origin, [0, 0, 0].
-    #[serde(default)]
-    pub origin: Option<TransformBy<Point3d<LengthUnit>>>,
 }
 
 ///If bidirectional or symmetric operations are needed this enum encapsulates the required
