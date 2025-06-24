@@ -1082,7 +1082,7 @@ pub struct TransformBy<T> {
 }
 
 /// Describes the origin of a transformation.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
 #[serde(untagged)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1103,12 +1103,55 @@ impl<T: JsonSchema> JsonSchema for TransformBy<T> {
         std::borrow::Cow::Owned(format!("{}::TransformBy<{}>", module_path!(), T::schema_id()))
     }
 
-    fn json_schema(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
-        SchemaObject {
-            instance_type: Some(schemars::schema::InstanceType::String.into()),
-            ..Default::default()
-        }
-        .into()
+    fn json_schema(generator: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+        // ATTENTION PROGRAMMERS:
+        // You will need to manually update this in the future if you ever change its JSON schema (by adding/deleting/changing a field, or maybe through some serde annotations).
+        // The way I originally generated this was to copy TransformBy's struct definition, change the name to something like AdamsFakeStruct, and **derive JsonSchema** instead of manually implementing it.
+        // Then I used cargo-expand (via VSCode, use "expand macro recursively" feature) to look at what that
+        // derive did. Then I copied its output into here.
+        schemars::_private::metadata::add_description(
+            {
+                let mut schema_object = schemars::schema::SchemaObject {
+                    instance_type: Some(schemars::schema::InstanceType::Object.into()),
+                    ..Default::default()
+                };
+                let object_validation = schema_object.object();
+                {
+                    schemars::_private::insert_object_property::<Point3d>(
+                        object_validation,
+                        "property",
+                        false,
+                        false,
+                        schemars::_private::metadata::add_description(
+                            generator.subschema_for::<Point3d>(),
+                            "The scale, or rotation, or translation.",
+                        ),
+                    );
+                }
+                {
+                    let desc= "If true, overwrite the previous value with this. If false, the previous value will be modified. E.g. when translating, `set=true` will set a new location, and `set=false` will translate the current location by the given X/Y/Z.";
+                    schemars::_private::insert_object_property::<bool>(
+                        object_validation,
+                        "set",
+                        false,
+                        false,
+                        schemars::_private::metadata::add_description(generator.subschema_for::<bool>(), desc),
+                    );
+                }
+                {
+                    let desc = "If true, the transform is applied in local space. If false, the transform is applied in global space.";
+                    schemars::_private::insert_object_property::<IsLocal>(
+                        object_validation,
+                        "is_local",
+                        false,
+                        false,
+                        schemars::_private::metadata::add_description(generator.subschema_for::<IsLocal>(), desc),
+                    );
+                }
+                schemars::schema::Schema::Object(schema_object)
+            },
+            "How a property of an object should be transformed.",
+        )
     }
 }
 
