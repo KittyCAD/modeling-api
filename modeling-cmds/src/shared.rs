@@ -1024,17 +1024,48 @@ mod tests {
     use super::*;
 
     #[test]
-    fn is_local_deser() {
-        let tests = [
-            ("true", IsLocal::Local(true)),
-            ("false", IsLocal::Local(false)),
+    fn check_transformby_deprecated() {
+        let tests: Vec<(OriginType, TransformBy<Point3d>)> = vec![
+            // get_origin should fall back to `is_local`, because `origin` is none.
             (
-                r#"{"x": 1.0,"y":2.0,"z":3.0}"#,
-                IsLocal::Custom(Point3d { x: 1.0, y: 2.0, z: 3.0 }),
+                OriginType::Local,
+                TransformBy {
+                    property: Point3d::default(),
+                    set: true,
+                    #[allow(deprecated)] // still need to test deprecated code
+                    is_local: true,
+                    origin: None,
+                },
+            ),
+            // get_origin should ignore `is_local`, because `origin` is given.
+            // test the case where origin is not custom
+            (
+                OriginType::Local,
+                TransformBy {
+                    property: Point3d::default(),
+                    set: true,
+                    #[allow(deprecated)] // still need to test deprecated code
+                    is_local: false,
+                    origin: Some(OriginType::Local),
+                },
+            ),
+            // get_origin should ignore `is_local`, because `origin` is given.
+            // test the case where origin is custom.
+            (
+                OriginType::Custom {
+                    origin: Point3d::uniform(2.0),
+                },
+                TransformBy {
+                    property: Point3d::default(),
+                    set: true,
+                    #[allow(deprecated)] // still need to test deprecated code
+                    is_local: false,
+                    origin: Some(OriginType::Custom{origin: Point3d::uniform(2.0)}),
+                },
             ),
         ];
-        for (json_str, expected) in tests {
-            let actual: IsLocal = serde_json::from_str(json_str).unwrap();
+        for (expected, input) in tests {
+            let actual = input.get_origin();
             assert_eq!(actual, expected);
         }
     }
@@ -1078,20 +1109,33 @@ pub struct TransformBy<T> {
     pub set: bool,
     /// If true, the transform is applied in local space.
     /// If false, the transform is applied in global space.
-    pub is_local: IsLocal,
+    #[deprecated(note = "Use the `origin` field instead.")]
+    pub is_local: bool,
+    /// What to use as the origin for the transformation.
+    /// If not provided, will fall back to local or global origin, depending on
+    /// whatever the `is_local` field was set to.
+    #[serde(default)]
+    pub origin: Option<OriginType>,
 }
 
-/// Describes the origin of a transformation.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
-#[serde(untagged)]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub enum IsLocal {
-    /// If true, the transform is applied in local space.
-    /// If false, the transform is applied in global space.
-    Local(bool),
-    /// Origin is at this given point.
-    Custom(Point3d<f64>),
+impl<T> TransformBy<T> {
+    /// Get the origin of this transformation.
+    /// Reads from the `origin` field if it's set, otherwise
+    /// falls back to the `is_local` field.
+    pub fn get_origin(&self) -> OriginType {
+        if let Some(origin) = self.origin {
+            return origin;
+        }
+        #[expect(
+            deprecated,
+            reason = "Must fall back to the deprecated field if the API client isn't using the new field yet."
+        )]
+        if self.is_local {
+            OriginType::Local
+        } else {
+            OriginType::Global
+        }
+    }
 }
 
 impl<T: JsonSchema> JsonSchema for TransformBy<T> {
@@ -1117,36 +1161,25 @@ impl<T: JsonSchema> JsonSchema for TransformBy<T> {
                 };
                 let object_validation = schema_object.object();
                 {
-                    schemars::_private::insert_object_property::<Point3d>(
+                    schemars::_private::insert_object_property::<T>(
                         object_validation,
                         "property",
                         false,
                         false,
                         schemars::_private::metadata::add_description(
-                            generator.subschema_for::<Point3d>(),
+                            generator.subschema_for::<T>(),
                             "The scale, or rotation, or translation.",
                         ),
                     );
                 }
                 {
-                    let desc= "If true, overwrite the previous value with this. If false, the previous value will be modified. E.g. when translating, `set=true` will set a new location, and `set=false` will translate the current location by the given X/Y/Z.";
-                    schemars::_private::insert_object_property::<bool>(
-                        object_validation,
-                        "set",
-                        false,
-                        false,
-                        schemars::_private::metadata::add_description(generator.subschema_for::<bool>(), desc),
-                    );
+                    schemars::_private::insert_object_property:: <bool>(object_validation,"set",false,false,schemars::_private::metadata::add_description(generator.subschema_for:: <bool>(),"If true, overwrite the previous value with this. If false, the previous value will be modified. E.g. when translating, `set=true` will set a new location, and `set=false` will translate the current location by the given X/Y/Z."));
                 }
                 {
-                    let desc = "If true, the transform is applied in local space. If false, the transform is applied in global space.";
-                    schemars::_private::insert_object_property::<IsLocal>(
-                        object_validation,
-                        "is_local",
-                        false,
-                        false,
-                        schemars::_private::metadata::add_description(generator.subschema_for::<IsLocal>(), desc),
-                    );
+                    schemars::_private::insert_object_property:: <bool>(object_validation,"is_local",false,false,schemars::_private::metadata::add_deprecated(schemars::_private::metadata::add_description(generator.subschema_for:: <bool>(),"If true, the transform is applied in local space. If false, the transform is applied in global space."),true));
+                }
+                {
+                    schemars::_private::insert_object_property:: <Option<OriginType> >(object_validation,"origin",true,false,schemars::_private::metadata::add_default(schemars::_private::metadata::add_description(generator.subschema_for:: <Option<OriginType> >(),"What to use as the origin for the transformation. If not provided, will fall back to local or global origin, depending on whatever the `is_local` field was set to."),Some(<Option<OriginType> > ::default()).and_then(|d|schemars::_schemars_maybe_to_value!(d))));
                 }
                 schemars::schema::Schema::Object(schema_object)
             },
