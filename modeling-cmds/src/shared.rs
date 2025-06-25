@@ -1021,7 +1021,59 @@ impl ExtrudedFaceInfo {
 
 #[cfg(test)]
 mod tests {
+    use schemars::schema_for;
+
     use super::*;
+
+    #[test]
+    fn check_transformby_deprecated() {
+        let s = schema_for!(TransformBy<Point3d>);
+        let pretty = serde_json::to_string_pretty(&s).unwrap();
+        println!("{pretty}");
+        let tests: Vec<(OriginType, TransformBy<Point3d>)> = vec![
+            // get_origin should fall back to `is_local`, because `origin` is none.
+            (
+                OriginType::Local,
+                TransformBy {
+                    property: Point3d::default(),
+                    set: true,
+                    #[allow(deprecated)] // still need to test deprecated code
+                    is_local: true,
+                    origin: None,
+                },
+            ),
+            // get_origin should ignore `is_local`, because `origin` is given.
+            // test the case where origin is not custom
+            (
+                OriginType::Local,
+                TransformBy {
+                    property: Point3d::default(),
+                    set: true,
+                    #[allow(deprecated)] // still need to test deprecated code
+                    is_local: false,
+                    origin: Some(OriginType::Local),
+                },
+            ),
+            // get_origin should ignore `is_local`, because `origin` is given.
+            // test the case where origin is custom.
+            (
+                OriginType::Custom {
+                    origin: Point3d::uniform(2.0),
+                },
+                TransformBy {
+                    property: Point3d::default(),
+                    set: true,
+                    #[allow(deprecated)] // still need to test deprecated code
+                    is_local: false,
+                    origin: Some(OriginType::Custom{origin: Point3d::uniform(2.0)}),
+                },
+            ),
+        ];
+        for (expected, input) in tests {
+            let actual = input.get_origin();
+            assert_eq!(actual, expected);
+        }
+    }
 
     #[test]
     fn test_angle_comparison() {
@@ -1049,7 +1101,8 @@ mod tests {
 }
 
 /// How a property of an object should be transformed.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
+#[schemars(rename = "TransformByFor{T}")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct TransformBy<T> {
@@ -1062,24 +1115,32 @@ pub struct TransformBy<T> {
     pub set: bool,
     /// If true, the transform is applied in local space.
     /// If false, the transform is applied in global space.
+    #[deprecated(note = "Use the `origin` field instead.")]
     pub is_local: bool,
+    /// What to use as the origin for the transformation.
+    /// If not provided, will fall back to local or global origin, depending on
+    /// whatever the `is_local` field was set to.
+    #[serde(default)]
+    pub origin: Option<OriginType>,
 }
 
-impl<T: JsonSchema> JsonSchema for TransformBy<T> {
-    fn schema_name() -> String {
-        format!("TransformByFor{}", T::schema_name())
-    }
-
-    fn schema_id() -> std::borrow::Cow<'static, str> {
-        std::borrow::Cow::Owned(format!("{}::TransformBy<{}>", module_path!(), T::schema_id()))
-    }
-
-    fn json_schema(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
-        SchemaObject {
-            instance_type: Some(schemars::schema::InstanceType::String.into()),
-            ..Default::default()
+impl<T> TransformBy<T> {
+    /// Get the origin of this transformation.
+    /// Reads from the `origin` field if it's set, otherwise
+    /// falls back to the `is_local` field.
+    pub fn get_origin(&self) -> OriginType {
+        if let Some(origin) = self.origin {
+            return origin;
         }
-        .into()
+        #[expect(
+            deprecated,
+            reason = "Must fall back to the deprecated field if the API client isn't using the new field yet."
+        )]
+        if self.is_local {
+            OriginType::Local
+        } else {
+            OriginType::Global
+        }
     }
 }
 
