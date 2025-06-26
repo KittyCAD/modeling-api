@@ -27,7 +27,7 @@ fn criterion_benchmark(c: &mut Criterion) {
             };
 
             /// Mike says this usually looks nice.
-            fn default_animation_seconds() -> f32 {
+            fn default_animation_seconds() -> f64 {
                 0.4
             }
 
@@ -660,7 +660,7 @@ fn criterion_benchmark(c: &mut Criterion) {
                 pub fade_in: bool,
                 /// How many seconds the animation should take.
                 #[serde(default = "default_animation_seconds")]
-                pub duration_seconds: f32,
+                pub duration_seconds: f64,
             }
 
             /// Make a new plane

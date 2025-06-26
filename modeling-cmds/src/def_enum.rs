@@ -37,7 +37,7 @@ define_modeling_cmd_enum! {
         };
 
         /// Mike says this usually looks nice.
-        fn default_animation_seconds() -> f32 {
+        fn default_animation_seconds() -> f64 {
             0.4
         }
 
@@ -980,7 +980,7 @@ define_modeling_cmd_enum! {
             pub fade_in: bool,
             /// How many seconds the animation should take.
             #[serde(default = "default_animation_seconds")]
-            pub duration_seconds: f32,
+            pub duration_seconds: f64,
         }
 
         /// Make a new plane
