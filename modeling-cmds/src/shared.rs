@@ -353,17 +353,6 @@ pub enum PathSegment {
         /// End of the path along the perimeter of the ellipse.
         end_angle: Angle,
     },
-    ///Adds an elliptical arc segment from the current position that goes through the given
-    ///interior point and ends at the given end point.
-    EllipseTo {
-        /// Interior point of the ellispe.
-        interior: Point3d<LengthUnit>,
-        /// End point of the ellipse.
-        end: Point3d<LengthUnit>,
-        /// Whether or not the interior and end points are relative to the previous path position.
-        relative: bool,
-    },
-
     ///Adds a generic conic section specfied by the end point, interior point and tangents at the
     ///start and end of the section.
     ConicTo {
