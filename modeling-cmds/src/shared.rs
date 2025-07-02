@@ -353,7 +353,7 @@ pub enum PathSegment {
         /// End of the path along the perimeter of the ellipse.
         end_angle: Angle,
     },
-    ///Adds a generic conic section specfied by the end point, interior point and tangents at the
+    ///Adds a generic conic section specified by the end point, interior point and tangents at the
     ///start and end of the section.
     ConicTo {
         /// Interior point that lies on the conic.
