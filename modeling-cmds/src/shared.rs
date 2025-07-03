@@ -344,9 +344,10 @@ pub enum PathSegment {
     Ellipse {
         /// The center point of the ellipse.
         center: Point2d<LengthUnit>,
-        /// Major radius of the ellipse (along the x axis).
-        major_radius: LengthUnit,
-        /// Minor radius of the ellipse (along the y axis).
+        /// Start point of the ellipse, the magnitude of the point from the origin will be the
+        /// major radius of the ellipse.
+        major_radius: Point2d<LengthUnit>,
+        /// Minor radius of the ellipse (perpendicular to the major radius).
         minor_radius: LengthUnit,
         /// Start of the path along the perimeter of the ellipse.
         start_angle: Angle,
