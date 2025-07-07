@@ -741,7 +741,7 @@ pub enum ExtrudeMethod {
     /// This extrusion will be part of object it is extruded from. This will result in one object
     /// after the operation.
     #[default]
-    Add,
+    Merge,
 }
 
 /// IDs for the extruded faces.
