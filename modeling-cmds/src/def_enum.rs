@@ -123,7 +123,8 @@ define_modeling_cmd_enum! {
             /// If so, this specifies its distance.
             #[serde(default)]
             pub opposite: Opposite<LengthUnit>,
-            /// Should the extrusion create a new object or be part of the existing object.
+            /// Should the extrusion create a new object or be part of the existing object. If a
+            /// new object is created, the command id will be the id of the newly created object.
             #[serde(default)]
             pub extrude_method: ExtrudeMethod,
         }

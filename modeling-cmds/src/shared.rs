@@ -736,7 +736,7 @@ impl From<EngineErrorCode> for http::StatusCode {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum ExtrudeMethod {
     /// Create a new object that is not connected to the object it is extruded from. This will
-    /// result in two objects after the opreration.
+    /// result in two objects after the operation.
     New,
     /// This extrusion will be part of object it is extruded from. This will result in one object
     /// after the operation.
