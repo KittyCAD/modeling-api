@@ -921,7 +921,7 @@ define_modeling_cmd_enum! {
             /// Which face is being queried.
             pub object_id: Uuid,
 
-            /// The 2D paramter-space u,v position to evaluate the surface at
+            /// The 2D parameter-space u,v position to evaluate the surface at
             pub uv: Point2d<f64>,
         }
 
@@ -942,7 +942,7 @@ define_modeling_cmd_enum! {
             /// Which face is being queried.
             pub object_id: Uuid,
 
-            /// The 2D paramter-space u,v position to evaluate the surface at
+            /// The 2D parameter-space u,v position to evaluate the surface at
             pub uv: Point2d<f64>,
         }
 
