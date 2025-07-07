@@ -1,0 +1,15 @@
+[files]
+extend-exclude = [
+  "**/target",
+]
+
+
+[default.extend-words]
+metalness = "metalness" # appearance API
+typ = "typ" # used to declare a variable named 'type' which is a reserved keyword in Rust
+"colinear" = "colinear" # some engine shit, kidding
+
+[default]
+extend-ignore-identifiers-re = [
+    "\\dnd", # e.g. 2nd
+]
