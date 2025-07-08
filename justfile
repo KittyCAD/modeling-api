@@ -10,7 +10,7 @@ check-wasm:
     cargo check -p kittycad-modeling-cmds --target wasm32-unknown-unknown --features websocket
 
 check-typos:
-    codespell --config .codespellrc
+    typos
 
 test:
     cargo nextest run --all-features
