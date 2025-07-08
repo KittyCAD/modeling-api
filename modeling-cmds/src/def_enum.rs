@@ -28,7 +28,7 @@ define_modeling_cmd_enum! {
                 CutType,
                 CutStrategy,
                 CameraMovement,
-                ExtrudedFaceInfo,
+                ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, SceneSelectionType, SceneToolType, Opposite,
@@ -123,6 +123,10 @@ define_modeling_cmd_enum! {
             /// If so, this specifies its distance.
             #[serde(default)]
             pub opposite: Opposite<LengthUnit>,
+            /// Should the extrusion create a new object or be part of the existing object. If a
+            /// new object is created, the command id will be the id of the newly created object.
+            #[serde(default)]
+            pub extrude_method: ExtrudeMethod,
         }
 
         fn default_twist_extrude_section_interval() -> Angle {

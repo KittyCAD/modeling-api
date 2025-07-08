@@ -728,6 +728,22 @@ impl From<EngineErrorCode> for http::StatusCode {
     }
 }
 
+/// Extrusion method determining if the extrusion will be part of the existing object or an
+/// entirely new object.
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum ExtrudeMethod {
+    /// Create a new object that is not connected to the object it is extruded from. This will
+    /// result in two objects after the operation.
+    New,
+    /// This extrusion will be part of object it is extruded from. This will result in one object
+    /// after the operation.
+    #[default]
+    Merge,
+}
+
 /// IDs for the extruded faces.
 #[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]

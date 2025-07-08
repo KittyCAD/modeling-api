@@ -109,6 +109,7 @@ async fn main() -> Result<()> {
                 target: path,
                 faces: None,
                 opposite: Default::default(),
+                extrude_method: Default::default(),
             }
             .into(),
         )

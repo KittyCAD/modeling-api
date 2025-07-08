@@ -139,6 +139,7 @@ async fn main() -> Result<()> {
             target: path,
             faces: None,
             opposite: Default::default(),
+            extrude_method: Default::default(),
         }),
         cmd_id: random_id(),
     });
