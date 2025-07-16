@@ -654,6 +654,9 @@ define_ok_modeling_cmd_response_enum! {
 
             /// plane's local z-axis (normal)
             pub z_axis: Option<Point3d<f64>>,
+
+            /// plane's ID
+            pub plane_id: Option<Uuid>,
         }
 
         /// The 3D position on the surface that was evaluated
