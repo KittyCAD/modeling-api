@@ -914,6 +914,17 @@ define_modeling_cmd_enum! {
         pub struct FaceIsPlanar {
             /// Which face is being queried.
             pub object_id: Uuid,
+            /// Whether to correct a bug around origin position for top/bottom faces.
+            /// You should really always set this. The only reason it's not a default is to allow
+            /// old clients who relied on the buggy behaviour to continue working.
+            ///
+            /// Specifically, the bug is that for top and bottom faces (caps), the plane's origin is being set
+            /// to the origin of the plane that face is sketched on. But for side faces (walls), the origin
+            /// is being set to the center of that face. This means if you sketch a cube at (40, 40, 40), the
+            /// center of the side faces will be at 40, 40 in the scene's coordinate system,
+            /// but the center of the top/bottom faces will be at 0, 0.
+            #[serde(default)]
+            pub correct_origin_bug: bool,
         }
 
         /// Determines a position on a brep face evaluated by parameters u,v
