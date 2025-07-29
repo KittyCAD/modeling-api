@@ -128,6 +128,28 @@ define_modeling_cmd_enum! {
             pub extrude_method: ExtrudeMethod,
         }
 
+        /// Command for extruding a solid 2d to a certain point
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct ExtrudeTo {
+            /// Which sketch to extrude.
+            /// Must be a closed 2D solid.
+            pub target: ModelingCmdId,
+            /// Point to extrude to. If the point is not in the direction of the extrusion,
+            /// the extrusion will stop 
+            pub end_absolute: Point3d<LengthUnit>,
+            /// Which IDs should the new faces have?
+            /// If this isn't given, the engine will generate IDs.
+            #[serde(default)]
+            pub faces: Option<ExtrudedFaceInfo>,
+            /// Should the extrusion create a new object or be part of the existing object.
+            #[serde(default)]
+            pub extrude_method: ExtrudeMethod,
+        }
+
         fn default_twist_extrude_section_interval() -> Angle {
             Angle::from_degrees(15.0)
         }
