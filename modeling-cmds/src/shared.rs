@@ -764,7 +764,7 @@ pub enum ExtrudeReference {
     /// Exrudes to the specified point.
     Point {
         /// The point to extrude to.
-        point: Point3d<f64>,
+        point: Point3d<LengthUnit>,
     }
 }
 
