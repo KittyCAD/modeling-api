@@ -31,7 +31,7 @@ define_modeling_cmd_enum! {
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
-                Point2d, Point3d, SceneSelectionType, SceneToolType, Opposite,
+                Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, Opposite,
             },
             units,
         };
@@ -134,13 +134,13 @@ define_modeling_cmd_enum! {
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct ExtrudeTo {
+        pub struct ExtrudeToReference {
             /// Which sketch to extrude.
             /// Must be a closed 2D solid.
             pub target: ModelingCmdId,
-            /// Point to extrude to. If the point is not in the direction of the extrusion,
-            /// the extrusion will stop 
-            pub end_absolute: Point3d<LengthUnit>,
+            /// Reference to extrude to. 
+            /// If the reference is not in the direction of the extrusion, the extrusion will not occur
+            pub reference: ExtrudeReference,
             /// Which IDs should the new faces have?
             /// If this isn't given, the engine will generate IDs.
             #[serde(default)]
