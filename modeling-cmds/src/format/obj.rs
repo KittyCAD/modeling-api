@@ -14,6 +14,7 @@ pub mod import {
     #[serde(rename = "ObjImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(feature = "python", pyo3::pyclass)]
     pub struct Options {
         /// Co-ordinate system of input data.
         ///
@@ -29,6 +30,16 @@ pub mod import {
         ///
         /// Defaults to millimeters.
         pub units: UnitLength,
+    }
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
     }
 
     impl Default for Options {
@@ -50,6 +61,7 @@ pub mod export {
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "ObjExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "python", pyo3::pyclass)]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Co-ordinate system of output data.
@@ -63,6 +75,16 @@ pub mod export {
         ///
         /// Defaults to millimeters.
         pub units: UnitLength,
+    }
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
     }
 
     impl Default for Options {

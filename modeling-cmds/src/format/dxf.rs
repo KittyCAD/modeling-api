@@ -29,8 +29,19 @@ pub mod export {
     #[serde(rename = "DxfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(feature = "python", pyo3::pyclass)]
     pub struct Options {
         /// Export storage.
         pub storage: Storage,
+    }
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
     }
 }

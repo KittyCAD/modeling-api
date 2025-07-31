@@ -14,11 +14,22 @@ pub mod import {
     #[serde(default, rename = "StepImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(feature = "python", pyo3::pyclass)]
     pub struct Options {
         /// Splits all closed faces into two open faces.
         ///
         /// Defaults to `false` but is implicitly `true` when importing into the engine.
         pub split_closed_faces: bool,
+    }
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
     }
 }
 
@@ -30,6 +41,7 @@ pub mod export {
     #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize)]
     #[serde(rename = "StepExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "python", pyo3::pyclass)]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Co-ordinate system of output data.
@@ -41,6 +53,16 @@ pub mod export {
 
         /// Timestamp override.
         pub created: Option<chrono::DateTime<chrono::Utc>>,
+    }
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
     }
 
     impl Default for Options {

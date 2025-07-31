@@ -12,7 +12,18 @@ pub mod import {
     #[serde(rename = "GltfImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(feature = "python", pyo3::pyclass)]
     pub struct Options {}
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
+    }
 }
 
 /// Export models in KittyCAD's GLTF format.
@@ -23,12 +34,23 @@ pub mod export {
     #[display("storage: {storage}, presentation: {presentation}")]
     #[serde(rename = "GltfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "python", pyo3::pyclass)]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Specifies which kind of glTF 2.0 will be exported.
         pub storage: Storage,
         /// Specifies how the JSON will be presented.
         pub presentation: Presentation,
+    }
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
     }
 
     /// Describes the storage format of a glTF 2.0 scene.

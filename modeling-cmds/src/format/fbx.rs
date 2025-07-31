@@ -11,7 +11,18 @@ pub mod import {
     #[serde(rename = "FbxImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(feature = "python", pyo3::pyclass)]
     pub struct Options {}
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
+    }
 }
 
 /// Export models in FBX format.
@@ -22,6 +33,7 @@ pub mod export {
     #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
     #[serde(rename = "FbxExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "python", pyo3::pyclass)]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Specifies which kind of FBX will be exported.
@@ -29,6 +41,16 @@ pub mod export {
 
         /// Timestamp override.
         pub created: Option<chrono::DateTime<chrono::Utc>>,
+    }
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
     }
 
     impl std::fmt::Display for Options {
