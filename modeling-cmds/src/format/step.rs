@@ -21,6 +21,16 @@ pub mod import {
         /// Defaults to `false` but is implicitly `true` when importing into the engine.
         pub split_closed_faces: bool,
     }
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
+    }
 }
 
 /// Export models in STEP format.
@@ -43,6 +53,16 @@ pub mod export {
 
         /// Timestamp override.
         pub created: Option<chrono::DateTime<chrono::Utc>>,
+    }
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
     }
 
     impl Default for Options {

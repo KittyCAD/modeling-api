@@ -32,6 +32,16 @@ pub mod import {
         pub units: UnitLength,
     }
 
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
+    }
+
     impl Default for Options {
         fn default() -> Self {
             Self {
@@ -72,6 +82,16 @@ pub mod export {
         ///
         /// Defaults to millimeters.
         pub units: UnitLength,
+    }
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
     }
 
     impl Default for Options {

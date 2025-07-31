@@ -34,4 +34,14 @@ pub mod export {
         /// Export storage.
         pub storage: Storage,
     }
+
+    #[cfg(feature = "python")]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
+    }
 }
