@@ -23,6 +23,7 @@ convert_client_crate = ["dep:kittycad"]
 websocket = ["dep:serde_json"]
 webrtc = ["dep:webrtc"]
 unstable_exhaustive = []
+python = ["dep:pyo3"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -40,6 +41,7 @@ kittycad-unit-conversion-derive = "0.1.0"
 measurements = "0.11.0"
 parse-display = "0.9.1"
 parse-display-derive = "0.9.0"
+pyo3 = { version = "0.25.1", optional = true }
 schemars = { version = "0.8.22", features = [
   "bigdecimal04",
   "chrono",
