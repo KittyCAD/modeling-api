@@ -16,14 +16,14 @@ missing_docs = "deny"
 dbg_macro = "deny"
 
 [workspace.dependencies]
-kittycad = { version = "0.3.36", features = ["requests"] }
+kittycad = { version = "0.3.38", features = ["requests"] }
 kittycad-modeling-cmds = { path = "modeling-cmds", version = "0.2.0" }
 kittycad-modeling-cmds-macros = { path = "modeling-cmds-macros", version = "0.1.11" }
 kittycad-modeling-cmds-macros-impl = { path = "modeling-cmds-macros-impl", version = "0.1.12" }
 kittycad-modeling-session = { path = "modeling-session", version = "0.1.2" }
-proc-macro2 = "1.0.94"
+proc-macro2 = "1.0.95"
 quote = "1.0.40"
-syn = "2.0.100"
+syn = "2.0.104"
 
 [profile.bench]
 debug = true
