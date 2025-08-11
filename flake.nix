@@ -53,6 +53,7 @@
             rustToolchain
 
             cargo-nextest
+            cargo-sort
 
             just
             openssl
