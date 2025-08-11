@@ -11,7 +11,7 @@ pub mod import {
     #[serde(rename = "FbxImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-    #[cfg_attr(feature = "python", pyo3::pyclass)]
+    #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
     pub struct Options {}
 
     #[cfg(feature = "python")]
@@ -33,7 +33,7 @@ pub mod export {
     #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
     #[serde(rename = "FbxExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-    #[cfg_attr(feature = "python", pyo3::pyclass)]
+    #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Specifies which kind of FBX will be exported.
@@ -77,6 +77,7 @@ pub mod export {
     #[serde(rename = "FbxStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
     pub enum Storage {
         /// ASCII FBX encoding.
         Ascii,

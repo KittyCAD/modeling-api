@@ -12,6 +12,7 @@ use serde::{Deserialize, Serialize};
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum Axis {
     /// 'Y' axis.
     Y = 1,
@@ -25,6 +26,7 @@ pub enum Axis {
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum Direction {
     /// Increasing numbers.
     Positive = 1,
@@ -48,6 +50,7 @@ impl std::ops::Mul for Direction {
 #[display("({axis}, {direction})")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
 pub struct AxisDirectionPair {
     /// Axis specifier.
     pub axis: Axis,
@@ -67,6 +70,7 @@ pub struct AxisDirectionPair {
 #[display("forward: {forward}, up: {up}")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
 pub struct System {
     /// Axis the front face of a model looks along.
     pub forward: AxisDirectionPair,
