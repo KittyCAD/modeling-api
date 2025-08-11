@@ -11,7 +11,7 @@ pub mod import {
     #[serde(default, rename = "SldprtImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-    #[cfg_attr(feature = "python", pyo3::pyclass)]
+    #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
     pub struct Options {
         /// Splits all closed faces into two open faces.
         ///
@@ -20,6 +20,7 @@ pub mod import {
     }
 
     #[cfg(feature = "python")]
+    #[pyo3_stub_gen::derive::gen_stub_pymethods]
     #[pyo3::pymethods]
     impl Options {
         #[new]

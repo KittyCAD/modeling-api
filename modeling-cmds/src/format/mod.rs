@@ -79,7 +79,11 @@ pub type InputFormat = InputFormat3d;
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[display(style = "snake_case")]
-#[cfg_attr(feature = "python", pyo3::pyclass)]
+#[cfg_attr(
+    feature = "python",
+    pyo3::pyclass,
+    pyo3_stub_gen::derive::gen_stub_pyclass_complex_enum
+)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum InputFormat3d {

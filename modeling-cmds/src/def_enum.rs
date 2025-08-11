@@ -1187,11 +1187,12 @@ define_modeling_cmd_enum! {
         }
 
         /// Enum containing the variety of image formats snapshots may be exported to.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, FromStr, Display)]
+        #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, FromStr, Display)]
         #[serde(rename_all = "snake_case")]
         #[display(style = "snake_case")]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
         pub enum ImageFormat {
             /// .png format
             Png,
