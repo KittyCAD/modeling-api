@@ -625,6 +625,21 @@ pub struct ExportFile {
     pub contents: crate::base64::Base64Data,
 }
 
+#[cfg(feature = "python")]
+#[pyo3_stub_gen::derive::gen_stub_pymethods]
+#[pyo3::pymethods]
+impl ExportFile {
+    #[getter]
+    fn contents(&self) -> Vec<u8> {
+        self.contents.0.clone()
+    }
+
+    #[getter]
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+}
+
 /// The valid types of output file formats.
 #[derive(
     Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence,

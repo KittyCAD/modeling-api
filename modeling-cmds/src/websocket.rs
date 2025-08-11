@@ -320,6 +320,7 @@ impl WebSocketResponse {
 /// A raw file with unencoded contents to be passed over binary websockets.
 /// When raw files come back for exports it is sent as binary/bson, not text/json.
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
 pub struct RawFile {
     /// The name of the file.
     pub name: String,
@@ -329,6 +330,21 @@ pub struct RawFile {
         deserialize_with = "serde_bytes::deserialize"
     )]
     pub contents: Vec<u8>,
+}
+
+#[cfg(feature = "python")]
+#[pyo3_stub_gen::derive::gen_stub_pymethods]
+#[pyo3::pymethods]
+impl RawFile {
+    #[getter]
+    fn contents(&self) -> Vec<u8> {
+        self.contents.clone()
+    }
+
+    #[getter]
+    fn name(&self) -> String {
+        self.name.clone()
+    }
 }
 
 impl From<ExportFile> for RawFile {

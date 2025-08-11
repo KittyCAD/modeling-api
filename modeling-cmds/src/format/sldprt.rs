@@ -20,6 +20,7 @@ pub mod import {
     }
 
     #[cfg(feature = "python")]
+    #[pyo3_stub_gen::derive::gen_stub_pymethods]
     #[pyo3::pymethods]
     impl Options {
         #[new]
