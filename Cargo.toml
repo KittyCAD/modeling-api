@@ -1,12 +1,12 @@
 [workspace]
 resolver = "2"
 members = [
-  "bumper",
-  "modeling-cmds",
-  "modeling-cmds-macros",
-  "modeling-cmds-macros-impl",
-  "modeling-session",
-  "unit-conversion-derive",
+    "bumper",
+    "modeling-cmds",
+    "modeling-cmds-macros",
+    "modeling-cmds-macros-impl",
+    "modeling-session",
+    "unit-conversion-derive",
 ]
 
 [workspace.lints.rust]
