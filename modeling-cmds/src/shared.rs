@@ -25,7 +25,7 @@ pub enum CutType {
     Chamfer {
         /// The ratio affects the edge length of the second edge of the fillet. E.g. 1.0 means both
         /// edges of the fillet will have the same length.
-        ratio: Option<LengthUnit>,
+        ratio: Option<f64>,
         /// The angle of the fillet, default is 45deg.
         angle: Option<Angle>,
     },
