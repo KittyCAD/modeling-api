@@ -344,9 +344,9 @@ pub enum PathSegment {
     Ellipse {
         /// The center point of the ellipse.
         center: Point2d<LengthUnit>,
-        /// Major radius of the ellipse (along the x axis).
-        major_radius: LengthUnit,
-        /// Minor radius of the ellipse (along the y axis).
+        /// Major axis of the ellipse.
+        major_axis: Point2d<LengthUnit>,
+        /// Minor radius of the ellipse.
         minor_radius: LengthUnit,
         /// Start of the path along the perimeter of the ellipse.
         start_angle: Angle,
@@ -617,11 +617,27 @@ pub enum CurveType {
 
 /// A file to be exported to the client.
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
 pub struct ExportFile {
     /// The name of the file.
     pub name: String,
     /// The contents of the file, base64 encoded.
     pub contents: crate::base64::Base64Data,
+}
+
+#[cfg(feature = "python")]
+#[pyo3_stub_gen::derive::gen_stub_pymethods]
+#[pyo3::pymethods]
+impl ExportFile {
+    #[getter]
+    fn contents(&self) -> Vec<u8> {
+        self.contents.0.clone()
+    }
+
+    #[getter]
+    fn name(&self) -> String {
+        self.name.clone()
+    }
 }
 
 /// The valid types of output file formats.
@@ -632,6 +648,7 @@ pub struct ExportFile {
 #[display(style = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum FileExportFormat {
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
     Fbx,

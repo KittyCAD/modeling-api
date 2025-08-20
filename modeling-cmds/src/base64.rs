@@ -18,6 +18,7 @@ static ALLOWED_DECODING_FORMATS: &[data_encoding::Encoding] = &[
 ];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
 /// A container for binary that should be base64 encoded in serialisation. In reverse
 /// when deserializing, will decode from many different types of base64 possible.
 pub struct Base64Data(pub Vec<u8>);
