@@ -777,6 +777,10 @@ pub enum ExtrudeReference {
     Axis {
         /// The axis to extrude to.
         axis: Point3d<f64>,
+        /// Point the axis goes through.
+        /// Defaults to (0, 0, 0).
+        #[serde(default)]
+        point: Point3d<f64>,
     },
     /// Exrudes to the specified point.
     Point {
