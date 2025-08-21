@@ -761,6 +761,34 @@ pub enum ExtrudeMethod {
     Merge,
 }
 
+/// Extrusion method determining if the extrusion will be part of the existing object or an
+/// entirely new object.
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum ExtrudeReference {
+    /// Extrudes to the entity that this UUID represents
+    EntityReference {
+        /// The UUID of the entity to extrude to.
+        entity_id: Uuid,
+    },
+    /// Extrudes to the specified axis.
+    Axis {
+        /// The axis to extrude to.
+        axis: Point3d<f64>,
+        /// Point the axis goes through.
+        /// Defaults to (0, 0, 0).
+        #[serde(default)]
+        point: Point3d<LengthUnit>,
+    },
+    /// Exrudes to the specified point.
+    Point {
+        /// The point to extrude to.
+        point: Point3d<LengthUnit>,
+    }
+}
+
 /// IDs for the extruded faces.
 #[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
