@@ -99,7 +99,7 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v4
         - name: Run codespell
-          uses: crate-ci/typos@v1.35.4
+          uses: crate-ci/typos@v1.35.5
 
     cargo-toml-sorted:
       name: Check Cargo.toml is sorted
