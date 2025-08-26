@@ -29,6 +29,11 @@ pub enum CutType {
         /// The angle of the fillet, default is 45deg.
         angle: Option<Angle>,
     },
+    /// A custom cut profile.
+    Custom {
+        /// The path that will be used for the custom profile.
+        path: Uuid,
+    }
 }
 
 /// A rotation defined by an axis, origin of rotation, and an angle.
