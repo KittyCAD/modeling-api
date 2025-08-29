@@ -28,6 +28,7 @@ define_modeling_cmd_enum! {
                 CutType,
                 CutStrategy,
                 CameraMovement,
+                EdgeReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
@@ -886,6 +887,8 @@ define_modeling_cmd_enum! {
             /// Which edges you want to fillet.
             #[serde(default)]
             pub edge_ids: Vec<Uuid>,
+            /// A struct containing the information required to reference an edge.
+            pub edges_references: Vec<EdgeReference>,
             /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
             pub radius: LengthUnit,
             /// The maximum acceptable surface gap computed between the filleted surfaces. Must be positive (i.e. greater than zero).

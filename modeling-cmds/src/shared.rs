@@ -12,6 +12,24 @@ pub use point::{Point2d, Point3d, Point4d, Quaternion};
 
 mod point;
 
+/// An edge can be referenced by its uuid or by the faces that uniquely define it.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum EdgeReference {
+    /// A uuid referencing an edge.
+    Edge {
+        /// Id of the edge being referenced.
+        uuid: Uuid,
+    },
+    /// A collection of ids that uniquely identify an edge.
+    Face {
+        /// List of face ids.
+        uuids: Vec<Uuid>,
+    },
+}
+
 /// What kind of cut to do
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
