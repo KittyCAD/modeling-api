@@ -14,7 +14,11 @@ pub mod import {
     #[serde(rename = "PlyImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-    #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
+    #[cfg_attr(
+        feature = "python",
+        pyo3::pyclass(name = "PlyImportOptions"),
+        pyo3_stub_gen::derive::gen_stub_pyclass
+    )]
     pub struct Options {
         /// Co-ordinate system of input data.
         ///
@@ -63,7 +67,11 @@ pub mod export {
     #[display("coords: {coords}, selection: {selection}, storage: {storage}, units: {units}")]
     #[serde(rename = "PlyExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-    #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
+    #[cfg_attr(
+        feature = "python",
+        pyo3::pyclass(name = "PlyExportOptions"),
+        pyo3_stub_gen::derive::gen_stub_pyclass
+    )]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
         /// Co-ordinate system of output data.

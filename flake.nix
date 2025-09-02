@@ -1,5 +1,5 @@
 {
-  description = "modeling-app development environment";
+  description = "modeling-api development environment";
 
   # Flake inputs
   inputs = {
@@ -20,10 +20,15 @@
       # Provides a `rustToolchain` attribute for Nixpkgs that we can use to
       # create a Rust environment
       (self: super: {
-        rustToolchain = super.rust-bin.stable.latest.default.override {
-          targets = ["wasm32-unknown-unknown"];
+        rustToolchain = super. rust-bin.stable.latest.default.override {
           extensions = ["rustfmt" "llvm-tools-preview"];
         };
+
+        # stand-alone nightly formatter so we get the fancy unstable flags
+        nightlyRustfmt = super.rust-bin.selectLatestNightlyWith (toolchain:
+          toolchain.default.override {
+            extensions = ["rustfmt"]; # just the formatter
+          });
       })
     ];
 
@@ -44,28 +49,30 @@
   in {
     # Development environment output
     devShells = forAllSystems ({pkgs}: {
-      default = pkgs.mkShell {
+      default = pkgs.mkShell.override {stdenv = pkgs.clangStdenv;} {
         # The Nix packages provided in the environment
-        packages =
-          (with pkgs; [
-            # The package provided by our custom overlay. Includes cargo, Clippy, cargo-fmt,
-            # rustdoc, rustfmt, and other tools.
-            rustToolchain
+        packages = with pkgs; [
+          # The package provided by our custom overlay. Includes cargo, Clippy, cargo-fmt,
+          # rustdoc, rustfmt, and other tools.
+          rustToolchain
+          nightlyRustfmt
 
-            cargo-nextest
-            cargo-sort
+          # live reload
+          bacon
 
-            just
-            openssl
-            pkg-config
-          ])
-          ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
-            libiconv
-            darwin.apple_sdk.frameworks.Security
-          ]);
+          # cargo-llvm-cov
+          cargo-nextest
+          cargo-expand
+          cargo-sort
 
-        TARGET_CC = "${pkgs.stdenv.cc}/bin/${pkgs.stdenv.cc.targetPrefix}cc";
-        LIBCLANG_PATH = "${pkgs.libclang.lib}/lib";
+          just
+
+          # pyo3
+          python3Full
+        ];
+
+        # needed for rustfmt-wrapper
+        RUSTFMT = "${pkgs.nightlyRustfmt}/bin/rustfmt";
       };
     });
   };
