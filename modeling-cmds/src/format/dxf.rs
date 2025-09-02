@@ -30,7 +30,11 @@ pub mod export {
     #[serde(rename = "DxfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-    #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
+    #[cfg_attr(
+        feature = "python",
+        pyo3::pyclass(name = "DxfExportOptions"),
+        pyo3_stub_gen::derive::gen_stub_pyclass
+    )]
     pub struct Options {
         /// Export storage.
         pub storage: Storage,
