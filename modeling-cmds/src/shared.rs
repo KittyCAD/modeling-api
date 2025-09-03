@@ -11,7 +11,7 @@ use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle
 
 mod point;
 
-/// What kind of cut to do
+/// What kind of cut to perform when cutting an edge.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
