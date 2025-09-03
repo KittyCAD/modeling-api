@@ -128,7 +128,7 @@ define_modeling_cmd_enum! {
             pub extrude_method: ExtrudeMethod,
         }
 
-        /// Command for extruding a solid 2d to a certain point
+        /// Command for extruding a solid 2d to a reference geometry.
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
@@ -139,7 +139,7 @@ define_modeling_cmd_enum! {
             /// Must be a closed 2D solid.
             pub target: ModelingCmdId,
             /// Reference to extrude to. 
-            /// If the reference is not in the direction of the extrusion, the extrusion will not occur
+            /// Extrusion occurs along the target's normal until it is as close to the reference as possible.
             pub reference: ExtrudeReference,
             /// Which IDs should the new faces have?
             /// If this isn't given, the engine will generate IDs.

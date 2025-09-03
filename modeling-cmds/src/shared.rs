@@ -760,19 +760,19 @@ pub enum ExtrudeMethod {
     Merge,
 }
 
-/// Extrusion method determining if the extrusion will be part of the existing object or an
-/// entirely new object.
+/// Type of reference geometry to extrude to.
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum ExtrudeReference {
-    /// Extrudes to the entity that this UUID represents
+    /// Extrudes along the normal of the top face until it is as close to the entity as possible. 
+    /// An entity can be a solid, a path, a face, etc.
     EntityReference {
         /// The UUID of the entity to extrude to.
         entity_id: Uuid,
     },
-    /// Extrudes to the specified axis.
+    /// Extrudes until the top face is as close as possible to this given axis.
     Axis {
         /// The axis to extrude to.
         axis: Point3d<f64>,
@@ -781,7 +781,7 @@ pub enum ExtrudeReference {
         #[serde(default)]
         point: Point3d<LengthUnit>,
     },
-    /// Exrudes to the specified point.
+    /// Extrudes until the top face is as close as possible to this given point.
     Point {
         /// The point to extrude to.
         point: Point3d<LengthUnit>,
