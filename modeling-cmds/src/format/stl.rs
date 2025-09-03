@@ -16,8 +16,8 @@ pub mod import {
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
-        pyo3::pyclass(name = "StlImportOptions"),
-        pyo3_stub_gen::derive::gen_stub_pyclass
+        pyo3_stub_gen::derive::gen_stub_pyclass,
+        pyo3::pyclass(name = "StlImportOptions")
     )]
     pub struct Options {
         /// Co-ordinate system of input data.
@@ -57,8 +57,8 @@ pub mod export {
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(
         feature = "python",
-        pyo3::pyclass(name = "StlExportOptions"),
-        pyo3_stub_gen::derive::gen_stub_pyclass
+        pyo3_stub_gen::derive::gen_stub_pyclass,
+        pyo3::pyclass(name = "StlExportOptions")
     )]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
@@ -111,7 +111,11 @@ pub mod export {
     #[serde(rename = "StlStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-    #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+    #[cfg_attr(
+        feature = "python",
+        pyo3_stub_gen::derive::gen_stub_pyclass_enum,
+        pyo3::pyclass(name = "StlStorage")
+    )]
     pub enum Storage {
         /// Plaintext encoding.
         Ascii,

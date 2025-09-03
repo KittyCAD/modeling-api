@@ -14,8 +14,8 @@ pub mod import {
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
-        pyo3::pyclass(name = "GltfImportOptions"),
-        pyo3_stub_gen::derive::gen_stub_pyclass
+        pyo3_stub_gen::derive::gen_stub_pyclass,
+        pyo3::pyclass(name = "GltfImportOptions")
     )]
     pub struct Options {}
 
@@ -41,8 +41,8 @@ pub mod export {
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(
         feature = "python",
-        pyo3::pyclass(name = "GltfExportOptions"),
-        pyo3_stub_gen::derive::gen_stub_pyclass
+        pyo3_stub_gen::derive::gen_stub_pyclass,
+        pyo3::pyclass(name = "GltfExportOptions")
     )]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
@@ -71,7 +71,11 @@ pub mod export {
     #[serde(rename = "GltfStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-    #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+    #[cfg_attr(
+        feature = "python",
+        pyo3_stub_gen::derive::gen_stub_pyclass_enum,
+        pyo3::pyclass(name = "GltfStorage")
+    )]
     pub enum Storage {
         /// Binary glTF 2.0.
         ///

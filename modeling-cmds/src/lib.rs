@@ -37,3 +37,5 @@ pub mod websocket;
 pub use def_enum::*;
 pub use ok_response::output;
 pub use traits::*;
+
+// (Tests construct `StubInfo` directly; no gatherer function is needed here.)

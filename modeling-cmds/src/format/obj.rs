@@ -16,8 +16,8 @@ pub mod import {
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
-        pyo3::pyclass(name = "ObjImportOptions"),
-        pyo3_stub_gen::derive::gen_stub_pyclass
+        pyo3_stub_gen::derive::gen_stub_pyclass,
+        pyo3::pyclass(name = "ObjImportOptions")
     )]
     pub struct Options {
         /// Co-ordinate system of input data.
@@ -68,8 +68,8 @@ pub mod export {
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(
         feature = "python",
-        pyo3::pyclass(name = "ObjExportOptions"),
-        pyo3_stub_gen::derive::gen_stub_pyclass
+        pyo3_stub_gen::derive::gen_stub_pyclass,
+        pyo3::pyclass(name = "ObjExportOptions")
     )]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {

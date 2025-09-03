@@ -16,8 +16,8 @@ pub mod import {
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
-        pyo3::pyclass(name = "StepImportOptions"),
-        pyo3_stub_gen::derive::gen_stub_pyclass
+        pyo3_stub_gen::derive::gen_stub_pyclass,
+        pyo3::pyclass(name = "StepImportOptions")
     )]
     pub struct Options {
         /// Splits all closed faces into two open faces.
@@ -48,8 +48,8 @@ pub mod export {
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(
         feature = "python",
-        pyo3::pyclass(name = "StepExportOptions"),
-        pyo3_stub_gen::derive::gen_stub_pyclass
+        pyo3_stub_gen::derive::gen_stub_pyclass,
+        pyo3::pyclass(name = "StepExportOptions")
     )]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     pub struct Options {
