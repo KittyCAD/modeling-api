@@ -43,8 +43,8 @@ impl<T> Point2d<T> {
     /// # Examples
     /// ```
     /// use kittycad_modeling_cmds::shared::Point2d;
-    /// let p0 = Point2d{x: 1.0, y: 1.0};
-    /// assert_eq!(p0.map(|n| n*2.0), Point2d{x: 2.0, y: 2.0});
+    /// let p0 = Point2d { x: 1.0, y: 1.0 };
+    /// assert_eq!(p0.map(|n| n * 2.0), Point2d { x: 2.0, y: 2.0 });
     /// ```
     pub fn map<U, F>(self, mut f: F) -> Point2d<U>
     where
@@ -99,8 +99,19 @@ impl<T> Point3d<T> {
     /// # Examples
     /// ```
     /// use kittycad_modeling_cmds::shared::Point3d;
-    /// let p0 = Point3d{x: 1.0, y: 1.0, z: 1.0};
-    /// assert_eq!(p0.map(|n| n*2.0), Point3d{x: 2.0, y: 2.0, z:2.0});
+    /// let p0 = Point3d {
+    ///     x: 1.0,
+    ///     y: 1.0,
+    ///     z: 1.0,
+    /// };
+    /// assert_eq!(
+    ///     p0.map(|n| n * 2.0),
+    ///     Point3d {
+    ///         x: 2.0,
+    ///         y: 2.0,
+    ///         z: 2.0
+    ///     }
+    /// );
     /// ```
     pub fn map<U, F>(self, mut f: F) -> Point3d<U>
     where
@@ -143,8 +154,21 @@ impl<T> Point4d<T> {
     /// # Examples
     /// ```
     /// use kittycad_modeling_cmds::shared::Point4d;
-    /// let p0 = Point4d{x: 1.0, y: 1.0, z: 1.0, w: 1.0};
-    /// assert_eq!(p0.map(|n| n*2.0), Point4d{x: 2.0, y: 2.0, z: 2.0, w: 2.0});
+    /// let p0 = Point4d {
+    ///     x: 1.0,
+    ///     y: 1.0,
+    ///     z: 1.0,
+    ///     w: 1.0,
+    /// };
+    /// assert_eq!(
+    ///     p0.map(|n| n * 2.0),
+    ///     Point4d {
+    ///         x: 2.0,
+    ///         y: 2.0,
+    ///         z: 2.0,
+    ///         w: 2.0
+    ///     }
+    /// );
     /// ```
     pub fn map<U, F>(self, mut f: F) -> Point4d<U>
     where

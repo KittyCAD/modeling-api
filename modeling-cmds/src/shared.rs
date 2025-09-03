@@ -1,5 +1,6 @@
 use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
+pub use point::{Point2d, Point3d, Point4d, Quaternion};
 use schemars::{schema::SchemaObject, JsonSchema};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -7,8 +8,6 @@ use uuid::Uuid;
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
 use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle};
-
-pub use point::{Point2d, Point3d, Point4d, Quaternion};
 
 mod point;
 

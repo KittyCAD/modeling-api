@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-modeling-cmds"
-version = "0.2.131"
+version = "0.2.133"
 edition = "2021"
 authors = ["KittyCAD, Inc."]
 description = "Commands in the KittyCAD Modeling API"
@@ -42,7 +42,7 @@ measurements = "0.11.0"
 parse-display = "0.9.1"
 parse-display-derive = "0.9.0"
 pyo3 = { version = "0.25.1", optional = true }
-pyo3-stub-gen = { version = "0.12.2", optional = true }
+pyo3-stub-gen = { version = "0.13.1", optional = true }
 schemars = { version = "0.8.22", features = [
   "bigdecimal04",
   "chrono",

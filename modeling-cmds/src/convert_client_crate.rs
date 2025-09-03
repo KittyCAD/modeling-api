@@ -93,9 +93,12 @@ impl From<kt::UnitVolume> for crate::units::UnitVolume {
 }
 
 mod format {
-    use crate::format::*;
-    use crate::shared::{FileExportFormat, FileImportFormat};
     use kittycad::types as kt;
+
+    use crate::{
+        format::*,
+        shared::{FileExportFormat, FileImportFormat},
+    };
 
     impl From<FileExportFormat> for kt::FileExportFormat {
         fn from(format: FileExportFormat) -> kt::FileExportFormat {
