@@ -13,8 +13,8 @@ pub mod import {
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
-        pyo3::pyclass(name = "SldprtImportOptions"),
-        pyo3_stub_gen::derive::gen_stub_pyclass
+        pyo3_stub_gen::derive::gen_stub_pyclass,
+        pyo3::pyclass(name = "SldprtImportOptions")
     )]
     pub struct Options {
         /// Splits all closed faces into two open faces.
