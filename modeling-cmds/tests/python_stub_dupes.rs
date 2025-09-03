@@ -1,5 +1,5 @@
+//! Checks for duplicate class/enum names in generated stubs.
 #![cfg(feature = "python")]
-#![allow(missing_docs)]
 
 use std::{collections::BTreeMap, path::PathBuf};
 

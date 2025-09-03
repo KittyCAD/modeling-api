@@ -1,5 +1,5 @@
+//! Ensures renamed `Storage` enums are reflected in stub generation.
 #![cfg(feature = "python")]
-#![allow(missing_docs)]
 
 use std::{collections::HashSet, path::PathBuf};
 
