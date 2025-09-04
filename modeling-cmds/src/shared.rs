@@ -22,17 +22,20 @@ pub enum CutType {
     Fillet,
     /// Cut away an edge.
     Chamfer {
-        /// The ratio affects the edge length of the second edge of the fillet. E.g. 1.0 means both
-        /// edges of the fillet will have the same length.
+        /// The ratio affects the edge length of the second face of the cut. E.g. 1.0 means both
+        /// faces will have the same length removed.
         ratio: Option<f64>,
-        /// The angle of the fillet, default is 45deg.
+        /// The angle of the chamfer, default is 45deg.
         angle: Option<Angle>,
+        /// If true, the ratio or angle is applied to the second face of the cut, instead of the
+        /// first.
+        swap: bool,
     },
     /// A custom cut profile.
     Custom {
         /// The path that will be used for the custom profile.
         path: Uuid,
-    }
+    },
 }
 
 /// A rotation defined by an axis, origin of rotation, and an angle.
