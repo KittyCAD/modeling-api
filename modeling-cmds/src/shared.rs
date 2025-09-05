@@ -22,13 +22,11 @@ pub enum CutType {
     Fillet,
     /// Cut away an edge.
     Chamfer {
-        /// The ratio affects the edge length of the second face of the cut. E.g. 1.0 means both
-        /// faces will have the same length removed.
-        ratio: Option<f64>,
+        /// The second length affects the edge length of the second face of the cut.
+        second_length: Option<LengthUnit>,
         /// The angle of the chamfer, default is 45deg.
         angle: Option<Angle>,
-        /// If true, the ratio or angle is applied to the second face of the cut, instead of the
-        /// first.
+        /// If true, the second length or angle is applied to the other face of the cut.
         swap: bool,
     },
     /// A custom cut profile.
