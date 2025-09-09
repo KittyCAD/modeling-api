@@ -31,7 +31,7 @@ define_modeling_cmd_enum! {
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
-                Point2d, Point3d, SceneSelectionType, SceneToolType, Opposite,
+                Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, Opposite,
             },
             units,
         };
@@ -123,6 +123,28 @@ define_modeling_cmd_enum! {
             /// If so, this specifies its distance.
             #[serde(default)]
             pub opposite: Opposite<LengthUnit>,
+            /// Should the extrusion create a new object or be part of the existing object.
+            #[serde(default)]
+            pub extrude_method: ExtrudeMethod,
+        }
+
+        /// Command for extruding a solid 2d to a reference geometry.
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct ExtrudeToReference {
+            /// Which sketch to extrude.
+            /// Must be a closed 2D solid.
+            pub target: ModelingCmdId,
+            /// Reference to extrude to. 
+            /// Extrusion occurs along the target's normal until it is as close to the reference as possible.
+            pub reference: ExtrudeReference,
+            /// Which IDs should the new faces have?
+            /// If this isn't given, the engine will generate IDs.
+            #[serde(default)]
+            pub faces: Option<ExtrudedFaceInfo>,
             /// Should the extrusion create a new object or be part of the existing object.
             #[serde(default)]
             pub extrude_method: ExtrudeMethod,
