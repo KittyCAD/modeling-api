@@ -70,6 +70,7 @@ impl UnitLength {
 
 /// The valid types of angle formats.
 #[derive(
+    Default,
     Display,
     FromStr,
     Copy,
@@ -83,6 +84,7 @@ impl UnitLength {
     Ord,
     PartialOrd,
     UnitConversion,
+    Hash,
 )]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
@@ -92,8 +94,11 @@ impl UnitLength {
 #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitAngle {
     /// Degrees <https://en.wikipedia.org/wiki/Degree_(angle)>
+    #[default]
+    #[display("deg")]
     Degrees,
     /// Radians <https://en.wikipedia.org/wiki/Radian>
+    #[display("rad")]
     Radians,
 }
 
