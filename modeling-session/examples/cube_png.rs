@@ -90,6 +90,7 @@ async fn main() -> Result<()> {
                         end: point,
                         relative: false,
                     },
+                    label: None,
                 }
                 .into(),
             )
