@@ -11,7 +11,7 @@ use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle
 
 mod point;
 
-/// What kind of cut to do
+/// What kind of cut to perform when cutting an edge.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -21,7 +21,19 @@ pub enum CutType {
     #[default]
     Fillet,
     /// Cut away an edge.
-    Chamfer,
+    Chamfer {
+        /// The second length affects the edge length of the second face of the cut.
+        second_length: Option<LengthUnit>,
+        /// The angle of the chamfer, default is 45deg.
+        angle: Option<Angle>,
+        /// If true, the second length or angle is applied to the other face of the cut.
+        swap: bool,
+    },
+    /// A custom cut profile.
+    Custom {
+        /// The path that will be used for the custom profile.
+        path: Uuid,
+    },
 }
 
 /// A rotation defined by an axis, origin of rotation, and an angle.
