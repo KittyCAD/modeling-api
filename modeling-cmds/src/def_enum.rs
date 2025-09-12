@@ -590,8 +590,8 @@ define_modeling_cmd_enum! {
             pub start_angle: Angle,
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
-            /// Length of the helix.
-            pub length: LengthUnit,
+            /// Length of the helix. If None, the length of the cylinder will be used instead.
+            pub length: Option<LengthUnit>,
         }
 
         /// Create a helix using the specified parameters.
