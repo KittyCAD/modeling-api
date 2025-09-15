@@ -90,7 +90,7 @@ async fn main() -> Result<()> {
                         end: point,
                         relative: false,
                     },
-                    label: None,
+                    label: Default::default(),
                 }
                 .into(),
             )

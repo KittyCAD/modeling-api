@@ -87,7 +87,7 @@ async fn main() -> Result<()> {
             cmd: ModelingCmd::ExtendPath(ExtendPath {
                 path,
                 segment: PathSegment::Line { end, relative: false },
-                label: None,
+                label: Default::default(),
             }),
         }),
     );

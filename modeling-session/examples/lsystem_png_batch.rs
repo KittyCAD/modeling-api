@@ -121,7 +121,7 @@ async fn main() -> Result<()> {
                             },
                             relative: false,
                         },
-                        label: None,
+                        label: Default::default(),
                     }),
                 });
             }
