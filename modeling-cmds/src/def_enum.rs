@@ -101,6 +101,7 @@ define_modeling_cmd_enum! {
             /// This segment will implicitly begin at the current "pen" location.
             pub segment: PathSegment,
             /// Optional label to associate with the new path segment.
+            #[serde(default, skip_serializing_if = "String::is_empty")]
             pub label: String,
         }
 
