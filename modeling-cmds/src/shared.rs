@@ -189,7 +189,7 @@ pub struct AnnotationBasicDimension {
     pub to_entity_id: Uuid,
 
     /// Normalized position within the entity to position the dimension to
-    pub to: Point2d<f64>,
+    pub to_entity_pos: Point2d<f64>,
 
     /// Basic dimension parameters (symbol and tolerance)
     pub dimension: AnnotationMBDBasicDimension,
