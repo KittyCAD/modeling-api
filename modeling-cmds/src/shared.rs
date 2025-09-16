@@ -1313,6 +1313,8 @@ impl_extern_type! {
     AnnotationTextAlignmentX = "Enums::_AnnotationTextAlignmentX"
     AnnotationTextAlignmentY = "Enums::_AnnotationTextAlignmentY"
     AnnotationLineEnd = "Enums::_AnnotationLineEnd"
+    MBDStandard = "Enums::_MBDStandard"
+    MBDSymbol = "Enums::_MBDSymbol"
 
     CurveType = "Enums::_CurveType"
     PathCommand = "Enums::_PathCommand"
