@@ -195,19 +195,19 @@ pub struct AnnotationBasicDimension {
     pub dimension: AnnotationMBDBasicDimension,
 
     /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
-    plane_uuid: Uuid,
+    pub plane_uuid: Uuid,
 
     /// 2D Position offset of the annotation within the plane.
-    offset: Point2d<f64>,
+    pub offset: Point2d<f64>,
 
     /// Number of decimal places to use when displaying tolerance and dimension values
-    precision: u32,
+    pub precision: u32,
 
     /// The scale of the font label in 3D space
-    font_scale: f32,
+    pub font_scale: f32,
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
-    font_point_size: u32,
+    pub font_point_size: u32,
 }
 
 /// Parameters for defining an MBD Feature Control Annotation state
@@ -235,25 +235,25 @@ pub struct AnnotationFeatureControl {
     pub defined_datum: Option<char>,
 
     /// Prefix text which will appear before the basic dimension
-    prefix: Option<String>,
+    pub prefix: Option<String>,
 
     /// Suffix text which will appear after the basic dimension
-    suffix: Option<String>,
+    pub suffix: Option<String>,
 
     /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
-    plane_uuid: Uuid,
+    pub plane_uuid: Uuid,
 
     /// 2D Position offset of the annotation within the plane.
-    offset: Point2d<f64>,
+    pub offset: Point2d<f64>,
 
     /// Number of decimal places to use when displaying tolerance and dimension values
-    precision: u32,
+    pub precision: u32,
 
     /// The scale of the font label in 3D space
-    font_scale: f32,
+    pub font_scale: f32,
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
-    font_point_size: u32,
+    pub font_point_size: u32,
 }
 
 /// Parameters for defining an MBD Feature Tag Annotation state
@@ -281,16 +281,16 @@ pub struct AnnotationFeatureTag {
     pub show_key: bool,
 
     /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
-    plane_uuid: Uuid,
+    pub plane_uuid: Uuid,
 
     /// 2D Position offset of the annotation within the plane.
-    offset: Point2d<f64>,
+    pub offset: Point2d<f64>,
 
     /// The scale of the font label in 3D space
-    font_scale: f32,
+    pub font_scale: f32,
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
-    font_point_size: u32,
+    pub font_point_size: u32,
 }
 
 /// The type of distance
