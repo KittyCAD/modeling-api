@@ -148,7 +148,7 @@ pub struct AnnotationMBDControlFrame {
     /// Diameter symbol (if required) whether the geometric control requires a cylindrical or diameter tolerance
     pub diameter_symbol: Option<MBDSymbol>,
     /// Tolerance value - the total tolerance of the geometric control.  The unit is based on the drawing standard.
-    tolerance: f64,
+    pub tolerance: f64,
     /// Feature of size or tolerance modifiers
     pub modifier: Option<MBDSymbol>,
     /// Primary datum
