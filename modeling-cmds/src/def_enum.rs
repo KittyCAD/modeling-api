@@ -100,12 +100,9 @@ define_modeling_cmd_enum! {
             /// Segment to append to the path.
             /// This segment will implicitly begin at the current "pen" location.
             pub segment: PathSegment,
-
-            // this is causing the engine to break down.  removing it during this release until
-            // we can address this
             /// Optional label to associate with the new path segment.
-            /// #[serde(default, skip_serializing_if = "String::is_empty")]
-            /// pub label: String,
+            #[serde(default, skip_serializing_if = "String::is_empty")]
+            pub label: String,
         }
 
         /// Command for extruding a solid 2d.
