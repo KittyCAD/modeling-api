@@ -100,8 +100,10 @@ define_modeling_cmd_enum! {
             /// Segment to append to the path.
             /// This segment will implicitly begin at the current "pen" location.
             pub segment: PathSegment,
+            /// Optional label to associate with the new path segment.
+            #[serde(default, skip_serializing_if = "String::is_empty")]
+            pub label: String,
         }
-
 
         /// Command for extruding a solid 2d.
         #[derive(
