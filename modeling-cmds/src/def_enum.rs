@@ -140,7 +140,7 @@ define_modeling_cmd_enum! {
             /// Which sketch to extrude.
             /// Must be a closed 2D solid.
             pub target: ModelingCmdId,
-            /// Reference to extrude to. 
+            /// Reference to extrude to.
             /// Extrusion occurs along the target's normal until it is as close to the reference as possible.
             pub reference: ExtrudeReference,
             /// Which IDs should the new faces have?
