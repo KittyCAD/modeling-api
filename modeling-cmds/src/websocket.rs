@@ -72,6 +72,7 @@ pub struct ModelingCmdReq {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
+#[allow(clippy::large_enum_variant)]
 pub enum WebSocketRequest {
     /// The trickle ICE candidate request.
     // We box these to avoid a huge size difference between variants.
