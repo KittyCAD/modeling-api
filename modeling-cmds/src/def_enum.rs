@@ -102,7 +102,7 @@ define_modeling_cmd_enum! {
             pub segment: PathSegment,
             /// Optional label to associate with the new path segment.
             #[serde(default, skip_serializing_if = "Option::is_none")]
-            pub label:Option< String>,
+            pub label: Option<String>,
         }
 
         /// Command for extruding a solid 2d.
