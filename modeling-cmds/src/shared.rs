@@ -766,7 +766,7 @@ pub enum ExtrudeMethod {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum ExtrudeReference {
-    /// Extrudes along the normal of the top face until it is as close to the entity as possible. 
+    /// Extrudes along the normal of the top face until it is as close to the entity as possible.
     /// An entity can be a solid, a path, a face, etc.
     EntityReference {
         /// The UUID of the entity to extrude to.
@@ -785,7 +785,7 @@ pub enum ExtrudeReference {
     Point {
         /// The point to extrude to.
         point: Point3d<LengthUnit>,
-    }
+    },
 }
 
 /// IDs for the extruded faces.
