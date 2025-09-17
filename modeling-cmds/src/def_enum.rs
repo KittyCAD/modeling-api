@@ -101,8 +101,8 @@ define_modeling_cmd_enum! {
             /// This segment will implicitly begin at the current "pen" location.
             pub segment: PathSegment,
             /// Optional label to associate with the new path segment.
-            #[serde(default, skip_serializing_if = "String::is_empty")]
-            pub label: String,
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub label:Option< String>,
         }
 
         /// Command for extruding a solid 2d.
@@ -140,7 +140,7 @@ define_modeling_cmd_enum! {
             /// Which sketch to extrude.
             /// Must be a closed 2D solid.
             pub target: ModelingCmdId,
-            /// Reference to extrude to. 
+            /// Reference to extrude to.
             /// Extrusion occurs along the target's normal until it is as close to the reference as possible.
             pub reference: ExtrudeReference,
             /// Which IDs should the new faces have?

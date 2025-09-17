@@ -37,8 +37,6 @@ fn print_duplicate_stub_names() {
         .map(|(n, c)| (n.to_string(), c))
         .collect();
 
-    eprintln!("duplicate classes: {:?}", dup_classes);
-    eprintln!("duplicate enums: {:?}", dup_enums);
-
-    // This is informational; do not fail test. If we decide to enforce, we can assert emptiness.
+    assert!(dup_classes.is_empty(), "Duplicate class names: {dup_classes:?}");
+    assert!(dup_enums.is_empty(), "Duplicate enum names: {dup_enums:?}");
 }
