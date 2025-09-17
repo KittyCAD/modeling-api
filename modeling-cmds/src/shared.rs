@@ -19,7 +19,7 @@ mod point;
 pub struct FilletParams {
     /// The second length affects the edge length of the second face of the cut. This will
     /// cause the fillet to take on the shape of a conic section, instead of an arc.
-    second_length: Option<LengthUnit>,
+    pub second_length: Option<LengthUnit>,
 }
 
 impl Default for FilletParams {
@@ -35,11 +35,11 @@ impl Default for FilletParams {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct ChamferParams {
     /// The second length affects the edge length of the second face of the cut.
-    second_length: Option<LengthUnit>,
+    pub second_length: Option<LengthUnit>,
     /// The angle of the chamfer, default is 45deg.
-    angle: Option<Angle>,
+    pub angle: Option<Angle>,
     /// If true, the second length or angle is applied to the other face of the cut.
-    swap: bool,
+    pub swap: bool,
 }
 
 impl Default for ChamferParams {
@@ -59,7 +59,7 @@ impl Default for ChamferParams {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct CustomParams {
     /// The path that will be used for the custom profile.
-    path: Uuid,
+    pub path: Uuid,
 }
 
 impl Default for CustomParams {
