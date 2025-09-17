@@ -432,6 +432,7 @@ pub enum MBDStandard {
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[repr(u16)]
 pub enum MBDSymbol {
     #[default]
     None,
