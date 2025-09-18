@@ -11,63 +11,6 @@ use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle
 
 mod point;
 
-/// Params required to perform a fillet cut of an edge.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub struct FilletParams {
-    /// The second length affects the edge length of the second face of the cut. This will
-    /// cause the fillet to take on the shape of a conic section, instead of an arc.
-    pub second_length: Option<LengthUnit>,
-}
-
-impl Default for FilletParams {
-    fn default() -> FilletParams {
-        FilletParams { second_length: None }
-    }
-}
-
-/// Params required to perform a chamfer cut of an edge.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub struct ChamferParams {
-    /// The second length affects the edge length of the second face of the cut.
-    pub second_length: Option<LengthUnit>,
-    /// The angle of the chamfer, default is 45deg.
-    pub angle: Option<Angle>,
-    /// If true, the second length or angle is applied to the other face of the cut.
-    pub swap: bool,
-}
-
-impl Default for ChamferParams {
-    fn default() -> ChamferParams {
-        ChamferParams {
-            second_length: None,
-            angle: None,
-            swap: false,
-        }
-    }
-}
-
-/// Params required to perform a custom profile cut of an edge.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub struct CustomParams {
-    /// The path that will be used for the custom profile.
-    pub path: Uuid,
-}
-
-impl Default for CustomParams {
-    fn default() -> CustomParams {
-        CustomParams { path: Uuid::nil() }
-    }
-}
-
 /// What kind of cut to perform when cutting an edge.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -75,16 +18,27 @@ impl Default for CustomParams {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum CutType {
     /// Round off an edge.
-    Fillet(FilletParams),
+    Fillet,
     /// Cut away an edge.
-    Chamfer(ChamferParams),
+    Chamfer {
+    /// The second length affects the edge length of the second face of the cut.
+    second_length: Option<LengthUnit>,
+    /// The angle of the chamfer, default is 45deg.
+    angle: Option<Angle>,
+    /// If true, the second length or angle is applied to the other face of the cut.
+    swap: bool,
+
+    },
     /// A custom cut profile.
-    Custom(CustomParams),
+    Custom {
+    /// The path that will be used for the custom profile.
+    path: Uuid,
+    },
 }
 
 impl Default for CutType {
     fn default() -> Self {
-        crate::shared::CutType::Fillet(FilletParams::default())
+        crate::shared::CutType::Fillet
     }
 }
 
