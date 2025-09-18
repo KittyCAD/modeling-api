@@ -195,7 +195,7 @@ pub struct AnnotationBasicDimension {
     pub dimension: AnnotationMbdBasicDimension,
 
     /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
-    pub plane_uuid: Uuid,
+    pub plane_id: Uuid,
 
     /// 2D Position offset of the annotation within the plane.
     pub offset: Point2d<f64>,
@@ -241,7 +241,7 @@ pub struct AnnotationFeatureControl {
     pub suffix: Option<String>,
 
     /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
-    pub plane_uuid: Uuid,
+    pub plane_id: Uuid,
 
     /// 2D Position offset of the annotation within the plane.
     pub offset: Point2d<f64>,
@@ -281,7 +281,7 @@ pub struct AnnotationFeatureTag {
     pub show_key: bool,
 
     /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
-    pub plane_uuid: Uuid,
+    pub plane_id: Uuid,
 
     /// 2D Position offset of the annotation within the plane.
     pub offset: Point2d<f64>,
