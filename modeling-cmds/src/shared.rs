@@ -142,15 +142,15 @@ pub struct AnnotationTextOptions {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub struct AnnotationMBDControlFrame {
+pub struct AnnotationMbdControlFrame {
     ///Geometric symbol, the type of geometric control specified
-    pub symbol: MBDSymbol,
+    pub symbol: MbdSymbol,
     /// Diameter symbol (if required) whether the geometric control requires a cylindrical or diameter tolerance
-    pub diameter_symbol: Option<MBDSymbol>,
+    pub diameter_symbol: Option<MbdSymbol>,
     /// Tolerance value - the total tolerance of the geometric control.  The unit is based on the drawing standard.
     pub tolerance: f64,
     /// Feature of size or tolerance modifiers
-    pub modifier: Option<MBDSymbol>,
+    pub modifier: Option<MbdSymbol>,
     /// Primary datum
     pub primary_datum: Option<char>,
     /// Secondary datum
@@ -164,9 +164,9 @@ pub struct AnnotationMBDControlFrame {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub struct AnnotationMBDBasicDimension {
+pub struct AnnotationMbdBasicDimension {
     /// Type of symbol to use for this dimension (if required)
-    pub symbol: Option<MBDSymbol>,
+    pub symbol: Option<MbdSymbol>,
     /// The explicitly defined dimension.  Only required if the measurement is not automatically calculated.
     pub dimension: Option<f64>,
     /// The tolerance of the dimension
@@ -192,7 +192,7 @@ pub struct AnnotationBasicDimension {
     pub to_entity_pos: Point2d<f64>,
 
     /// Basic dimension parameters (symbol and tolerance)
-    pub dimension: AnnotationMBDBasicDimension,
+    pub dimension: AnnotationMbdBasicDimension,
 
     /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
     pub plane_uuid: Uuid,
@@ -226,10 +226,10 @@ pub struct AnnotationFeatureControl {
     pub leader_type: AnnotationLineEnd,
 
     /// Basic dimensions
-    pub dimension: Option<AnnotationMBDBasicDimension>,
+    pub dimension: Option<AnnotationMbdBasicDimension>,
 
     /// MBD Control frame for geometric control
-    pub control_frame: Option<AnnotationMBDControlFrame>,
+    pub control_frame: Option<AnnotationMbdControlFrame>,
 
     /// Set if this annotation is defining a datum
     pub defined_datum: Option<char>,
@@ -406,7 +406,7 @@ pub enum AnnotationType {
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub enum MBDStandard {
+pub enum MbdStandard {
     /// ASME Y14.5 GD&T
     AsmeY14_5,
 }
@@ -434,7 +434,7 @@ pub enum MBDStandard {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[repr(u16)]
-pub enum MBDSymbol {
+pub enum MbdSymbol {
     #[default]
     None = 0,
     ArcLength = 174,
@@ -1315,8 +1315,8 @@ impl_extern_type! {
     AnnotationTextAlignmentX = "Enums::_AnnotationTextAlignmentX"
     AnnotationTextAlignmentY = "Enums::_AnnotationTextAlignmentY"
     AnnotationLineEnd = "Enums::_AnnotationLineEnd"
-    MBDStandard = "Enums::_MBDStandard"
-    MBDSymbol = "Enums::_MBDSymbol"
+    MbdStandard = "Enums::_MBDStandard"
+    MbdSymbol = "Enums::_MBDSymbol"
 
     CurveType = "Enums::_CurveType"
     PathCommand = "Enums::_PathCommand"
