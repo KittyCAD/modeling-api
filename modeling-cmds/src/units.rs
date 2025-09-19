@@ -3,6 +3,9 @@ use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "cxx")]
+use crate::impl_extern_type;
+
 /// The valid types of length units.
 #[derive(
     Default,
