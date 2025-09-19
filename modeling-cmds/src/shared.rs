@@ -12,7 +12,7 @@ use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle
 mod point;
 
 /// Params required to perform a fillet cut of an edge.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -22,14 +22,8 @@ pub struct FilletParams {
     pub second_length: Option<LengthUnit>,
 }
 
-impl Default for FilletParams {
-    fn default() -> FilletParams {
-        FilletParams { second_length: None }
-    }
-}
-
 /// Params required to perform a chamfer cut of an edge.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -40,16 +34,6 @@ pub struct ChamferParams {
     pub angle: Option<Angle>,
     /// If true, the second length or angle is applied to the other face of the cut.
     pub swap: bool,
-}
-
-impl Default for ChamferParams {
-    fn default() -> ChamferParams {
-        ChamferParams {
-            second_length: None,
-            angle: None,
-            swap: false,
-        }
-    }
 }
 
 /// Params required to perform a custom profile cut of an edge.
