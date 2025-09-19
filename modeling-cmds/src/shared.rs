@@ -442,7 +442,7 @@ pub enum MbdSymbol {
     Degrees = 176,
     PlusMinus = 177,
     Angularity = 178,
-    Cylendricity = 179,
+    Cylindricity = 179,
     Roundness = 180,
     Concentricity = 181,
     Straightness = 182,
