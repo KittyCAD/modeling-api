@@ -20,6 +20,7 @@ use crate::RunCommandError;
 
 type Result<T> = std::result::Result<T, RunCommandError>;
 
+#[allow(clippy::large_enum_variant)]
 pub enum Request {
     SendModelingCmd(ModelingCmdReq, oneshot::Sender<Result<()>>),
     GetResponse(ModelingCmdId, oneshot::Sender<Result<OkModelingCmdResponse>>),
