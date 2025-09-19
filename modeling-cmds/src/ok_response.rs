@@ -544,6 +544,14 @@ define_ok_modeling_cmd_response_enum! {
             /// The type of the entity.
             pub entity_type: EntityType,
         }
+
+        /// The response from the `SceneGetEntityIds` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SceneGetEntityIds {
+            /// The ids of the requested entities.
+            pub entity_ids: Vec<Uuid>,
+        }
+
         /// The response from the `CurveGetControlPoints` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct CurveGetControlPoints {
