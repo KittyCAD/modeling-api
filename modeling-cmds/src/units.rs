@@ -68,6 +68,12 @@ impl UnitLength {
     }
 }
 
+#[cfg(feature = "cxx")]
+impl_extern_type! {
+    [Trivial]
+    UnitLength = "Enums::_UnitLength"
+}
+
 /// The valid types of angle formats.
 #[derive(
     Default,
