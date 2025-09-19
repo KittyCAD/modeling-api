@@ -950,6 +950,7 @@ define_ok_modeling_cmd_response_enum! {
             pub extra_solid_ids: Vec<Uuid>,
         }
 
+
         /// The response from the 'SetGridScale'.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SetGridScale {}
@@ -957,5 +958,9 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the 'SetGridScale'.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SetGridAutoScale {}
+
+        /// The response from the 'SetLabel' command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetLabel {}
     }
 }
