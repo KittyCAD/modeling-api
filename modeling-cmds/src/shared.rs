@@ -101,6 +101,12 @@ pub struct AnnotationOptions {
     pub color: Option<Color>,
     /// Position to put the annotation
     pub position: Option<Point3d<f32>>,
+    /// Set as an MBD measured basic dimension annotation
+    pub dimension: Option<AnnotationBasicDimension>,
+    /// Set as an MBD Feature control annotation
+    pub feature_control: Option<AnnotationFeatureControl>,
+    /// Set as a feature tag annotation
+    pub feature_tag: Option<AnnotationFeatureTag>,
 }
 
 /// Options for annotation text
@@ -129,6 +135,162 @@ pub struct AnnotationTextOptions {
     pub text: String,
     /// Text font's point size
     pub point_size: u32,
+}
+
+/// Parameters for defining an MBD Geometric control frame
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct AnnotationMbdControlFrame {
+    ///Geometric symbol, the type of geometric control specified
+    pub symbol: MbdSymbol,
+    /// Diameter symbol (if required) whether the geometric control requires a cylindrical or diameter tolerance
+    pub diameter_symbol: Option<MbdSymbol>,
+    /// Tolerance value - the total tolerance of the geometric control.  The unit is based on the drawing standard.
+    pub tolerance: f64,
+    /// Feature of size or tolerance modifiers
+    pub modifier: Option<MbdSymbol>,
+    /// Primary datum
+    pub primary_datum: Option<char>,
+    /// Secondary datum
+    pub secondary_datum: Option<char>,
+    /// Tertiary datum
+    pub tertiary_datum: Option<char>,
+}
+
+/// Parameters for defining an MBD basic dimension
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct AnnotationMbdBasicDimension {
+    /// Type of symbol to use for this dimension (if required)
+    pub symbol: Option<MbdSymbol>,
+    /// The explicitly defined dimension.  Only required if the measurement is not automatically calculated.
+    pub dimension: Option<f64>,
+    /// The tolerance of the dimension
+    pub tolerance: f64,
+}
+
+/// Parameters for defining an MBD Basic Dimension Annotation state which is measured between two positions in 3D
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct AnnotationBasicDimension {
+    /// Entity to measure the dimension from
+    pub from_entity_id: Uuid,
+
+    /// Normalized position within the entity to position the dimension from
+    pub from_entity_pos: Point2d<f64>,
+
+    /// Entity to measure the dimension to
+    pub to_entity_id: Uuid,
+
+    /// Normalized position within the entity to position the dimension to
+    pub to_entity_pos: Point2d<f64>,
+
+    /// Basic dimension parameters (symbol and tolerance)
+    pub dimension: AnnotationMbdBasicDimension,
+
+    /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
+    pub plane_id: Uuid,
+
+    /// 2D Position offset of the annotation within the plane.
+    pub offset: Point2d<f64>,
+
+    /// Number of decimal places to use when displaying tolerance and dimension values
+    pub precision: u32,
+
+    /// The scale of the font label in 3D space
+    pub font_scale: f32,
+
+    /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
+    pub font_point_size: u32,
+}
+
+/// Parameters for defining an MBD Feature Control Annotation state
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct AnnotationFeatureControl {
+    /// Entity to place the annotation leader from
+    pub entity_id: Uuid,
+
+    /// Normalized position within the entity to position the annotation leader from
+    pub entity_pos: Point2d<f64>,
+
+    /// Type of leader to use
+    pub leader_type: AnnotationLineEnd,
+
+    /// Basic dimensions
+    pub dimension: Option<AnnotationMbdBasicDimension>,
+
+    /// MBD Control frame for geometric control
+    pub control_frame: Option<AnnotationMbdControlFrame>,
+
+    /// Set if this annotation is defining a datum
+    pub defined_datum: Option<char>,
+
+    /// Prefix text which will appear before the basic dimension
+    pub prefix: Option<String>,
+
+    /// Suffix text which will appear after the basic dimension
+    pub suffix: Option<String>,
+
+    /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
+    pub plane_id: Uuid,
+
+    /// 2D Position offset of the annotation within the plane.
+    pub offset: Point2d<f64>,
+
+    /// Number of decimal places to use when displaying tolerance and dimension values
+    pub precision: u32,
+
+    /// The scale of the font label in 3D space
+    pub font_scale: f32,
+
+    /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
+    pub font_point_size: u32,
+}
+
+/// Parameters for defining an MBD Feature Tag Annotation state
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct AnnotationFeatureTag {
+    /// Entity to place the annotation leader from
+    pub entity_id: Uuid,
+
+    /// Normalized position within the entity to position the annotation leader from
+    pub entity_pos: Point2d<f64>,
+
+    /// Type of leader to use
+    pub leader_type: AnnotationLineEnd,
+
+    /// Tag key
+    pub key: String,
+
+    /// Tag value
+    pub value: String,
+
+    /// Whether or not to display the key on the annotation label
+    pub show_key: bool,
+
+    /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
+    pub plane_id: Uuid,
+
+    /// 2D Position offset of the annotation within the plane.
+    pub offset: Point2d<f64>,
+
+    /// The scale of the font label in 3D space
+    pub font_scale: f32,
+
+    /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
+    pub font_point_size: u32,
 }
 
 /// The type of distance
@@ -220,6 +382,7 @@ pub enum AnnotationTextAlignmentY {
 pub enum AnnotationLineEnd {
     None,
     Arrow,
+    Dot,
 }
 
 /// The type of annotation
@@ -234,6 +397,108 @@ pub enum AnnotationType {
     T2D,
     /// 3D annotation type
     T3D,
+}
+
+/// MBD standard
+#[derive(
+    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
+)]
+#[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum MbdStandard {
+    /// ASME Y14.5 GD&T
+    AsmeY14_5,
+}
+
+//SEE MIKE BEFORE MAKING ANY CHANGES TO THIS ENUM
+/// MBD symbol type
+#[allow(missing_docs)]
+#[derive(
+    Default,
+    Display,
+    FromStr,
+    Copy,
+    Eq,
+    PartialEq,
+    Debug,
+    JsonSchema,
+    Deserialize,
+    Serialize,
+    Sequence,
+    Clone,
+    Ord,
+    PartialOrd,
+)]
+#[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[repr(u16)]
+pub enum MbdSymbol {
+    #[default]
+    None = 0,
+    ArcLength = 174,
+    Between = 175,
+    Degrees = 176,
+    PlusMinus = 177,
+    Angularity = 178,
+    Cylindricity = 179,
+    Roundness = 180,
+    Concentricity = 181,
+    Straightness = 182,
+    Parallelism = 183,
+    Flatness = 184,
+    ProfileOfLine = 185,
+    SurfaceProfile = 186,
+    Symmetry = 187,
+    Perpendicularity = 188,
+    Runout = 189,
+    TotalRunout = 190,
+    Position = 191,
+    CenterLine = 192,
+    PartingLine = 193,
+    IsoEnvelope = 195,
+    IsoEnvelopeNonY145M = 196,
+    FreeState = 197,
+    StatisticalTolerance = 198,
+    ContinuousFeature = 199,
+    Independency = 200,
+    Depth = 201,
+    Start = 202,
+    LeastCondition = 203,
+    MaxCondition = 204,
+    ConicalTaper = 205,
+    Projected = 206,
+    Slope = 207,
+    Micro = 208,
+    TangentPlane = 210,
+    Unilateral = 211,
+    SquareFeature = 212,
+    Countersink = 213,
+    SpotFace = 214,
+    Target = 215,
+    Diameter = 216,
+    Radius = 217,
+    SphericalRadius = 218,
+    SphericalDiameter = 219,
+    ControlledRadius = 220,
+    BoxStart = 123,
+    BoxBar = 162,
+    BoxBarBetween = 124,
+    LetterBackwardUnderline = 95,
+    PunctuationBackwardUnderline = 92,
+    ModifierBackwardUnderline = 126,
+    NumericBackwardUnderline = 96,
+    BoxEnd = 125,
+    DatumUp = 166,
+    DatumLeft = 168,
+    DatumRight = 167,
+    DatumDown = 165,
+    DatumTriangle = 295,
+    HalfSpace = 236,
+    QuarterSpace = 237,
+    EighthSpace = 238,
+    ModifierSpace = 239,
 }
 
 /// The type of camera drag interaction.
@@ -1050,6 +1315,8 @@ impl_extern_type! {
     AnnotationTextAlignmentX = "Enums::_AnnotationTextAlignmentX"
     AnnotationTextAlignmentY = "Enums::_AnnotationTextAlignmentY"
     AnnotationLineEnd = "Enums::_AnnotationLineEnd"
+    MbdStandard = "Enums::_MBDStandard"
+    MbdSymbol = "Enums::_MBDSymbol"
 
     CurveType = "Enums::_CurveType"
     PathCommand = "Enums::_PathCommand"

@@ -69,6 +69,7 @@ pub struct ModelingCmdReq {
 }
 
 /// The websocket messages the server receives.
+#[allow(clippy::large_enum_variant)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
