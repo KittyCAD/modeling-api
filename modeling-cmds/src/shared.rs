@@ -46,12 +46,6 @@ pub struct CustomParams {
     pub path: Uuid,
 }
 
-impl Default for CustomParams {
-    fn default() -> CustomParams {
-        CustomParams { path: Uuid::nil() }
-    }
-}
-
 /// What kind of cut to perform when cutting an edge.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
