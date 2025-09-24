@@ -2028,46 +2028,6 @@ dependencies = [
 
 [[package]]
 name = "kittycad"
-version = "0.3.36"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0a345fd2a4cb16205f32bd1aa41715045830c59d78c59927fca6580e2a651ac9"
-dependencies = [
- "anyhow",
- "async-trait",
- "base64",
- "bigdecimal",
- "bytes",
- "chrono",
- "data-encoding",
- "format_serde_error",
- "futures",
- "getrandom 0.3.1",
- "http",
- "itertools 0.13.0",
- "log",
- "mime_guess",
- "parse-display 0.10.0",
- "phonenumber",
- "rand 0.9.0",
- "reqwest",
- "reqwest-conditional-middleware",
- "reqwest-middleware",
- "reqwest-retry",
- "reqwest-tracing",
- "schemars",
- "serde",
- "serde_bytes",
- "serde_json",
- "serde_urlencoded",
- "thiserror 2.0.12",
- "tokio",
- "tracing",
- "url",
- "uuid",
-]
-
-[[package]]
-name = "kittycad"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "87ad248df3976689e9bd17b93157d7413884c56a59c5c53cdc8aba66d42ea144"
@@ -2119,7 +2079,7 @@ dependencies = [
  "enum-iterator-derive",
  "euler",
  "http",
- "kittycad 0.3.36",
+ "kittycad",
  "kittycad-modeling-cmds-macros",
  "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "measurements",
@@ -2173,7 +2133,7 @@ dependencies = [
  "color-eyre",
  "futures",
  "image",
- "kittycad 0.4.2",
+ "kittycad",
  "kittycad-modeling-cmds",
  "lsystem",
  "reqwest",
