@@ -3,6 +3,9 @@ use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "cxx")]
+use crate::impl_extern_type;
+
 /// The valid types of length units.
 #[derive(
     Default,
@@ -66,6 +69,12 @@ impl UnitLength {
             Self::Yards => measurements::Length::from_yards(value),
         }
     }
+}
+
+#[cfg(feature = "cxx")]
+impl_extern_type! {
+    [Trivial]
+    UnitLength = "Enums::_UnitLength"
 }
 
 /// The valid types of angle formats.
