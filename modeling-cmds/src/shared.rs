@@ -12,17 +12,14 @@ use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle
 mod point;
 
 /// What kind of cut to perform when cutting an edge.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum CutType {
     /// Round off an edge.
-    Fillet {
-        /// The second length affects the edge length of the second face of the cut. This will
-        /// cause the fillet to take on the shape of a conic section, instead of an arc.
-        second_length: Option<LengthUnit>,
-    },
+    #[default]
+    Fillet,
     /// Cut away an edge.
     Chamfer {
         /// The second length affects the edge length of the second face of the cut.
@@ -37,12 +34,6 @@ pub enum CutType {
         /// The path that will be used for the custom profile.
         path: Uuid,
     },
-}
-
-impl Default for CutType {
-    fn default() -> Self {
-        crate::shared::CutType::Fillet { second_length: None }
-    }
 }
 
 /// A rotation defined by an axis, origin of rotation, and an angle.
