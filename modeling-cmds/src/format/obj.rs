@@ -13,6 +13,7 @@ pub mod import {
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "ObjImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
@@ -66,6 +67,7 @@ pub mod export {
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "ObjExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,

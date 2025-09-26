@@ -13,6 +13,7 @@ pub mod import {
     #[display("split_closed_faces: {split_closed_faces}")]
     #[serde(default, rename = "StepImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
@@ -46,6 +47,7 @@ pub mod export {
     #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize)]
     #[serde(rename = "StepExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,

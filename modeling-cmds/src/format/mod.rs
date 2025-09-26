@@ -30,6 +30,7 @@ pub mod sldprt;
 #[serde(tag = "type", rename_all = "snake_case")]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum OutputFormat2d {
     /// AutoCAD drawing interchange format.
@@ -46,6 +47,7 @@ pub type OutputFormat = OutputFormat3d;
 #[serde(tag = "type", rename_all = "snake_case")]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum OutputFormat3d {
     /// Autodesk Filmbox (FBX) format.
@@ -85,6 +87,7 @@ pub type InputFormat = InputFormat3d;
     pyo3_stub_gen::derive::gen_stub_pyclass_complex_enum
 )]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum InputFormat3d {
     /// Autodesk Filmbox (FBX) format.
@@ -117,6 +120,7 @@ pub enum InputFormat3d {
 #[display(style = "snake_case")]
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum Selection {
     /// Visit the default scene.

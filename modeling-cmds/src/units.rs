@@ -27,6 +27,7 @@ use crate::impl_extern_type;
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitLength {
@@ -99,6 +100,7 @@ impl_extern_type! {
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitAngle {
@@ -133,6 +135,7 @@ pub enum UnitAngle {
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitArea {
@@ -208,6 +211,7 @@ impl UnitArea {
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitDensity {
@@ -255,6 +259,7 @@ impl UnitDensity {
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitMass {
@@ -305,6 +310,7 @@ impl UnitMass {
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitVolume {

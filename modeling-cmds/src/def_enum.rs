@@ -51,6 +51,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EngineUtilEvaluatePath {
             /// The path in json form (the serialized result of the kcl Sketch/Path object
@@ -65,6 +66,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct StartPath {}
 
@@ -79,6 +81,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct MovePathPen {
             /// The ID of the command which created the path.
@@ -93,6 +96,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ExtendPath {
             /// The ID of the command which created the path.
@@ -110,6 +114,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Extrude {
             /// Which sketch to extrude.
@@ -135,6 +140,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ExtrudeToReference {
             /// Which sketch to extrude.
@@ -161,6 +167,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct TwistExtrude {
             /// Which sketch to extrude.
@@ -189,6 +196,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Sweep {
             /// Which sketch to sweep.
@@ -210,6 +218,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Revolve {
             /// Which sketch to revolve.
@@ -236,6 +245,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dShellFace {
             /// Which Solid3D is being shelled.
@@ -255,6 +265,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct RevolveAboutEdge {
             /// Which sketch to revolve.
@@ -277,6 +288,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Loft {
             /// The closed section curves to create a lofted solid from.
@@ -301,6 +313,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ClosePath {
             /// Which path to close.
@@ -310,6 +323,7 @@ define_modeling_cmd_enum! {
         /// Camera drag started.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct CameraDragStart {
             /// The type of camera drag interaction.
@@ -321,6 +335,7 @@ define_modeling_cmd_enum! {
         /// Camera drag continued.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct CameraDragMove {
             /// The type of camera drag interaction.
@@ -337,6 +352,7 @@ define_modeling_cmd_enum! {
         /// Camera drag ended
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct CameraDragEnd {
             /// The type of camera drag interaction.
@@ -348,18 +364,21 @@ define_modeling_cmd_enum! {
         /// Gets the default camera's camera settings
         #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraGetSettings {}
 
         /// Gets the default camera's view state
         #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraGetView {}
 
         /// Sets the default camera's view state
         #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraSetView {
             /// Camera view state
@@ -369,6 +388,7 @@ define_modeling_cmd_enum! {
         /// Change what the default camera is looking at.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraLookAt {
             /// Where the camera is positioned
@@ -387,6 +407,7 @@ define_modeling_cmd_enum! {
         /// Change what the default camera is looking at.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraPerspectiveSettings {
             /// Where the camera is positioned
@@ -411,6 +432,7 @@ define_modeling_cmd_enum! {
         /// Adjust zoom of the default camera.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraZoom {
             /// Move the camera forward along the vector it's looking at,
@@ -422,6 +444,7 @@ define_modeling_cmd_enum! {
         /// Export a sketch to a file.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Export2d {
             /// IDs of the entities to be exported.
@@ -433,6 +456,7 @@ define_modeling_cmd_enum! {
         /// Export the scene to a file.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Export3d {
             /// IDs of the entities to be exported. If this is empty, then all entities are exported.
@@ -444,6 +468,7 @@ define_modeling_cmd_enum! {
         /// Export the scene to a file.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Export {
             /// IDs of the entities to be exported. If this is empty, then all entities are exported.
@@ -455,6 +480,7 @@ define_modeling_cmd_enum! {
         /// What is this entity's parent?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityGetParentId {
             /// ID of the entity being queried.
@@ -464,6 +490,7 @@ define_modeling_cmd_enum! {
         /// How many children does the entity have?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityGetNumChildren {
             /// ID of the entity being queried.
@@ -473,6 +500,7 @@ define_modeling_cmd_enum! {
         /// What is the UUID of this entity's n-th child?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityGetChildUuid {
             /// ID of the entity being queried.
@@ -484,6 +512,7 @@ define_modeling_cmd_enum! {
         /// What are all UUIDs of this entity's children?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityGetAllChildUuids {
             /// ID of the entity being queried.
@@ -493,6 +522,7 @@ define_modeling_cmd_enum! {
         /// What are all UUIDs of all the paths sketched on top of this entity?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityGetSketchPaths {
             /// ID of the entity being queried.
@@ -502,6 +532,7 @@ define_modeling_cmd_enum! {
         /// What is the distance between these two entities?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityGetDistance {
             /// ID of the first entity being queried.
@@ -516,6 +547,7 @@ define_modeling_cmd_enum! {
         /// Transformations are performed in the following order (first applied to last applied): scale, rotate, translate.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityClone {
             /// ID of the entity being cloned.
@@ -526,6 +558,7 @@ define_modeling_cmd_enum! {
         /// Transformations are performed in the following order (first applied to last applied): scale, rotate, translate.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityLinearPatternTransform {
             /// ID of the entity being copied.
@@ -545,6 +578,7 @@ define_modeling_cmd_enum! {
         /// Create a linear pattern using this entity.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityLinearPattern {
             /// ID of the entity being copied.
@@ -560,6 +594,7 @@ define_modeling_cmd_enum! {
         /// Create a circular pattern using this entity.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityCircularPattern {
             /// ID of the entity being copied.
@@ -581,6 +616,7 @@ define_modeling_cmd_enum! {
         /// Create a helix using the input cylinder and other specified parameters.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityMakeHelix {
             /// ID of the cylinder.
@@ -599,6 +635,7 @@ define_modeling_cmd_enum! {
         /// Create a helix using the specified parameters.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityMakeHelixFromParams {
             /// Radius of the helix.
@@ -621,6 +658,7 @@ define_modeling_cmd_enum! {
         /// Create a helix using the specified parameters.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityMakeHelixFromEdge {
             /// Radius of the helix.
@@ -641,6 +679,7 @@ define_modeling_cmd_enum! {
         /// Mirror the input entities over the specified axis. (Currently only supports sketches)
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityMirror {
             /// ID of the mirror entities.
@@ -656,6 +695,7 @@ define_modeling_cmd_enum! {
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityMirrorAcrossEdge {
             /// ID of the mirror entities.
@@ -668,6 +708,7 @@ define_modeling_cmd_enum! {
         /// Returns ID of whatever was selected.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SelectWithPoint {
             /// Where in the window was selected
@@ -679,6 +720,7 @@ define_modeling_cmd_enum! {
         /// Adds one or more entities (by UUID) to the selection.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SelectAdd {
             /// Which entities to select
@@ -688,6 +730,7 @@ define_modeling_cmd_enum! {
         /// Removes one or more entities (by UUID) from the selection.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SelectRemove {
             /// Which entities to unselect
@@ -697,12 +740,14 @@ define_modeling_cmd_enum! {
         /// Removes all of the Objects in the scene
         #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SceneClearAll {}
 
         /// Replaces current selection with these entities (by UUID).
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SelectReplace {
             /// Which entities to select
@@ -713,6 +758,7 @@ define_modeling_cmd_enum! {
         /// If there's no entity at this location, clears the highlight.
         #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct HighlightSetEntity {
             /// Coordinates of the window being clicked
@@ -727,6 +773,7 @@ define_modeling_cmd_enum! {
         /// Changes the current highlighted entity to these entities.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct HighlightSetEntities {
             /// Highlight these entities.
@@ -736,6 +783,7 @@ define_modeling_cmd_enum! {
         /// Create a new annotation
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct NewAnnotation {
             /// What should the annotation contain?
@@ -749,6 +797,7 @@ define_modeling_cmd_enum! {
         /// Update an annotation
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct UpdateAnnotation {
             /// Which annotation to update
@@ -761,6 +810,7 @@ define_modeling_cmd_enum! {
         /// Changes visibility of scene-wide edge lines on brep solids
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EdgeLinesVisible {
             /// Whether or not the edge lines should be hidden.
@@ -770,6 +820,7 @@ define_modeling_cmd_enum! {
         /// Hide or show an object
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ObjectVisible {
             /// Which object to change
@@ -781,6 +832,7 @@ define_modeling_cmd_enum! {
         /// Bring an object to the front of the scene
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ObjectBringToFront {
             /// Which object to change
@@ -790,6 +842,7 @@ define_modeling_cmd_enum! {
         /// Set the material properties of an object
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ObjectSetMaterialParamsPbr {
             /// Which object to change
@@ -806,6 +859,7 @@ define_modeling_cmd_enum! {
         /// What type of entity is this?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct GetEntityType {
             /// ID of the entity being queried.
@@ -815,6 +869,7 @@ define_modeling_cmd_enum! {
         /// Gets all faces which use the given edge.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dGetAllEdgeFaces {
             /// Which object is being queried.
@@ -826,6 +881,7 @@ define_modeling_cmd_enum! {
         /// Add a hole to a Solid2d object before extruding it.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid2dAddHole {
             /// Which object to add the hole to.
@@ -837,6 +893,7 @@ define_modeling_cmd_enum! {
         /// Gets all edges which are opposite the given edge, across all possible faces.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dGetAllOppositeEdges {
             /// Which object is being queried.
@@ -850,6 +907,7 @@ define_modeling_cmd_enum! {
         /// Gets the edge opposite the given edge, along the given face.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dGetOppositeEdge {
             /// Which object is being queried.
@@ -863,6 +921,7 @@ define_modeling_cmd_enum! {
         /// Gets the next adjacent edge for the given edge, along the given face.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dGetNextAdjacentEdge {
             /// Which object is being queried.
@@ -876,6 +935,7 @@ define_modeling_cmd_enum! {
         /// Gets the previous adjacent edge for the given edge, along the given face.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dGetPrevAdjacentEdge {
             /// Which object is being queried.
@@ -889,6 +949,7 @@ define_modeling_cmd_enum! {
         /// Gets the shared edge between these two faces if it exists
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dGetCommonEdge {
             /// Which object is being queried.
@@ -900,6 +961,7 @@ define_modeling_cmd_enum! {
         /// Fillets the given edge with the specified radius.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dFilletEdge {
             /// Which object is being filletted.
@@ -934,6 +996,7 @@ define_modeling_cmd_enum! {
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct FaceIsPlanar {
             /// Which face is being queried.
@@ -943,6 +1006,7 @@ define_modeling_cmd_enum! {
         /// Determines a position on a brep face evaluated by parameters u,v
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct FaceGetPosition {
             /// Which face is being queried.
@@ -955,6 +1019,7 @@ define_modeling_cmd_enum! {
         ///Obtains the surface "center of mass"
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct FaceGetCenter {
             /// Which face is being queried.
@@ -964,6 +1029,7 @@ define_modeling_cmd_enum! {
         /// Determines the gradient (dFdu, dFdv) + normal vector on a brep face evaluated by parameters u,v
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct FaceGetGradient {
             /// Which face is being queried.
@@ -976,6 +1042,7 @@ define_modeling_cmd_enum! {
         /// Send object to front or back.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SendObject {
             /// Which object is being changed.
@@ -986,6 +1053,7 @@ define_modeling_cmd_enum! {
         /// Set opacity of the entity.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntitySetOpacity {
             /// Which entity is being changed.
@@ -999,6 +1067,7 @@ define_modeling_cmd_enum! {
         /// Fade entity in or out.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EntityFade {
             /// Which entity is being changed.
@@ -1013,6 +1082,7 @@ define_modeling_cmd_enum! {
         /// Make a new plane
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct MakePlane {
             /// Origin of the plane
@@ -1034,6 +1104,7 @@ define_modeling_cmd_enum! {
         /// Set the color of a plane.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct PlaneSetColor {
             /// Which plane is being changed.
@@ -1045,6 +1116,7 @@ define_modeling_cmd_enum! {
         /// Set the current tool.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetTool {
             /// What tool should be active.
@@ -1054,6 +1126,7 @@ define_modeling_cmd_enum! {
         /// Send a mouse move event
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct MouseMove {
             /// Where the mouse is
@@ -1069,6 +1142,7 @@ define_modeling_cmd_enum! {
         /// Updates modified/selected entities.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct MouseClick {
             /// Where the mouse is
@@ -1080,18 +1154,21 @@ define_modeling_cmd_enum! {
         /// Otherwise, your object will not be fused with the face.
         #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SketchModeDisable {}
 
         /// Get the plane for sketch mode.
         #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct GetSketchModePlane {}
 
         /// Get the plane for sketch mode.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct CurveSetConstraint {
             /// Which curve to constrain.
@@ -1105,6 +1182,7 @@ define_modeling_cmd_enum! {
         /// Sketch on some entity (e.g. a plane, a face).
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EnableSketchMode {
             /// Which entity to sketch on.
@@ -1126,6 +1204,7 @@ define_modeling_cmd_enum! {
         /// This is useful for catching errors before actually making the change.
         #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct EnableDryRun {}
 
@@ -1134,12 +1213,14 @@ define_modeling_cmd_enum! {
         /// This is useful for catching errors before actually making the change.
         #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DisableDryRun {}
 
         /// Set the background color of the scene.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetBackgroundColor {
             /// The color to set the background to.
@@ -1149,6 +1230,7 @@ define_modeling_cmd_enum! {
         /// Set the properties of the tool lines for the scene.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetCurrentToolProperties {
             /// The color to set the tool line to.
@@ -1158,6 +1240,7 @@ define_modeling_cmd_enum! {
         /// Set the default system properties used when a specific property isn't set.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetDefaultSystemProperties {
             /// The default system color.
@@ -1167,6 +1250,7 @@ define_modeling_cmd_enum! {
         /// Get type of the given curve.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct CurveGetType {
             /// Which curve to query.
@@ -1176,6 +1260,7 @@ define_modeling_cmd_enum! {
         /// Get control points of the given curve.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct CurveGetControlPoints {
             /// Which curve to query.
@@ -1185,6 +1270,7 @@ define_modeling_cmd_enum! {
         /// Project an entity on to a plane.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ProjectEntityToPlane {
             /// Which entity to project (vertex or edge).
@@ -1199,6 +1285,7 @@ define_modeling_cmd_enum! {
         /// Project a list of points on to a plane.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ProjectPointsToPlane {
             /// The id of the plane used for the projection.
@@ -1215,6 +1302,7 @@ define_modeling_cmd_enum! {
         #[serde(rename_all = "snake_case")]
         #[display(style = "snake_case")]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
         pub enum ImageFormat {
@@ -1227,6 +1315,7 @@ define_modeling_cmd_enum! {
         /// Take a snapshot of the current view.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct TakeSnapshot {
             /// What image format to return.
@@ -1236,6 +1325,7 @@ define_modeling_cmd_enum! {
         /// Add a gizmo showing the axes.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct MakeAxesGizmo {
             /// If true, axes gizmo will be placed in the corner of the screen.
@@ -1248,6 +1338,7 @@ define_modeling_cmd_enum! {
         /// Query the given path.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct PathGetInfo {
             /// Which path to query
@@ -1257,6 +1348,7 @@ define_modeling_cmd_enum! {
         /// Obtain curve ids for vertex ids
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct PathGetCurveUuidsForVertices {
             /// Which path to query
@@ -1269,6 +1361,7 @@ define_modeling_cmd_enum! {
         /// Obtain curve id by index
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct PathGetCurveUuid {
             /// Which path to query
@@ -1281,6 +1374,7 @@ define_modeling_cmd_enum! {
         /// Obtain vertex ids for a path
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct PathGetVertexUuids {
             /// Which path to query
@@ -1290,6 +1384,7 @@ define_modeling_cmd_enum! {
         /// Obtain the sketch target id (if the path was drawn in sketchmode) for a path
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct PathGetSketchTargetUuid {
             /// Which path to query
@@ -1299,6 +1394,7 @@ define_modeling_cmd_enum! {
         /// Start dragging the mouse.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct HandleMouseDragStart {
             /// The mouse position.
@@ -1308,6 +1404,7 @@ define_modeling_cmd_enum! {
         /// Continue dragging the mouse.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct HandleMouseDragMove {
             /// The mouse position.
@@ -1322,6 +1419,7 @@ define_modeling_cmd_enum! {
         /// Stop dragging the mouse.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct HandleMouseDragEnd {
             /// The mouse position.
@@ -1331,6 +1429,7 @@ define_modeling_cmd_enum! {
         /// Remove scene objects.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct RemoveSceneObjects {
             /// Objects to remove.
@@ -1341,6 +1440,7 @@ define_modeling_cmd_enum! {
         /// Returns the plane coordinates for the given window coordinates.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct PlaneIntersectAndProject {
             /// The plane you're intersecting against.
@@ -1352,6 +1452,7 @@ define_modeling_cmd_enum! {
         /// Find the start and end of a curve.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct CurveGetEndPoints {
             /// ID of the curve being queried.
@@ -1361,6 +1462,7 @@ define_modeling_cmd_enum! {
         /// Reconfigure the stream.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ReconfigureStream {
             /// Width of the stream.
@@ -1377,6 +1479,7 @@ define_modeling_cmd_enum! {
         /// Import files to the current model.
         #[derive(Debug, Eq, PartialEq, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ImportFiles {
             /// Files to import.
@@ -1391,6 +1494,7 @@ define_modeling_cmd_enum! {
         /// They will remain in the units they were originally executed in.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetSceneUnits {
             /// Which units the scene uses.
@@ -1400,6 +1504,7 @@ define_modeling_cmd_enum! {
         /// Get the mass of entities in the scene or the default scene.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Mass {
             /// IDs of the entities to get the mass of. If this is empty, then the default scene is included in
@@ -1416,6 +1521,7 @@ define_modeling_cmd_enum! {
         /// Get the density of entities in the scene or the default scene.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Density {
             /// IDs of the entities to get the density of. If this is empty, then the default scene is included in
@@ -1432,6 +1538,7 @@ define_modeling_cmd_enum! {
         /// Get the volume of entities in the scene or the default scene.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Volume {
             /// IDs of the entities to get the volume of. If this is empty, then the default scene is included in
@@ -1444,6 +1551,7 @@ define_modeling_cmd_enum! {
         /// Get the center of mass of entities in the scene or the default scene.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct CenterOfMass {
             /// IDs of the entities to get the center of mass of. If this is empty, then the default scene is included in
@@ -1456,6 +1564,7 @@ define_modeling_cmd_enum! {
         /// Get the surface area of entities in the scene or the default scene.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SurfaceArea {
             /// IDs of the entities to get the surface area of. If this is empty, then the default scene is included in
@@ -1470,6 +1579,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraFocusOn {
             /// UUID of object to focus on.
@@ -1480,6 +1590,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetSelectionType {
             /// What type of selection should occur when you select something?
@@ -1491,6 +1602,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetSelectionFilter {
             /// If vector is empty, clear all filters.
@@ -1503,6 +1615,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraSetOrthographic {}
 
@@ -1511,6 +1624,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraSetPerspective {
             /// If this is not given, use the same parameters as last time the perspective camera was used.
@@ -1523,6 +1637,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraCenterToSelection {
             /// Dictates whether or not the camera position should be adjusted during this operation
@@ -1536,6 +1651,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraCenterToScene {
             /// Dictates whether or not the camera position should be adjusted during this operation
@@ -1547,6 +1663,7 @@ define_modeling_cmd_enum! {
         /// Fit the view to the specified object(s).
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ZoomToFit {
             /// Which objects to fit camera to; if empty, fit to all non-default objects. Defaults to empty vector.
@@ -1566,6 +1683,7 @@ define_modeling_cmd_enum! {
         /// Looks along the normal of the specified face (if it is planar!), and fits the view to it.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct OrientToFace {
             /// Which face to orient camera to. If the face is not planar, no action will occur.
@@ -1584,6 +1702,7 @@ define_modeling_cmd_enum! {
         /// Fit the view to the scene with an isometric view.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct ViewIsometric {
             /// How much to pad the view frame by, as a fraction of the object(s) bounding box size.
@@ -1597,6 +1716,7 @@ define_modeling_cmd_enum! {
         /// Get a concise description of all of an extrusion's faces.
         #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dGetExtrusionFaceInfo {
             /// The Solid3d object whose extrusion is being queried.
@@ -1608,6 +1728,7 @@ define_modeling_cmd_enum! {
         /// Get a concise description of all of solids edges.
         #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dGetAdjacencyInfo {
             /// The Solid3d object whose info is being queried.
@@ -1620,12 +1741,14 @@ define_modeling_cmd_enum! {
         /// Clear the selection
         #[derive(Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SelectClear {}
 
         /// Find all IDs of selected entities
         #[derive(Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SelectGet {}
 
@@ -1634,6 +1757,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct GetNumObjects {}
 
@@ -1642,6 +1766,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetObjectTransform
         {
@@ -1657,6 +1782,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct BooleanUnion
         {
@@ -1673,6 +1799,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct BooleanIntersection
         {
@@ -1689,6 +1816,7 @@ define_modeling_cmd_enum! {
             Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct BooleanSubtract
         {
@@ -1704,6 +1832,7 @@ define_modeling_cmd_enum! {
         /// The new path's ID will be the ID of this command.
         #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct MakeOffsetPath {
             /// The object that will be offset (can be a path, sketch, or a solid)
@@ -1721,6 +1850,7 @@ define_modeling_cmd_enum! {
         /// Add a hole to a closed path by offsetting it a uniform distance inward.
         #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct AddHoleFromOffset {
             /// The closed path to add a hole to.
@@ -1732,6 +1862,7 @@ define_modeling_cmd_enum! {
         /// Align the grid with a plane or a planar face.
         #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetGridReferencePlane {
             /// The grid to be moved.
@@ -1744,6 +1875,7 @@ define_modeling_cmd_enum! {
         /// Set the scale of the grid lines in the video feed.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetGridScale {
             /// Distance between grid lines represents this much distance.
@@ -1755,6 +1887,7 @@ define_modeling_cmd_enum! {
         /// and smaller the more you zoom in.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetGridAutoScale {
         }
@@ -1790,6 +1923,7 @@ impl ModelingCmd {
 /// binary/bson, not text/json.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Eq, PartialEq)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct ImportFile {
     /// The file's full path, including file extension.

@@ -10,6 +10,7 @@ pub mod import {
     #[display("")]
     #[serde(rename = "FbxImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
@@ -38,6 +39,7 @@ pub mod export {
     #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
     #[serde(rename = "FbxExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
@@ -86,6 +88,7 @@ pub mod export {
     #[display(style = "snake_case")]
     #[serde(rename = "FbxStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
