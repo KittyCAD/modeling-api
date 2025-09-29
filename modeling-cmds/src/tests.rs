@@ -31,12 +31,10 @@ fn example_server() -> Result<ApiDescription<()>, String> {
     use dropshot::RequestContext;
     use dropshot::TypedBody;
 
-    /// Update the current value of the counter.  Note that the special value of 10
-    /// is not allowed (just to demonstrate how to generate an error).
     #[endpoint {
-    method = PUT,
-    path = "/example",
-}]
+        method = PUT,
+        path = "/example",
+    }]
     async fn example(
         _: RequestContext<()>,
         _: TypedBody<WebSocketRequest>,
