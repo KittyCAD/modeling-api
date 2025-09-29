@@ -23,7 +23,7 @@ async fn openapi_lint() {
     assert!(errors.is_empty(), "{}", errors.join("\n\n"));
 }
 
-fn example_server() -> Result<ApiDescription<ExampleContext>, String> {
+fn example_server() -> Result<ApiDescription<()>, String> {
     use dropshot::endpoint;
     use dropshot::ApiDescription;
     use dropshot::HttpError;
@@ -38,7 +38,7 @@ fn example_server() -> Result<ApiDescription<ExampleContext>, String> {
     path = "/example",
 }]
     async fn example(
-        _: RequestContext<ExampleContext>,
+        _: RequestContext<()>,
         _: TypedBody<WebSocketRequest>,
     ) -> Result<HttpResponseUpdatedNoContent, HttpError> {
         Ok(HttpResponseUpdatedNoContent())
@@ -50,6 +50,3 @@ fn example_server() -> Result<ApiDescription<ExampleContext>, String> {
 
     Ok(api)
 }
-
-#[derive(Default)]
-struct ExampleContext {}
