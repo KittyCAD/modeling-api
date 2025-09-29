@@ -26,6 +26,8 @@ pub mod ok_response;
 pub mod session;
 /// Types that are shared between various modeling commands, like Point3d.
 pub mod shared;
+#[cfg(all(test, feature = "derive-jsonschema-on-enums"))]
+mod tests;
 /// The modeling command trait that each modeling command implements.
 mod traits;
 /// Units of measurement.
