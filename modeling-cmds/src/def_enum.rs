@@ -944,7 +944,7 @@ define_modeling_cmd_enum! {
             /// The cut type and information required to perform the cut.
             pub cut_type: CutTypeV2,
             /// The maximum acceptable surface gap computed between the filleted surfaces. Must be
-            /// positive (i.e. greated than zero).
+            /// positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
             /// Which cutting algorithm to use.
             #[serde(default)]
