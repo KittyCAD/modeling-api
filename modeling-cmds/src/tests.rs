@@ -50,3 +50,17 @@ fn example_server() -> Result<ApiDescription<()>, String> {
 
     Ok(api)
 }
+
+async fn get_current_schema() -> openapiv3::Schema {
+    let branch = "main";
+    let file = "openapi/api.json";
+    let path =
+        format!("https://raw.githubusercontent.com/KittyCAD/modeling-api/refs/heads/{branch}/modeling-cmds/{file}");
+    dbg!(&path);
+    reqwest::get(path).await.unwrap().json().await.unwrap()
+}
+
+#[tokio::test]
+async fn test_schema() {
+    let s = get_current_schema().await;
+}
