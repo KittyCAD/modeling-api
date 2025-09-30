@@ -25,7 +25,7 @@ define_modeling_cmd_enum! {
                 Angle,
                 ComponentTransform,
                 RelativeTo,
-                CutType,
+                CutType, CutTypeV2,
                 CutStrategy,
                 CameraMovement,
                 ExtrudedFaceInfo, ExtrudeMethod,
@@ -925,6 +925,35 @@ define_modeling_cmd_enum! {
             /// be the command ID used to send this command, and this
             /// field should be empty.
             /// If you've passed `n` IDs (to fillet `n` edges), then
+            /// this should be length `n-1`, and the first edge will use
+            /// the command ID used to send this command.
+            #[serde(default)]
+            pub extra_face_ids: Vec<Uuid>,
+        }
+
+        /// Cut the list of given edges with the given cut parameters.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct Solid3dCutEdges {
+            /// Which object is being cut.
+            pub object_id: Uuid,
+            /// Which edges you want to cut.
+            #[serde(default)]
+            pub edge_ids: Vec<Uuid>,
+            /// The cut type and information required to perform the cut.
+            pub cut_type: CutTypeV2,
+            /// The maximum acceptable surface gap computed between the cut surfaces. Must be
+            /// positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+            /// Which cutting algorithm to use.
+            #[serde(default)]
+            pub strategy: CutStrategy,
+            /// What IDs should the resulting faces have?
+            /// If you've only passed one edge ID, its ID will
+            /// be the command ID used to send this command, and this
+            /// field should be empty.
+            /// If you've passed `n` IDs (to cut `n` edges), then
             /// this should be length `n-1`, and the first edge will use
             /// the command ID used to send this command.
             #[serde(default)]

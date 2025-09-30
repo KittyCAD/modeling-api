@@ -24,6 +24,38 @@ pub enum CutType {
     Chamfer,
 }
 
+/// What kind of cut to perform when cutting an edge.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum CutTypeV2 {
+    /// Round off an edge.
+    Fillet {
+        /// The radius of the fillet.
+        radius: LengthUnit,
+        /// The second length affects the edge length of the second face of the cut. This will
+        /// cause the fillet to take on the shape of a conic section, instead of an arc.
+        second_length: Option<LengthUnit>,
+    },
+    /// Cut away an edge.
+    Chamfer {
+        /// The distance from the edge to cut on each face.
+        distance: LengthUnit,
+        /// The second distance affects the edge length of the second face of the cut.
+        second_distance: Option<LengthUnit>,
+        /// The angle of the chamfer, default is 45deg.
+        angle: Option<Angle>,
+        /// If true, the second distance or angle is applied to the other face of the cut.
+        swap: bool,
+    },
+    /// A custom cut profile.
+    Custom {
+        /// The path that will be used for the custom profile.
+        path: Uuid,
+    },
+}
+
 /// A rotation defined by an axis, origin of rotation, and an angle.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
