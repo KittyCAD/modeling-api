@@ -23,6 +23,10 @@ async fn test_openapi() {
     // Check for lint errors.
     let errors = openapi_lint::validate(&spec);
     assert!(errors.is_empty(), "{}", errors.join("\n\n"));
+
+    // Download the old schema, write it to disk.
+    let schema = download_openapi_schema("main").await;
+    std::fs::write("openapi/old_api.json", schema).unwrap();
 }
 
 fn example_server() -> Result<ApiDescription<()>, String> {
@@ -49,4 +53,11 @@ fn example_server() -> Result<ApiDescription<()>, String> {
     api.register(example).unwrap();
 
     Ok(api)
+}
+
+async fn download_openapi_schema(branch: &str) -> String {
+    let file = "openapi/api.json";
+    let path =
+        format!("https://raw.githubusercontent.com/KittyCAD/modeling-api/refs/heads/{branch}/modeling-cmds/{file}");
+    reqwest::get(path).await.unwrap().text().await.unwrap()
 }

@@ -18,7 +18,7 @@ test:
 
 # Regenerate OpenAPI spec
 redo-openapi:
-    EXPECTORATE=overwrite cargo nextest run --all-features -- test_openapi
+    EXPECTORATE=overwrite cargo nextest run --all-features --nocapture -E "test(test_openapi)"
 
 # Run unit tests, output coverage to `lcov.info`.
 test-with-coverage:
@@ -71,3 +71,8 @@ finish-release pkg:
     git tag kittycad-{{pkg}}-$version -m "kittycad-{{pkg}}-$version"
     git push --tags
     cargo publish -p kittycad-{{pkg}}
+
+# Other actions: changelog, checks, diff, summary
+breaking-api-changes action='summary':
+    just redo-openapi 
+    openapi-changes {{action}} --no-color -b modeling-cmds/openapi/old_api.json modeling-cmds/openapi/api.json
