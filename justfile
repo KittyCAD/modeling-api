@@ -16,6 +16,10 @@ test:
     cargo nextest run --all-features
     cargo test --doc
 
+# Regenerate OpenAPI spec
+redo-openapi:
+    EXPECTORATE=overwrite cargo nextest run --all-features -- test_openapi
+
 # Run unit tests, output coverage to `lcov.info`.
 test-with-coverage:
     cargo llvm-cov nextest --all-features --workspace --lcov --output-path lcov.info
