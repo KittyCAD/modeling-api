@@ -61,6 +61,7 @@ impl Session {
         let (ws, _headers) = client
             .modeling()
             .commands_ws(
+                None,
                 fps,
                 None,
                 None,
