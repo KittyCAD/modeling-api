@@ -4000,7 +4000,7 @@
                 }
               },
               "extra_face_ids": {
-                "description": "What IDs should the resulting faces have? If you've only passed one edge ID, its ID will be the command ID used to send this command, and this field should be empty. If you've passed `n` IDs (to fillet `n` edges), then this should be length `n-1`, and the first edge will use the command ID used to send this command.",
+                "description": "What IDs should the resulting faces have? If you've only passed one edge ID, its ID will be the command ID used to send this command, and this field should be empty. If you've passed `n` IDs (to cut `n` edges), then this should be length `n-1`, and the first edge will use the command ID used to send this command.",
                 "default": [],
                 "type": "array",
                 "items": {
@@ -4023,7 +4023,7 @@
                 ]
               },
               "tolerance": {
-                "description": "The maximum acceptable surface gap computed between the filleted surfaces. Must be positive (i.e. greater than zero).",
+                "description": "The maximum acceptable surface gap computed between the cut surfaces. Must be positive (i.e. greater than zero).",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/LengthUnit"

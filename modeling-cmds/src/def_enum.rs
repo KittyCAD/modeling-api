@@ -943,7 +943,7 @@ define_modeling_cmd_enum! {
             pub edge_ids: Vec<Uuid>,
             /// The cut type and information required to perform the cut.
             pub cut_type: CutTypeV2,
-            /// The maximum acceptable surface gap computed between the filleted surfaces. Must be
+            /// The maximum acceptable surface gap computed between the cut surfaces. Must be
             /// positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
             /// Which cutting algorithm to use.
@@ -953,7 +953,7 @@ define_modeling_cmd_enum! {
             /// If you've only passed one edge ID, its ID will
             /// be the command ID used to send this command, and this
             /// field should be empty.
-            /// If you've passed `n` IDs (to fillet `n` edges), then
+            /// If you've passed `n` IDs (to cut `n` edges), then
             /// this should be length `n-1`, and the first edge will use
             /// the command ID used to send this command.
             #[serde(default)]
