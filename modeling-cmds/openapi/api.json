@@ -962,6 +962,118 @@
           }
         ]
       },
+      "CutTypeV2": {
+        "description": "What kind of cut to perform when cutting an edge.",
+        "oneOf": [
+          {
+            "description": "Round off an edge.",
+            "type": "object",
+            "properties": {
+              "fillet": {
+                "type": "object",
+                "properties": {
+                  "radius": {
+                    "description": "The radius of the fillet.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/LengthUnit"
+                      }
+                    ]
+                  },
+                  "second_length": {
+                    "nullable": true,
+                    "description": "The second length affects the edge length of the second face of the cut. This will cause the fillet to take on the shape of a conic section, instead of an arc.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/LengthUnit"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "radius"
+                ]
+              }
+            },
+            "required": [
+              "fillet"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Cut away an edge.",
+            "type": "object",
+            "properties": {
+              "chamfer": {
+                "type": "object",
+                "properties": {
+                  "angle": {
+                    "nullable": true,
+                    "description": "The angle of the chamfer, default is 45deg.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Angle"
+                      }
+                    ]
+                  },
+                  "distance": {
+                    "description": "The distance from the edge to cut on each face.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/LengthUnit"
+                      }
+                    ]
+                  },
+                  "second_distance": {
+                    "nullable": true,
+                    "description": "The second distance affects the edge length of the second face of the cut.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/LengthUnit"
+                      }
+                    ]
+                  },
+                  "swap": {
+                    "description": "If true, the second distance or angle is applied to the other face of the cut.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "distance",
+                  "swap"
+                ]
+              }
+            },
+            "required": [
+              "chamfer"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A custom cut profile.",
+            "type": "object",
+            "properties": {
+              "custom": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "description": "The path that will be used for the custom profile.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "path"
+                ]
+              }
+            },
+            "required": [
+              "custom"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "Direction": {
         "description": "Specifies the sign of a co-ordinate axis.",
         "oneOf": [
@@ -3862,6 +3974,72 @@
             "required": [
               "object_id",
               "radius",
+              "tolerance",
+              "type"
+            ]
+          },
+          {
+            "description": "Cut the list of given edges with the given cut parameters.",
+            "type": "object",
+            "properties": {
+              "cut_type": {
+                "description": "The cut type and information required to perform the cut.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CutTypeV2"
+                  }
+                ]
+              },
+              "edge_ids": {
+                "description": "Which edges you want to cut.",
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "extra_face_ids": {
+                "description": "What IDs should the resulting faces have? If you've only passed one edge ID, its ID will be the command ID used to send this command, and this field should be empty. If you've passed `n` IDs (to fillet `n` edges), then this should be length `n-1`, and the first edge will use the command ID used to send this command.",
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "object_id": {
+                "description": "Which object is being cut.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "strategy": {
+                "description": "Which cutting algorithm to use.",
+                "default": "automatic",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CutStrategy"
+                  }
+                ]
+              },
+              "tolerance": {
+                "description": "The maximum acceptable surface gap computed between the filleted surfaces. Must be positive (i.e. greater than zero).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_cut_edges"
+                ]
+              }
+            },
+            "required": [
+              "cut_type",
+              "object_id",
               "tolerance",
               "type"
             ]
