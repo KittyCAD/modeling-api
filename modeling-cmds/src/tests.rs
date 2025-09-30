@@ -3,7 +3,7 @@ use dropshot::ApiDescription;
 use crate::websocket::WebSocketRequest;
 
 #[tokio::test]
-async fn openapi_lint() {
+async fn test_openapi() {
     let api = example_server().unwrap();
     // Create the API schema.
     let mut definition = api.openapi("Example Modeling API server", "1.2.3".parse().unwrap());
@@ -13,6 +13,8 @@ async fn openapi_lint() {
         .contact_email("api@zoo.dev")
         .json()
         .unwrap();
+    let schema_str = serde_json::to_string_pretty(&schema).unwrap();
+    expectorate::assert_contents("openapi/api.json", &schema_str);
 
     let spec: openapiv3::OpenAPI = serde_json::from_value(schema).expect("schema was not valid OpenAPI");
 
