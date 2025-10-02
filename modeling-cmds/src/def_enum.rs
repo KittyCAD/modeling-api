@@ -1921,7 +1921,7 @@ impl ModelingCmd {
 /// File to import into the current model.
 /// If you are sending binary data for a file, be sure to send the WebSocketRequest as
 /// binary/bson, not text/json.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Eq, PartialEq)]
+#[derive(Clone, Serialize, Deserialize, JsonSchema, Eq, PartialEq)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1934,4 +1934,13 @@ pub struct ImportFile {
         deserialize_with = "serde_bytes::deserialize"
     )]
     pub data: Vec<u8>,
+}
+
+impl std::fmt::Debug for ImportFile {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ImportFile")
+            .field("path", &self.path)
+            .field("data", &"<redacted>")
+            .finish()
+    }
 }
