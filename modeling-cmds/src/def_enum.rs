@@ -1527,6 +1527,21 @@ define_modeling_cmd_enum! {
             pub filter: Vec<EntityType>,
         }
 
+        /// Get the all ids of a given entity type.
+        #[derive(
+            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct SceneGetEntityIds {
+            /// The entity types to be queried.
+            pub filter: Vec<EntityType>,
+            /// Skip the first n returned ids.
+            pub skip: u32,
+            /// Take n ids after any ids skipped.
+            pub take: u32,
+        }
+
         /// Use orthographic projection.
         #[derive(
             Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
