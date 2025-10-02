@@ -1536,6 +1536,10 @@ define_modeling_cmd_enum! {
         pub struct SceneGetEntityIds {
             /// The entity types to be queried.
             pub filter: Vec<EntityType>,
+            /// Skip the first n returned ids.
+            pub skip: u32,
+            /// Take n ids after any ids skipped.
+            pub take: u32,
         }
 
         /// Use orthographic projection.
