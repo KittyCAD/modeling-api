@@ -15,7 +15,7 @@ jobs:
       name: cargo test
       runs-on: ubuntu-latest-8-cores
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v5
         - name: Install Rust
           uses: dtolnay/rust-toolchain@stable
         - uses: taiki-e/install-action@cargo-llvm-cov
@@ -44,7 +44,7 @@ jobs:
       name: Check for breaking API changes
       runs-on: ubuntu-latest-8-cores
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v5
         - uses: taiki-e/install-action@just
         - name: Install Rust
           uses: dtolnay/rust-toolchain@stable
@@ -61,7 +61,7 @@ jobs:
       name: Check lints
       runs-on: ubuntu-latest-8-cores
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v5
         - uses: taiki-e/install-action@just
         - name: Install Rust
           uses: dtolnay/rust-toolchain@stable
@@ -76,7 +76,7 @@ jobs:
       name: Check wasm
       runs-on: ubuntu-latest-8-cores
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v5
         - uses: taiki-e/install-action@just
         - name: Install Rust
           uses: dtolnay/rust-toolchain@stable
@@ -91,7 +91,7 @@ jobs:
         name: cargo fmt
         runs-on: ubuntu-latest-8-cores
         steps:
-          - uses: actions/checkout@v4
+          - uses: actions/checkout@v5
           - name: Install Rust
             uses: dtolnay/rust-toolchain@stable
             with:
@@ -104,7 +104,7 @@ jobs:
         name: Check modeling-cmds can release
         runs-on: ubuntu-latest-8-cores
         steps:
-          - uses: actions/checkout@v4
+          - uses: actions/checkout@v5
           - name: Install Rust
             uses: dtolnay/rust-toolchain@stable
           - name: Dry-run a release of modeling-cmds
@@ -114,7 +114,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
         - name: Run codespell
           uses: crate-ci/typos@v1.37.2
 
@@ -123,7 +123,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
         - name: Install cargo-sort
           run: cargo install cargo-sort
         - name: Run check
