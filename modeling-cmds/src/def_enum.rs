@@ -1540,8 +1540,9 @@ define_modeling_cmd_enum! {
             /// apply to each filter individually.
             pub skip: u32,
             /// Take n ids after any ids skipped. This value must be greater than zero and not
-            /// exceed 1000. If multiple filtes are provided, this take will apply to each filter
-            /// individually.
+            /// exceed 1000. If multiple filters are provided, this take will apply to each filter
+            /// individually. If there are fewer than `take` items of the provided filter type then the
+            /// returned list's length will be the smaller value.
             pub take: u32,
         }
 
