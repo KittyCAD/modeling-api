@@ -1527,7 +1527,7 @@ define_modeling_cmd_enum! {
             pub filter: Vec<EntityType>,
         }
 
-        /// Get the all ids of a given entity type.
+        /// Get the ids of a given entity type.
         #[derive(
             Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
         )]
