@@ -5414,6 +5414,43 @@
             ]
           },
           {
+            "description": "Get the all ids of a given entity type.",
+            "type": "object",
+            "properties": {
+              "filter": {
+                "description": "The entity types to be queried.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityType"
+                }
+              },
+              "skip": {
+                "description": "Skip the first n returned ids.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "take": {
+                "description": "Take n ids after any ids skipped.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "scene_get_entity_ids"
+                ]
+              }
+            },
+            "required": [
+              "filter",
+              "skip",
+              "take",
+              "type"
+            ]
+          },
+          {
             "description": "Use orthographic projection.",
             "type": "object",
             "properties": {
