@@ -12,7 +12,11 @@ pub mod export {
     #[serde(rename = "DxfStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-    #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+    #[cfg_attr(
+        feature = "python",
+        pyo3_stub_gen::derive::gen_stub_pyclass_enum,
+        pyo3::pyclass(name = "DxfStorage")
+    )]
     pub enum Storage {
         /// Plaintext encoding.
         ///
@@ -30,7 +34,11 @@ pub mod export {
     #[serde(rename = "DxfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-    #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
+    #[cfg_attr(
+        feature = "python",
+        pyo3_stub_gen::derive::gen_stub_pyclass,
+        pyo3::pyclass(name = "DxfExportOptions")
+    )]
     pub struct Options {
         /// Export storage.
         pub storage: Storage,

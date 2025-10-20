@@ -69,6 +69,7 @@ pub struct ModelingCmdReq {
 }
 
 /// The websocket messages the server receives.
+#[allow(clippy::large_enum_variant)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
@@ -368,11 +369,12 @@ pub struct LoggableApiError {
 #[cfg(feature = "slog")]
 impl KV for LoggableApiError {
     fn serialize(&self, _rec: &Record, serializer: &mut dyn Serializer) -> slog::Result {
+        use slog::Key;
         if let Some(ref msg_internal) = self.msg_internal {
-            serializer.emit_str("msg_internal", msg_internal)?;
+            serializer.emit_str(Key::from("msg_internal"), msg_internal)?;
         }
-        serializer.emit_str("msg_external", &self.error.message)?;
-        serializer.emit_str("error_code", &self.error.error_code.to_string())
+        serializer.emit_str(Key::from("msg_external"), &self.error.message)?;
+        serializer.emit_str(Key::from("error_code"), &self.error.error_code.to_string())
     }
 }
 

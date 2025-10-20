@@ -25,14 +25,14 @@ define_modeling_cmd_enum! {
                 Angle,
                 ComponentTransform,
                 RelativeTo,
-                CutType,
+                CutType, CutTypeV2,
                 CutStrategy,
                 CameraMovement,
                 EdgeReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
-                Point2d, Point3d, SceneSelectionType, SceneToolType, Opposite,
+                Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, Opposite,
             },
             units,
         };
@@ -101,8 +101,10 @@ define_modeling_cmd_enum! {
             /// Segment to append to the path.
             /// This segment will implicitly begin at the current "pen" location.
             pub segment: PathSegment,
+            /// Optional label to associate with the new path segment.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub label: Option<String>,
         }
-
 
         /// Command for extruding a solid 2d.
         #[derive(
@@ -124,6 +126,28 @@ define_modeling_cmd_enum! {
             /// If so, this specifies its distance.
             #[serde(default)]
             pub opposite: Opposite<LengthUnit>,
+            /// Should the extrusion create a new object or be part of the existing object.
+            #[serde(default)]
+            pub extrude_method: ExtrudeMethod,
+        }
+
+        /// Command for extruding a solid 2d to a reference geometry.
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct ExtrudeToReference {
+            /// Which sketch to extrude.
+            /// Must be a closed 2D solid.
+            pub target: ModelingCmdId,
+            /// Reference to extrude to.
+            /// Extrusion occurs along the target's normal until it is as close to the reference as possible.
+            pub reference: ExtrudeReference,
+            /// Which IDs should the new faces have?
+            /// If this isn't given, the engine will generate IDs.
+            #[serde(default)]
+            pub faces: Option<ExtrudedFaceInfo>,
             /// Should the extrusion create a new object or be part of the existing object.
             #[serde(default)]
             pub extrude_method: ExtrudeMethod,
@@ -569,8 +593,8 @@ define_modeling_cmd_enum! {
             pub start_angle: Angle,
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
-            /// Length of the helix.
-            pub length: LengthUnit,
+            /// Length of the helix. If None, the length of the cylinder will be used instead.
+            pub length: Option<LengthUnit>,
         }
 
         /// Create a helix using the specified parameters.
@@ -904,6 +928,35 @@ define_modeling_cmd_enum! {
             /// be the command ID used to send this command, and this
             /// field should be empty.
             /// If you've passed `n` IDs (to fillet `n` edges), then
+            /// this should be length `n-1`, and the first edge will use
+            /// the command ID used to send this command.
+            #[serde(default)]
+            pub extra_face_ids: Vec<Uuid>,
+        }
+
+        /// Cut the list of given edges with the given cut parameters.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct Solid3dCutEdges {
+            /// Which object is being cut.
+            pub object_id: Uuid,
+            /// Which edges you want to cut.
+            #[serde(default)]
+            pub edge_ids: Vec<Uuid>,
+            /// The cut type and information required to perform the cut.
+            pub cut_type: CutTypeV2,
+            /// The maximum acceptable surface gap computed between the cut surfaces. Must be
+            /// positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+            /// Which cutting algorithm to use.
+            #[serde(default)]
+            pub strategy: CutStrategy,
+            /// What IDs should the resulting faces have?
+            /// If you've only passed one edge ID, its ID will
+            /// be the command ID used to send this command, and this
+            /// field should be empty.
+            /// If you've passed `n` IDs (to cut `n` edges), then
             /// this should be length `n-1`, and the first edge will use
             /// the command ID used to send this command.
             #[serde(default)]

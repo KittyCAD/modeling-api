@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-modeling-cmds"
-version = "0.2.131"
+version = "0.2.145"
 edition = "2021"
 authors = ["KittyCAD, Inc."]
 description = "Commands in the KittyCAD Modeling API"
@@ -27,22 +27,22 @@ python = ["dep:pyo3", "dep:pyo3-stub-gen"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.97"
+anyhow = "1.0.100"
 chrono = { version = "0.4.39", features = ["serde"] }
 cxx = { version = "1.0", optional = true }
-data-encoding = "2.8.0"
-enum-iterator = "2.1.0"
+data-encoding = "2.9.0"
+enum-iterator = "2.3.0"
 enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
 http = "1.3.1"
-kittycad = { version = "0.3.36", optional = true }
+kittycad = { workspace = true, optional = true }
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
 measurements = "0.11.0"
-parse-display = "0.9.1"
-parse-display-derive = "0.9.0"
+parse-display = "0.10.0"
+parse-display-derive = "0.10.0"
 pyo3 = { version = "0.25.1", optional = true }
-pyo3-stub-gen = { version = "0.12.2", optional = true }
+pyo3-stub-gen = { version = "0.13.1", optional = true }
 schemars = { version = "0.8.22", features = [
   "bigdecimal04",
   "chrono",
@@ -50,10 +50,10 @@ schemars = { version = "0.8.22", features = [
   "uuid1",
 ] }
 serde = { version = "1.0.219", features = ["derive"] }
-serde_bytes = "0.11.17"
+serde_bytes = "0.11.19"
 serde_json = { version = "1.0.139", optional = true }
-slog = { version = "2.7.0", optional = true }
-tabled = { version = "0.18", optional = true }
+slog = { version = "2.8.2", optional = true }
+tabled = { version = "0.20", optional = true }
 ts-rs = { version = "11.0.1", optional = true, features = [
   "chrono-impl",
   "uuid-impl",
@@ -65,6 +65,12 @@ webrtc = { version = "0.12", optional = true }
 
 [dev-dependencies]
 bson = "2.14.0"
+dropshot = { version = "0.16.4", default-features = false }
+expectorate = "1.1.0"
+openapi-lint = { git = "https://github.com/KittyCAD/openapi-lint", branch = "kittycad" }
+openapiv3 = "2.2.0"
+reqwest = "0.12.23"
+tokio = { version = "1.47.1", features = ["macros"] }
 
 [lints]
 workspace = true

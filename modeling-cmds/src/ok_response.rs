@@ -49,6 +49,11 @@ define_ok_modeling_cmd_response_enum! {
         pub struct Extrude {
         }
 
+        /// The response from the `ExtrudeToReference` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct ExtrudeToReference {
+        }
+
         /// The response from the `TwistExtrude` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct TwistExtrude {
@@ -152,6 +157,12 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dFilletEdge {
         }
+
+        /// The response from the `Solid3dCutEdges` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dCutEdges {
+        }
+
 
         /// The response from the `SendObject` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]

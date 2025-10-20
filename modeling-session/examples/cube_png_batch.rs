@@ -87,6 +87,7 @@ async fn main() -> Result<()> {
             cmd: ModelingCmd::ExtendPath(ExtendPath {
                 path,
                 segment: PathSegment::Line { end, relative: false },
+                label: Default::default(),
             }),
         }),
     );
@@ -124,7 +125,7 @@ async fn main() -> Result<()> {
     // Save the PNG to disk.
     match snapshot_resp {
         OkModelingCmdResponse::TakeSnapshot(snap) => {
-            let mut img = image::io::Reader::new(Cursor::new(snap.contents));
+            let mut img = image::ImageReader::new(Cursor::new(snap.contents));
             img.set_format(image::ImageFormat::Png);
             let img = img.decode().context("could not decode PNG bytes")?;
             img.save(img_output_path).context("could not save PNG to disk")?;
