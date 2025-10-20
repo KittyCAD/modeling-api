@@ -1536,9 +1536,12 @@ define_modeling_cmd_enum! {
         pub struct SceneGetEntityIds {
             /// The entity types to be queried.
             pub filter: Vec<EntityType>,
-            /// Skip the first n returned ids.
+            /// Skip the first n returned ids. If multiple filters are provided, this skip will
+            /// apply to each filter individually.
             pub skip: u32,
-            /// Take n ids after any ids skipped.
+            /// Take n ids after any ids skipped. This value must be greater than zero and not
+            /// exceed 1000. If multiple filtes are provided, this take will apply to each filter
+            /// individually.
             pub take: u32,
         }
 
