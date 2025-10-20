@@ -5414,7 +5414,7 @@
             ]
           },
           {
-            "description": "Get the all ids of a given entity type.",
+            "description": "Get the ids of a given entity type.",
             "type": "object",
             "properties": {
               "filter": {
