@@ -1543,6 +1543,7 @@ define_modeling_cmd_enum! {
             /// exceed 1000. If multiple filters are provided, this take will apply to each filter
             /// individually. If there are fewer than `take` items of the provided filter type then the
             /// returned list's length will be the smaller value.
+            #[schemars(range(min = 1, max = 1000))]
             pub take: u32,
         }
 
