@@ -1530,6 +1530,26 @@ define_modeling_cmd_enum! {
             pub filter: Vec<EntityType>,
         }
 
+        /// Get the ids of a given entity type.
+        #[derive(
+            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct SceneGetEntityIds {
+            /// The entity types to be queried.
+            pub filter: Vec<EntityType>,
+            /// Skip the first n returned ids. If multiple filters are provided, this skip will
+            /// apply to each filter individually.
+            pub skip: u32,
+            /// Take n ids after any ids skipped. This value must be greater than zero and not
+            /// exceed 1000. If multiple filters are provided, this take will apply to each filter
+            /// individually. If there are fewer than `take` items of the provided filter type then the
+            /// returned list's length will be the smaller value.
+            #[schemars(range(min = 1, max = 1000))]
+            pub take: u32,
+        }
+
         /// Use orthographic projection.
         #[derive(
             Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
