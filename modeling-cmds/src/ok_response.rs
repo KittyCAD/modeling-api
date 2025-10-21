@@ -18,7 +18,7 @@ define_ok_modeling_cmd_response_enum! {
             base64::Base64Data,
             id::ModelingCmdId,
             length_unit::LengthUnit,
-            shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d},
+            shared::{CurveType, EntityReference, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d},
             units,
         };
 
@@ -336,6 +336,14 @@ define_ok_modeling_cmd_response_enum! {
             /// The UUID of the entity that was selected.
             pub entity_id: Option<Uuid>,
         }
+
+        /// The response from the `QueryEntityType` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct QueryEntityType{
+            /// The UUID of the entity that was selected.
+            pub entity_id: Vec<EntityReference>,
+        }
+
         /// The response from the `HighlightSetEntity` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct HighlightSetEntity {
