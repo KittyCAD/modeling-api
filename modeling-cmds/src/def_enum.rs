@@ -683,13 +683,23 @@ define_modeling_cmd_enum! {
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct QueryEntityType {
+        pub struct QueryEntityTypeWithPoint {
             /// Where in the window was selected
             pub selected_at_window: Point2d,
             /// What entity was selected?
             pub selection_type: SceneSelectionType,
         }
 
+        /// Query the type of entity given its id. E.g. if a face is selected the face id is
+        /// returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are
+        /// returned (typically two).
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct QueryEntityType {
+            /// The entity id to query
+            pub entity_id: Uuid,
+        }
 
         /// Adds one or more entities (by UUID) to the selection.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]

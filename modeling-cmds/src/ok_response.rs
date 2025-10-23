@@ -337,12 +337,20 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_id: Option<Uuid>,
         }
 
+        /// The response from the `QueryEntityTypeWithPoint` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct QueryEntityTypeWithPoint{
+            /// How to reference the selected entity using face ids.
+            pub reference: EntityReference,
+        }
+
         /// The response from the `QueryEntityType` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct QueryEntityType{
-            /// The UUID of the entity that was selected.
-            pub entity_id: Vec<EntityReference>,
+        pub struct QueryEntityType {
+            /// How to reference the provided entity using face ids.
+            pub reference: EntityReference,
         }
+
 
         /// The response from the `HighlightSetEntity` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
