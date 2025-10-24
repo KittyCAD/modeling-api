@@ -158,6 +158,12 @@ define_ok_modeling_cmd_response_enum! {
         pub struct Solid3dFilletEdge {
         }
 
+        /// The response from the `Solid3dCutEdgeReferences` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dCutEdgeReferences {
+        }
+
+
         /// The response from the `Solid3dCutEdges` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dCutEdges {
