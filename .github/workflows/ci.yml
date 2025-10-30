@@ -50,7 +50,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
         - uses: taiki-e/install-action@nextest
         - name: Setup node
-          uses: actions/setup-node@v5
+          uses: actions/setup-node@v6
         - name: Install openapi-changes
           run: npm i -g @pb33f/openapi-changes
         - uses: Swatinem/rust-cache@v2.8.1
