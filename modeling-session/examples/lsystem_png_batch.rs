@@ -20,14 +20,16 @@ use uuid::Uuid;
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
     // Set up the API client.
-    let kittycad_api_token = env::var("KITTYCAD_API_TOKEN").context("You must set $KITTYCAD_API_TOKEN")?;
-    let kittycad_api_client = kittycad::Client::new(kittycad_api_token);
+    let token = env::var("ZOO_API_TOKEN")
+        .or_else(|_| env::var("KITTYCAD_API_TOKEN")) // legacy name
+        .context("You must set $ZOO_API_TOKEN")?;
+    let client = kittycad::Client::new(token);
 
     // Where should the final PNG be saved?
     let img_output_path = env::var("IMAGE_OUTPUT_PATH").unwrap_or_else(|_| "model_lsystem_batched.png".to_owned());
 
     let session_builder = SessionBuilder {
-        client: kittycad_api_client,
+        client,
         fps: Some(10),
         unlocked_framerate: Some(false),
         video_res_height: Some(720),
