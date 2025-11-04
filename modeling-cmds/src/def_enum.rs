@@ -453,12 +453,18 @@ define_modeling_cmd_enum! {
         }
 
         /// Cache the scene on the server.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Cache {
             /// ID of the cache (this should be built from a hash of the content that produced the scene)
             pub cache_id: Uuid,
         }
 
         /// Retrieve a cached version of the scene if one exists.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct LoadCache {
             /// ID of the cache (this should be built from a hash of the content that produced the scene)
             pub cache_id: Uuid,
