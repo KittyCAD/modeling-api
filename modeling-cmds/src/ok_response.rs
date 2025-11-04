@@ -323,6 +323,16 @@ define_ok_modeling_cmd_response_enum! {
             pub files: Vec<ExportFile>,
         }
 
+        /// The response from the `Cache` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Export {
+        }
+
+        /// The response from the `LoadCache` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct LoadCache {
+        }
+
         /// The response from the `Export` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Export {
