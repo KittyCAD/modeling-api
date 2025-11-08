@@ -1800,12 +1800,23 @@ define_modeling_cmd_enum! {
             /// Which units the `value` field uses.
             pub units: units::UnitLength,
         }
+
         /// Set the grid lines to auto scale. The grid will get larger the further you zoom out,
         /// and smaller the more you zoom in.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct SetGridAutoScale {
+        pub struct SetGridAutoScale {}
+
+        /// Apply a label to an object.
+        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct SetLabel {
+            /// The object to be labeled.
+            pub object_id: Uuid,
+            /// Label to be set. Send an empty string to unset the label.
+            pub label: String,
         }
     }
 }
