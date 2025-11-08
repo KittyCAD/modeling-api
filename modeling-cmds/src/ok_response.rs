@@ -971,5 +971,9 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the 'SetGridScale'.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SetGridAutoScale {}
+
+        /// The response from the 'Wireframe'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Wireframe {}
     }
 }
