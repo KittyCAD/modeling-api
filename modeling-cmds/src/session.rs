@@ -31,6 +31,8 @@ pub struct EngineParams {
     pub replay: Option<String>,
     /// API Call ID for distributed tracing
     pub api_call_id: Option<String>,
+    /// TODO: Give summary of what this actually means
+    pub order_independent_transparency: bool,
 }
 
 impl Default for EngineParams {
@@ -46,6 +48,7 @@ impl Default for EngineParams {
             show_grid: false,
             replay: None,
             api_call_id: None,
+            order_independent_transparency: false,
         }
     }
 }
