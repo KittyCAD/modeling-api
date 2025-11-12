@@ -6002,7 +6002,7 @@
             ]
           },
           {
-            "description": "TODO: Explain what this means.",
+            "description": "Render transparent surfaces more accurately, but this might make rendering slower. Because it can interfere with runtime performance, it defaults to false.",
             "type": "object",
             "properties": {
               "enabled": {

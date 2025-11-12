@@ -1809,7 +1809,8 @@ define_modeling_cmd_enum! {
         pub struct SetGridAutoScale {
         }
 
-        /// TODO: Explain what this means.
+        /// Render transparent surfaces more accurately, but this might make rendering slower.
+        /// Because it can interfere with runtime performance, it defaults to false.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
