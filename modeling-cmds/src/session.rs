@@ -31,7 +31,8 @@ pub struct EngineParams {
     pub replay: Option<String>,
     /// API Call ID for distributed tracing
     pub api_call_id: Option<String>,
-    /// TODO: Give summary of what this actually means
+    /// Enables nicer visuals for transparent surfaces.
+    /// This slows down rendering, so it's off by default.
     #[serde(default)]
     pub order_independent_transparency: bool,
 }
