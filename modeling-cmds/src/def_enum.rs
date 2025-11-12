@@ -1816,7 +1816,7 @@ define_modeling_cmd_enum! {
         pub struct SetOrderIndependentTransparency {
             /// Enables or disables OIT.
             /// If not given, toggles it.
-            enabled: Option<bool>,
+            pub enabled: Option<bool>,
         }
     }
 }
