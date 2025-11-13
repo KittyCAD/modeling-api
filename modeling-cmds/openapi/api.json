@@ -6000,6 +6000,26 @@
             "required": [
               "type"
             ]
+          },
+          {
+            "description": "Render transparent surfaces more accurately, but this might make rendering slower. Because it can interfere with runtime performance, it defaults to false.",
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "nullable": true,
+                "description": "Enables or disables OIT. If not given, toggles it.",
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_order_independent_transparency"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
           }
         ]
       },
