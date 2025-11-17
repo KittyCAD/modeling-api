@@ -116,7 +116,7 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v5
         - name: Run codespell
-          uses: crate-ci/typos@v1.39.0
+          uses: crate-ci/typos@v1.39.2
 
     cargo-toml-sorted:
       name: Check Cargo.toml is sorted
