@@ -1355,6 +1355,7 @@ impl_extern_type! {
     // Scene
     SceneSelectionType = "Enums::_SceneSelectionType"
     SceneToolType = "Enums::_SceneToolType"
+    BodyType = "Enums::_BodyType"
     EntityType = "Enums::_EntityType"
     AnnotationType = "Enums::_AnnotationType"
     AnnotationTextAlignmentX = "Enums::_AnnotationTextAlignmentX"
