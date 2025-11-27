@@ -993,5 +993,13 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the 'SetGridScale'.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SetGridAutoScale {}
+
+        /// The response from the 'SetOrderIndependentTransparency'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetOrderIndependentTransparency {
+            /// Is it now enabled, or disabled?
+            pub enabled: bool,
+        }
+
     }
 }

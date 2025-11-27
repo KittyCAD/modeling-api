@@ -26,7 +26,7 @@ jobs:
         - name: cargo test
           shell: bash
           run: |
-            export KITTYCAD_API_TOKEN=${{secrets.KITTYCAD_API_TOKEN}}
+            export ZOO_API_TOKEN=${{secrets.KITTYCAD_API_TOKEN}}
             just test-with-coverage
           env:
             RUST_BACKTRACE: 1
@@ -50,7 +50,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
         - uses: taiki-e/install-action@nextest
         - name: Setup node
-          uses: actions/setup-node@v5
+          uses: actions/setup-node@v6
         - name: Install openapi-changes
           run: npm i -g @pb33f/openapi-changes
         - uses: Swatinem/rust-cache@v2.8.1
@@ -116,7 +116,7 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v5
         - name: Run codespell
-          uses: crate-ci/typos@v1.38.1
+          uses: crate-ci/typos@v1.39.2
 
     cargo-toml-sorted:
       name: Check Cargo.toml is sorted
