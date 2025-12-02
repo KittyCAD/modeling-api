@@ -802,6 +802,8 @@ define_modeling_cmd_enum! {
             pub roughness: f32,
             /// Ambient Occlusion of the new material
             pub ambient_occlusion: f32,
+            /// Color of the backface
+            pub backface_color: Option<Color>,
         }
         /// What type of entity is this?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]

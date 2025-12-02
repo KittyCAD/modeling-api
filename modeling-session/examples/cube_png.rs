@@ -21,8 +21,8 @@ const CUBE_WIDTH: LengthUnit = LengthUnit(100.0);
 async fn main() -> Result<()> {
     // Set up the API client.
     let token = env::var("ZOO_API_TOKEN")
-    .or_else(|_| env::var("KITTYCAD_API_TOKEN")) // legacy name
-    .context("You must set $ZOO_API_TOKEN")?;
+        .or_else(|_| env::var("KITTYCAD_API_TOKEN")) // legacy name
+        .context("You must set $ZOO_API_TOKEN")?;
     let client = kittycad::Client::new(token);
 
     // Where should the final PNG be saved?
