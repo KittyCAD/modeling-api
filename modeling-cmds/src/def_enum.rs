@@ -408,15 +408,16 @@ define_modeling_cmd_enum! {
             pub sequence: Option<u32>,
         }
 
-        /// Adjust zoom of the default camera.
+        /// Moves the camera towards its pivot
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct DefaultCameraZoom {
-            /// Move the camera forward along the vector it's looking at,
-            /// by this magnitudedefaultCameraZoom.
-            /// Basically, how much should the camera move forward by.
+            /// How much should the camera move
             pub magnitude: f32,
+            /// Optional screen space position to zoom towards. If given, the camera's pivot will
+            /// be set to the projection of this point onto the XY plane of the current pivot.
+            pub screen_point: Option<Point2d>,
         }
 
         /// Export a sketch to a file.
