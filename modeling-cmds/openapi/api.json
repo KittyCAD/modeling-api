@@ -3615,6 +3615,15 @@
                 "type": "number",
                 "format": "float"
               },
+              "backface_color": {
+                "nullable": true,
+                "description": "Color of the backface",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Color"
+                  }
+                ]
+              },
               "color": {
                 "description": "Color of the new material",
                 "allOf": [
