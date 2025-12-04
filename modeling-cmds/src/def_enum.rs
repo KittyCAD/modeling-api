@@ -1596,6 +1596,17 @@ define_modeling_cmd_enum! {
             pub camera_movement: CameraMovement,
         }
 
+        ///Sets the default backface color used if a specific color is not set
+        #[derive(
+            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct DefaultBackfaceSetColor {
+            /// The default color to use for all backfaces
+            pub backface_color: Color,
+        }
+
         /// Fit the view to the specified object(s).
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
