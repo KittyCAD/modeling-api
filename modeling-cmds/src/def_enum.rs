@@ -1602,7 +1602,7 @@ define_modeling_cmd_enum! {
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct DefaultBackfaceSetColor {
+        pub struct SetDefaultBackfaceColor {
             /// The default color to use for all backfaces
             pub backface_color: Color,
         }
