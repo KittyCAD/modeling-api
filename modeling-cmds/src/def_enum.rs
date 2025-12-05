@@ -128,6 +128,11 @@ define_modeling_cmd_enum! {
             /// Should the extrusion create a new object or be part of the existing object.
             #[serde(default)]
             pub extrude_method: ExtrudeMethod,
+            /// Only used if the extrusion is created from a face and extrude_method = Merge
+            /// If true, seams between the extrusion and the original body will be shown. 
+            /// Otherwise, seams resulting from the extrusion will be removed where possible.
+            #[serde(default)]
+            pub show_seams: Option<bool>,
         }
 
         /// Command for extruding a solid 2d to a reference geometry.
