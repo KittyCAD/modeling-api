@@ -646,7 +646,7 @@
         "description": "Body type determining if the operation will create a solid or a surface.",
         "oneOf": [
           {
-            "description": "Create an body that has two caps, creating a solid object.",
+            "description": "Create a body that has two caps, creating a solid object.",
             "type": "string",
             "enum": [
               "solid"
