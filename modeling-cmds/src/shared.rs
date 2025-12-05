@@ -1047,7 +1047,7 @@ impl From<EngineErrorCode> for http::StatusCode {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum BodyType {
-    ///Create an body that has two caps, creating a solid object.
+    ///Create a body that has two caps, creating a solid object.
     #[default]
     Solid,
     ///Create only the surface of the body without any caps.
