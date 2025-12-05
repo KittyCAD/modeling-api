@@ -642,6 +642,25 @@
           "direction"
         ]
       },
+      "BodyType": {
+        "description": "Body type determining if the operation will create a solid or a surface.",
+        "oneOf": [
+          {
+            "description": "Create an body that has two caps, creating a solid object.",
+            "type": "string",
+            "enum": [
+              "solid"
+            ]
+          },
+          {
+            "description": "Create only the surface of the body without any caps.",
+            "type": "string",
+            "enum": [
+              "surface"
+            ]
+          }
+        ]
+      },
       "CameraDragInteractionType": {
         "description": "The type of camera drag interaction.",
         "oneOf": [
@@ -1829,6 +1848,15 @@
             "description": "Command for extruding a solid 2d.",
             "type": "object",
             "properties": {
+              "body_type": {
+                "description": "Should this extrude create a solid body or a surface?",
+                "default": "solid",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BodyType"
+                  }
+                ]
+              },
               "distance": {
                 "description": "How far off the plane to extrude",
                 "allOf": [
@@ -1890,6 +1918,15 @@
             "description": "Command for extruding a solid 2d to a reference geometry.",
             "type": "object",
             "properties": {
+              "body_type": {
+                "description": "Should this extrude create a solid body or a surface?",
+                "default": "solid",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BodyType"
+                  }
+                ]
+              },
               "extrude_method": {
                 "description": "Should the extrusion create a new object or be part of the existing object.",
                 "default": "merge",
@@ -1951,6 +1988,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/Angle"
+                  }
+                ]
+              },
+              "body_type": {
+                "description": "Should this extrude create a solid body or a surface?",
+                "default": "solid",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BodyType"
                   }
                 ]
               },
