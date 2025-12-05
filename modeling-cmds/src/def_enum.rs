@@ -154,6 +154,9 @@ define_modeling_cmd_enum! {
             /// Should the extrusion create a new object or be part of the existing object.
             #[serde(default)]
             pub extrude_method: ExtrudeMethod,
+            /// Should this extrude create a solid body or a surface?
+            #[serde(default)]
+            pub body_type: BodyType,
         }
 
         fn default_twist_extrude_section_interval() -> Angle {
@@ -186,6 +189,9 @@ define_modeling_cmd_enum! {
             pub angle_step_size: Angle,
             ///The twisted surface loft tolerance
             pub tolerance: LengthUnit,
+            /// Should this extrude create a solid body or a surface?
+            #[serde(default)]
+            pub body_type: BodyType,
         }
 
         /// Extrude the object along a path.
