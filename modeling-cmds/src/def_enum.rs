@@ -239,6 +239,9 @@ define_modeling_cmd_enum! {
             /// If so, this specifies its angle.
             #[serde(default)]
             pub opposite: Opposite<Angle>,
+            /// Should this extrude create a solid body or a surface?
+            #[serde(default)]
+            pub body_type: BodyType,
         }
 
         /// Command for shelling a solid3d face
@@ -280,6 +283,9 @@ define_modeling_cmd_enum! {
             /// If so, this specifies its angle.
             #[serde(default)]
             pub opposite: Opposite<Angle>,
+            /// Should this extrude create a solid body or a surface?
+            #[serde(default)]
+            pub body_type: BodyType,
         }
 
         /// Command for lofting sections to create a solid
