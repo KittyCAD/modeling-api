@@ -100,6 +100,8 @@ pub enum TranslateBy {
     /// normal vector of this circle, going through the circle's center.
     ///
     /// If the edge is linear, translates along that line's vector.
+    ///
+    /// If the edge is neither circular nor linear, the API will respond with an error.
     Edge {
         /// Which edge to translate along.
         id: Uuid,
@@ -111,6 +113,8 @@ pub enum TranslateBy {
     ///
     /// If the face is circular (i.e. the end of a cone or cylinder),
     /// this works the same as translating along a circular sketch.
+    ///
+    /// If the face is not circular, the API will respond with an error.
     Face {
         /// Which face to translate along.
         id: Uuid,
