@@ -83,6 +83,48 @@ impl Default for Rotation {
     }
 }
 
+/// How to translate in space.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum TranslateBy {
+    /// Translate this much in each dimension.
+    Point3d {
+        /// Which vector to translate along.
+        point: Point3d<LengthUnit>,
+    },
+    /// Translate along this edge or path segment.
+    ///
+    /// If the edge is a circle, translates along the
+    /// normal vector of this circle, going through the circle's center.
+    ///
+    /// If the edge is linear, translates along that line's vector.
+    Edge {
+        /// Which edge to translate along.
+        id: Uuid,
+    },
+    /// Translate along this face or sketch.
+    ///
+    /// If the sketch is circular, translate along
+    /// the normal vector of the face/sketch, through its center.
+    ///
+    /// If the face is circular (i.e. the end of a cone or cylinder),
+    /// this works the same as translating along a circular sketch.
+    Face {
+        /// Which face to translate along.
+        id: Uuid,
+    },
+}
+
+impl Default for TranslateBy {
+    fn default() -> Self {
+        Self::Point3d {
+            point: Default::default(),
+        }
+    }
+}
+
 /// Ways to transform each solid being replicated in a repeating pattern.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -92,7 +134,7 @@ pub struct Transform {
     /// Translate the replica this far along each dimension.
     /// Defaults to zero vector (i.e. same position as the original).
     #[serde(default)]
-    pub translate: Point3d<LengthUnit>,
+    pub translate: TranslateBy,
     /// Scale the replica's size along each axis.
     /// Defaults to (1, 1, 1) (i.e. the same size as the original).
     #[serde(default = "same_scale")]
