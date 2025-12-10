@@ -5548,6 +5548,30 @@
             ]
           },
           {
+            "description": "Sets the default backface color used if a specific color is not set",
+            "type": "object",
+            "properties": {
+              "backface_color": {
+                "description": "The default color to use for all backfaces",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Color"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_default_backface_color"
+                ]
+              }
+            },
+            "required": [
+              "backface_color",
+              "type"
+            ]
+          },
+          {
             "description": "Fit the view to the specified object(s).",
             "type": "object",
             "properties": {
