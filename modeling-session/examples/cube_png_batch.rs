@@ -105,6 +105,7 @@ async fn main() -> Result<()> {
             opposite: Default::default(),
             extrude_method: Default::default(),
             show_seams: Default::default(),
+            body_type: Default::default(),
         }),
         cmd_id: random_id(),
     });

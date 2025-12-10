@@ -1041,6 +1041,19 @@ impl From<EngineErrorCode> for http::StatusCode {
     }
 }
 
+/// Body type determining if the operation will create a solid or a surface.
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum BodyType {
+    ///Create a body that has two caps, creating a solid object.
+    #[default]
+    Solid,
+    ///Create only the surface of the body without any caps.
+    Surface,
+}
+
 /// Extrusion method determining if the extrusion will be part of the existing object or an
 /// entirely new object.
 #[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -1342,6 +1355,7 @@ impl_extern_type! {
     // Scene
     SceneSelectionType = "Enums::_SceneSelectionType"
     SceneToolType = "Enums::_SceneToolType"
+    BodyType = "Enums::_BodyType"
     EntityType = "Enums::_EntityType"
     AnnotationType = "Enums::_AnnotationType"
     AnnotationTextAlignmentX = "Enums::_AnnotationTextAlignmentX"

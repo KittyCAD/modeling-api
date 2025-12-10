@@ -20,7 +20,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
         - uses: taiki-e/install-action@cargo-llvm-cov
         - uses: taiki-e/install-action@nextest
-        - uses: Swatinem/rust-cache@v2.8.1
+        - uses: Swatinem/rust-cache@v2.8.2
         - uses: taiki-e/install-action@just
 
         - name: cargo test
@@ -53,7 +53,7 @@ jobs:
           uses: actions/setup-node@v6
         - name: Install openapi-changes
           run: npm i -g @pb33f/openapi-changes
-        - uses: Swatinem/rust-cache@v2.8.1
+        - uses: Swatinem/rust-cache@v2.8.2
         - name: Run just breaking-api-changes
           run: just breaking-api-changes
 
@@ -67,7 +67,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
           with:
             components: clippy
-        - uses: Swatinem/rust-cache@v2.8.1
+        - uses: Swatinem/rust-cache@v2.8.2
 
         - name: Check lints
           run: just lint
@@ -82,7 +82,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
           with:
             targets: wasm32-unknown-unknown
-        - uses: Swatinem/rust-cache@v2.8.1
+        - uses: Swatinem/rust-cache@v2.8.2
 
         - name: Check lints
           run: just check-wasm
@@ -116,7 +116,7 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v6
         - name: Run codespell
-          uses: crate-ci/typos@v1.39.2
+          uses: crate-ci/typos@v1.40.0
 
     cargo-toml-sorted:
       name: Check Cargo.toml is sorted
