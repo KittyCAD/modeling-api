@@ -133,7 +133,7 @@ define_modeling_cmd_enum! {
             /// If true, seams between the extrusion and the original body will be shown. 
             /// Otherwise, seams resulting from the extrusion will be removed where possible.
             #[serde(default)]
-            pub show_seams: Option<bool>,
+            pub merge_coplanar_faces: Option<bool>,
             /// Should this extrude create a solid body or a surface?
             #[serde(default)]
             pub body_type: BodyType,
