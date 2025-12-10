@@ -143,6 +143,7 @@ async fn main() -> Result<()> {
             faces: None,
             opposite: Default::default(),
             extrude_method: Default::default(),
+            merge_coplanar_faces: Default::default(),
             body_type: Default::default(),
         }),
         cmd_id: random_id(),
