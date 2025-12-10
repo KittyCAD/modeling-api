@@ -113,6 +113,7 @@ async fn main() -> Result<()> {
                 faces: None,
                 opposite: Default::default(),
                 extrude_method: Default::default(),
+                show_seams: Default::default(),
             }
             .into(),
         )

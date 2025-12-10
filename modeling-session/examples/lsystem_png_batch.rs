@@ -143,6 +143,7 @@ async fn main() -> Result<()> {
             faces: None,
             opposite: Default::default(),
             extrude_method: Default::default(),
+            show_seams: Default::default(),
         }),
         cmd_id: random_id(),
     });
