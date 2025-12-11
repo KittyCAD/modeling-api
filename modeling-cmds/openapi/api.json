@@ -4652,9 +4652,20 @@
             "description": "Set the default system properties used when a specific property isn't set.",
             "type": "object",
             "properties": {
+              "backface_color": {
+                "nullable": true,
+                "description": "The default color to use for all backfaces",
+                "default": null,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Color"
+                  }
+                ]
+              },
               "color": {
                 "nullable": true,
                 "description": "The default system color.",
+                "default": null,
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/Color"

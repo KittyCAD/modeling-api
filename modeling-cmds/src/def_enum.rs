@@ -1203,7 +1203,11 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetDefaultSystemProperties {
             /// The default system color.
+            #[serde(default)]
             pub color: Option<Color>,
+            /// The default color to use for all backfaces
+            #[serde(default)]
+            pub backface_color: Option<Color>,
         }
 
         /// Get type of the given curve.
