@@ -2150,7 +2150,7 @@
                 "type": "boolean"
               },
               "body_type": {
-                "description": "Should this revolve create a solid body or a surface?",
+                "description": "Should this extrude create a solid body or a surface?",
                 "default": "solid",
                 "allOf": [
                   {
