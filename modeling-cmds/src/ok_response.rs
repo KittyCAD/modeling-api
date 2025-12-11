@@ -304,11 +304,6 @@ define_ok_modeling_cmd_response_enum! {
         pub struct DefaultCameraCenterToScene {
         }
 
-        /// The response from the `SetDefaultBackfaceColor` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct SetDefaultBackfaceColor {
-        }
-
         /// The response from the `SelectClear` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SelectClear {

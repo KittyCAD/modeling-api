@@ -1193,7 +1193,11 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SetDefaultSystemProperties {
             /// The default system color.
+            #[serde(default)]
             pub color: Option<Color>,
+            /// The default color to use for all backfaces
+            #[serde(default)]
+            pub backface_color: Option<Color>,
         }
 
         /// Get type of the given curve.
@@ -1594,17 +1598,6 @@ define_modeling_cmd_enum! {
             /// If no movement is requested, the camera will orbit around the new center from its current position
             #[serde(default)]
             pub camera_movement: CameraMovement,
-        }
-
-        ///Sets the default backface color used if a specific color is not set
-        #[derive(
-            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
-        )]
-        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct SetDefaultBackfaceColor {
-            /// The default color to use for all backfaces
-            pub backface_color: Color,
         }
 
         /// Fit the view to the specified object(s).
