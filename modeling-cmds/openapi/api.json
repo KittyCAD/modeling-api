@@ -2149,6 +2149,15 @@
                 "description": "If true, the axis is interpreted within the 2D space of the solid 2D's plane",
                 "type": "boolean"
               },
+              "body_type": {
+                "description": "Should this extrude create a solid body or a surface?",
+                "default": "solid",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BodyType"
+                  }
+                ]
+              },
               "opposite": {
                 "description": "Should the revolution also revolve in the opposite direction along the given axis? If so, this specifies its angle.",
                 "default": "None",
@@ -2252,6 +2261,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/Angle"
+                  }
+                ]
+              },
+              "body_type": {
+                "description": "Should this extrude create a solid body or a surface?",
+                "default": "solid",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BodyType"
                   }
                 ]
               },
@@ -4652,9 +4670,20 @@
             "description": "Set the default system properties used when a specific property isn't set.",
             "type": "object",
             "properties": {
+              "backface_color": {
+                "nullable": true,
+                "description": "The default color to use for all backfaces",
+                "default": null,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Color"
+                  }
+                ]
+              },
               "color": {
                 "nullable": true,
                 "description": "The default system color.",
+                "default": null,
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/Color"
