@@ -10,8 +10,11 @@ define_ok_modeling_cmd_response_enum! {
         use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
         use uuid::Uuid;
-        use crate::shared::CameraSettings;
-        use crate::shared::CameraViewState;
+        use crate::shared::{
+            CameraSettings,
+            CameraViewState,
+            BodyType,
+        };
 
         use crate::{self as kittycad_modeling_cmds};
         use crate::{
@@ -82,6 +85,7 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `Solid3dGetBodyType` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetBodyType {
+            /// The body type
             pub body_type: BodyType,
         }
 
