@@ -9,8 +9,8 @@ pub mod import {
     use super::*;
 
     /// Options for importing STEP format.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
-    #[display("coords: {coords}, split_closed_faces: {split_closed_faces}")]
+    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[display("split_closed_faces: {split_closed_faces}")]
     #[serde(default, rename = "StepImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -20,13 +20,6 @@ pub mod import {
         pyo3::pyclass(name = "StepImportOptions")
     )]
     pub struct Options {
-        /// Co-ordinate system of input data.
-        ///
-        /// Defaults to the [KittyCAD co-ordinate system].
-        ///
-        /// [KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html
-        pub coords: coord::System,
-
         /// Splits all closed faces into two open faces.
         ///
         /// Defaults to `false` but is implicitly `true` when importing into the engine.
@@ -41,15 +34,6 @@ pub mod import {
         /// Set the options to their defaults.
         pub fn new() -> Self {
             Default::default()
-        }
-    }
-
-    impl Default for Options {
-        fn default() -> Self {
-            Self {
-                coords: *coord::KITTYCAD,
-                split_closed_faces: false,
-            }
         }
     }
 }
