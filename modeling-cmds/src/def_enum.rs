@@ -263,6 +263,32 @@ define_modeling_cmd_enum! {
             pub hollow: bool,
         }
 
+        /// Command for joining a Surface (non-manifold) body back to a Solid.
+        /// All of the surfaces should already be contained within the body mated topologically.
+        /// This operation should be the final step after a sequence of Solid modeling commands such as
+        /// BooleanImprint, EntityDeleteChild, Solid3dFlipFace
+        /// If successful, the new body type will become "Solid".
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct Solid3dJoin {
+            /// Which Solid3D is being joined.
+            pub object_id: Uuid,
+        }
+
+        /// Retrieves the body type.
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct Solid3dGetBodyType {
+            /// The Solid3D who's body type is being queried.
+            pub object_id: Uuid,
+        }
+
         /// Command for revolving a solid 2d about a brep edge
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
@@ -495,6 +521,18 @@ define_modeling_cmd_enum! {
             pub entity_id: Uuid,
             /// Index into the entity's list of children.
             pub child_index: u32,
+        }
+
+        /// Attempts to delete a child entity from an entity.
+        /// Note that this API may change the body type of certain entities from Solid to Surface.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct EntityDeleteChild {
+            /// ID of the entity being modified
+            pub entity_id: Uuid,
+            /// ID of the entity's child being deleted
+            pub child_entity_id: Uuid,
         }
 
         /// What are all UUIDs of this entity's children?
@@ -840,6 +878,21 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
             /// Which edge you want the faces of.
             pub edge_id: Uuid,
+        }
+
+        /// Flips (reverses) a face.  If the solid3d body already has a "Solid" body type,
+        /// and preserve_solid is false, then the body type will become non-manifold ("Surface").
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct Solid3dFlipFace {
+            /// Which object is being queried.
+            pub object_id: Uuid,
+            /// Which face you want to flip.
+            pub face_id: Uuid,
+            /// Convenience parameter to reverse the entire body inside-out (flip all faces).
+            /// If the body type of the solid3d is already "Solid".
+            pub preserve_solid: bool,
         }
 
         /// Add a hole to a Solid2d object before extruding it.
@@ -1769,6 +1822,20 @@ define_modeling_cmd_enum! {
             /// Will be cut out from the 'target'.
             pub tool_ids: Vec<Uuid>,
             /// The maximum acceptable surface gap computed between the target and the solids cut out from it. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+        }
+
+        /// Create a new non-manifold body by intersecting all the input bodies, cutting and splitting all the faces at the intersection boundaries.
+        #[derive(
+            Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct BooleanImprint
+        {
+            /// Which input bodies to intersect.  Inputs with non-solid body types are permitted
+            pub body_ids: Vec<Uuid>,
+            /// The maximum acceptable surface gap between the intersected bodies. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }
 

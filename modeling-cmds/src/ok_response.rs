@@ -74,6 +74,17 @@ define_ok_modeling_cmd_response_enum! {
         pub struct Solid3dShellFace {
         }
 
+        /// The response from the `Solid3dJoin` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dJoin {
+        }
+
+        /// The response from the `Solid3dGetBodyType` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dGetBodyType {
+            pub body_type: BodyType,
+        }
+
         /// The response from the `RevolveAboutEdge` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct RevolveAboutEdge {
@@ -350,6 +361,10 @@ define_ok_modeling_cmd_response_enum! {
             /// The UUID of the child entity.
             pub entity_id: Uuid,
         }
+        /// The response from the `EntityGetChildUuid` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityDeleteChild {
+        }
         /// The response from the `EntityGetNumChildren` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct EntityGetNumChildren {
@@ -507,6 +522,11 @@ define_ok_modeling_cmd_response_enum! {
         pub struct Solid3dGetAllEdgeFaces {
             /// The UUIDs of the faces.
             pub faces: Vec<Uuid>,
+        }
+
+        /// The response from the `Solid3dFlipFace` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dFlipFace {
         }
 
         /// The response from the `Solid3dGetAllOppositeEdges` command.
@@ -959,6 +979,17 @@ define_ok_modeling_cmd_response_enum! {
             /// If the operation produced just one solid, then its ID will be the
             /// ID of the modeling command request.
             /// But if any extra solids are produced, then their IDs will be included
+            /// here.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub extra_solid_ids: Vec<Uuid>,
+        }
+
+        /// The response from the 'BooleanImprint'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct BooleanImprint {
+            /// If the operation produced just one body, then its ID will be the
+            /// ID of the modeling command request.
+            /// But if any extra bodies are produced, then their IDs will be included
             /// here.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,

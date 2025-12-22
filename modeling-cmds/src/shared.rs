@@ -1041,16 +1041,16 @@ impl From<EngineErrorCode> for http::StatusCode {
     }
 }
 
-/// Body type determining if the operation will create a solid or a surface.
+/// Body type determining if the operation will create a manifold (solid) body or a non-manifold collection of surfaces.
 #[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum BodyType {
-    ///Create a body that has two caps, creating a solid object.
+    ///Defines a body that is manifold.
     #[default]
     Solid,
-    ///Create only the surface of the body without any caps.
+    ///Defines a body that is non-manifold (an open collection of connected surfaces).
     Surface,
 }
 
