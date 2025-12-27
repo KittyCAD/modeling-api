@@ -2668,13 +2668,22 @@
             ]
           },
           {
-            "description": "Adjust zoom of the default camera.",
+            "description": "Moves the camera towards its pivot",
             "type": "object",
             "properties": {
               "magnitude": {
-                "description": "Move the camera forward along the vector it's looking at, by this magnitudedefaultCameraZoom. Basically, how much should the camera move forward by.",
+                "description": "How much should the camera move",
                 "type": "number",
                 "format": "float"
+              },
+              "screen_point": {
+                "nullable": true,
+                "description": "Optional screen space position to zoom towards. If given, the camera's pivot will be set to the projection of this point onto the XY plane of the current pivot.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Point2d"
+                  }
+                ]
               },
               "type": {
                 "type": "string",
