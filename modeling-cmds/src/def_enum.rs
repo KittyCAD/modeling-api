@@ -532,7 +532,7 @@ define_modeling_cmd_enum! {
             /// ID of the entity being modified
             pub entity_id: Uuid,
             /// ID of the entity's child being deleted
-            pub child_entity_id: Uuid,
+            pub child_entity_ids: HashSet<Uuid>,
         }
 
         /// What are all UUIDs of this entity's children?
