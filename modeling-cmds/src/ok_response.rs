@@ -365,9 +365,9 @@ define_ok_modeling_cmd_response_enum! {
             /// The UUID of the child entity.
             pub entity_id: Uuid,
         }
-        /// The response from the `EntityGetChildUuid` command.
+        /// The response from the `EntityDeleteChildren` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct EntityDeleteChild {
+        pub struct EntityDeleteChildren {
         }
         /// The response from the `EntityGetNumChildren` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]

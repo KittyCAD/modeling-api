@@ -266,7 +266,7 @@ define_modeling_cmd_enum! {
         /// Command for joining a Surface (non-manifold) body back to a Solid.
         /// All of the surfaces should already be contained within the body mated topologically.
         /// This operation should be the final step after a sequence of Solid modeling commands such as
-        /// BooleanImprint, EntityDeleteChild, Solid3dFlipFace
+        /// BooleanImprint, EntityDeleteChildren, Solid3dFlipFace
         /// If successful, the new body type will become "Solid".
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
@@ -523,12 +523,12 @@ define_modeling_cmd_enum! {
             pub child_index: u32,
         }
 
-        /// Attempts to delete a child entity from an entity.
+        /// Attempts to delete children entity from an entity.
         /// Note that this API may change the body type of certain entities from Solid to Surface.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        pub struct EntityDeleteChild {
+        pub struct EntityDeleteChildren {
             /// ID of the entity being modified
             pub entity_id: Uuid,
             /// ID of the entity's child being deleted
