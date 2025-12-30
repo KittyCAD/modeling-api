@@ -285,7 +285,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dGetBodyType {
-            /// The Solid3D who's body type is being queried.
+            /// The Solid3D whose body type is being queried.
             pub object_id: Uuid,
         }
 
