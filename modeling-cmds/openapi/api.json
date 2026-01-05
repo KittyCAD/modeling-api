@@ -1605,6 +1605,24 @@
             "description": "ISO 10303-21 (STEP) format.",
             "type": "object",
             "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
               "split_closed_faces": {
                 "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
                 "default": false,
