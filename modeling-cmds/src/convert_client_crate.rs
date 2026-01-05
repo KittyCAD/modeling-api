@@ -144,7 +144,7 @@ mod format {
                 InputFormat3d::Sldprt(sldprt::import::Options { split_closed_faces }) => {
                     kt::InputFormat3D::Sldprt { split_closed_faces }
                 }
-                InputFormat3d::Step(step::import::Options { split_closed_faces }) => {
+                InputFormat3d::Step(step::import::Options { split_closed_faces, .. }) => {
                     kt::InputFormat3D::Step { split_closed_faces }
                 }
                 InputFormat3d::Stl(stl::import::Options { coords, units }) => kt::InputFormat3D::Stl {
@@ -171,9 +171,10 @@ mod format {
                 kt::InputFormat3D::Sldprt { split_closed_faces } => {
                     Self::Sldprt(crate::format::sldprt::import::Options { split_closed_faces })
                 }
-                kt::InputFormat3D::Step { split_closed_faces } => {
-                    Self::Step(crate::format::step::import::Options { split_closed_faces })
-                }
+                kt::InputFormat3D::Step { split_closed_faces } => Self::Step(crate::format::step::import::Options {
+                    split_closed_faces,
+                    ..Default::default()
+                }),
                 kt::InputFormat3D::Stl { coords, units } => Self::Stl(crate::format::stl::import::Options {
                     coords: coords.into(),
                     units: units.into(),
