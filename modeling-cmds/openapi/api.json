@@ -6406,6 +6406,68 @@
             "required": [
               "type"
             ]
+          },
+          {
+            "description": "Create a region bounded by the intersection of various paths. The region should have an ID taken from the ID of the 'CreateRegion' modeling command.",
+            "type": "object",
+            "properties": {
+              "curve_clockwise": {
+                "description": "By default, curve counterclockwise at intersections. If this is true, instead curve clockwise.",
+                "default": false,
+                "type": "boolean"
+              },
+              "intersection_index": {
+                "description": "At which intersection between `segment` and `intersection_segment` should we stop following the `segment` and start following `intersection_segment`? Defaults to -1, which means the last intersection.",
+                "default": -1,
+                "type": "integer",
+                "format": "int32"
+              },
+              "intersection_segment": {
+                "description": "Second segment to follow to find the region. Intersects the first segment.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "segment": {
+                "description": "First segment to follow to find the region.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "create_region"
+                ]
+              }
+            },
+            "required": [
+              "intersection_segment",
+              "segment",
+              "type"
+            ]
+          },
+          {
+            "description": "The user clicked on a point in the window, returns the region the user clicked on, if any.",
+            "type": "object",
+            "properties": {
+              "selected_at_window": {
+                "description": "Where in the window was selected",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Point2d"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "select_region_from_point"
+                ]
+              }
+            },
+            "required": [
+              "selected_at_window",
+              "type"
+            ]
           }
         ]
       },

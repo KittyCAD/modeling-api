@@ -2179,7 +2179,7 @@ define_modeling_cmd_enum! {
             /// By default, curve counterclockwise at intersections.
             /// If this is true, instead curve clockwise.
             #[serde(default)]
-            pub flip_direction: bool,
+            pub curve_clockwise: bool,
         }
 
         /// The user clicked on a point in the window,

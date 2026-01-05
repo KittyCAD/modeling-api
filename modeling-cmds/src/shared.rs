@@ -1641,7 +1641,7 @@ pub enum RelativeTo {
 }
 
 /// The region a user clicked on.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct SelectedRegion {
@@ -1655,10 +1655,21 @@ pub struct SelectedRegion {
     /// Defaults to -1, which means the last intersection.
     #[serde(default = "negative_one")]
     pub intersection_index: i32,
-    /// By default, curve counterclockwise at intersections.
+    /// By default (when this is false), curve counterclockwise at intersections.
     /// If this is true, instead curve clockwise.
     #[serde(default)]
-    pub flip_direction: bool,
+    pub curve_clockwise: bool,
+}
+
+impl Default for SelectedRegion {
+    fn default() -> Self {
+        Self {
+            segment: Default::default(),
+            intersection_segment: Default::default(),
+            intersection_index: -1,
+            curve_clockwise: Default::default(),
+        }
+    }
 }
 
 fn one() -> f32 {
