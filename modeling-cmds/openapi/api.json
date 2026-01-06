@@ -3867,7 +3867,28 @@
             ]
           },
           {
-            "description": "Flips (reverses) a face.  If the solid3d body already has a \"Solid\" body type, and preserve_solid is false, then the body type will become non-manifold (\"Surface\").",
+            "description": "Flips (reverses) a brep that is \"inside-out\".",
+            "type": "object",
+            "properties": {
+              "object_id": {
+                "description": "Which object is being flipped.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_flip"
+                ]
+              }
+            },
+            "required": [
+              "object_id",
+              "type"
+            ]
+          },
+          {
+            "description": "Flips (reverses) a face.  If the solid3d body type is \"Solid\", then body type will become non-manifold (\"Surface\").",
             "type": "object",
             "properties": {
               "face_id": {
@@ -3880,10 +3901,6 @@
                 "type": "string",
                 "format": "uuid"
               },
-              "preserve_solid": {
-                "description": "Convenience parameter to reverse the entire body inside-out (flip all faces). If the body type of the solid3d is already \"Solid\".",
-                "type": "boolean"
-              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -3894,7 +3911,6 @@
             "required": [
               "face_id",
               "object_id",
-              "preserve_solid",
               "type"
             ]
           },
