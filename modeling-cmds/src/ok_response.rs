@@ -528,6 +528,11 @@ define_ok_modeling_cmd_response_enum! {
             pub faces: Vec<Uuid>,
         }
 
+        /// The response from the `Solid3dFlip` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dFlip {
+        }
+
         /// The response from the `Solid3dFlipFace` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dFlipFace {

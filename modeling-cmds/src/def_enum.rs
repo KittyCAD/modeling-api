@@ -880,8 +880,17 @@ define_modeling_cmd_enum! {
             pub edge_id: Uuid,
         }
 
-        /// Flips (reverses) a face.  If the solid3d body already has a "Solid" body type,
-        /// and preserve_solid is false, then the body type will become non-manifold ("Surface").
+        /// Flips (reverses) a brep that is "inside-out".
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct Solid3dFlip {
+            /// Which object is being flipped.
+            pub object_id: Uuid,
+        }
+
+        /// Flips (reverses) a face.  If the solid3d body type is "Solid",
+        /// then body type will become non-manifold ("Surface").
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -890,9 +899,6 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
             /// Which face you want to flip.
             pub face_id: Uuid,
-            /// Convenience parameter to reverse the entire body inside-out (flip all faces).
-            /// If the body type of the solid3d is already "Solid".
-            pub preserve_solid: bool,
         }
 
         /// Add a hole to a Solid2d object before extruding it.
