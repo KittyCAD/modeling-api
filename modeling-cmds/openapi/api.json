@@ -643,17 +643,17 @@
         ]
       },
       "BodyType": {
-        "description": "Body type determining if the operation will create a solid or a surface.",
+        "description": "Body type determining if the operation will create a manifold (solid) body or a non-manifold collection of surfaces.",
         "oneOf": [
           {
-            "description": "Create a body that has two caps, creating a solid object.",
+            "description": "Defines a body that is manifold.",
             "type": "string",
             "enum": [
               "solid"
             ]
           },
           {
-            "description": "Create only the surface of the body without any caps.",
+            "description": "Defines a body that is non-manifold (an open collection of connected surfaces).",
             "type": "string",
             "enum": [
               "surface"
@@ -2271,6 +2271,48 @@
             ]
           },
           {
+            "description": "Command for joining a Surface (non-manifold) body back to a Solid. All of the surfaces should already be contained within the body mated topologically. This operation should be the final step after a sequence of Solid modeling commands such as BooleanImprint, EntityDeleteChildren, Solid3dFlipFace If successful, the new body type will become \"Solid\".",
+            "type": "object",
+            "properties": {
+              "object_id": {
+                "description": "Which Solid3D is being joined.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_join"
+                ]
+              }
+            },
+            "required": [
+              "object_id",
+              "type"
+            ]
+          },
+          {
+            "description": "Retrieves the body type.",
+            "type": "object",
+            "properties": {
+              "object_id": {
+                "description": "The Solid3D whose body type is being queried.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_body_type"
+                ]
+              }
+            },
+            "required": [
+              "object_id",
+              "type"
+            ]
+          },
+          {
             "description": "Command for revolving a solid 2d about a brep edge",
             "type": "object",
             "properties": {
@@ -2871,6 +2913,37 @@
             },
             "required": [
               "child_index",
+              "entity_id",
+              "type"
+            ]
+          },
+          {
+            "description": "Attempts to delete children entity from an entity. Note that this API may change the body type of certain entities from Solid to Surface.",
+            "type": "object",
+            "properties": {
+              "child_entity_ids": {
+                "description": "ID of the entity's child being deleted",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "uniqueItems": true
+              },
+              "entity_id": {
+                "description": "ID of the entity being modified",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_delete_children"
+                ]
+              }
+            },
+            "required": [
+              "child_entity_ids",
               "entity_id",
               "type"
             ]
@@ -3790,6 +3863,38 @@
             "required": [
               "edge_id",
               "object_id",
+              "type"
+            ]
+          },
+          {
+            "description": "Flips (reverses) a face.  If the solid3d body already has a \"Solid\" body type, and preserve_solid is false, then the body type will become non-manifold (\"Surface\").",
+            "type": "object",
+            "properties": {
+              "face_id": {
+                "description": "Which face you want to flip.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "object_id": {
+                "description": "Which object is being queried.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "preserve_solid": {
+                "description": "Convenience parameter to reverse the entire body inside-out (flip all faces). If the body type of the solid3d is already \"Solid\".",
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_flip_face"
+                ]
+              }
+            },
+            "required": [
+              "face_id",
+              "object_id",
+              "preserve_solid",
               "type"
             ]
           },
@@ -5961,6 +6066,39 @@
               "target_ids",
               "tolerance",
               "tool_ids",
+              "type"
+            ]
+          },
+          {
+            "description": "Create a new non-manifold body by intersecting all the input bodies, cutting and splitting all the faces at the intersection boundaries.",
+            "type": "object",
+            "properties": {
+              "body_ids": {
+                "description": "Which input bodies to intersect.  Inputs with non-solid body types are permitted",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "tolerance": {
+                "description": "The maximum acceptable surface gap between the intersected bodies. Must be positive (i.e. greater than zero).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "boolean_imprint"
+                ]
+              }
+            },
+            "required": [
+              "body_ids",
+              "tolerance",
               "type"
             ]
           },
