@@ -129,13 +129,6 @@ define_modeling_cmd_enum! {
             /// Should the extrusion create a new object or be part of the existing object.
             #[serde(default)]
             pub extrude_method: ExtrudeMethod,
-            /// Only used if the extrusion is created from a face and extrude_method = Merge
-
-            /// If true, coplanar faces will be merged and seams will be hidden.
-            /// Otherwise, seams between the extrusion and original body will be shown.
-            #[serde(default)]
-            pub merge_coplanar_faces: Option<bool>,
-
             /// Should this extrude create a solid body or a surface?
             #[serde(default)]
             pub body_type: BodyType,
