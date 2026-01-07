@@ -2357,6 +2357,15 @@
                 "description": "Attempt to approximate rational curves (such as arcs) using a bezier. This will remove banding around interpolations between arcs and non-arcs.  It may produce errors in other scenarios Over time, this field won't be necessary.",
                 "type": "boolean"
               },
+              "body_type": {
+                "description": "Should this loft create a solid body or a surface?",
+                "default": "solid",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BodyType"
+                  }
+                ]
+              },
               "section_ids": {
                 "description": "The closed section curves to create a lofted solid from. Currently, these must be Solid2Ds",
                 "type": "array",
