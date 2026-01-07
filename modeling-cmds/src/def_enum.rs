@@ -130,10 +130,9 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             pub extrude_method: ExtrudeMethod,
             /// Only used if the extrusion is created from a face and extrude_method = Merge
-
             /// If true, coplanar faces will be merged and seams will be hidden.
             /// Otherwise, seams between the extrusion and original body will be shown.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "Option::is_none")]
             pub merge_coplanar_faces: Option<bool>,
 
             /// Should this extrude create a solid body or a surface?
