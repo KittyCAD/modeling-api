@@ -112,6 +112,7 @@ define_modeling_cmd_enum! {
         )]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[derive(bon::Builder)]
         pub struct Extrude {
             /// Which sketch to extrude.
             /// Must be a closed 2D solid.
@@ -124,9 +125,11 @@ define_modeling_cmd_enum! {
             pub faces: Option<ExtrudedFaceInfo>,
             /// Should the extrusion also extrude in the opposite direction?
             /// If so, this specifies its distance.
+            #[builder(default)]
             #[serde(default)]
             pub opposite: Opposite<LengthUnit>,
             /// Should the extrusion create a new object or be part of the existing object.
+            #[builder(default)]
             #[serde(default)]
             pub extrude_method: ExtrudeMethod,
             /// Only used if the extrusion is created from a face and extrude_method = Merge
@@ -137,6 +140,7 @@ define_modeling_cmd_enum! {
 
             /// Should this extrude create a solid body or a surface?
             #[serde(default)]
+            #[builder(default)]
             pub body_type: BodyType,
         }
 
