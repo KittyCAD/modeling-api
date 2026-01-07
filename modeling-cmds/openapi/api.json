@@ -1905,7 +1905,6 @@
               "merge_coplanar_faces": {
                 "nullable": true,
                 "description": "Only used if the extrusion is created from a face and extrude_method = Merge If true, coplanar faces will be merged and seams will be hidden. Otherwise, seams between the extrusion and original body will be shown.",
-                "default": null,
                 "type": "boolean"
               },
               "opposite": {
