@@ -309,6 +309,9 @@ define_modeling_cmd_enum! {
             pub base_curve_index: Option<u32>,
             /// Tolerance
             pub tolerance: LengthUnit,
+            /// Should this extrude create a solid body or a surface?
+            #[serde(default)]
+            pub body_type: BodyType,
         }
 
 
