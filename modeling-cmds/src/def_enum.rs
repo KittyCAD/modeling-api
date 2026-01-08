@@ -113,6 +113,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[derive(bon::Builder)]
+        #[non_exhaustive]
         pub struct Extrude {
             /// Which sketch to extrude.
             /// Must be a closed 2D solid.
