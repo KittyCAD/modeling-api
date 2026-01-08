@@ -107,16 +107,15 @@ async fn main() -> Result<()> {
     session
         .run_command(
             random_id(),
-            Extrude {
-                distance: CUBE_WIDTH * 2.0,
-                target: path,
-                faces: None,
-                opposite: Default::default(),
-                extrude_method: Default::default(),
-                merge_coplanar_faces: Default::default(),
-                body_type: Default::default(),
-            }
-            .into(),
+            Extrude::builder()
+                // Set required attributes
+                .target(path)
+                .distance(CUBE_WIDTH * 2.0)
+                // Finish building.
+                // If you forgot to set one of the required attributes above,
+                // you'd get a compile error on this field.
+                .build()
+                .into(),
         )
         .await
         .context("could not extrude square into cube")?;
