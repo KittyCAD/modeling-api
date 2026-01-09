@@ -63,14 +63,16 @@ async fn main() -> Result<()> {
     // First, start the path at the first corner.
     let mut sketch_batch = vec![ModelingCmdReq {
         cmd_id: random_id(),
-        cmd: ModelingCmd::MovePathPen(MovePathPen {
-            path,
-            to: Point3d {
-                x: LengthUnit(0.0),
-                y: LengthUnit(0.0),
-                z: LengthUnit(0.0),
-            },
-        }),
+        cmd: ModelingCmd::MovePathPen(
+            MovePathPen::builder()
+                .path(path)
+                .to(Point3d {
+                    x: LengthUnit(0.0),
+                    y: LengthUnit(0.0),
+                    z: LengthUnit(0.0),
+                })
+                .build(),
+        ),
     }];
 
     struct Polar {
@@ -113,18 +115,19 @@ async fn main() -> Result<()> {
 
                 extend_paths.push(ModelingCmdReq {
                     cmd_id: random_id(),
-                    cmd: ModelingCmd::ExtendPath(ExtendPath {
-                        path,
-                        segment: PathSegment::Line {
-                            end: Point3d {
-                                x: LengthUnit(x),
-                                y: LengthUnit(y),
-                                z: LengthUnit(0.0),
-                            },
-                            relative: false,
-                        },
-                        label: Default::default(),
-                    }),
+                    cmd: ModelingCmd::ExtendPath(
+                        ExtendPath::builder()
+                            .path(path)
+                            .segment(PathSegment::Line {
+                                end: Point3d {
+                                    x: LengthUnit(x),
+                                    y: LengthUnit(y),
+                                    z: LengthUnit(0.0),
+                                },
+                                relative: false,
+                            })
+                            .build(),
+                    ),
                 });
             }
             _ => panic!("Unhandled character encountered"),
@@ -133,19 +136,16 @@ async fn main() -> Result<()> {
     sketch_batch.extend(extend_paths);
 
     sketch_batch.push(ModelingCmdReq {
-        cmd: ModelingCmd::ClosePath(ClosePath { path_id }),
+        cmd: ModelingCmd::ClosePath(ClosePath::builder().path_id(path_id).build()),
         cmd_id: random_id(),
     });
     sketch_batch.push(ModelingCmdReq {
-        cmd: ModelingCmd::Extrude(Extrude {
-            distance: LengthUnit(1.0),
-            target: path,
-            faces: None,
-            opposite: Default::default(),
-            extrude_method: Default::default(),
-            merge_coplanar_faces: Default::default(),
-            body_type: Default::default(),
-        }),
+        cmd: ModelingCmd::Extrude(
+            Extrude::builder()
+                .target(path)
+                .distance(LengthUnit(1.0))
+                .build(),
+        ),
         cmd_id: random_id(),
     });
     session
@@ -157,9 +157,11 @@ async fn main() -> Result<()> {
     let snapshot_resp = session
         .run_command(
             random_id(),
-            ModelingCmd::from(TakeSnapshot {
-                format: kittycad_modeling_cmds::ImageFormat::Png,
-            }),
+            ModelingCmd::from(
+                TakeSnapshot::builder()
+                    .format(kittycad_modeling_cmds::ImageFormat::Png)
+                    .build(),
+            ),
         )
         .await
         .context("could not get PNG snapshot")?;
