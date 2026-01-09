@@ -43,11 +43,6 @@ define_modeling_cmd_enum! {
             0.4
         }
 
-        /// Default empty uuid vector.
-        fn default_uuid_vector() -> Vec<Uuid> {
-            Vec::new()
-        }
-
         /// Evaluates the position of a path in one shot (engine utility for kcl executor)
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
@@ -1849,7 +1844,8 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ZoomToFit {
             /// Which objects to fit camera to; if empty, fit to all non-default objects. Defaults to empty vector.
-            #[serde(default = "default_uuid_vector")]
+            #[serde(default)]
+            #[builder(default)]
             pub object_ids: Vec<Uuid>,
             /// How much to pad the view frame by, as a fraction of the object(s) bounding box size.
             /// Negative padding will crop the view of the object proportionally.
@@ -1895,7 +1891,8 @@ define_modeling_cmd_enum! {
             /// Negative padding will crop the view of the object proportionally.
             /// e.g. padding = 0.2 means the view will span 120% of the object(s) bounding box,
             /// and padding = -0.2 means the view will span 80% of the object(s) bounding box.
-            #[serde(default = "f32::default")]
+            #[serde(default)]
+            #[builder(default)]
             pub padding: f32,
         }
 
