@@ -996,6 +996,12 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the 'BooleanImprint'.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct BooleanImprint {
+            /// If the operation produced just one body, then its ID will be the
+            /// ID of the modeling command request.
+            /// But if any extra bodies are produced, then their IDs will be included
+            /// here.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub extra_solid_ids: Vec<Uuid>,
         }
 
         /// The response from the 'SetGridScale'.
