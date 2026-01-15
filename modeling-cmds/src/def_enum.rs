@@ -2162,7 +2162,7 @@ define_modeling_cmd_enum! {
         /// Create a region bounded by the intersection of various paths.
         /// The region should have an ID taken from the ID of the
         /// 'CreateRegion' modeling command.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct CreateRegion {
