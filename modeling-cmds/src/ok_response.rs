@@ -82,6 +82,20 @@ define_ok_modeling_cmd_response_enum! {
         pub struct Solid3dJoin {
         }
 
+        /// The response from the `Solid3dGetEdgeUuid` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dGetEdgeUuid {
+            /// The UUID of the edge.
+            pub edge_id: Uuid,
+        }
+
+        /// The response from the `Solid3dGetFaceUuid` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dGetFaceUuid {
+            /// The UUID of the face.
+            pub face_id: Uuid,
+        }
+
         /// The response from the `Solid3dGetBodyType` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetBodyType {
@@ -364,6 +378,21 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityGetChildUuid {
             /// The UUID of the child entity.
             pub entity_id: Uuid,
+        }
+        /// The response from the `EntityGetIndex` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityGetIndex {
+            /// The child index of the entity.
+            pub entity_index: u32,
+        }
+        /// The response from the `EntityGetPrimitiveIndex` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityGetPrimitiveIndex {
+            /// The primitive index of the entity.
+            pub primitive_index: u32,
+
+            /// The type of this entity.  Helps infer whether this is an edge or a face index.
+            pub entity_type: EntityType,
         }
         /// The response from the `EntityDeleteChildren` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
