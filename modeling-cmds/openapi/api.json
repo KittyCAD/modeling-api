@@ -2297,6 +2297,62 @@
             ]
           },
           {
+            "description": "What is the UUID of this body's n-th edge?",
+            "type": "object",
+            "properties": {
+              "edge_index": {
+                "description": "The primitive index of the edge being queried.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "object_id": {
+                "description": "The Solid3D parent who owns the edge",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_edge_uuid"
+                ]
+              }
+            },
+            "required": [
+              "edge_index",
+              "object_id",
+              "type"
+            ]
+          },
+          {
+            "description": "What is the UUID of this body's n-th face?",
+            "type": "object",
+            "properties": {
+              "face_index": {
+                "description": "The primitive index of the face being queried.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "object_id": {
+                "description": "The Solid3D parent who owns the face",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_face_uuid"
+                ]
+              }
+            },
+            "required": [
+              "face_index",
+              "object_id",
+              "type"
+            ]
+          },
+          {
             "description": "Retrieves the body type.",
             "type": "object",
             "properties": {
@@ -2927,6 +2983,48 @@
             },
             "required": [
               "child_index",
+              "entity_id",
+              "type"
+            ]
+          },
+          {
+            "description": "What is this entity's child index within its parent",
+            "type": "object",
+            "properties": {
+              "entity_id": {
+                "description": "ID of the entity being queried.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_get_index"
+                ]
+              }
+            },
+            "required": [
+              "entity_id",
+              "type"
+            ]
+          },
+          {
+            "description": "What is this edge or face entity's primitive index within its parent body's edges or faces array respectively",
+            "type": "object",
+            "properties": {
+              "entity_id": {
+                "description": "ID of the entity being queried.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_get_primitive_index"
+                ]
+              }
+            },
+            "required": [
               "entity_id",
               "type"
             ]
