@@ -9,7 +9,6 @@ updates:
   schedule:
     interval: weekly
     day: saturday
-    time: '03:00'
     timezone: America/Los_Angeles
   open-pull-requests-limit: 5
   groups:
@@ -20,24 +19,12 @@ updates:
       update-types:
       - minor
       - patch
-    security-major:
-      applies-to: security-updates
-      exclude-patterns:
-      - kittycad*
-      update-types:
-      - major
     patch:
       applies-to: version-updates
       exclude-patterns:
       - kittycad*
       update-types:
       - patch
-    major:
-      applies-to: version-updates
-      exclude-patterns:
-      - kittycad*
-      update-types:
-      - major
     minor:
       applies-to: version-updates
       exclude-patterns:
@@ -45,12 +32,17 @@ updates:
       update-types:
       - minor
       - patch
+  cooldown:
+    default-days: 7
+    exclude:
+    - '*kcl*'
+    - '*zoo*'
+    - '*kittycad*'
 - package-ecosystem: cargo
   directory: /
   schedule:
     interval: weekly
     day: saturday
-    time: '03:00'
     timezone: America/Los_Angeles
   ignore:
   - dependency-name: webrtc
@@ -63,24 +55,12 @@ updates:
       update-types:
       - minor
       - patch
-    security-major:
-      applies-to: security-updates
-      exclude-patterns:
-      - kittycad*
-      update-types:
-      - major
     patch:
       applies-to: version-updates
       exclude-patterns:
       - kittycad*
       update-types:
       - patch
-    major:
-      applies-to: version-updates
-      exclude-patterns:
-      - kittycad*
-      update-types:
-      - major
     minor:
       applies-to: version-updates
       exclude-patterns:
@@ -90,3 +70,7 @@ updates:
       - patch
   cooldown:
     default-days: 7
+    exclude:
+    - '*kcl*'
+    - '*zoo*'
+    - '*kittycad*'
