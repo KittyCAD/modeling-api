@@ -303,6 +303,36 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
         }
 
+        /// What is the UUID of this body's n-th edge?
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct Solid3dGetEdgeUuid {
+            /// The Solid3D parent who owns the edge
+            pub object_id: Uuid,
+
+            /// The primitive index of the edge being queried.
+            pub edge_index: u32,
+        }
+
+        /// What is the UUID of this body's n-th face?
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct Solid3dGetFaceUuid {
+            /// The Solid3D parent who owns the face
+            pub object_id: Uuid,
+
+            /// The primitive index of the face being queried.
+            pub face_index: u32,
+        }
+
         /// Retrieves the body type.
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
@@ -571,6 +601,26 @@ define_modeling_cmd_enum! {
             pub entity_id: Uuid,
             /// Index into the entity's list of children.
             pub child_index: u32,
+        }
+
+        /// What is this entity's child index within its parent
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EntityGetIndex {
+            /// ID of the entity being queried.
+            pub entity_id: Uuid,
+        }
+
+        /// What is this edge or face entity's primitive index within its parent body's edges or faces array respectively
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EntityGetPrimitiveIndex {
+            /// ID of the entity being queried.
+            pub entity_id: Uuid,
         }
 
         /// Attempts to delete children entity from an entity.
