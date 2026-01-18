@@ -27,14 +27,14 @@ python = ["dep:pyo3", "dep:pyo3-stub-gen"]
 
 [dependencies]
 anyhow = "1.0.100"
-bon = "3.8.1"
+bon = "3.8.2"
 chrono = { version = "0.4.39", features = ["serde"] }
 cxx = { version = "1.0", optional = true }
-data-encoding = "2.9.0"
+data-encoding = "2.10.0"
 enum-iterator = "2.3.0"
 enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
-http = "1.3.1"
+http = "1.4.0"
 kittycad = { workspace = true, optional = true }
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
@@ -51,7 +51,7 @@ schemars = { version = "0.8.22", features = [
 ] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_bytes = "0.11.19"
-serde_json = { version = "1.0.139", optional = true }
+serde_json = { version = "1.0.149", optional = true }
 slog = { version = "2.8.2", optional = true }
 tabled = { version = "0.20", optional = true }
 ts-rs = { version = "11.0.1", optional = true, features = [
@@ -60,17 +60,17 @@ ts-rs = { version = "11.0.1", optional = true, features = [
   "no-serde-warnings",
   "serde-json-impl",
 ] }
-uuid = { version = "1.16.0", features = ["serde", "v4", "js"] }
+uuid = { version = "1.19.0", features = ["serde", "v4", "js"] }
 webrtc = { version = "0.12", optional = true }
 
 [dev-dependencies]
 bson = "2.14.0"
-dropshot = { version = "0.16.4", default-features = false }
+dropshot = { version = "0.16.6", default-features = false }
 expectorate = "1.1.0"
 openapi-lint = { git = "https://github.com/KittyCAD/openapi-lint", branch = "kittycad" }
 openapiv3 = "2.2.0"
 reqwest = "0.12.23"
-tokio = { version = "1.47.1", features = ["macros"] }
+tokio = { version = "1.49.0", features = ["macros"] }
 
 [lints]
 workspace = true
