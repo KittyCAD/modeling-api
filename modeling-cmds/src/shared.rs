@@ -242,6 +242,7 @@ pub struct AnnotationBasicDimension {
     pub font_point_size: u32,
 
     /// The scale of the dimension arrows
+    #[serde(default)]
     pub arrow_scale: Option<f32>,
 }
 
@@ -291,6 +292,7 @@ pub struct AnnotationFeatureControl {
     pub font_point_size: u32,
 
     /// The scale of the leader (dot or arrow)
+    #[serde(default)]
     pub leader_scale: Option<f32>,
 }
 
@@ -331,6 +333,7 @@ pub struct AnnotationFeatureTag {
     pub font_point_size: u32,
 
     /// The scale of the leader (dot or arrow)
+    #[serde(default)]
     pub leader_scale: Option<f32>,
 }
 
