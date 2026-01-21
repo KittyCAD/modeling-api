@@ -286,6 +286,9 @@ pub struct AnnotationFeatureControl {
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
+
+    /// The scale of the leader (dot or arrow)
+    pub leader_scale: f32,
 }
 
 /// Parameters for defining an MBD Feature Tag Annotation state
