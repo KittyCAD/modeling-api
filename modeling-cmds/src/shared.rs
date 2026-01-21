@@ -240,6 +240,9 @@ pub struct AnnotationBasicDimension {
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
+
+    /// The scale of the dimension arrows
+    pub arrow_scale: Option<f32>,
 }
 
 /// Parameters for defining an MBD Feature Control Annotation state
@@ -288,7 +291,7 @@ pub struct AnnotationFeatureControl {
     pub font_point_size: u32,
 
     /// The scale of the leader (dot or arrow)
-    pub leader_scale: f32,
+    pub leader_scale: Option<f32>,
 }
 
 /// Parameters for defining an MBD Feature Tag Annotation state
@@ -326,6 +329,9 @@ pub struct AnnotationFeatureTag {
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
+
+    /// The scale of the leader (dot or arrow)
+    pub leader_scale: Option<f32>,
 }
 
 /// The type of distance
