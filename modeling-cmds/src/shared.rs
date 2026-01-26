@@ -20,6 +20,8 @@ pub enum BlendType {
     /// Use the tangent of the surfaces to calculate the blend.
     #[default]
     Tangent,
+    /// Filler
+    Other,
 }
 
 /// What kind of cut to do
