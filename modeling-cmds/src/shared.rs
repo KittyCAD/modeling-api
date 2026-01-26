@@ -11,19 +11,6 @@ use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle
 
 mod point;
 
-/// What kind of blend to do
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
-#[serde(rename_all = "snake_case")]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub enum BlendType {
-    /// Use the tangent of the surfaces to calculate the blend.
-    #[default]
-    Tangent,
-    /// Filler
-    Other,
-}
-
 /// What kind of cut to do
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
@@ -1052,6 +1039,19 @@ impl From<EngineErrorCode> for http::StatusCode {
             EngineErrorCode::InternalEngine => Self::INTERNAL_SERVER_ERROR,
         }
     }
+}
+
+/// What kind of blend to do
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum BlendType {
+    /// Use the tangent of the surfaces to calculate the blend.
+    #[default]
+    Tangent,
+    /// Filler
+    Other,
 }
 
 /// Body type determining if the operation will create a manifold (solid) body or a non-manifold collection of surfaces.

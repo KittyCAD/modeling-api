@@ -642,6 +642,25 @@
           "direction"
         ]
       },
+      "BlendType": {
+        "description": "What kind of blend to do",
+        "oneOf": [
+          {
+            "description": "Use the tangent of the surfaces to calculate the blend.",
+            "type": "string",
+            "enum": [
+              "tangent"
+            ]
+          },
+          {
+            "description": "Filler",
+            "type": "string",
+            "enum": [
+              "other"
+            ]
+          }
+        ]
+      },
       "BodyType": {
         "description": "Body type determining if the operation will create a manifold (solid) body or a non-manifold collection of surfaces.",
         "oneOf": [
@@ -2293,6 +2312,48 @@
             },
             "required": [
               "object_id",
+              "type"
+            ]
+          },
+          {
+            "description": "Command for creating a blend between the edge of two given surfaces",
+            "type": "object",
+            "properties": {
+              "blend_type": {
+                "description": "The type of blend to use.",
+                "default": "tangent",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BlendType"
+                  }
+                ]
+              },
+              "edge_ids": {
+                "description": "The edges of the two given surfaces. The order must be the same as the surface order.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "object_ids": {
+                "description": "The two surfaces that the blend will span between",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "surface_blend"
+                ]
+              }
+            },
+            "required": [
+              "edge_ids",
+              "object_ids",
               "type"
             ]
           },
