@@ -24,6 +24,7 @@ define_modeling_cmd_enum! {
             length_unit::LengthUnit,
             shared::{
                 Angle,
+                BlendType,
                 BodyType,
                 ComponentTransform,
                 RelativeTo,
@@ -301,6 +302,24 @@ define_modeling_cmd_enum! {
         pub struct Solid3dJoin {
             /// Which Solid3D is being joined.
             pub object_id: Uuid,
+        }
+
+        /// Command for creating a blend between the edge of two given surfaces
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct SurfaceBlend {
+            /// The two surfaces that the blend will span between
+            pub object_ids: Vec<Uuid>,
+            /// The edges of the two given surfaces. The order must be the same as the surface
+            /// order.
+            pub edge_ids: Vec<Uuid>,
+            /// The type of blend to use.
+            #[serde(default)]
+            pub blend_type: BlendType,
         }
 
         /// What is the UUID of this body's n-th edge?
