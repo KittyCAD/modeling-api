@@ -241,9 +241,9 @@ pub struct AnnotationBasicDimension {
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
 
-    /// The scale of the dimension arrows
-    #[serde(default)]
-    pub arrow_scale: Option<f32>,
+    /// The scale of the dimension arrows. Defaults to 1.
+    #[serde(default = "one")]
+    pub arrow_scale: f32,
 }
 
 /// Parameters for defining an MBD Feature Control Annotation state
@@ -291,9 +291,9 @@ pub struct AnnotationFeatureControl {
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
 
-    /// The scale of the leader (dot or arrow)
-    #[serde(default)]
-    pub leader_scale: Option<f32>,
+    /// The scale of the leader (dot or arrow). Defaults to 1.
+    #[serde(default = "one")]
+    pub leader_scale: f32,
 }
 
 /// Parameters for defining an MBD Feature Tag Annotation state
@@ -332,9 +332,9 @@ pub struct AnnotationFeatureTag {
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
 
-    /// The scale of the leader (dot or arrow)
-    #[serde(default)]
-    pub leader_scale: Option<f32>,
+    /// The scale of the leader (dot or arrow). Defaults to 1.
+    #[serde(default = "one")]
+    pub leader_scale: f32,
 }
 
 /// The type of distance
@@ -1637,4 +1637,8 @@ pub enum RelativeTo {
     SketchPlane,
     /// Local/relative to the trajectory curve
     TrajectoryCurve,
+}
+
+fn one() -> f32 {
+    1.0
 }

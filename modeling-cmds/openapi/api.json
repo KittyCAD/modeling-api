@@ -67,9 +67,8 @@
         "type": "object",
         "properties": {
           "arrow_scale": {
-            "nullable": true,
-            "description": "The scale of the dimension arrows",
-            "default": null,
+            "description": "The scale of the dimension arrows. Defaults to 1.",
+            "default": 1.0,
             "type": "number",
             "format": "float"
           },
@@ -205,9 +204,8 @@
             "format": "float"
           },
           "leader_scale": {
-            "nullable": true,
-            "description": "The scale of the leader (dot or arrow)",
-            "default": null,
+            "description": "The scale of the leader (dot or arrow). Defaults to 1.",
+            "default": 1.0,
             "type": "number",
             "format": "float"
           },
@@ -293,9 +291,8 @@
             "type": "string"
           },
           "leader_scale": {
-            "nullable": true,
-            "description": "The scale of the leader (dot or arrow)",
-            "default": null,
+            "description": "The scale of the leader (dot or arrow). Defaults to 1.",
+            "default": 1.0,
             "type": "number",
             "format": "float"
           },
