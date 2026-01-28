@@ -66,6 +66,12 @@
         "description": "Parameters for defining an MBD Basic Dimension Annotation state which is measured between two positions in 3D",
         "type": "object",
         "properties": {
+          "arrow_scale": {
+            "description": "The scale of the dimension arrows. Defaults to 1.",
+            "default": 1.0,
+            "type": "number",
+            "format": "float"
+          },
           "dimension": {
             "description": "Basic dimension parameters (symbol and tolerance)",
             "allOf": [
@@ -197,6 +203,12 @@
             "type": "number",
             "format": "float"
           },
+          "leader_scale": {
+            "description": "The scale of the leader (dot or arrow). Defaults to 1.",
+            "default": 1.0,
+            "type": "number",
+            "format": "float"
+          },
           "leader_type": {
             "description": "Type of leader to use",
             "allOf": [
@@ -277,6 +289,12 @@
           "key": {
             "description": "Tag key",
             "type": "string"
+          },
+          "leader_scale": {
+            "description": "The scale of the leader (dot or arrow). Defaults to 1.",
+            "default": 1.0,
+            "type": "number",
+            "format": "float"
           },
           "leader_type": {
             "description": "Type of leader to use",
