@@ -6427,6 +6427,11 @@
                 "type": "string",
                 "format": "uuid"
               },
+              "object_id": {
+                "description": "Which sketch object to create the region from.",
+                "type": "string",
+                "format": "uuid"
+              },
               "segment": {
                 "description": "First segment to follow to find the region.",
                 "type": "string",
@@ -6441,6 +6446,7 @@
             },
             "required": [
               "intersection_segment",
+              "object_id",
               "segment",
               "type"
             ]

@@ -2166,6 +2166,8 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct CreateRegion {
+            /// Which sketch object to create the region from.
+            pub object_id: Uuid,
             /// First segment to follow to find the region.
             pub segment: Uuid,
             /// Second segment to follow to find the region.
