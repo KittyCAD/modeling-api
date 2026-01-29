@@ -2177,16 +2177,18 @@ define_modeling_cmd_enum! {
             /// should we stop following the `segment` and start following `intersection_segment`?
             /// Defaults to -1, which means the last intersection.
             #[serde(default = "super::negative_one")]
+            #[builder(default = -1)]
             pub intersection_index: i32,
             /// By default, curve counterclockwise at intersections.
             /// If this is true, instead curve clockwise.
             #[serde(default)]
+            #[builder(default)]
             pub curve_clockwise: bool,
         }
 
         /// The user clicked on a point in the window,
         /// returns the region the user clicked on, if any.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct SelectRegionFromPoint {
