@@ -735,8 +735,7 @@
         "type": "object",
         "properties": {
           "eye_offset": {
-            "type": "number",
-            "format": "float"
+            "$ref": "#/components/schemas/Point3d"
           },
           "fov_y": {
             "type": "number",
@@ -745,32 +744,19 @@
           "is_ortho": {
             "type": "boolean"
           },
-          "ortho_scale_enabled": {
-            "type": "boolean"
-          },
-          "ortho_scale_factor": {
-            "type": "number",
-            "format": "float"
-          },
           "pivot_position": {
             "$ref": "#/components/schemas/Point3d"
           },
           "pivot_rotation": {
             "$ref": "#/components/schemas/Point4d"
-          },
-          "world_coord_system": {
-            "$ref": "#/components/schemas/WorldCoordinateSystem"
           }
         },
         "required": [
           "eye_offset",
           "fov_y",
           "is_ortho",
-          "ortho_scale_enabled",
-          "ortho_scale_factor",
           "pivot_position",
-          "pivot_rotation",
-          "world_coord_system"
+          "pivot_rotation"
         ]
       },
       "ClientMetrics": {
@@ -8301,13 +8287,6 @@
               "type"
             ]
           }
-        ]
-      },
-      "WorldCoordinateSystem": {
-        "type": "string",
-        "enum": [
-          "right_handed_up_z",
-          "right_handed_up_y"
         ]
       }
     },
