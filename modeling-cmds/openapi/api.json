@@ -7775,13 +7775,17 @@
           "translate": {
             "description": "Translate the replica this far along each dimension. Defaults to zero vector (i.e. same position as the original).",
             "default": {
-              "x": 0.0,
-              "y": 0.0,
-              "z": 0.0
+              "point3d": {
+                "point": {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 0.0
+                }
+              }
             },
             "allOf": [
               {
-                "$ref": "#/components/schemas/Point3d"
+                "$ref": "#/components/schemas/TranslateBy"
               }
             ]
           }
@@ -7861,6 +7865,83 @@
           "is_local",
           "property",
           "set"
+        ]
+      },
+      "TranslateBy": {
+        "description": "How to translate in space.",
+        "oneOf": [
+          {
+            "description": "Translate this much in each dimension.",
+            "type": "object",
+            "properties": {
+              "point3d": {
+                "type": "object",
+                "properties": {
+                  "point": {
+                    "description": "Which vector to translate along.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Point3d"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "point"
+                ]
+              }
+            },
+            "required": [
+              "point3d"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Translate along this edge or path segment.\n\nIf the edge is a circle, translates along the normal vector of this circle, going through the circle's center.\n\nIf the edge is linear, translates along that line's vector.",
+            "type": "object",
+            "properties": {
+              "edge": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Which edge to translate along.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "edge"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Translate along this face or sketch.\n\nIf the sketch is circular, translate along the normal vector of the face/sketch, through its center.\n\nIf the face is circular (i.e. the end of a cone or cylinder), this works the same as translating along a circular sketch.",
+            "type": "object",
+            "properties": {
+              "face": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Which face to translate along.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "face"
+            ],
+            "additionalProperties": false
+          }
         ]
       },
       "UnitAngle": {
