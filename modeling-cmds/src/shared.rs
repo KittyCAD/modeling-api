@@ -1166,18 +1166,6 @@ pub struct CameraSettings {
 }
 
 #[allow(missing_docs)]
-#[repr(u8)]
-#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub enum WorldCoordinateSystem {
-    #[default]
-    RightHandedUpZ,
-    RightHandedUpY,
-}
-
-#[allow(missing_docs)]
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -1185,12 +1173,9 @@ pub enum WorldCoordinateSystem {
 pub struct CameraViewState {
     pub pivot_rotation: Quaternion,
     pub pivot_position: Point3d,
-    pub eye_offset: f32,
+    pub eye_offset: Point3d,
     pub fov_y: f32,
-    pub ortho_scale_factor: f32,
     pub is_ortho: bool,
-    pub ortho_scale_enabled: bool,
-    pub world_coord_system: WorldCoordinateSystem,
 }
 
 impl Default for CameraViewState {
@@ -1198,12 +1183,13 @@ impl Default for CameraViewState {
         CameraViewState {
             pivot_rotation: Default::default(),
             pivot_position: Default::default(),
-            eye_offset: 10.0,
+            eye_offset: Point3d {
+                x: 0.0,
+                y: 0.0,
+                z: 10.0,
+            },
             fov_y: 45.0,
-            ortho_scale_factor: 1.6,
             is_ortho: false,
-            ortho_scale_enabled: true,
-            world_coord_system: Default::default(),
         }
     }
 }
