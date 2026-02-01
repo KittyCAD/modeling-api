@@ -39,7 +39,8 @@ pub async fn start(
             Request::SendModelingCmd(cmd, responder) => {
                 let ws_msg = WsMsg::Text(
                     serde_json::to_string(&WebSocketRequest::ModelingCmdReq(cmd))
-                        .expect("ModelingCmdReq can always be serialized"),
+                        .expect("ModelingCmdReq can always be serialized")
+                        .into(),
                 );
                 let resp = write_to_ws.send(ws_msg).await.map_err(RunCommandError::WebSocketSend);
                 // If the send fails, it's because the caller dropped its end, so ignore the
@@ -111,7 +112,8 @@ pub async fn start(
             Request::SendModelingBatch(batch, responder) => {
                 let ws_msg = WsMsg::Text(
                     serde_json::to_string(&WebSocketRequest::ModelingCmdBatchReq(batch))
-                        .expect("ModelingCmdReq can always be serialized"),
+                        .expect("ModelingCmdReq can always be serialized")
+                        .into(),
                 );
                 let resp = write_to_ws.send(ws_msg).await.map_err(RunCommandError::WebSocketSend);
                 // If the send fails, it's because the caller dropped its end, so ignore the
@@ -134,7 +136,7 @@ fn decode_websocket_text(text: &str) -> Result<WebSocketResponse> {
 /// Find the text in a WebSocket message, if there's any.
 fn text_from_ws(msg: WsMsg) -> Option<String> {
     match msg {
-        WsMsg::Text(text) => Some(text),
+        WsMsg::Text(text) => Some(text.to_string()),
         _ => None,
     }
 }
