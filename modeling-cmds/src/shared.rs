@@ -1,3 +1,4 @@
+use crate::def_enum::negative_one;
 use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
 pub use point::{Point2d, Point3d, Point4d, Quaternion};
@@ -240,6 +241,10 @@ pub struct AnnotationBasicDimension {
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
+
+    /// The scale of the dimension arrows. Defaults to 1.
+    #[serde(default = "one")]
+    pub arrow_scale: f32,
 }
 
 /// Parameters for defining an MBD Feature Control Annotation state
@@ -286,6 +291,10 @@ pub struct AnnotationFeatureControl {
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
+
+    /// The scale of the leader (dot or arrow). Defaults to 1.
+    #[serde(default = "one")]
+    pub leader_scale: f32,
 }
 
 /// Parameters for defining an MBD Feature Tag Annotation state
@@ -323,6 +332,10 @@ pub struct AnnotationFeatureTag {
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
+
+    /// The scale of the leader (dot or arrow). Defaults to 1.
+    #[serde(default = "one")]
+    pub leader_scale: f32,
 }
 
 /// The type of distance
@@ -1639,4 +1652,40 @@ pub enum RelativeTo {
     SketchPlane,
     /// Local/relative to the trajectory curve
     TrajectoryCurve,
+}
+
+/// The region a user clicked on.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct SelectedRegion {
+    /// First segment to follow to find the region.
+    pub segment: Uuid,
+    /// Second segment to follow to find the region.
+    /// Intersects the first segment.
+    pub intersection_segment: Uuid,
+    /// At which intersection between `segment` and `intersection_segment`
+    /// should we stop following the `segment` and start following `intersection_segment`?
+    /// Defaults to -1, which means the last intersection.
+    #[serde(default = "negative_one")]
+    pub intersection_index: i32,
+    /// By default (when this is false), curve counterclockwise at intersections.
+    /// If this is true, instead curve clockwise.
+    #[serde(default)]
+    pub curve_clockwise: bool,
+}
+
+impl Default for SelectedRegion {
+    fn default() -> Self {
+        Self {
+            segment: Default::default(),
+            intersection_segment: Default::default(),
+            intersection_index: -1,
+            curve_clockwise: Default::default(),
+        }
+    }
+}
+
+fn one() -> f32 {
+    1.0
 }

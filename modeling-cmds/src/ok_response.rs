@@ -370,6 +370,7 @@ define_ok_modeling_cmd_response_enum! {
             /// The UUID of the entity that was selected.
             pub entity_id: Option<Uuid>,
         }
+
         /// The response from the `HighlightSetEntity` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct HighlightSetEntity {
@@ -1051,6 +1052,23 @@ define_ok_modeling_cmd_response_enum! {
         pub struct SetOrderIndependentTransparency {
             /// Is it now enabled, or disabled?
             pub enabled: bool,
+        }
+
+        /// The response from the 'CreateRegion'.
+        /// The region should have an ID taken from the ID of the
+        /// 'CreateRegion' modeling command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct CreateRegion {
+        }
+
+        /// The response from the 'SelectRegionFromPoint'.
+        /// If there are multiple ways to construct this region, this chooses arbitrarily.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SelectRegionFromPoint {
+            /// The region the user clicked on.
+            /// If they clicked an open space which isn't a region,
+            /// this returns None.
+            pub region: Option<crate::shared::SelectedRegion>,
         }
 
     }

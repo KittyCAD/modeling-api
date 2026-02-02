@@ -2177,7 +2177,46 @@ define_modeling_cmd_enum! {
             /// If not given, toggles it.
             pub enabled: Option<bool>,
         }
+
+        /// Create a region bounded by the intersection of various paths.
+        /// The region should have an ID taken from the ID of the
+        /// 'CreateRegion' modeling command.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct CreateRegion {
+            /// Which sketch object to create the region from.
+            pub object_id: Uuid,
+            /// First segment to follow to find the region.
+            pub segment: Uuid,
+            /// Second segment to follow to find the region.
+            /// Intersects the first segment.
+            pub intersection_segment: Uuid,
+            /// At which intersection between `segment` and `intersection_segment`
+            /// should we stop following the `segment` and start following `intersection_segment`?
+            /// Defaults to -1, which means the last intersection.
+            #[serde(default = "super::negative_one")]
+            pub intersection_index: i32,
+            /// By default, curve counterclockwise at intersections.
+            /// If this is true, instead curve clockwise.
+            #[serde(default)]
+            pub curve_clockwise: bool,
+        }
+
+        /// The user clicked on a point in the window,
+        /// returns the region the user clicked on, if any.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct SelectRegionFromPoint {
+            /// Where in the window was selected
+            pub selected_at_window: Point2d,
+        }
     }
+}
+
+pub(crate) fn negative_one() -> i32 {
+    -1
 }
 
 impl ModelingCmd {
