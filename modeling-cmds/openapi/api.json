@@ -6474,6 +6474,41 @@
               "selected_at_window",
               "type"
             ]
+          },
+          {
+            "description": "Offset a surface by a given distance.",
+            "type": "object",
+            "properties": {
+              "distance": {
+                "description": "The distance to offset the surface by.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
+              "new_surface": {
+                "description": "If true, a new surface will be created and the existing surface will remain unchanged. Otherwise the existing surface will be offset.",
+                "type": "boolean"
+              },
+              "surface_id": {
+                "description": "The surface to offset.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "offset_surface"
+                ]
+              }
+            },
+            "required": [
+              "distance",
+              "new_surface",
+              "surface_id",
+              "type"
+            ]
           }
         ]
       },
