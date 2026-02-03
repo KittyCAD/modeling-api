@@ -1,4 +1,5 @@
 use crate::def_enum::negative_one;
+use bon::Builder;
 use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
 pub use point::{Point2d, Point3d, Point4d, Quaternion};
@@ -30,6 +31,7 @@ pub enum CutType {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum CutTypeV2 {
     /// Round off an edge.
     Fillet {
@@ -58,10 +60,11 @@ pub enum CutTypeV2 {
 }
 
 /// A rotation defined by an axis, origin of rotation, and an angle.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct Rotation {
     /// Rotation axis.
     /// Defaults to (0, 0, 1) (i.e. the Z axis).
@@ -85,10 +88,11 @@ impl Default for Rotation {
 }
 
 /// Ways to transform each solid being replicated in a repeating pattern.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct Transform {
     /// Translate the replica this far along each dimension.
     /// Defaults to zero vector (i.e. same position as the original).
@@ -119,10 +123,11 @@ impl Default for Transform {
 }
 
 /// Options for annotations
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationOptions {
     /// Text displayed on the annotation
     pub text: Option<AnnotationTextOptions>,
@@ -143,10 +148,11 @@ pub struct AnnotationOptions {
 }
 
 /// Options for annotation text
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationLineEndOptions {
     /// How to style the start of the annotation line.
     pub start: AnnotationLineEnd,
@@ -155,10 +161,11 @@ pub struct AnnotationLineEndOptions {
 }
 
 /// Options for annotation text
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationTextOptions {
     /// Alignment along the X axis
     pub x: AnnotationTextAlignmentX,
@@ -171,10 +178,11 @@ pub struct AnnotationTextOptions {
 }
 
 /// Parameters for defining an MBD Geometric control frame
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationMbdControlFrame {
     ///Geometric symbol, the type of geometric control specified
     pub symbol: MbdSymbol,
@@ -193,10 +201,11 @@ pub struct AnnotationMbdControlFrame {
 }
 
 /// Parameters for defining an MBD basic dimension
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationMbdBasicDimension {
     /// Type of symbol to use for this dimension (if required)
     pub symbol: Option<MbdSymbol>,
@@ -207,10 +216,11 @@ pub struct AnnotationMbdBasicDimension {
 }
 
 /// Parameters for defining an MBD Basic Dimension Annotation state which is measured between two positions in 3D
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationBasicDimension {
     /// Entity to measure the dimension from
     pub from_entity_id: Uuid,
@@ -248,10 +258,11 @@ pub struct AnnotationBasicDimension {
 }
 
 /// Parameters for defining an MBD Feature Control Annotation state
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationFeatureControl {
     /// Entity to place the annotation leader from
     pub entity_id: Uuid,
@@ -298,10 +309,11 @@ pub struct AnnotationFeatureControl {
 }
 
 /// Parameters for defining an MBD Feature Tag Annotation state
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationFeatureTag {
     /// Entity to place the annotation leader from
     pub entity_id: Uuid,
@@ -345,6 +357,7 @@ pub struct AnnotationFeatureTag {
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum DistanceType {
     /// Euclidean Distance.
     Euclidean {},
@@ -360,6 +373,7 @@ pub enum DistanceType {
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OriginType {
     /// Local Origin (center of object bounding box).
     #[default]
@@ -374,9 +388,10 @@ pub enum OriginType {
 }
 
 /// An RGBA color
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct Color {
     /// Red
     pub r: f32,
@@ -396,6 +411,7 @@ pub struct Color {
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum AnnotationTextAlignmentX {
     Left,
     Center,
@@ -410,6 +426,7 @@ pub enum AnnotationTextAlignmentX {
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum AnnotationTextAlignmentY {
     Bottom,
     Center,
@@ -424,6 +441,7 @@ pub enum AnnotationTextAlignmentY {
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum AnnotationLineEnd {
     None,
     Arrow,
@@ -437,6 +455,7 @@ pub enum AnnotationLineEnd {
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum AnnotationType {
     /// 2D annotation type (screen or planar space)
     T2D,
@@ -451,6 +470,7 @@ pub enum AnnotationType {
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum MbdStandard {
     /// ASME Y14.5 GD&T
     AsmeY14_5,
@@ -479,6 +499,7 @@ pub enum MbdStandard {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[repr(u16)]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum MbdSymbol {
     #[default]
     None = 0,
@@ -553,6 +574,7 @@ pub enum MbdSymbol {
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum CameraDragInteractionType {
     /// Camera pan
     Pan,
@@ -570,6 +592,7 @@ pub enum CameraDragInteractionType {
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum PathSegment {
     /// A straight line segment.
     /// Goes from the current path "pen" to the given endpoint.
@@ -682,6 +705,7 @@ pub enum PathSegment {
 #[derive(Clone, Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct Angle {
     /// What unit is the measurement?
     pub unit: UnitAngle,
@@ -786,6 +810,7 @@ impl std::ops::AddAssign for Angle {
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum SceneSelectionType {
     /// Replaces the selection
     Replace,
@@ -803,6 +828,7 @@ pub enum SceneSelectionType {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum SceneToolType {
     CameraRevolve,
     Select,
@@ -834,6 +860,7 @@ pub enum SceneToolType {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum PathComponentConstraintBound {
     #[default]
     Unconstrained,
@@ -862,6 +889,7 @@ pub enum PathComponentConstraintBound {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum PathComponentConstraintType {
     #[default]
     Unconstrained,
@@ -880,6 +908,7 @@ pub enum PathComponentConstraintType {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum PathCommand {
     MoveTo,
     LineTo,
@@ -897,6 +926,7 @@ pub enum PathCommand {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[repr(u8)]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum EntityType {
     Entity,
     Object,
@@ -918,6 +948,7 @@ pub enum EntityType {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum CurveType {
     Line,
     Arc,
@@ -925,8 +956,9 @@ pub enum CurveType {
 }
 
 /// A file to be exported to the client.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, Builder)]
 #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct ExportFile {
     /// The name of the file.
     pub name: String,
@@ -958,6 +990,7 @@ impl ExportFile {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum FileExportFormat {
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
     Fbx,
@@ -999,6 +1032,7 @@ pub enum FileExportFormat {
 #[display(style = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum FileExportFormat2d {
     /// AutoCAD drawing interchange format.
     Dxf,
@@ -1012,6 +1046,7 @@ pub enum FileExportFormat2d {
 #[display(style = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum FileImportFormat {
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
     Fbx,
@@ -1036,6 +1071,7 @@ pub enum FileImportFormat {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum EngineErrorCode {
     /// User requested something geometrically or graphically impossible.
     /// Don't retry this request, as it's inherently impossible. Instead, read the error message
@@ -1059,6 +1095,7 @@ impl From<EngineErrorCode> for http::StatusCode {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum BodyType {
     ///Defines a body that is manifold.
     #[default]
@@ -1073,6 +1110,7 @@ pub enum BodyType {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum ExtrudeMethod {
     /// Create a new object that is not connected to the object it is extruded from. This will
     /// result in two objects after the operation.
@@ -1088,6 +1126,7 @@ pub enum ExtrudeMethod {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum ExtrudeReference {
     /// Extrudes along the normal of the top face until it is as close to the entity as possible.
     /// An entity can be a solid, a path, a face, etc.
@@ -1112,9 +1151,10 @@ pub enum ExtrudeReference {
 }
 
 /// IDs for the extruded faces.
-#[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct ExtrudedFaceInfo {
     /// The face made from the original 2D shape being extruded.
     /// If the solid is extruded from a shape which already has an ID
@@ -1128,9 +1168,10 @@ pub struct ExtrudedFaceInfo {
 }
 
 /// IDs for a side face, extruded from the path of some sketch/2D shape.
-#[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct SideFace {
     /// ID of the path this face is being extruded from.
     pub path_id: Uuid,
@@ -1139,9 +1180,10 @@ pub struct SideFace {
 }
 
 /// Camera settings including position, center, fov etc
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct CameraSettings {
     ///Camera position (vantage)
     pub pos: Point3d,
@@ -1171,6 +1213,7 @@ pub struct CameraSettings {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum WorldCoordinateSystem {
     #[default]
     RightHandedUpZ,
@@ -1179,9 +1222,10 @@ pub enum WorldCoordinateSystem {
 
 #[allow(missing_docs)]
 #[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct CameraViewState {
     pub pivot_rotation: Quaternion,
     pub pivot_position: Point3d,
@@ -1251,10 +1295,11 @@ impl From<CameraSettings> for crate::output::ViewIsometric {
 }
 
 /// Defines a perspective view.
-#[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd, Default)]
+#[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd, Default, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct PerspectiveCameraParameters {
     /// Camera frustum vertical field of view.
     pub fov_y: Option<f32>,
@@ -1284,6 +1329,7 @@ pub struct PerspectiveCameraParameters {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum CameraMovement {
     /// Adjusts the camera position during the camera operation
     #[default]
@@ -1299,6 +1345,7 @@ pub enum CameraMovement {
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum GlobalAxis {
     /// The X axis
     X,
@@ -1316,6 +1363,7 @@ pub enum GlobalAxis {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[repr(u8)]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum ExtrusionFaceCapType {
     /// Uncapped.
     None,
@@ -1348,6 +1396,7 @@ pub enum ExtrusionFaceCapType {
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum PostEffectType {
     Phosphor,
     Ssao,
@@ -1514,10 +1563,11 @@ mod tests {
 }
 
 /// How a property of an object should be transformed.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema, Builder)]
 #[schemars(rename = "TransformByFor{T}")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct TransformBy<T> {
     /// The scale, or rotation, or translation.
     pub property: T,
@@ -1559,9 +1609,10 @@ impl<T> TransformBy<T> {
 
 /// Container that holds a translate, rotate and scale.
 /// Defaults to no change, everything stays the same (i.e. the identity function).
-#[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, Default)]
+#[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, Default, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct ComponentTransform {
     /// Translate component of the transform.
     pub translate: Option<TransformBy<Point3d<LengthUnit>>>,
@@ -1581,6 +1632,7 @@ pub struct ComponentTransform {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum Opposite<T> {
     /// No opposite. The operation will only occur on one side.
     #[default]
@@ -1615,6 +1667,7 @@ impl<T: JsonSchema> JsonSchema for Opposite<T> {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum CutStrategy {
     /// Basic fillet cut. This has limitations, like the filletted edges
     /// can't touch each other. But it's very fast and simple.
@@ -1632,6 +1685,7 @@ pub enum CutStrategy {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum RelativeTo {
     /// Local/relative to a position centered within the plane being sketched on
     #[default]
@@ -1641,9 +1695,10 @@ pub enum RelativeTo {
 }
 
 /// The region a user clicked on.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct SelectedRegion {
     /// First segment to follow to find the region.
     pub segment: Uuid,
