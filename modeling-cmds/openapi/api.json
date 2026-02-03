@@ -2042,7 +2042,7 @@
                 ]
               },
               "center_2d": {
-                "description": "Center to twist about (relative to 2D sketch)",
+                "description": "Center to twist about (relative to plane's origin) Defaults to `[0, 0]` i.e. the plane's origin",
                 "default": {
                   "x": 0.0,
                   "y": 0.0

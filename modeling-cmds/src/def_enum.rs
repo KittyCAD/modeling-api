@@ -194,16 +194,18 @@ define_modeling_cmd_enum! {
             /// If this isn't given, the engine will generate IDs.
             #[serde(default)]
             pub faces: Option<ExtrudedFaceInfo>,
-            /// Center to twist about (relative to 2D sketch)
+            /// Center to twist about (relative to plane's origin)
+            /// Defaults to `[0, 0]` i.e. the plane's origin
             #[serde(default)]
             #[builder(default)]
             pub center_2d: Point2d<f64>,
             /// Total rotation of the section
             pub total_rotation_angle: Angle,
-            ///Angle step interval (converted to whole number degrees and bounded between 4° and 90°)
+            /// Angle step interval (converted to whole number degrees and bounded between 4° and 90°)
             #[serde(default = "default_twist_extrude_section_interval")]
+            #[builder(default = Angle::from_degrees(15.0))]
             pub angle_step_size: Angle,
-            ///The twisted surface loft tolerance
+            /// The twisted surface loft tolerance
             pub tolerance: LengthUnit,
             /// Should this extrude create a solid body or a surface?
             #[serde(default)]
