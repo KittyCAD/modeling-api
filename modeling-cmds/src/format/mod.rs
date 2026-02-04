@@ -264,3 +264,69 @@ impl From<FileImportFormat> for InputFormat3d {
         }
     }
 }
+
+/// Options for a 3D export.
+pub struct OutputFormat3dOptions {
+    src_unit: crate::units::UnitLength,
+}
+
+impl OutputFormat3dOptions {
+    /// Create the options, setting all optional fields to their defaults.
+    pub fn new(src_unit: crate::units::UnitLength) -> Self {
+        Self { src_unit }
+    }
+}
+
+impl OutputFormat3d {
+    /// Create the output format, setting the options as given.
+    pub fn new(format: &FileExportFormat, options: OutputFormat3dOptions) -> Self {
+        let OutputFormat3dOptions { src_unit } = options;
+        // Zoo co-ordinate system.
+        //
+        // * Forward: -Y
+        // * Up: +Z
+        // * Handedness: Right
+        let coords = crate::coord::System {
+            forward: crate::coord::AxisDirectionPair {
+                axis: crate::coord::Axis::Y,
+                direction: crate::coord::Direction::Negative,
+            },
+            up: crate::coord::AxisDirectionPair {
+                axis: crate::coord::Axis::Z,
+                direction: crate::coord::Direction::Positive,
+            },
+        };
+
+        match format {
+            FileExportFormat::Fbx => Self::Fbx(fbx::export::Options {
+                storage: fbx::export::Storage::Binary,
+                created: None,
+            }),
+            FileExportFormat::Glb => Self::Gltf(gltf::export::Options {
+                storage: gltf::export::Storage::Binary,
+                presentation: gltf::export::Presentation::Compact,
+            }),
+            FileExportFormat::Gltf => Self::Gltf(gltf::export::Options {
+                storage: gltf::export::Storage::Embedded,
+                presentation: gltf::export::Presentation::Pretty,
+            }),
+            FileExportFormat::Obj => Self::Obj(obj::export::Options {
+                coords,
+                units: src_unit,
+            }),
+            FileExportFormat::Ply => Self::Ply(ply::export::Options {
+                storage: ply::export::Storage::Ascii,
+                coords,
+                selection: Selection::DefaultScene,
+                units: src_unit,
+            }),
+            FileExportFormat::Step => Self::Step(step::export::Options { coords, created: None }),
+            FileExportFormat::Stl => Self::Stl(stl::export::Options {
+                storage: stl::export::Storage::Ascii,
+                coords,
+                units: src_unit,
+                selection: Selection::DefaultScene,
+            }),
+        }
+    }
+}
