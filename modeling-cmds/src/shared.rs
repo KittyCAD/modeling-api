@@ -1494,59 +1494,7 @@ impl ExtrudedFaceInfo {
 
 #[cfg(test)]
 mod tests {
-    use schemars::schema_for;
-
     use super::*;
-
-    #[test]
-    fn check_transformby_deprecated() {
-        let s = schema_for!(TransformBy<Point3d>);
-        let pretty = serde_json::to_string_pretty(&s).unwrap();
-        println!("{pretty}");
-        let tests: Vec<(OriginType, TransformBy<Point3d>)> = vec![
-            // get_origin should fall back to `is_local`, because `origin` is none.
-            (
-                OriginType::Local,
-                TransformBy {
-                    property: Point3d::default(),
-                    set: true,
-                    #[allow(deprecated)] // still need to test deprecated code
-                    is_local: true,
-                    origin: None,
-                },
-            ),
-            // get_origin should ignore `is_local`, because `origin` is given.
-            // test the case where origin is not custom
-            (
-                OriginType::Local,
-                TransformBy {
-                    property: Point3d::default(),
-                    set: true,
-                    #[allow(deprecated)] // still need to test deprecated code
-                    is_local: false,
-                    origin: Some(OriginType::Local),
-                },
-            ),
-            // get_origin should ignore `is_local`, because `origin` is given.
-            // test the case where origin is custom.
-            (
-                OriginType::Custom {
-                    origin: Point3d::uniform(2.0),
-                },
-                TransformBy {
-                    property: Point3d::default(),
-                    set: true,
-                    #[allow(deprecated)] // still need to test deprecated code
-                    is_local: false,
-                    origin: Some(OriginType::Custom{origin: Point3d::uniform(2.0)}),
-                },
-            ),
-        ];
-        for (expected, input) in tests {
-            let actual = input.get_origin();
-            assert_eq!(actual, expected);
-        }
-    }
 
     #[test]
     fn test_angle_comparison() {
@@ -1587,15 +1535,12 @@ pub struct TransformBy<T> {
     /// E.g. when translating, `set=true` will set a new location,
     /// and `set=false` will translate the current location by the given X/Y/Z.
     pub set: bool,
-    /// If true, the transform is applied in local space.
-    /// If false, the transform is applied in global space.
-    #[deprecated(note = "Use the `origin` field instead.")]
-    pub is_local: bool,
     /// What to use as the origin for the transformation.
     /// If not provided, will fall back to local or global origin, depending on
     /// whatever the `is_local` field was set to.
     #[serde(default)]
-    pub origin: Option<OriginType>,
+    #[builder(default)]
+    pub origin: OriginType,
 }
 
 impl<T> TransformBy<T> {
@@ -1603,18 +1548,7 @@ impl<T> TransformBy<T> {
     /// Reads from the `origin` field if it's set, otherwise
     /// falls back to the `is_local` field.
     pub fn get_origin(&self) -> OriginType {
-        if let Some(origin) = self.origin {
-            return origin;
-        }
-        #[expect(
-            deprecated,
-            reason = "Must fall back to the deprecated field if the API client isn't using the new field yet."
-        )]
-        if self.is_local {
-            OriginType::Local
-        } else {
-            OriginType::Global
-        }
+        self.origin
     }
 }
 
