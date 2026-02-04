@@ -403,6 +403,12 @@ pub struct Color {
     pub a: f32,
 }
 
+impl Color {
+    pub fn from_rgba(r: f32, g: f32, b: f32, a: f32) -> Self {
+        Self { r, g, b, a }
+    }
+}
+
 /// Horizontal Text alignment
 #[allow(missing_docs)]
 #[derive(
