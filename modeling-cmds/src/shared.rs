@@ -97,17 +97,21 @@ pub struct Transform {
     /// Translate the replica this far along each dimension.
     /// Defaults to zero vector (i.e. same position as the original).
     #[serde(default)]
+    #[builder(default)]
     pub translate: Point3d<LengthUnit>,
     /// Scale the replica's size along each axis.
     /// Defaults to (1, 1, 1) (i.e. the same size as the original).
     #[serde(default = "same_scale")]
+    #[builder(default = same_scale())]
     pub scale: Point3d<f64>,
     /// Rotate the replica about the specified rotation axis and origin.
     /// Defaults to no rotation.
     #[serde(default)]
+    #[builder(default)]
     pub rotation: Rotation,
     /// Whether to replicate the original solid in this instance.
     #[serde(default = "bool_true")]
+    #[builder(default = bool_true())]
     pub replicate: bool,
 }
 
@@ -404,6 +408,7 @@ pub struct Color {
 }
 
 impl Color {
+    /// Assign the red, green, blue and alpha (transparency) channels.
     pub fn from_rgba(r: f32, g: f32, b: f32, a: f32) -> Self {
         Self { r, g, b, a }
     }
