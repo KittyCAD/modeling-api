@@ -669,13 +669,6 @@
             "enum": [
               "tangent"
             ]
-          },
-          {
-            "description": "Filler",
-            "type": "string",
-            "enum": [
-              "other"
-            ]
           }
         ]
       },
@@ -2346,20 +2339,11 @@
                   }
                 ]
               },
-              "edge_ids": {
-                "description": "The edges of the two given surfaces. The order must be the same as the surface order.",
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              },
-              "object_ids": {
+              "surfaces": {
                 "description": "The two surfaces that the blend will span between",
                 "type": "array",
                 "items": {
-                  "type": "string",
-                  "format": "uuid"
+                  "$ref": "#/components/schemas/SurfaceEdgeReference"
                 }
               },
               "type": {
@@ -2370,8 +2354,7 @@
               }
             },
             "required": [
-              "edge_ids",
-              "object_ids",
+              "surfaces",
               "type"
             ]
           },
@@ -7761,6 +7744,29 @@
               "binary"
             ]
           }
+        ]
+      },
+      "SurfaceEdgeReference": {
+        "description": "An object id, that corresponds to a surface body, and a list of edges of the surface.",
+        "type": "object",
+        "properties": {
+          "edge_ids": {
+            "description": "A list of the edge ids that belong to the body.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "object_id": {
+            "description": "The id of the body.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "edge_ids",
+          "object_id"
         ]
       },
       "System": {
