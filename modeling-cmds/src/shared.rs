@@ -1536,8 +1536,6 @@ pub struct TransformBy<T> {
     /// and `set=false` will translate the current location by the given X/Y/Z.
     pub set: bool,
     /// What to use as the origin for the transformation.
-    /// If not provided, will fall back to local or global origin, depending on
-    /// whatever the `is_local` field was set to.
     #[serde(default)]
     #[builder(default)]
     pub origin: OriginType,

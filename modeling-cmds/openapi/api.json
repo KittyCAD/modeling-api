@@ -6582,6 +6582,7 @@
             "properties": {
               "storage": {
                 "description": "Export storage.",
+                "default": "ascii",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/DxfStorage"
@@ -6596,7 +6597,6 @@
               }
             },
             "required": [
-              "storage",
               "type"
             ]
           }
@@ -7792,7 +7792,7 @@
         "type": "object",
         "properties": {
           "origin": {
-            "description": "What to use as the origin for the transformation. If not provided, will fall back to local or global origin, depending on whatever the `is_local` field was set to.",
+            "description": "What to use as the origin for the transformation.",
             "default": {
               "type": "local"
             },
@@ -7825,7 +7825,7 @@
         "type": "object",
         "properties": {
           "origin": {
-            "description": "What to use as the origin for the transformation. If not provided, will fall back to local or global origin, depending on whatever the `is_local` field was set to.",
+            "description": "What to use as the origin for the transformation.",
             "default": {
               "type": "local"
             },
