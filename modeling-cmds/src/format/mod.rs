@@ -116,6 +116,21 @@ pub enum InputFormat3d {
     Stl(stl::import::Options),
 }
 
+impl InputFormat3d {
+    /// Get the name of this format.
+    pub fn name(&self) -> &'static str {
+        match self {
+            InputFormat3d::Fbx(_) => "fbx",
+            InputFormat3d::Gltf(_) => "gltf",
+            InputFormat3d::Obj(_) => "obj",
+            InputFormat3d::Ply(_) => "ply",
+            InputFormat3d::Sldprt(_) => "sldprt",
+            InputFormat3d::Step(_) => "step",
+            InputFormat3d::Stl(_) => "stl",
+        }
+    }
+}
+
 /// Data item selection.
 #[derive(Clone, Debug, Default, Display, Eq, FromStr, Hash, PartialEq, JsonSchema, Deserialize, Serialize)]
 #[display(style = "snake_case")]
