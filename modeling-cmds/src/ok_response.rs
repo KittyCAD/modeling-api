@@ -9,6 +9,7 @@ define_ok_modeling_cmd_response_enum! {
         use kittycad_modeling_cmds_macros::ModelingCmdOutput;
         use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
+        use bon::Builder;
         use uuid::Uuid;
         use crate::shared::{
             CameraSettings,
@@ -889,7 +890,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Data from importing the files
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput, Builder)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ImportFiles {
             /// ID of the imported 3D models within the scene.
