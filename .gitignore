@@ -4,3 +4,5 @@
 .idea/
 flamegraph.svg
 perf.data
+**/.DS_Store
+modeling-cmds/openapi/old_api.json

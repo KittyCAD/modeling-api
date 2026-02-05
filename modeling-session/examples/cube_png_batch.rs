@@ -21,14 +21,16 @@ const CUBE_WIDTH: LengthUnit = LengthUnit(100.0);
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
     // Set up the API client.
-    let kittycad_api_token = env::var("KITTYCAD_API_TOKEN").context("You must set $KITTYCAD_API_TOKEN")?;
-    let kittycad_api_client = kittycad::Client::new(kittycad_api_token);
+    let token = env::var("ZOO_API_TOKEN")
+        .or_else(|_| env::var("KITTYCAD_API_TOKEN")) // legacy name
+        .context("You must set $ZOO_API_TOKEN")?;
+    let client = kittycad::Client::new(token);
 
     // Where should the final PNG be saved?
     let img_output_path = env::var("IMAGE_OUTPUT_PATH").unwrap_or_else(|_| "model_batched.png".to_owned());
 
     let session_builder = SessionBuilder {
-        client: kittycad_api_client,
+        client,
         fps: Some(10),
         unlocked_framerate: Some(false),
         video_res_height: Some(720),
@@ -59,7 +61,7 @@ async fn main() -> Result<()> {
     };
     let mut sketch_batch = vec![ModelingCmdReq {
         cmd_id: random_id(),
-        cmd: ModelingCmd::MovePathPen(MovePathPen { path, to: start }),
+        cmd: ModelingCmd::MovePathPen(MovePathPen::builder().path(path).to(start).build()),
     }];
 
     // Now extend the path to each corner, and back to the start.
@@ -84,25 +86,25 @@ async fn main() -> Result<()> {
         ]
         .map(|end| ModelingCmdReq {
             cmd_id: random_id(),
-            cmd: ModelingCmd::ExtendPath(ExtendPath {
-                path,
-                segment: PathSegment::Line { end, relative: false },
-                label: Default::default(),
-            }),
+            cmd: ModelingCmd::ExtendPath(
+                ExtendPath::builder()
+                    .path(path)
+                    .segment(PathSegment::Line { end, relative: false })
+                    .build(),
+            ),
         }),
     );
     sketch_batch.push(ModelingCmdReq {
-        cmd: ModelingCmd::ClosePath(ClosePath { path_id }),
+        cmd: ModelingCmd::ClosePath(ClosePath::builder().path_id(path_id).build()),
         cmd_id: random_id(),
     });
     sketch_batch.push(ModelingCmdReq {
-        cmd: ModelingCmd::Extrude(Extrude {
-            distance: CUBE_WIDTH * 2.0,
-            target: path,
-            faces: None,
-            opposite: Default::default(),
-            extrude_method: Default::default(),
-        }),
+        cmd: ModelingCmd::Extrude(
+            Extrude::builder()
+                .target(path)
+                .distance(CUBE_WIDTH * 2.0)
+                .build(),
+        ),
         cmd_id: random_id(),
     });
     session
@@ -114,10 +116,10 @@ async fn main() -> Result<()> {
     let snapshot_resp = session
         .run_command(
             random_id(),
-            TakeSnapshot {
-                format: kittycad_modeling_cmds::ImageFormat::Png,
-            }
-            .into(),
+            TakeSnapshot::builder()
+                .format(kittycad_modeling_cmds::ImageFormat::Png)
+                .build()
+                .into(),
         )
         .await
         .context("could not get PNG snapshot")?;
@@ -125,7 +127,7 @@ async fn main() -> Result<()> {
     // Save the PNG to disk.
     match snapshot_resp {
         OkModelingCmdResponse::TakeSnapshot(snap) => {
-            let mut img = image::io::Reader::new(Cursor::new(snap.contents));
+            let mut img = image::ImageReader::new(Cursor::new(snap.contents));
             img.set_format(image::ImageFormat::Png);
             let img = img.decode().context("could not decode PNG bytes")?;
             img.save(img_output_path).context("could not save PNG to disk")?;

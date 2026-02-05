@@ -20,14 +20,16 @@ use uuid::Uuid;
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
     // Set up the API client.
-    let kittycad_api_token = env::var("KITTYCAD_API_TOKEN").context("You must set $KITTYCAD_API_TOKEN")?;
-    let kittycad_api_client = kittycad::Client::new(kittycad_api_token);
+    let token = env::var("ZOO_API_TOKEN")
+        .or_else(|_| env::var("KITTYCAD_API_TOKEN")) // legacy name
+        .context("You must set $ZOO_API_TOKEN")?;
+    let client = kittycad::Client::new(token);
 
     // Where should the final PNG be saved?
     let img_output_path = env::var("IMAGE_OUTPUT_PATH").unwrap_or_else(|_| "model_lsystem_batched.png".to_owned());
 
     let session_builder = SessionBuilder {
-        client: kittycad_api_client,
+        client,
         fps: Some(10),
         unlocked_framerate: Some(false),
         video_res_height: Some(720),
@@ -61,14 +63,16 @@ async fn main() -> Result<()> {
     // First, start the path at the first corner.
     let mut sketch_batch = vec![ModelingCmdReq {
         cmd_id: random_id(),
-        cmd: ModelingCmd::MovePathPen(MovePathPen {
-            path,
-            to: Point3d {
-                x: LengthUnit(0.0),
-                y: LengthUnit(0.0),
-                z: LengthUnit(0.0),
-            },
-        }),
+        cmd: ModelingCmd::MovePathPen(
+            MovePathPen::builder()
+                .path(path)
+                .to(Point3d {
+                    x: LengthUnit(0.0),
+                    y: LengthUnit(0.0),
+                    z: LengthUnit(0.0),
+                })
+                .build(),
+        ),
     }];
 
     struct Polar {
@@ -111,18 +115,19 @@ async fn main() -> Result<()> {
 
                 extend_paths.push(ModelingCmdReq {
                     cmd_id: random_id(),
-                    cmd: ModelingCmd::ExtendPath(ExtendPath {
-                        path,
-                        segment: PathSegment::Line {
-                            end: Point3d {
-                                x: LengthUnit(x),
-                                y: LengthUnit(y),
-                                z: LengthUnit(0.0),
-                            },
-                            relative: false,
-                        },
-                        label: Default::default(),
-                    }),
+                    cmd: ModelingCmd::ExtendPath(
+                        ExtendPath::builder()
+                            .path(path)
+                            .segment(PathSegment::Line {
+                                end: Point3d {
+                                    x: LengthUnit(x),
+                                    y: LengthUnit(y),
+                                    z: LengthUnit(0.0),
+                                },
+                                relative: false,
+                            })
+                            .build(),
+                    ),
                 });
             }
             _ => panic!("Unhandled character encountered"),
@@ -131,17 +136,16 @@ async fn main() -> Result<()> {
     sketch_batch.extend(extend_paths);
 
     sketch_batch.push(ModelingCmdReq {
-        cmd: ModelingCmd::ClosePath(ClosePath { path_id }),
+        cmd: ModelingCmd::ClosePath(ClosePath::builder().path_id(path_id).build()),
         cmd_id: random_id(),
     });
     sketch_batch.push(ModelingCmdReq {
-        cmd: ModelingCmd::Extrude(Extrude {
-            distance: LengthUnit(1.0),
-            target: path,
-            faces: None,
-            opposite: Default::default(),
-            extrude_method: Default::default(),
-        }),
+        cmd: ModelingCmd::Extrude(
+            Extrude::builder()
+                .target(path)
+                .distance(LengthUnit(1.0))
+                .build(),
+        ),
         cmd_id: random_id(),
     });
     session
@@ -153,9 +157,11 @@ async fn main() -> Result<()> {
     let snapshot_resp = session
         .run_command(
             random_id(),
-            ModelingCmd::from(TakeSnapshot {
-                format: kittycad_modeling_cmds::ImageFormat::Png,
-            }),
+            ModelingCmd::from(
+                TakeSnapshot::builder()
+                    .format(kittycad_modeling_cmds::ImageFormat::Png)
+                    .build(),
+            ),
         )
         .await
         .context("could not get PNG snapshot")?;
@@ -163,7 +169,7 @@ async fn main() -> Result<()> {
     // Save the PNG to disk.
     match snapshot_resp {
         OkModelingCmdResponse::TakeSnapshot(snap) => {
-            let mut img = image::io::Reader::new(Cursor::new(snap.contents));
+            let mut img = image::ImageReader::new(Cursor::new(snap.contents));
             img.set_format(image::ImageFormat::Png);
             let img = img.decode().context("could not decode PNG bytes")?;
             img.save(img_output_path).context("could not save PNG to disk")?;

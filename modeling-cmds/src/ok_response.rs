@@ -10,8 +10,11 @@ define_ok_modeling_cmd_response_enum! {
         use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
         use uuid::Uuid;
-        use crate::shared::CameraSettings;
-        use crate::shared::CameraViewState;
+        use crate::shared::{
+            CameraSettings,
+            CameraViewState,
+            BodyType,
+        };
 
         use crate::{self as kittycad_modeling_cmds};
         use crate::{
@@ -72,6 +75,32 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `Solid3dShellFace` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dShellFace {
+        }
+
+        /// The response from the `Solid3dJoin` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dJoin {
+        }
+
+        /// The response from the `Solid3dGetEdgeUuid` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dGetEdgeUuid {
+            /// The UUID of the edge.
+            pub edge_id: Uuid,
+        }
+
+        /// The response from the `Solid3dGetFaceUuid` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dGetFaceUuid {
+            /// The UUID of the face.
+            pub face_id: Uuid,
+        }
+
+        /// The response from the `Solid3dGetBodyType` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dGetBodyType {
+            /// The body type
+            pub body_type: BodyType,
         }
 
         /// The response from the `RevolveAboutEdge` endpoint.
@@ -157,6 +186,12 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dFilletEdge {
         }
+
+        /// The response from the `Solid3dCutEdges` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dCutEdges {
+        }
+
 
         /// The response from the `SendObject` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
@@ -330,6 +365,7 @@ define_ok_modeling_cmd_response_enum! {
             /// The UUID of the entity that was selected.
             pub entity_id: Option<Uuid>,
         }
+
         /// The response from the `HighlightSetEntity` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct HighlightSetEntity {
@@ -343,6 +379,25 @@ define_ok_modeling_cmd_response_enum! {
         pub struct EntityGetChildUuid {
             /// The UUID of the child entity.
             pub entity_id: Uuid,
+        }
+        /// The response from the `EntityGetIndex` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityGetIndex {
+            /// The child index of the entity.
+            pub entity_index: u32,
+        }
+        /// The response from the `EntityGetPrimitiveIndex` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityGetPrimitiveIndex {
+            /// The primitive index of the entity.
+            pub primitive_index: u32,
+
+            /// The type of this entity.  Helps infer whether this is an edge or a face index.
+            pub entity_type: EntityType,
+        }
+        /// The response from the `EntityDeleteChildren` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct EntityDeleteChildren {
         }
         /// The response from the `EntityGetNumChildren` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
@@ -503,6 +558,16 @@ define_ok_modeling_cmd_response_enum! {
             pub faces: Vec<Uuid>,
         }
 
+        /// The response from the `Solid3dFlip` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dFlip {
+        }
+
+        /// The response from the `Solid3dFlipFace` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dFlipFace {
+        }
+
         /// The response from the `Solid3dGetAllOppositeEdges` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dGetAllOppositeEdges {
@@ -544,6 +609,14 @@ define_ok_modeling_cmd_response_enum! {
             /// The type of the entity.
             pub entity_type: EntityType,
         }
+
+        /// The response from the `SceneGetEntityIds` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SceneGetEntityIds {
+            /// The ids of the requested entities.
+            pub entity_ids: Vec<Vec<Uuid>>,
+        }
+
         /// The response from the `CurveGetControlPoints` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct CurveGetControlPoints {
@@ -950,6 +1023,17 @@ define_ok_modeling_cmd_response_enum! {
             pub extra_solid_ids: Vec<Uuid>,
         }
 
+        /// The response from the 'BooleanImprint'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct BooleanImprint {
+            /// If the operation produced just one body, then its ID will be the
+            /// ID of the modeling command request.
+            /// But if any extra bodies are produced, then their IDs will be included
+            /// here.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub extra_solid_ids: Vec<Uuid>,
+        }
+
         /// The response from the 'SetGridScale'.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SetGridScale {}
@@ -957,5 +1041,30 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the 'SetGridScale'.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct SetGridAutoScale {}
+
+        /// The response from the 'SetOrderIndependentTransparency'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SetOrderIndependentTransparency {
+            /// Is it now enabled, or disabled?
+            pub enabled: bool,
+        }
+
+        /// The response from the 'CreateRegion'.
+        /// The region should have an ID taken from the ID of the
+        /// 'CreateRegion' modeling command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct CreateRegion {
+        }
+
+        /// The response from the 'SelectRegionFromPoint'.
+        /// If there are multiple ways to construct this region, this chooses arbitrarily.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SelectRegionFromPoint {
+            /// The region the user clicked on.
+            /// If they clicked an open space which isn't a region,
+            /// this returns None.
+            pub region: Option<crate::shared::SelectedRegion>,
+        }
+
     }
 }

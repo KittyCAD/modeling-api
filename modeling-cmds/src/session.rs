@@ -31,6 +31,10 @@ pub struct EngineParams {
     pub replay: Option<String>,
     /// API Call ID for distributed tracing
     pub api_call_id: Option<String>,
+    /// Enables nicer visuals for transparent surfaces.
+    /// This slows down rendering, so it's off by default.
+    #[serde(default)]
+    pub order_independent_transparency: bool,
 }
 
 impl Default for EngineParams {
@@ -46,6 +50,7 @@ impl Default for EngineParams {
             show_grid: false,
             replay: None,
             api_call_id: None,
+            order_independent_transparency: false,
         }
     }
 }

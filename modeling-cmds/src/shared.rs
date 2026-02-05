@@ -1,3 +1,4 @@
+use crate::def_enum::negative_one;
 use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
 pub use point::{Point2d, Point3d, Point4d, Quaternion};
@@ -23,6 +24,38 @@ pub enum CutType {
     Fillet,
     /// Cut away an edge.
     Chamfer,
+}
+
+/// What kind of cut to perform when cutting an edge.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum CutTypeV2 {
+    /// Round off an edge.
+    Fillet {
+        /// The radius of the fillet.
+        radius: LengthUnit,
+        /// The second length affects the edge length of the second face of the cut. This will
+        /// cause the fillet to take on the shape of a conic section, instead of an arc.
+        second_length: Option<LengthUnit>,
+    },
+    /// Cut away an edge.
+    Chamfer {
+        /// The distance from the edge to cut on each face.
+        distance: LengthUnit,
+        /// The second distance affects the edge length of the second face of the cut.
+        second_distance: Option<LengthUnit>,
+        /// The angle of the chamfer, default is 45deg.
+        angle: Option<Angle>,
+        /// If true, the second distance or angle is applied to the other face of the cut.
+        swap: bool,
+    },
+    /// A custom cut profile.
+    Custom {
+        /// The path that will be used for the custom profile.
+        path: Uuid,
+    },
 }
 
 /// A rotation defined by an axis, origin of rotation, and an angle.
@@ -217,6 +250,10 @@ pub struct AnnotationBasicDimension {
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
+
+    /// The scale of the dimension arrows. Defaults to 1.
+    #[serde(default = "one")]
+    pub arrow_scale: f32,
 }
 
 /// Parameters for defining an MBD Feature Control Annotation state
@@ -264,6 +301,10 @@ pub struct AnnotationFeatureControl {
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
+
+    /// The scale of the leader (dot or arrow). Defaults to 1.
+    #[serde(default = "one")]
+    pub leader_scale: f32,
 }
 
 /// Parameters for defining an MBD Feature Tag Annotation state
@@ -302,6 +343,10 @@ pub struct AnnotationFeatureTag {
 
     /// The point size of the fonts used to generate the annotation label.  Very large values can negatively affect performance.
     pub font_point_size: u32,
+
+    /// The scale of the leader (dot or arrow). Defaults to 1.
+    #[serde(default = "one")]
+    pub leader_scale: f32,
 }
 
 /// The type of distance
@@ -1043,6 +1088,19 @@ impl From<EngineErrorCode> for http::StatusCode {
     }
 }
 
+/// Body type determining if the operation will create a manifold (solid) body or a non-manifold collection of surfaces.
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum BodyType {
+    ///Defines a body that is manifold.
+    #[default]
+    Solid,
+    ///Defines a body that is non-manifold (an open collection of connected surfaces).
+    Surface,
+}
+
 /// Extrusion method determining if the extrusion will be part of the existing object or an
 /// entirely new object.
 #[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -1356,6 +1414,7 @@ impl_extern_type! {
     // Scene
     SceneSelectionType = "Enums::_SceneSelectionType"
     SceneToolType = "Enums::_SceneToolType"
+    BodyType = "Enums::_BodyType"
     EntityType = "Enums::_EntityType"
     AnnotationType = "Enums::_AnnotationType"
     AnnotationTextAlignmentX = "Enums::_AnnotationTextAlignmentX"
@@ -1630,4 +1689,40 @@ pub enum RelativeTo {
     SketchPlane,
     /// Local/relative to the trajectory curve
     TrajectoryCurve,
+}
+
+/// The region a user clicked on.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct SelectedRegion {
+    /// First segment to follow to find the region.
+    pub segment: Uuid,
+    /// Second segment to follow to find the region.
+    /// Intersects the first segment.
+    pub intersection_segment: Uuid,
+    /// At which intersection between `segment` and `intersection_segment`
+    /// should we stop following the `segment` and start following `intersection_segment`?
+    /// Defaults to -1, which means the last intersection.
+    #[serde(default = "negative_one")]
+    pub intersection_index: i32,
+    /// By default (when this is false), curve counterclockwise at intersections.
+    /// If this is true, instead curve clockwise.
+    #[serde(default)]
+    pub curve_clockwise: bool,
+}
+
+impl Default for SelectedRegion {
+    fn default() -> Self {
+        Self {
+            segment: Default::default(),
+            intersection_segment: Default::default(),
+            intersection_index: -1,
+            curve_clockwise: Default::default(),
+        }
+    }
+}
+
+fn one() -> f32 {
+    1.0
 }
