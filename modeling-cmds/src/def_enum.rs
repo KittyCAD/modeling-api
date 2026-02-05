@@ -1506,6 +1506,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub enum ImageFormat {
             /// .png format
             Png,
@@ -2195,6 +2196,7 @@ define_modeling_cmd_enum! {
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectRegionFromPoint {
             /// Where in the window was selected
             pub selected_at_window: Point2d,

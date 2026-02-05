@@ -1,3 +1,4 @@
+use bon::Builder;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -9,7 +10,7 @@ pub mod import {
     use super::*;
 
     /// Options for importing STEP format.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder)]
     #[display("coords: {coords}, split_closed_faces: {split_closed_faces}")]
     #[serde(default, rename = "StepImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -19,17 +20,20 @@ pub mod import {
         pyo3_stub_gen::derive::gen_stub_pyclass,
         pyo3::pyclass(name = "StepImportOptions")
     )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
         /// Co-ordinate system of input data.
         ///
         /// Defaults to the [KittyCAD co-ordinate system].
         ///
         /// [KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html
+        #[builder(default = *coord::KITTYCAD)]
         pub coords: coord::System,
 
         /// Splits all closed faces into two open faces.
         ///
         /// Defaults to `false` but is implicitly `true` when importing into the engine.
+        #[builder(default)]
         pub split_closed_faces: bool,
     }
 
@@ -59,7 +63,7 @@ pub mod export {
     use super::*;
 
     /// Options for exporting STEP format.
-    #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize)]
+    #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize, Builder)]
     #[serde(rename = "StepExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(
@@ -68,12 +72,14 @@ pub mod export {
         pyo3::pyclass(name = "StepExportOptions")
     )]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
         /// Co-ordinate system of output data.
         ///
         /// Defaults to the [KittyCAD co-ordinate system].
         ///
         /// [KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html
+        #[builder(default = *coord::KITTYCAD)]
         pub coords: coord::System,
 
         /// Timestamp override.
