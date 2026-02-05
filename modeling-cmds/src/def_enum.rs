@@ -319,6 +319,7 @@ define_modeling_cmd_enum! {
             pub edge_ids: Vec<Uuid>,
             /// The type of blend to use.
             #[serde(default)]
+            #[builder(default)]
             pub blend_type: BlendType,
         }
 
