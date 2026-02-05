@@ -1063,8 +1063,6 @@ pub enum BlendType {
     /// Use the tangent of the surfaces to calculate the blend.
     #[default]
     Tangent,
-    /// Filler
-    Other,
 }
 
 /// Body type determining if the operation will create a manifold (solid) body or a non-manifold collection of surfaces.
