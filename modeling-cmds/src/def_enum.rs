@@ -203,7 +203,7 @@ define_modeling_cmd_enum! {
             pub total_rotation_angle: Angle,
             /// Angle step interval (converted to whole number degrees and bounded between 4° and 90°)
             #[serde(default = "default_twist_extrude_section_interval")]
-            #[builder(default = Angle::from_degrees(15.0))]
+            #[builder(default = default_twist_extrude_section_interval())]
             pub angle_step_size: Angle,
             /// The twisted surface loft tolerance
             pub tolerance: LengthUnit,
@@ -1273,6 +1273,7 @@ define_modeling_cmd_enum! {
             pub fade_in: bool,
             /// How many seconds the animation should take.
             #[serde(default = "default_animation_seconds")]
+            #[builder(default = default_animation_seconds())]
             pub duration_seconds: f64,
         }
 
@@ -1505,6 +1506,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub enum ImageFormat {
             /// .png format
             Png,
@@ -2167,6 +2169,7 @@ define_modeling_cmd_enum! {
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreateRegion {
             /// Which sketch object to create the region from.
             pub object_id: Uuid,
@@ -2179,7 +2182,7 @@ define_modeling_cmd_enum! {
             /// should we stop following the `segment` and start following `intersection_segment`?
             /// Defaults to -1, which means the last intersection.
             #[serde(default = "super::negative_one")]
-            #[builder(default = -1)]
+            #[builder(default = super::negative_one())]
             pub intersection_index: i32,
             /// By default, curve counterclockwise at intersections.
             /// If this is true, instead curve clockwise.
@@ -2193,6 +2196,7 @@ define_modeling_cmd_enum! {
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectRegionFromPoint {
             /// Where in the window was selected
             pub selected_at_window: Point2d,
@@ -2231,9 +2235,10 @@ impl ModelingCmd {
 /// File to import into the current model.
 /// If you are sending binary data for a file, be sure to send the WebSocketRequest as
 /// binary/bson, not text/json.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Eq, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Eq, PartialEq, bon::Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct ImportFile {
     /// The file's full path, including file extension.
     pub path: String,
