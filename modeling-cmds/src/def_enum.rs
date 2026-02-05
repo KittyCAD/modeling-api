@@ -34,7 +34,7 @@ define_modeling_cmd_enum! {
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
-                Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, Opposite,
+                Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, SurfaceEdgeReference, Opposite,
             },
             units,
         };
@@ -313,10 +313,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SurfaceBlend {
             /// The two surfaces that the blend will span between
-            pub object_ids: Vec<Uuid>,
-            /// The edges of the two given surfaces. The order must be the same as the surface
-            /// order.
-            pub edge_ids: Vec<Uuid>,
+            pub surfaces: Vec<SurfaceEdgeReference>,
             /// The type of blend to use.
             #[serde(default)]
             #[builder(default)]

@@ -1684,6 +1684,17 @@ impl Default for SelectedRegion {
     }
 }
 
+/// An object id, that corresponds to a surface body, and a list of edges of the surface.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct SurfaceEdgeReference {
+    /// The id of the body.
+    pub object_id: Uuid,
+    /// A list of the edge ids that belong to the body.
+    pub edge_ids: Vec<Uuid>,
+}
+
 fn one() -> f32 {
     1.0
 }
