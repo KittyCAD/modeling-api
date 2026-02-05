@@ -1036,7 +1036,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityCircularPattern` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput, Default)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityCircularPattern {
             /// The Face, edge, and entity ids of the patterned entities.
