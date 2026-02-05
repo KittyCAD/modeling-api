@@ -234,6 +234,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub relative_to: RelativeTo,
+            /// Should this sweep create a solid body or a surface?
+            #[serde(default)]
+            #[builder(default)]
+            pub body_type: BodyType,
         }
 
         /// Command for revolving a solid 2d.
