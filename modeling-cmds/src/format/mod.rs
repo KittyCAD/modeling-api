@@ -1,3 +1,4 @@
+use bon::Builder;
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -31,6 +32,7 @@ pub mod sldprt;
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OutputFormat2d {
     /// AutoCAD drawing interchange format.
     #[display("{}: {0}")]
@@ -47,6 +49,7 @@ pub type OutputFormat = OutputFormat3d;
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OutputFormat3d {
     /// Autodesk Filmbox (FBX) format.
     #[display("{}: {0}")]
@@ -86,6 +89,7 @@ pub type InputFormat = InputFormat3d;
 )]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum InputFormat3d {
     /// Autodesk Filmbox (FBX) format.
     #[display("{}: {0}")]
@@ -118,6 +122,7 @@ pub enum InputFormat3d {
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum Selection {
     /// Visit the default scene.
     #[default]
@@ -153,7 +158,8 @@ pub enum Selection {
 }
 
 /// Represents an in-memory file with an associated potentially foreign file path.
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize, Builder)]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct VirtualFile {
     /// Original file path.
     pub path: std::path::PathBuf,

@@ -1,5 +1,6 @@
 /// Export sketches in DXF format.
 pub mod export {
+    use bon::Builder;
     use parse_display::{Display, FromStr};
     use schemars::JsonSchema;
     use serde::{Deserialize, Serialize};
@@ -17,6 +18,7 @@ pub mod export {
         pyo3_stub_gen::derive::gen_stub_pyclass_enum,
         pyo3::pyclass(name = "DxfStorage")
     )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub enum Storage {
         /// Plaintext encoding.
         ///
@@ -29,7 +31,9 @@ pub mod export {
     }
 
     /// Options for exporting DXF format.
-    #[derive(Clone, Debug, Default, Deserialize, Display, Eq, FromStr, Hash, JsonSchema, PartialEq, Serialize)]
+    #[derive(
+        Clone, Debug, Default, Deserialize, Display, Eq, FromStr, Hash, JsonSchema, PartialEq, Serialize, Builder,
+    )]
     #[display("storage: {storage}")]
     #[serde(rename = "DxfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -39,8 +43,11 @@ pub mod export {
         pyo3_stub_gen::derive::gen_stub_pyclass,
         pyo3::pyclass(name = "DxfExportOptions")
     )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
         /// Export storage.
+        #[builder(default)]
+        #[serde(default)]
         pub storage: Storage,
     }
 
