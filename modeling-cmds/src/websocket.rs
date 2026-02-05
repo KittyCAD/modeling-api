@@ -19,6 +19,7 @@ use crate::{
 /// The type of error sent by the KittyCAD API.
 #[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum ErrorCode {
     /// Graphics engine failed to complete request, consider retrying
     InternalEngine,
@@ -73,6 +74,7 @@ pub struct ModelingCmdReq {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum WebSocketRequest {
     /// The trickle ICE candidate request.
     // We box these to avoid a huge size difference between variants.
@@ -167,6 +169,7 @@ pub struct IceServer {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(tag = "type", content = "data", rename_all = "snake_case")]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OkWebSocketResponseData {
     /// Information about the ICE servers.
     IceServerInfo {
