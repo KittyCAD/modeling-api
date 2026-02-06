@@ -2127,6 +2127,15 @@
                 "description": "If true, the sweep will be broken up into sub-sweeps (extrusions, revolves, sweeps) based on the trajectory path components.",
                 "type": "boolean"
               },
+              "body_type": {
+                "description": "Should this sweep create a solid body or a surface?",
+                "default": "solid",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BodyType"
+                  }
+                ]
+              },
               "target": {
                 "description": "Which sketch to sweep. Must be a closed 2D solid.",
                 "allOf": [

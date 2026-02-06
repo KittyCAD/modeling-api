@@ -230,6 +230,10 @@ define_modeling_cmd_enum! {
             pub sectional: bool,
             /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
+            /// Should this sweep create a solid body or a surface?
+            #[serde(default)]
+            #[builder(default)]
+            pub body_type: BodyType,
             /// What is this sweep relative to?
             #[serde(default)]
             #[builder(default)]
