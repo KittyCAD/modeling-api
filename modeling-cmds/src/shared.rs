@@ -1682,6 +1682,29 @@ impl Default for SelectedRegion {
     }
 }
 
+/// An edge id and an upper and lower percentage bound of the edge.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct FractionOfEdge {
+    /// The id of the edge
+    pub edge_id: Uuid,
+    /// A value between [0.0, 1.0] (default 0.0) that is a percentage along the edge. This bound
+    /// will control how much of the edge is used during the blend.
+    /// If lower_bound is larger than upper_bound, the edge is effectively "flipped".
+    #[serde(default)]
+    #[builder(default)]
+    #[schemars(range(min = 0, max = 1))]
+    pub lower_bound: f32,
+    /// A value between [0.0, 1.0] (default 1.0) that is a percentage along the edge. This bound
+    /// will control how much of the edge is used during the blend.
+    /// If lower_bound is larger than upper_bound, the edge is effectively "flipped".
+    #[serde(default = "one")]
+    #[builder(default = one())]
+    #[schemars(range(min = 0, max = 1))]
+    pub upper_bound: f32,
+}
+
 /// An object id, that corresponds to a surface body, and a list of edges of the surface.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -1690,7 +1713,7 @@ pub struct SurfaceEdgeReference {
     /// The id of the body.
     pub object_id: Uuid,
     /// A list of the edge ids that belong to the body.
-    pub edge_ids: Vec<Uuid>,
+    pub edges: Vec<FractionOfEdge>,
 }
 
 fn one() -> f32 {

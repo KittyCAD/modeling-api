@@ -1399,6 +1399,36 @@
           }
         ]
       },
+      "FractionOfEdge": {
+        "description": "An edge id and an upper and lower percentage bound of the edge.",
+        "type": "object",
+        "properties": {
+          "edge_id": {
+            "description": "The id of the edge",
+            "type": "string",
+            "format": "uuid"
+          },
+          "lower_bound": {
+            "description": "A value between [0.0, 1.0] (default 0.0) that is a percentage along the edge. This bound will control how much of the edge is used during the blend. If lower_bound is larger than upper_bound, the edge is effectively \"flipped\".",
+            "default": 0.0,
+            "type": "number",
+            "format": "float",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "upper_bound": {
+            "description": "A value between [0.0, 1.0] (default 1.0) that is a percentage along the edge. This bound will control how much of the edge is used during the blend. If lower_bound is larger than upper_bound, the edge is effectively \"flipped\".",
+            "default": 1.0,
+            "type": "number",
+            "format": "float",
+            "minimum": 0.0,
+            "maximum": 1.0
+          }
+        },
+        "required": [
+          "edge_id"
+        ]
+      },
       "GlobalAxis": {
         "description": "The global axes.",
         "oneOf": [
@@ -7750,12 +7780,11 @@
         "description": "An object id, that corresponds to a surface body, and a list of edges of the surface.",
         "type": "object",
         "properties": {
-          "edge_ids": {
+          "edges": {
             "description": "A list of the edge ids that belong to the body.",
             "type": "array",
             "items": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/FractionOfEdge"
             }
           },
           "object_id": {
@@ -7765,7 +7794,7 @@
           }
         },
         "required": [
-          "edge_ids",
+          "edges",
           "object_id"
         ]
       },
