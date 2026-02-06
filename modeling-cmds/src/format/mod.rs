@@ -1,3 +1,4 @@
+use bon::Builder;
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -32,6 +33,7 @@ pub mod sldprt;
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OutputFormat2d {
     /// AutoCAD drawing interchange format.
     #[display("{}: {0}")]
@@ -49,6 +51,7 @@ pub type OutputFormat = OutputFormat3d;
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OutputFormat3d {
     /// Autodesk Filmbox (FBX) format.
     #[display("{}: {0}")]
@@ -89,6 +92,7 @@ pub type InputFormat = InputFormat3d;
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum InputFormat3d {
     /// Autodesk Filmbox (FBX) format.
     #[display("{}: {0}")]
@@ -115,6 +119,21 @@ pub enum InputFormat3d {
     Stl(stl::import::Options),
 }
 
+impl InputFormat3d {
+    /// Get the name of this format.
+    pub fn name(&self) -> &'static str {
+        match self {
+            InputFormat3d::Fbx(_) => "fbx",
+            InputFormat3d::Gltf(_) => "gltf",
+            InputFormat3d::Obj(_) => "obj",
+            InputFormat3d::Ply(_) => "ply",
+            InputFormat3d::Sldprt(_) => "sldprt",
+            InputFormat3d::Step(_) => "step",
+            InputFormat3d::Stl(_) => "stl",
+        }
+    }
+}
+
 /// Data item selection.
 #[derive(Clone, Debug, Default, Display, Eq, FromStr, Hash, PartialEq, JsonSchema, Deserialize, Serialize)]
 #[display(style = "snake_case")]
@@ -122,6 +141,7 @@ pub enum InputFormat3d {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum Selection {
     /// Visit the default scene.
     #[default]
@@ -157,7 +177,8 @@ pub enum Selection {
 }
 
 /// Represents an in-memory file with an associated potentially foreign file path.
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize, Builder)]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct VirtualFile {
     /// Original file path.
     pub path: std::path::PathBuf,
@@ -265,6 +286,72 @@ impl From<FileImportFormat> for InputFormat3d {
             FileImportFormat::Sldprt => InputFormat3d::Sldprt(Default::default()),
             FileImportFormat::Step => InputFormat3d::Step(Default::default()),
             FileImportFormat::Stl => InputFormat3d::Stl(Default::default()),
+        }
+    }
+}
+
+/// Options for a 3D export.
+pub struct OutputFormat3dOptions {
+    src_unit: crate::units::UnitLength,
+}
+
+impl OutputFormat3dOptions {
+    /// Create the options, setting all optional fields to their defaults.
+    pub fn new(src_unit: crate::units::UnitLength) -> Self {
+        Self { src_unit }
+    }
+}
+
+impl OutputFormat3d {
+    /// Create the output format, setting the options as given.
+    pub fn new(format: &FileExportFormat, options: OutputFormat3dOptions) -> Self {
+        let OutputFormat3dOptions { src_unit } = options;
+        // Zoo co-ordinate system.
+        //
+        // * Forward: -Y
+        // * Up: +Z
+        // * Handedness: Right
+        let coords = crate::coord::System {
+            forward: crate::coord::AxisDirectionPair {
+                axis: crate::coord::Axis::Y,
+                direction: crate::coord::Direction::Negative,
+            },
+            up: crate::coord::AxisDirectionPair {
+                axis: crate::coord::Axis::Z,
+                direction: crate::coord::Direction::Positive,
+            },
+        };
+
+        match format {
+            FileExportFormat::Fbx => Self::Fbx(fbx::export::Options {
+                storage: fbx::export::Storage::Binary,
+                created: None,
+            }),
+            FileExportFormat::Glb => Self::Gltf(gltf::export::Options {
+                storage: gltf::export::Storage::Binary,
+                presentation: gltf::export::Presentation::Compact,
+            }),
+            FileExportFormat::Gltf => Self::Gltf(gltf::export::Options {
+                storage: gltf::export::Storage::Embedded,
+                presentation: gltf::export::Presentation::Pretty,
+            }),
+            FileExportFormat::Obj => Self::Obj(obj::export::Options {
+                coords,
+                units: src_unit,
+            }),
+            FileExportFormat::Ply => Self::Ply(ply::export::Options {
+                storage: ply::export::Storage::Ascii,
+                coords,
+                selection: Selection::DefaultScene,
+                units: src_unit,
+            }),
+            FileExportFormat::Step => Self::Step(step::export::Options { coords, created: None }),
+            FileExportFormat::Stl => Self::Stl(stl::export::Options {
+                storage: stl::export::Storage::Ascii,
+                coords,
+                units: src_unit,
+                selection: Selection::DefaultScene,
+            }),
         }
     }
 }

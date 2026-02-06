@@ -1,3 +1,4 @@
+use bon::Builder;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -9,7 +10,7 @@ pub mod import {
     use super::*;
 
     /// Options for importing OBJ.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder)]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "ObjImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -20,12 +21,14 @@ pub mod import {
         pyo3_stub_gen::derive::gen_stub_pyclass,
         pyo3::pyclass(name = "ObjImportOptions")
     )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
         /// Co-ordinate system of input data.
         ///
         /// Defaults to the [KittyCAD co-ordinate system].
         ///
         /// [KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html
+        #[builder(default = *coord::KITTYCAD)]
         pub coords: coord::System,
 
         /// The units of the input data.
@@ -34,6 +37,7 @@ pub mod import {
         /// mass, etc.
         ///
         /// Defaults to millimeters.
+        #[builder(default = UnitLength::Millimeters)]
         pub units: UnitLength,
     }
 
@@ -63,7 +67,7 @@ pub mod export {
     use super::*;
 
     /// Options for exporting OBJ.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder)]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "ObjExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -74,17 +78,20 @@ pub mod export {
         pyo3::pyclass(name = "ObjExportOptions")
     )]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
         /// Co-ordinate system of output data.
         ///
         /// Defaults to the [KittyCAD co-ordinate system].
         ///
         /// [KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html
+        #[builder(default = *coord::KITTYCAD)]
         pub coords: coord::System,
 
         /// Export length unit.
         ///
         /// Defaults to millimeters.
+        #[builder(default = UnitLength::Millimeters)]
         pub units: UnitLength,
     }
 
