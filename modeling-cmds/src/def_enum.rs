@@ -2383,7 +2383,7 @@ impl ModelingCmd {
 /// File to import into the current model.
 /// If you are sending binary data for a file, be sure to send the WebSocketRequest as
 /// binary/bson, not text/json.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Eq, PartialEq, bon::Builder)]
+#[derive(Clone, Serialize, Deserialize, JsonSchema, Eq, PartialEq, bon::Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
