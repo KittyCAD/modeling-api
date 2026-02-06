@@ -2114,6 +2114,15 @@
             "description": "Extrude the object along a path.",
             "type": "object",
             "properties": {
+              "body_type": {
+                "description": "Should this sweep create a solid body or a surface?",
+                "default": "solid",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BodyType"
+                  }
+                ]
+              },
               "relative_to": {
                 "description": "What is this sweep relative to?",
                 "default": "sketch_plane",
@@ -2126,15 +2135,6 @@
               "sectional": {
                 "description": "If true, the sweep will be broken up into sub-sweeps (extrusions, revolves, sweeps) based on the trajectory path components.",
                 "type": "boolean"
-              },
-              "body_type": {
-                "description": "Should this sweep create a solid body or a surface?",
-                "default": "solid",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/BodyType"
-                  }
-                ]
               },
               "target": {
                 "description": "Which sketch to sweep. Must be a closed 2D solid.",
