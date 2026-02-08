@@ -94,6 +94,11 @@ define_ok_modeling_cmd_response_enum! {
         pub struct Solid3dJoin {
         }
 
+        /// The response from the `SurfaceBlend` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct SurfaceBlend {
+        }
+
         /// The response from the `Solid3dGetEdgeUuid` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
