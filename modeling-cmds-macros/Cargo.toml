@@ -21,7 +21,7 @@ syn = { workspace = true, features = ["extra-traits", "full"] }
 
 [dev-dependencies]
 anyhow = "1.0.100"
-insta = "1.46.1"
+insta = "1.46.2"
 regex = "1.12.1"
 rustfmt-wrapper = "0.2.1"
 
