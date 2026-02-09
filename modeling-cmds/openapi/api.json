@@ -2374,7 +2374,9 @@
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/SurfaceEdgeReference"
-                }
+                },
+                "minItems": 2,
+                "maxItems": 2
               },
               "type": {
                 "type": "string",

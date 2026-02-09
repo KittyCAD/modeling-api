@@ -315,6 +315,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SurfaceBlend {
             /// The two surfaces that the blend will span between
+            #[schemars(length(min = 2, max = 2))]
             pub surfaces: Vec<SurfaceEdgeReference>,
             /// The type of blend to use.
             #[serde(default)]
