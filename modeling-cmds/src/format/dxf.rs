@@ -12,7 +12,7 @@ pub mod export {
     #[display(style = "snake_case")]
     #[serde(rename = "DxfStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
@@ -38,7 +38,7 @@ pub mod export {
     #[display("storage: {storage}")]
     #[serde(rename = "DxfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",

@@ -14,7 +14,7 @@ pub mod import {
     #[display("")]
     #[serde(rename = "GltfImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
@@ -46,7 +46,7 @@ pub mod export {
     #[display("storage: {storage}, presentation: {presentation}")]
     #[serde(rename = "GltfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
@@ -81,7 +81,7 @@ pub mod export {
     #[display(style = "snake_case")]
     #[serde(rename = "GltfStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
@@ -118,7 +118,7 @@ pub mod export {
     #[display(style = "snake_case")]
     #[serde(rename = "GltfPresentation", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-    #[cfg_attr(feature = "fuzzing", derive(arbitrary::Arbitrary))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub enum Presentation {
