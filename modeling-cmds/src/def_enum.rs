@@ -584,6 +584,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Export3d {
             /// IDs of the entities to be exported. If this is empty, then all entities are exported.
+            #[builder(default)]
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.
             pub format: OutputFormat3d,
@@ -597,6 +598,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Export {
             /// IDs of the entities to be exported. If this is empty, then all entities are exported.
+            #[builder(default)]
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.
             pub format: OutputFormat3d,
@@ -1826,6 +1828,7 @@ define_modeling_cmd_enum! {
         pub struct Mass {
             /// IDs of the entities to get the mass of. If this is empty, then the default scene is included in
             /// the mass.
+            #[builder(default)]
             pub entity_ids: Vec<Uuid>,
             /// The material density.
             pub material_density: f64,
@@ -1844,6 +1847,7 @@ define_modeling_cmd_enum! {
         pub struct Density {
             /// IDs of the entities to get the density of. If this is empty, then the default scene is included in
             /// the density.
+            #[builder(default)]
             pub entity_ids: Vec<Uuid>,
             /// The material mass.
             pub material_mass: f64,
@@ -1862,6 +1866,7 @@ define_modeling_cmd_enum! {
         pub struct Volume {
             /// IDs of the entities to get the volume of. If this is empty, then the default scene is included in
             /// the volume.
+            #[builder(default)]
             pub entity_ids: Vec<Uuid>,
             /// The output unit for the volume.
             pub output_unit: units::UnitVolume,
@@ -1876,6 +1881,7 @@ define_modeling_cmd_enum! {
         pub struct CenterOfMass {
             /// IDs of the entities to get the center of mass of. If this is empty, then the default scene is included in
             /// the center of mass.
+            #[builder(default)]
             pub entity_ids: Vec<Uuid>,
             /// The output unit for the center of mass.
             pub output_unit: units::UnitLength,
@@ -1890,6 +1896,7 @@ define_modeling_cmd_enum! {
         pub struct SurfaceArea {
             /// IDs of the entities to get the surface area of. If this is empty, then the default scene is included in
             /// the surface area.
+            #[builder(default)]
             pub entity_ids: Vec<Uuid>,
             /// The output unit for the surface area.
             pub output_unit: units::UnitArea,
