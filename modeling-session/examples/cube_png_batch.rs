@@ -99,12 +99,7 @@ async fn main() -> Result<()> {
         cmd_id: random_id(),
     });
     sketch_batch.push(ModelingCmdReq {
-        cmd: ModelingCmd::Extrude(
-            Extrude::builder()
-                .target(path)
-                .distance(CUBE_WIDTH * 2.0)
-                .build(),
-        ),
+        cmd: ModelingCmd::Extrude(Extrude::builder().target(path).distance(CUBE_WIDTH * 2.0).build()),
         cmd_id: random_id(),
     });
     session
