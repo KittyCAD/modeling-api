@@ -660,6 +660,18 @@
           "direction"
         ]
       },
+      "BlendType": {
+        "description": "What kind of blend to do",
+        "oneOf": [
+          {
+            "description": "Use the tangent of the surfaces to calculate the blend.",
+            "type": "string",
+            "enum": [
+              "tangent"
+            ]
+          }
+        ]
+      },
       "BodyType": {
         "description": "Body type determining if the operation will create a manifold (solid) body or a non-manifold collection of surfaces.",
         "oneOf": [
@@ -1385,6 +1397,36 @@
               "binary"
             ]
           }
+        ]
+      },
+      "FractionOfEdge": {
+        "description": "An edge id and an upper and lower percentage bound of the edge.",
+        "type": "object",
+        "properties": {
+          "edge_id": {
+            "description": "The id of the edge",
+            "type": "string",
+            "format": "uuid"
+          },
+          "lower_bound": {
+            "description": "A value between [0.0, 1.0] (default 0.0) that is a percentage along the edge. This bound will control how much of the edge is used during the blend. If lower_bound is larger than upper_bound, the edge is effectively \"flipped\".",
+            "default": 0.0,
+            "type": "number",
+            "format": "float",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "upper_bound": {
+            "description": "A value between [0.0, 1.0] (default 1.0) that is a percentage along the edge. This bound will control how much of the edge is used during the blend. If lower_bound is larger than upper_bound, the edge is effectively \"flipped\".",
+            "default": 1.0,
+            "type": "number",
+            "format": "float",
+            "minimum": 0.0,
+            "maximum": 1.0
+          }
+        },
+        "required": [
+          "edge_id"
         ]
       },
       "GlobalAxis": {
@@ -2311,6 +2353,40 @@
             },
             "required": [
               "object_id",
+              "type"
+            ]
+          },
+          {
+            "description": "Command for creating a blend between the edge of two given surfaces",
+            "type": "object",
+            "properties": {
+              "blend_type": {
+                "description": "The type of blend to use.",
+                "default": "tangent",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BlendType"
+                  }
+                ]
+              },
+              "surfaces": {
+                "description": "The two surfaces that the blend will span between",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SurfaceEdgeReference"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "surface_blend"
+                ]
+              }
+            },
+            "required": [
+              "surfaces",
               "type"
             ]
           },
@@ -7700,6 +7776,28 @@
               "binary"
             ]
           }
+        ]
+      },
+      "SurfaceEdgeReference": {
+        "description": "An object id, that corresponds to a surface body, and a list of edges of the surface.",
+        "type": "object",
+        "properties": {
+          "edges": {
+            "description": "A list of the edge ids that belong to the body.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FractionOfEdge"
+            }
+          },
+          "object_id": {
+            "description": "The id of the body.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "edges",
+          "object_id"
         ]
       },
       "System": {

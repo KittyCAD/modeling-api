@@ -24,6 +24,7 @@ define_modeling_cmd_enum! {
             length_unit::LengthUnit,
             shared::{
                 Angle,
+                BlendType,
                 BodyType,
                 ComponentTransform,
                 RelativeTo,
@@ -33,7 +34,7 @@ define_modeling_cmd_enum! {
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
-                Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, Opposite,
+                Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, SurfaceEdgeReference, Opposite,
             },
             units,
         };
@@ -314,6 +315,24 @@ define_modeling_cmd_enum! {
         pub struct Solid3dJoin {
             /// Which Solid3D is being joined.
             pub object_id: Uuid,
+        }
+
+        /// Command for creating a blend between the edge of two given surfaces
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct SurfaceBlend {
+            /// The two surfaces that the blend will span between
+            #[schemars(length(min = 2, max = 2))]
+            pub surfaces: Vec<SurfaceEdgeReference>,
+            /// The type of blend to use.
+            #[serde(default)]
+            #[builder(default)]
+            pub blend_type: BlendType,
         }
 
         /// What is the UUID of this body's n-th edge?
