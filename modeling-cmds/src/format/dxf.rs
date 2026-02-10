@@ -1,5 +1,6 @@
 /// Export sketches in DXF format.
 pub mod export {
+    use bon::Builder;
     use parse_display::{Display, FromStr};
     use schemars::JsonSchema;
     use serde::{Deserialize, Serialize};
@@ -11,12 +12,14 @@ pub mod export {
     #[display(style = "snake_case")]
     #[serde(rename = "DxfStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass_enum,
         pyo3::pyclass(name = "DxfStorage")
     )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub enum Storage {
         /// Plaintext encoding.
         ///
@@ -29,18 +32,24 @@ pub mod export {
     }
 
     /// Options for exporting DXF format.
-    #[derive(Clone, Debug, Default, Deserialize, Display, Eq, FromStr, Hash, JsonSchema, PartialEq, Serialize)]
+    #[derive(
+        Clone, Debug, Default, Deserialize, Display, Eq, FromStr, Hash, JsonSchema, PartialEq, Serialize, Builder,
+    )]
     #[display("storage: {storage}")]
     #[serde(rename = "DxfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
         pyo3::pyclass(name = "DxfExportOptions")
     )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
         /// Export storage.
+        #[builder(default)]
+        #[serde(default)]
         pub storage: Storage,
     }
 
