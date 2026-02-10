@@ -29,7 +29,7 @@ use crate::impl_extern_type;
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+#[cfg_attr(feature = "python", pyo3::pyclass(eq), pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitLength {
     /// Centimeters <https://en.wikipedia.org/wiki/Centimeter>
     #[serde(rename = "cm")]
@@ -102,7 +102,7 @@ impl_extern_type! {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+#[cfg_attr(feature = "python", pyo3::pyclass(eq), pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitAngle {
     /// Degrees <https://en.wikipedia.org/wiki/Degree_(angle)>
     #[default]
@@ -137,7 +137,7 @@ pub enum UnitAngle {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+#[cfg_attr(feature = "python", pyo3::pyclass(eq), pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitArea {
     /// Square centimeters <https://en.wikipedia.org/wiki/Square_centimeter>
     #[serde(rename = "cm2")]
@@ -213,7 +213,7 @@ impl UnitArea {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+#[cfg_attr(feature = "python", pyo3::pyclass(eq), pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitDensity {
     /// Pounds per cubic feet.
     #[serde(rename = "lb:ft3")]
@@ -261,7 +261,7 @@ impl UnitDensity {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+#[cfg_attr(feature = "python", pyo3::pyclass(eq), pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitMass {
     /// Grams <https://en.wikipedia.org/wiki/Gram>
     #[default]
@@ -312,7 +312,7 @@ impl UnitMass {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+#[cfg_attr(feature = "python", pyo3::pyclass(eq), pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
 pub enum UnitVolume {
     /// Cubic centimeters (cc or cm³) <https://en.wikipedia.org/wiki/Cubic_centimeter>
     #[serde(rename = "cm3")]
