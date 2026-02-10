@@ -1140,6 +1140,7 @@ impl From<EngineErrorCode> for http::StatusCode {
 #[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum BlendType {
     /// Use the tangent of the surfaces to calculate the blend.
@@ -1738,7 +1739,9 @@ impl Default for SelectedRegion {
 /// An edge id and an upper and lower percentage bound of the edge.
 #[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct FractionOfEdge {
     /// The id of the edge
     pub edge_id: Uuid,
@@ -1761,7 +1764,9 @@ pub struct FractionOfEdge {
 /// An object id, that corresponds to a surface body, and a list of edges of the surface.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct SurfaceEdgeReference {
     /// The id of the body.
     pub object_id: Uuid,
