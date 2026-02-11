@@ -333,6 +333,9 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub blend_type: BlendType,
+            /// The ids of the two new edges created by the blend
+            #[schemars(length(min = 2, max = 2))]
+            pub new_edge_ids: Vec<Uuid>,
         }
 
         /// What is the UUID of this body's n-th edge?

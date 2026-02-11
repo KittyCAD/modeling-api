@@ -2369,6 +2369,16 @@
                   }
                 ]
               },
+              "new_edge_ids": {
+                "description": "The ids of the two new edges created by the blend",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
               "surfaces": {
                 "description": "The two surfaces that the blend will span between",
                 "type": "array",
@@ -2386,6 +2396,7 @@
               }
             },
             "required": [
+              "new_edge_ids",
               "surfaces",
               "type"
             ]
