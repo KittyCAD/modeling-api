@@ -2156,6 +2156,15 @@
             "description": "Extrude the object along a path.",
             "type": "object",
             "properties": {
+              "body_type": {
+                "description": "Should this sweep create a solid body or a surface?",
+                "default": "solid",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BodyType"
+                  }
+                ]
+              },
               "relative_to": {
                 "description": "What is this sweep relative to?",
                 "default": "sketch_plane",
