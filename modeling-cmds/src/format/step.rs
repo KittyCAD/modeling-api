@@ -62,6 +62,27 @@ pub mod import {
 /// Export models in STEP format.
 pub mod export {
     use super::*;
+    use crate::units::UnitLength;
+
+    /// Describes the presentation style of the EXPRESS exchange format.
+    #[derive(
+        Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
+    )]
+    #[display(style = "snake_case")]
+    #[serde(rename = "StepPresentation", rename_all = "snake_case")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+    pub enum Presentation {
+        /// Condenses the text to reduce the size of the file.
+        Compact,
+
+        /// Add extra spaces to make the text more easily readable.
+        ///
+        /// This is the default setting.
+        #[default]
+        Pretty,
+    }
 
     /// Options for exporting STEP format.
     #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize, Builder)]
@@ -86,6 +107,16 @@ pub mod export {
 
         /// Timestamp override.
         pub created: Option<chrono::DateTime<chrono::Utc>>,
+
+        /// Export length unit.
+        ///
+        /// Defaults to meters.
+        #[builder(default = UnitLength::Meters)]
+        pub units: UnitLength,
+
+        /// Presentation style.
+        #[builder(default = Presentation::Pretty)]
+        pub presentation: Presentation,
     }
 
     #[cfg(feature = "python")]
@@ -104,13 +135,19 @@ pub mod export {
             Self {
                 coords: *coord::KITTYCAD,
                 created: None,
+                units: UnitLength::Meters,
+                presentation: Presentation::Pretty,
             }
         }
     }
 
     impl std::fmt::Display for Options {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            write!(f, "coords: {}", self.coords)
+            write!(
+                f,
+                "coords: {}, units: {}, presentation: {}",
+                self.coords, self.units, self.presentation
+            )
         }
     }
 
@@ -120,6 +157,8 @@ pub mod export {
             Ok(Self {
                 coords: <coord::System as std::str::FromStr>::from_str(s)?,
                 created: None,
+                units: <UnitLength as std::str::FromStr>::from_str(s)?,
+                presentation: <Presentation as std::str::FromStr>::from_str(s)?,
             })
         }
     }
