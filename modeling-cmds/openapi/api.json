@@ -6572,10 +6572,6 @@
                   }
                 ]
               },
-              "new_surface": {
-                "description": "If true, a new surface will be created and the existing surface will remain unchanged. Otherwise the existing surface will be offset.",
-                "type": "boolean"
-              },
               "surface_id": {
                 "description": "The surface to offset.",
                 "type": "string",
@@ -6590,7 +6586,6 @@
             },
             "required": [
               "distance",
-              "new_surface",
               "surface_id",
               "type"
             ]
