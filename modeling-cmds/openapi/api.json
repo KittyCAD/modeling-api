@@ -6196,6 +6196,10 @@
             "description": "Create a new solid from combining other smaller solids. In other words, every part of the input solids will be included in the output solid.",
             "type": "object",
             "properties": {
+              "separate_bodies": {
+                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "type": "boolean"
+              },
               "solid_ids": {
                 "description": "Which solids to union together. Cannot be empty.",
                 "type": "array",
@@ -6220,6 +6224,7 @@
               }
             },
             "required": [
+              "separate_bodies",
               "solid_ids",
               "tolerance",
               "type"
@@ -6229,6 +6234,10 @@
             "description": "Create a new solid from intersecting several other solids. In other words, the part of the input solids where they all overlap will be the output solid.",
             "type": "object",
             "properties": {
+              "separate_bodies": {
+                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "type": "boolean"
+              },
               "solid_ids": {
                 "description": "Which solids to intersect together",
                 "type": "array",
@@ -6253,6 +6262,7 @@
               }
             },
             "required": [
+              "separate_bodies",
               "solid_ids",
               "tolerance",
               "type"
@@ -6262,6 +6272,10 @@
             "description": "Create a new solid from subtracting several other solids. The 'target' is what will be cut from. The 'tool' is what will be cut out from 'target'.",
             "type": "object",
             "properties": {
+              "separate_bodies": {
+                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "type": "boolean"
+              },
               "target_ids": {
                 "description": "Geometry to cut out from.",
                 "type": "array",
@@ -6294,6 +6308,7 @@
               }
             },
             "required": [
+              "separate_bodies",
               "target_ids",
               "tolerance",
               "tool_ids",
@@ -6312,6 +6327,10 @@
                   "format": "uuid"
                 }
               },
+              "separate_bodies": {
+                "description": "If true, bodies will be separated into multiple objects at their intersection boundaries.",
+                "type": "boolean"
+              },
               "tolerance": {
                 "description": "The maximum acceptable surface gap between the intersected bodies. Must be positive (i.e. greater than zero).",
                 "allOf": [
@@ -6329,6 +6348,7 @@
             },
             "required": [
               "body_ids",
+              "separate_bodies",
               "tolerance",
               "type"
             ]
