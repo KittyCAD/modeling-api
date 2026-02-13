@@ -70,8 +70,14 @@ pub mod export {
     )]
     #[display(style = "snake_case")]
     #[serde(rename = "StepPresentation", rename_all = "snake_case")]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(
+        feature = "python",
+        pyo3_stub_gen::derive::gen_stub_pyclass_enum,
+        pyo3::pyclass(name = "StepPresentation")
+    )]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub enum Presentation {
         /// Condenses the text to reduce the size of the file.
