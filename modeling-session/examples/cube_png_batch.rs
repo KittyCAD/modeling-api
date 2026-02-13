@@ -61,7 +61,7 @@ async fn main() -> Result<()> {
     };
     let mut sketch_batch = vec![ModelingCmdReq {
         cmd_id: random_id(),
-        cmd: ModelingCmd::MovePathPen(MovePathPen { path, to: start }),
+        cmd: ModelingCmd::MovePathPen(MovePathPen::builder().path(path).to(start).build()),
     }];
 
     // Now extend the path to each corner, and back to the start.
@@ -86,25 +86,20 @@ async fn main() -> Result<()> {
         ]
         .map(|end| ModelingCmdReq {
             cmd_id: random_id(),
-            cmd: ModelingCmd::ExtendPath(ExtendPath {
-                path,
-                segment: PathSegment::Line { end, relative: false },
-                label: Default::default(),
-            }),
+            cmd: ModelingCmd::ExtendPath(
+                ExtendPath::builder()
+                    .path(path)
+                    .segment(PathSegment::Line { end, relative: false })
+                    .build(),
+            ),
         }),
     );
     sketch_batch.push(ModelingCmdReq {
-        cmd: ModelingCmd::ClosePath(ClosePath { path_id }),
+        cmd: ModelingCmd::ClosePath(ClosePath::builder().path_id(path_id).build()),
         cmd_id: random_id(),
     });
     sketch_batch.push(ModelingCmdReq {
-        cmd: ModelingCmd::Extrude(Extrude {
-            distance: CUBE_WIDTH * 2.0,
-            target: path,
-            faces: None,
-            opposite: Default::default(),
-            extrude_method: Default::default(),
-        }),
+        cmd: ModelingCmd::Extrude(Extrude::builder().target(path).distance(CUBE_WIDTH * 2.0).build()),
         cmd_id: random_id(),
     });
     session
@@ -116,10 +111,10 @@ async fn main() -> Result<()> {
     let snapshot_resp = session
         .run_command(
             random_id(),
-            TakeSnapshot {
-                format: kittycad_modeling_cmds::ImageFormat::Png,
-            }
-            .into(),
+            TakeSnapshot::builder()
+                .format(kittycad_modeling_cmds::ImageFormat::Png)
+                .build()
+                .into(),
         )
         .await
         .context("could not get PNG snapshot")?;

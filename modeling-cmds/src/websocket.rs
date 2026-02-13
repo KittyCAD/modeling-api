@@ -19,6 +19,7 @@ use crate::{
 /// The type of error sent by the KittyCAD API.
 #[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum ErrorCode {
     /// Graphics engine failed to complete request, consider retrying
     InternalEngine,
@@ -61,6 +62,7 @@ impl From<EngineErrorCode> for ErrorCode {
 /// A graphics command submitted to the KittyCAD engine via the Modeling API.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct ModelingCmdReq {
     /// Which command to submit to the Kittycad engine.
     pub cmd: ModelingCmd,
@@ -72,7 +74,9 @@ pub struct ModelingCmdReq {
 #[allow(clippy::large_enum_variant)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[serde(tag = "type", rename_all = "snake_case")]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum WebSocketRequest {
     /// The trickle ICE candidate request.
     // We box these to avoid a huge size difference between variants.
@@ -111,6 +115,7 @@ pub enum WebSocketRequest {
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[serde(rename_all = "snake_case")]
 pub struct ModelingBatch {
     /// A sequence of modeling requests. If any request fails, following requests will not be tried.
@@ -167,6 +172,7 @@ pub struct IceServer {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(tag = "type", content = "data", rename_all = "snake_case")]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OkWebSocketResponseData {
     /// Information about the ICE servers.
     IceServerInfo {
@@ -455,6 +461,7 @@ impl<T, E> From<Result<T, E>> for SnakeCaseResult<T, E> {
 
 /// ClientMetrics contains information regarding the state of the peer.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct ClientMetrics {
     /// Counter of the number of WebRTC frames the client has dropped from the
     /// inbound video stream.
@@ -724,6 +731,7 @@ impl From<RtcIceProtocol> for webrtc::ice_transport::ice_protocol::RTCIceProtoco
 
 /// ICECandidateInit is used to serialize ice candidates
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[serde(rename_all = "camelCase")]
 // These HAVE to be camel case as per the RFC.
 pub struct RtcIceCandidateInit {
@@ -767,6 +775,7 @@ impl From<RtcIceCandidateInit> for webrtc::ice_transport::ice_candidate::RTCIceC
 
 /// SessionDescription is used to expose local and remote session descriptions.
 #[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct RtcSessionDescription {
     /// SDP type.
     #[serde(rename = "type")]
@@ -812,6 +821,7 @@ impl TryFrom<RtcSessionDescription> for webrtc::peer_connection::sdp::session_de
 /// SDPType describes the type of an SessionDescription.
 #[derive(Default, Debug, PartialEq, Eq, Copy, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub enum RtcSdpType {
     /// Unspecified indicates that the type is unspecified.
     #[default]

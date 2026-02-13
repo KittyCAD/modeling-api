@@ -1,3 +1,4 @@
+use bon::Builder;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -6,16 +7,20 @@ use serde::{Deserialize, Serialize};
 pub mod import {
     use super::*;
     /// Options for importing FBX.
-    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(
+        Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder,
+    )]
     #[display("")]
     #[serde(rename = "FbxImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
         pyo3::pyclass(name = "FbxImportOptions")
     )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {}
 
     #[cfg(feature = "python")]
@@ -35,15 +40,17 @@ pub mod export {
     use super::*;
 
     /// Options for exporting FBX.
-    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
+    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(rename = "FbxExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
         pyo3::pyclass(name = "FbxExportOptions")
     )]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
         /// Specifies which kind of FBX will be exported.
         pub storage: Storage,
@@ -86,12 +93,14 @@ pub mod export {
     #[display(style = "snake_case")]
     #[serde(rename = "FbxStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass_enum,
         pyo3::pyclass(name = "FbxStorage")
     )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub enum Storage {
         /// ASCII FBX encoding.
         Ascii,

@@ -21,8 +21,8 @@ const CUBE_WIDTH: LengthUnit = LengthUnit(100.0);
 async fn main() -> Result<()> {
     // Set up the API client.
     let token = env::var("ZOO_API_TOKEN")
-    .or_else(|_| env::var("KITTYCAD_API_TOKEN")) // legacy name
-    .context("You must set $ZOO_API_TOKEN")?;
+        .or_else(|_| env::var("KITTYCAD_API_TOKEN")) // legacy name
+        .context("You must set $ZOO_API_TOKEN")?;
     let client = kittycad::Client::new(token);
 
     // Where should the final PNG be saved?
@@ -59,7 +59,7 @@ async fn main() -> Result<()> {
         z: -CUBE_WIDTH,
     };
     session
-        .run_command(random_id(), MovePathPen { path, to: start }.into())
+        .run_command(random_id(), MovePathPen::builder().path(path).to(start).build().into())
         .await
         .context("could not move path pen to start")?;
 
@@ -86,35 +86,38 @@ async fn main() -> Result<()> {
         session
             .run_command(
                 random_id(),
-                ExtendPath {
-                    path,
-                    segment: PathSegment::Line {
+                ExtendPath::builder()
+                    .path(path)
+                    .segment(PathSegment::Line {
                         end: point,
                         relative: false,
-                    },
-                    label: Default::default(),
-                }
-                .into(),
+                    })
+                    .build()
+                    .into(),
             )
             .await
             .context("could not draw square")?;
     }
     // Extrude the square into a cube.
     session
-        .run_command(random_id(), ModelingCmd::ClosePath(ClosePath { path_id }))
+        .run_command(
+            random_id(),
+            ModelingCmd::ClosePath(ClosePath::builder().path_id(path_id).build()),
+        )
         .await
         .context("could not close square path")?;
     session
         .run_command(
             random_id(),
-            Extrude {
-                distance: CUBE_WIDTH * 2.0,
-                target: path,
-                faces: None,
-                opposite: Default::default(),
-                extrude_method: Default::default(),
-            }
-            .into(),
+            Extrude::builder()
+                // Set required attributes
+                .target(path)
+                .distance(CUBE_WIDTH * 2.0)
+                // Finish building.
+                // If you forgot to set one of the required attributes above,
+                // you'd get a compile error on this field.
+                .build()
+                .into(),
         )
         .await
         .context("could not extrude square into cube")?;
@@ -122,10 +125,10 @@ async fn main() -> Result<()> {
     let snapshot_resp = session
         .run_command(
             random_id(),
-            TakeSnapshot {
-                format: kittycad_modeling_cmds::ImageFormat::Png,
-            }
-            .into(),
+            TakeSnapshot::builder()
+                .format(kittycad_modeling_cmds::ImageFormat::Png)
+                .build()
+                .into(),
         )
         .await
         .context("could not get PNG snapshot")?;

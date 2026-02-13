@@ -15,12 +15,12 @@ jobs:
       name: cargo test
       runs-on: ubuntu-latest-8-cores
       steps:
-        - uses: actions/checkout@v5
+        - uses: actions/checkout@v6
         - name: Install Rust
           uses: dtolnay/rust-toolchain@stable
         - uses: taiki-e/install-action@cargo-llvm-cov
         - uses: taiki-e/install-action@nextest
-        - uses: Swatinem/rust-cache@v2.8.1
+        - uses: Swatinem/rust-cache@v2.8.2
         - uses: taiki-e/install-action@just
 
         - name: cargo test
@@ -44,7 +44,7 @@ jobs:
       name: Check for breaking API changes
       runs-on: ubuntu-latest-8-cores
       steps:
-        - uses: actions/checkout@v5
+        - uses: actions/checkout@v6
         - uses: taiki-e/install-action@just
         - name: Install Rust
           uses: dtolnay/rust-toolchain@stable
@@ -53,7 +53,7 @@ jobs:
           uses: actions/setup-node@v6
         - name: Install openapi-changes
           run: npm i -g @pb33f/openapi-changes
-        - uses: Swatinem/rust-cache@v2.8.1
+        - uses: Swatinem/rust-cache@v2.8.2
         - name: Run just breaking-api-changes
           run: just breaking-api-changes
 
@@ -61,13 +61,13 @@ jobs:
       name: Check lints
       runs-on: ubuntu-latest-8-cores
       steps:
-        - uses: actions/checkout@v5
+        - uses: actions/checkout@v6
         - uses: taiki-e/install-action@just
         - name: Install Rust
           uses: dtolnay/rust-toolchain@stable
           with:
             components: clippy
-        - uses: Swatinem/rust-cache@v2.8.1
+        - uses: Swatinem/rust-cache@v2.8.2
 
         - name: Check lints
           run: just lint
@@ -76,13 +76,13 @@ jobs:
       name: Check wasm
       runs-on: ubuntu-latest-8-cores
       steps:
-        - uses: actions/checkout@v5
+        - uses: actions/checkout@v6
         - uses: taiki-e/install-action@just
         - name: Install Rust
           uses: dtolnay/rust-toolchain@stable
           with:
             targets: wasm32-unknown-unknown
-        - uses: Swatinem/rust-cache@v2.8.1
+        - uses: Swatinem/rust-cache@v2.8.2
 
         - name: Check lints
           run: just check-wasm
@@ -91,7 +91,7 @@ jobs:
         name: cargo fmt
         runs-on: ubuntu-latest-8-cores
         steps:
-          - uses: actions/checkout@v5
+          - uses: actions/checkout@v6
           - name: Install Rust
             uses: dtolnay/rust-toolchain@stable
             with:
@@ -104,7 +104,7 @@ jobs:
         name: Check modeling-cmds can release
         runs-on: ubuntu-latest-8-cores
         steps:
-          - uses: actions/checkout@v5
+          - uses: actions/checkout@v6
           - name: Install Rust
             uses: dtolnay/rust-toolchain@stable
           - name: Dry-run a release of modeling-cmds
@@ -114,16 +114,16 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
-          uses: actions/checkout@v5
+          uses: actions/checkout@v6
         - name: Run codespell
-          uses: crate-ci/typos@v1.39.2
+          uses: crate-ci/typos@v1.42.0
 
     cargo-toml-sorted:
       name: Check Cargo.toml is sorted
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
-          uses: actions/checkout@v5
+          uses: actions/checkout@v6
         - name: Install cargo-sort
           run: cargo install cargo-sort
         - name: Run check

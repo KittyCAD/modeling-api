@@ -1,3 +1,4 @@
+use bon::Builder;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -9,22 +10,25 @@ pub mod import {
     use super::*;
 
     /// Options for importing STL.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder)]
     #[display("coords: {coords}, units: {units}")]
     #[serde(rename = "StlImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
         pyo3::pyclass(name = "StlImportOptions")
     )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
         /// Co-ordinate system of input data.
         ///
         /// Defaults to the [KittyCAD co-ordinate system].
         ///
         /// [KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html
+        #[builder(default = *coord::KITTYCAD)]
         pub coords: coord::System,
         /// The units of the input data.
         ///
@@ -32,6 +36,7 @@ pub mod import {
         /// mass, etc.
         ///
         /// Defaults to millimeters.
+        #[builder(default = UnitLength::Millimeters)]
         pub units: UnitLength,
     }
 
@@ -51,33 +56,39 @@ pub mod export {
     use super::*;
 
     /// Options for exporting STL.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder)]
     #[display("coords: {coords}, selection: {selection}, storage: {storage}, units: {units}")]
     #[serde(rename = "StlExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
         pyo3::pyclass(name = "StlExportOptions")
     )]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
         /// Co-ordinate system of output data.
         ///
         /// Defaults to the [KittyCAD co-ordinate system].
         ///
         /// [KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html
+        #[builder(default = *coord::KITTYCAD)]
         pub coords: coord::System,
 
         /// Export selection.
+        #[builder(default)]
         pub selection: Selection,
 
         /// Export storage.
+        #[builder(default)]
         pub storage: Storage,
 
         /// Export length unit.
         ///
         /// Defaults to millimeters.
+        #[builder(default = UnitLength::Millimeters)]
         pub units: UnitLength,
     }
 
@@ -110,12 +121,14 @@ pub mod export {
     #[display(style = "snake_case")]
     #[serde(rename = "StlStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass_enum,
         pyo3::pyclass(name = "StlStorage")
     )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub enum Storage {
         /// Plaintext encoding.
         Ascii,
