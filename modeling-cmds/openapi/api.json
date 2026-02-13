@@ -6198,6 +6198,7 @@
             "properties": {
               "separate_bodies": {
                 "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "default": false,
                 "type": "boolean"
               },
               "solid_ids": {
@@ -6224,7 +6225,6 @@
               }
             },
             "required": [
-              "separate_bodies",
               "solid_ids",
               "tolerance",
               "type"
@@ -6236,6 +6236,7 @@
             "properties": {
               "separate_bodies": {
                 "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "default": false,
                 "type": "boolean"
               },
               "solid_ids": {
@@ -6262,7 +6263,6 @@
               }
             },
             "required": [
-              "separate_bodies",
               "solid_ids",
               "tolerance",
               "type"
@@ -6274,6 +6274,7 @@
             "properties": {
               "separate_bodies": {
                 "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "default": false,
                 "type": "boolean"
               },
               "target_ids": {
@@ -6308,7 +6309,6 @@
               }
             },
             "required": [
-              "separate_bodies",
               "target_ids",
               "tolerance",
               "tool_ids",
@@ -6329,6 +6329,7 @@
               },
               "separate_bodies": {
                 "description": "If true, bodies will be separated into multiple objects at their intersection boundaries.",
+                "default": false,
                 "type": "boolean"
               },
               "tolerance": {
@@ -6348,7 +6349,6 @@
             },
             "required": [
               "body_ids",
-              "separate_bodies",
               "tolerance",
               "type"
             ]
