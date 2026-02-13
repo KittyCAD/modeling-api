@@ -345,7 +345,12 @@ impl OutputFormat3d {
                 selection: Selection::DefaultScene,
                 units: src_unit,
             }),
-            FileExportFormat::Step => Self::Step(step::export::Options { coords, created: None }),
+            FileExportFormat::Step => Self::Step(step::export::Options {
+                coords,
+                created: None,
+                units: src_unit,
+                presentation: step::export::Presentation::Pretty,
+            }),
             FileExportFormat::Stl => Self::Stl(stl::export::Options {
                 storage: stl::export::Storage::Ascii,
                 coords,
