@@ -16,10 +16,10 @@ quote = { workspace = true }
 syn = { workspace = true, features = ["extra-traits", "full"] }
 
 [dev-dependencies]
-anyhow = "1.0.100"
+anyhow = "1.0.101"
 criterion = { version = "0.7", features = ["html_reports"] }
-insta = "1.46.1"
-regex = "1.12.1"
+insta = "1.46.3"
+regex = "1.12.3"
 rustfmt-wrapper = "0.2.1"
 
 [[bench]]
