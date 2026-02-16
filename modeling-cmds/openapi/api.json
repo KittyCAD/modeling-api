@@ -6572,6 +6572,10 @@
                   }
                 ]
               },
+              "flip": {
+                "description": "Flip the newly created face.",
+                "type": "boolean"
+              },
               "surface_id": {
                 "description": "The surface to offset.",
                 "type": "string",
@@ -6586,6 +6590,7 @@
             },
             "required": [
               "distance",
+              "flip",
               "surface_id",
               "type"
             ]

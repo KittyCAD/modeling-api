@@ -2387,10 +2387,12 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct OffsetSurface {
-            ///The surface to offset.
+            /// The surface to offset.
             pub surface_id: Uuid,
-            ///The distance to offset the surface by.
+            /// The distance to offset the surface by.
             pub distance: LengthUnit,
+            /// Flip the newly created face.
+            pub flip: bool,
         }
 
     }
