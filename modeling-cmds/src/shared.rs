@@ -79,6 +79,12 @@ pub enum EntityReference {
         #[serde(rename = "solid2dId")]
         solid2d_id: Uuid,
     },
+    /// A uuid referencing a solid3d (body).
+    Solid3d {
+        /// Id of the solid3d being referenced.
+        #[serde(rename = "solid3dId")]
+        solid3d_id: Uuid,
+    },
 }
 
 /// What kind of cut to do
