@@ -6843,6 +6843,16 @@
             "properties": {
               "coords": {
                 "description": "Co-ordinate system of output data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/System"
@@ -6852,18 +6862,36 @@
               "created": {
                 "nullable": true,
                 "description": "Timestamp override.",
+                "default": null,
                 "type": "string",
                 "format": "date-time"
+              },
+              "presentation": {
+                "description": "Presentation style.",
+                "default": "pretty",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepPresentation"
+                  }
+                ]
               },
               "type": {
                 "type": "string",
                 "enum": [
                   "step"
                 ]
+              },
+              "units": {
+                "description": "Export length unit.\n\nDefaults to meters.",
+                "default": "m",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitLength"
+                  }
+                ]
               }
             },
             "required": [
-              "coords",
               "type"
             ]
           },
@@ -7766,6 +7794,25 @@
         "required": [
           "face_id",
           "path_id"
+        ]
+      },
+      "StepPresentation": {
+        "description": "Describes the presentation style of the EXPRESS exchange format.",
+        "oneOf": [
+          {
+            "description": "Condenses the text to reduce the size of the file.",
+            "type": "string",
+            "enum": [
+              "compact"
+            ]
+          },
+          {
+            "description": "Add extra spaces to make the text more easily readable.\n\nThis is the default setting.",
+            "type": "string",
+            "enum": [
+              "pretty"
+            ]
+          }
         ]
       },
       "StlStorage": {

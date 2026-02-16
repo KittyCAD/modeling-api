@@ -92,7 +92,7 @@ pub mod export {
 
     /// Options for exporting STEP format.
     #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize, Builder)]
-    #[serde(rename = "StepExportOptions")]
+    #[serde(default, rename = "StepExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(
