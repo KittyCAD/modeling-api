@@ -35,18 +35,20 @@ pub struct EdgeReference {
 
 /// An edge/vertex can be defined by the faces that it is connected to.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[serde(tag = "type", rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum EntityReference {
     /// A uuid referencing a plane.
     Plane {
         /// Id of the plane being referenced.
+        #[serde(rename = "planeId")]
         plane_id: Uuid,
     },
     /// A uuid referencing a face.
     Face {
         /// Id of the face being referenced.
+        #[serde(rename = "faceId")]
         face_id: Uuid,
     },
     /// A collection of ids that uniquely identify an edge.
