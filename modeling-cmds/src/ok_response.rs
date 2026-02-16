@@ -15,6 +15,7 @@ define_ok_modeling_cmd_response_enum! {
             CameraSettings,
             CameraViewState,
             BodyType,
+            EntityReference,
         };
 
         use crate::{self as kittycad_modeling_cmds};
@@ -22,7 +23,7 @@ define_ok_modeling_cmd_response_enum! {
             base64::Base64Data,
             id::ModelingCmdId,
             length_unit::LengthUnit,
-            shared::{CurveType, EntityReference, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d},
+            shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d},
             units,
         };
 
@@ -411,6 +412,12 @@ define_ok_modeling_cmd_response_enum! {
         pub struct SelectClear {
         }
 
+        /// The response from the `SelectEntity` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct SelectEntity {
+        }
+
         /// The response from the `Export2d` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
@@ -463,6 +470,16 @@ define_ok_modeling_cmd_response_enum! {
         pub struct HighlightSetEntity {
             /// The UUID of the entity that was highlighted.
             pub entity_id: Option<Uuid>,
+            /// If the client sent a sequence ID with its request, the backend sends it back.
+            pub sequence: Option<u32>,
+        }
+
+        /// The response from the `HighlightQueryEntity` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct HighlightQueryEntity {
+            /// The EntityReference of the entity that was hovered.
+            pub reference: EntityReference,
             /// If the client sent a sequence ID with its request, the backend sends it back.
             pub sequence: Option<u32>,
         }

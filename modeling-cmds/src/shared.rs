@@ -14,21 +14,23 @@ use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle
 mod point;
 
 /// An edge can be referenced by its uuid or by the faces that uniquely define it.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub enum EdgeReference {
-    /// A uuid referencing an edge.
-    Edge {
-        /// Id of the edge being referenced.
-        uuid: Uuid,
-    },
-    /// A collection of ids that uniquely identify an edge.
-    Face {
-        /// List of face ids.
-        uuids: Vec<Uuid>,
-    },
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct EdgeReference {
+    /// List of face ids that uniquely identify the edge.
+    pub faces: Vec<Uuid>,
+    /// Optional disambiguator face ids for ambiguous edges.
+    #[serde(default)]
+    #[builder(default)]
+    pub disambiguators: Vec<Uuid>,
+    /// Optional index for disambiguation when multiple edges share the same faces.
+    /// If not provided (None), all matching edges will be used.
+    /// If provided (Some(n)), only the edge at index n will be used.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub index: Option<u32>,
 }
 
 /// An edge/vertex can be defined by the faces that it is connected to.
@@ -37,20 +39,37 @@ pub enum EdgeReference {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum EntityReference {
+    /// A uuid referencing a plane.
+    Plane {
+        /// Id of the plane being referenced.
+        plane_id: Uuid,
+    },
     /// A uuid referencing a face.
     Face {
         /// Id of the face being referenced.
-        uuid: Uuid,
+        face_id: Uuid,
     },
     /// A collection of ids that uniquely identify an edge.
     Edge {
-        /// List of face ids.
-        uuids: Vec<Uuid>,
+        /// List of face ids that identify the edge.
+        faces: Vec<Uuid>,
+        /// Optional disambiguator face ids for ambiguous edge matches.
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        disambiguators: Vec<Uuid>,
+        /// Optional index among the filtered candidates.
+        #[serde(skip_serializing_if = "Option::is_none")]
+        index: Option<u32>,
     },
     /// A collection of ids that uniquely identify an vertex.
     Vertex {
-        /// List of face ids.
-        uuids: Vec<Uuid>,
+        /// List of face ids that identify the vertex.
+        faces: Vec<Uuid>,
+        /// Optional disambiguator face ids for ambiguous vertex matches.
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        disambiguators: Vec<Uuid>,
+        /// Optional index among the filtered candidates.
+        #[serde(skip_serializing_if = "Option::is_none")]
+        index: Option<u32>,
     },
 }
 
