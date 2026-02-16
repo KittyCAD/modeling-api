@@ -73,6 +73,12 @@ pub enum EntityReference {
         #[serde(skip_serializing_if = "Option::is_none")]
         index: Option<u32>,
     },
+    /// A uuid referencing a solid2d (profile).
+    Solid2d {
+        /// Id of the solid2d being referenced.
+        #[serde(rename = "solid2dId")]
+        solid2d_id: Uuid,
+    },
 }
 
 /// What kind of cut to do
