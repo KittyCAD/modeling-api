@@ -1,5 +1,4 @@
 use bon::Builder;
-use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -27,16 +26,14 @@ pub mod stl;
 pub mod sldprt;
 
 /// Output 2D format specifier.
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case")]
-#[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OutputFormat2d {
     /// AutoCAD drawing interchange format.
-    #[display("{}: {0}")]
     Dxf(dxf::export::Options),
 }
 
@@ -45,34 +42,27 @@ pub enum OutputFormat2d {
 pub type OutputFormat = OutputFormat3d;
 
 /// Output 3D format specifier.
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case")]
-#[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OutputFormat3d {
     /// Autodesk Filmbox (FBX) format.
-    #[display("{}: {0}")]
     Fbx(fbx::export::Options),
     /// glTF 2.0.
     /// We refer to this as glTF since that is how our customers refer to it, although by default
     /// it will be in binary format and thus technically (glb).
     /// If you prefer ASCII output, you can set that option for the export.
-    #[display("{}: {0}")]
     Gltf(gltf::export::Options),
     /// Wavefront OBJ format.
-    #[display("{}: {0}")]
     Obj(obj::export::Options),
     /// The PLY Polygon File Format.
-    #[display("{}: {0}")]
     Ply(ply::export::Options),
     /// ISO 10303-21 (STEP) format.
-    #[display("{}: {0}")]
     Step(step::export::Options),
     /// **ST**ereo**L**ithography format.
-    #[display("{}: {0}")]
     Stl(stl::export::Options),
 }
 
@@ -81,9 +71,8 @@ pub enum OutputFormat3d {
 pub type InputFormat = InputFormat3d;
 
 /// Input format specifier.
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case")]
-#[display(style = "snake_case")]
 #[cfg_attr(
     feature = "python",
     pyo3::pyclass,
@@ -95,27 +84,20 @@ pub type InputFormat = InputFormat3d;
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum InputFormat3d {
     /// Autodesk Filmbox (FBX) format.
-    #[display("{}: {0}")]
     Fbx(fbx::import::Options),
     /// Binary glTF 2.0.
     /// We refer to this as glTF since that is how our customers refer to it,
     /// but this can also import binary glTF (glb).
-    #[display("{}: {0}")]
     Gltf(gltf::import::Options),
     /// Wavefront OBJ format.
-    #[display("{}: {0}")]
     Obj(obj::import::Options),
     /// The PLY Polygon File Format.
-    #[display("{}: {0}")]
     Ply(ply::import::Options),
     /// SolidWorks part (SLDPRT) format.
-    #[display("{}: {0}")]
     Sldprt(sldprt::import::Options),
     /// ISO 10303-21 (STEP) format.
-    #[display("{}: {0}")]
     Step(step::import::Options),
     /// **ST**ereo**L**ithography format.
-    #[display("{}: {0}")]
     Stl(stl::import::Options),
 }
 
@@ -135,8 +117,7 @@ impl InputFormat3d {
 }
 
 /// Data item selection.
-#[derive(Clone, Debug, Default, Display, Eq, FromStr, Hash, PartialEq, JsonSchema, Deserialize, Serialize)]
-#[display(style = "snake_case")]
+#[derive(Clone, Debug, Default, Eq, Hash, PartialEq, JsonSchema, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -148,28 +129,24 @@ pub enum Selection {
     DefaultScene,
 
     /// Visit the indexed scene.
-    #[display("{}: {index}")]
     SceneByIndex {
         /// The index.
         index: usize,
     },
 
     /// Visit the first scene with the given name.
-    #[display("{}: {name}")]
     SceneByName {
         /// The name.
         name: String,
     },
 
     /// Visit the indexed mesh.
-    #[display("{}: {index}")]
     MeshByIndex {
         /// The index.
         index: usize,
     },
 
     /// Visit the first mesh with the given name.
-    #[display("{}: {name}")]
     MeshByName {
         /// The name.
         name: String,

@@ -10,8 +10,7 @@ pub mod import {
     use super::*;
 
     /// Options for importing STEP format.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder)]
-    #[display("coords: {coords}, split_closed_faces: {split_closed_faces}")]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(default, rename = "StepImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -144,28 +143,6 @@ pub mod export {
                 units: UnitLength::Meters,
                 presentation: Presentation::Pretty,
             }
-        }
-    }
-
-    impl std::fmt::Display for Options {
-        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            write!(
-                f,
-                "coords: {}, units: {}, presentation: {}",
-                self.coords, self.units, self.presentation
-            )
-        }
-    }
-
-    impl std::str::FromStr for Options {
-        type Err = <coord::System as std::str::FromStr>::Err;
-        fn from_str(s: &str) -> Result<Self, Self::Err> {
-            Ok(Self {
-                coords: <coord::System as std::str::FromStr>::from_str(s)?,
-                created: None,
-                units: <UnitLength as std::str::FromStr>::from_str(s)?,
-                presentation: <Presentation as std::str::FromStr>::from_str(s)?,
-            })
         }
     }
 }

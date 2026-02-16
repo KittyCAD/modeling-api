@@ -1,16 +1,11 @@
 /// Import functionality.
 pub mod import {
-
     use bon::Builder;
-    use parse_display::{Display, FromStr};
     use schemars::JsonSchema;
     use serde::{Deserialize, Serialize};
 
     /// Options for importing SolidWorks parts.
-    #[derive(
-        Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder,
-    )]
-    #[display("split_closed_faces: {split_closed_faces}")]
+    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(default, rename = "SldprtImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
