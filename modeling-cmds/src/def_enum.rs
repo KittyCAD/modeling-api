@@ -415,6 +415,35 @@ define_modeling_cmd_enum! {
             pub body_type: BodyType,
         }
 
+        /// Command for revolving a solid 2d about an edge reference (with faces, disambiguators, index).
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RevolveAboutEdgeReference {
+            /// Which sketch to revolve.
+            /// Must be a closed 2D solid.
+            pub target: ModelingCmdId,
+            /// The edge reference to use as the axis of revolution, must be linear and lie in the plane of the solid
+            pub edge_reference: EdgeReference,
+            /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
+            pub angle: Angle,
+            /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+            /// Should the revolution also revolve in the opposite direction along the given axis?
+            /// If so, this specifies its angle.
+            #[serde(default)]
+            #[builder(default)]
+            pub opposite: Opposite<Angle>,
+            /// Should this extrude create a solid body or a surface?
+            #[serde(default)]
+            #[builder(default)]
+            pub body_type: BodyType,
+        }
+
         /// Command for lofting sections to create a solid
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder

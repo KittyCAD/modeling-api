@@ -130,6 +130,12 @@ define_ok_modeling_cmd_response_enum! {
         pub struct RevolveAboutEdge {
         }
 
+        /// The response from the `RevolveAboutEdgeReference` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RevolveAboutEdgeReference {
+        }
+
         /// The response from the `CameraDragStart` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
