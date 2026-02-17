@@ -107,7 +107,7 @@ pub mod export {
         /// Defaults to the [KittyCAD co-ordinate system].
         ///
         /// [KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html
-        #[builder(default = *coord::KITTYCAD)]
+        #[builder(default = default_coords())]
         pub coords: coord::System,
 
         /// Timestamp override.
@@ -116,11 +116,11 @@ pub mod export {
         /// Export length unit.
         ///
         /// Defaults to meters.
-        #[builder(default = UnitLength::Meters)]
+        #[builder(default = default_units())]
         pub units: UnitLength,
 
         /// Presentation style.
-        #[builder(default = Presentation::Pretty)]
+        #[builder(default = default_presentation())]
         pub presentation: Presentation,
     }
 
@@ -138,11 +138,23 @@ pub mod export {
     impl Default for Options {
         fn default() -> Self {
             Self {
-                coords: *coord::KITTYCAD,
+                coords: default_coords(),
                 created: None,
-                units: UnitLength::Meters,
-                presentation: Presentation::Pretty,
+                units: default_units(),
+                presentation: default_presentation(),
             }
         }
+    }
+
+    const fn default_presentation() -> Presentation {
+        Presentation::Pretty
+    }
+
+    const fn default_coords() -> coord::System {
+        *coord::KITTYCAD
+    }
+
+    const fn default_units() -> UnitLength {
+        UnitLength::Meters
     }
 }
