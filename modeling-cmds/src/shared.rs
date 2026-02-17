@@ -85,6 +85,13 @@ pub enum EntityReference {
         #[serde(rename = "solid3dId")]
         solid3d_id: Uuid,
     },
+    /// A uuid referencing an edge on a solid2d (profile) - used for raw sketch/profile edges.
+    /// This is distinct from the face-based Edge reference which is used for BRep/swept body edges.
+    Solid2dEdge {
+        /// Id of the edge being referenced.
+        #[serde(rename = "edgeId")]
+        edge_id: Uuid,
+    },
 }
 
 /// What kind of cut to do
