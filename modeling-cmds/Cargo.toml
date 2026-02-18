@@ -26,7 +26,7 @@ python = ["dep:pyo3", "dep:pyo3-stub-gen"]
 arbitrary = ["dep:arbitrary", "uuid/arbitrary", "chrono/arbitrary"]
 
 [dependencies]
-anyhow = "1.0.100"
+anyhow = "1.0.101"
 arbitrary = { version = "1", features = ["derive"], optional = true }
 bon = "3.8.2"
 chrono = { version = "0.4.43", features = ["serde"] }
@@ -61,12 +61,12 @@ ts-rs = { version = ">= 11.1.0, < 13", optional = true, features = [
   "no-serde-warnings",
   "serde-json-impl",
 ] }
-uuid = { version = "1.19.0", features = ["serde", "v4", "js"] }
+uuid = { version = "1.20.0", features = ["serde", "v4", "js"] }
 webrtc = { version = "0.12", optional = true }
 
 [dev-dependencies]
 bson = "2.14.0"
-dropshot = { version = "0.16.6", default-features = false }
+dropshot = { version = "0.16.7", default-features = false }
 expectorate = "1.1.0"
 openapi-lint = { git = "https://github.com/KittyCAD/openapi-lint", branch = "kittycad" }
 openapiv3 = "2.2.0"
