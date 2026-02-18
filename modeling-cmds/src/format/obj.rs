@@ -1,5 +1,4 @@
 use bon::Builder;
-use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -10,8 +9,7 @@ pub mod import {
     use super::*;
 
     /// Options for importing OBJ.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder)]
-    #[display("coords: {coords}, units: {units}")]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(rename = "ObjImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -67,8 +65,7 @@ pub mod export {
     use super::*;
 
     /// Options for exporting OBJ.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder)]
-    #[display("coords: {coords}, units: {units}")]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(rename = "ObjExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
