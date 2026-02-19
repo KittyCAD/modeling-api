@@ -6369,6 +6369,11 @@
             "description": "Create a new solid from combining other smaller solids. In other words, every part of the input solids will be included in the output solid.",
             "type": "object",
             "properties": {
+              "separate_bodies": {
+                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "default": false,
+                "type": "boolean"
+              },
               "solid_ids": {
                 "description": "Which solids to union together. Cannot be empty.",
                 "type": "array",
@@ -6402,6 +6407,11 @@
             "description": "Create a new solid from intersecting several other solids. In other words, the part of the input solids where they all overlap will be the output solid.",
             "type": "object",
             "properties": {
+              "separate_bodies": {
+                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "default": false,
+                "type": "boolean"
+              },
               "solid_ids": {
                 "description": "Which solids to intersect together",
                 "type": "array",
@@ -6435,6 +6445,11 @@
             "description": "Create a new solid from subtracting several other solids. The 'target' is what will be cut from. The 'tool' is what will be cut out from 'target'.",
             "type": "object",
             "properties": {
+              "separate_bodies": {
+                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "default": false,
+                "type": "boolean"
+              },
               "target_ids": {
                 "description": "Geometry to cut out from.",
                 "type": "array",
@@ -6484,6 +6499,11 @@
                   "type": "string",
                   "format": "uuid"
                 }
+              },
+              "separate_bodies": {
+                "description": "If true, bodies will be separated into multiple objects at their intersection boundaries.",
+                "default": false,
+                "type": "boolean"
               },
               "tolerance": {
                 "description": "The maximum acceptable surface gap between the intersected bodies. Must be positive (i.e. greater than zero).",
@@ -7016,6 +7036,16 @@
             "properties": {
               "coords": {
                 "description": "Co-ordinate system of output data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/System"
@@ -7025,18 +7055,36 @@
               "created": {
                 "nullable": true,
                 "description": "Timestamp override.",
+                "default": null,
                 "type": "string",
                 "format": "date-time"
+              },
+              "presentation": {
+                "description": "Presentation style.",
+                "default": "pretty",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepPresentation"
+                  }
+                ]
               },
               "type": {
                 "type": "string",
                 "enum": [
                   "step"
                 ]
+              },
+              "units": {
+                "description": "Export length unit.\n\nDefaults to meters.",
+                "default": "m",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitLength"
+                  }
+                ]
               }
             },
             "required": [
-              "coords",
               "type"
             ]
           },
@@ -7939,6 +7987,25 @@
         "required": [
           "face_id",
           "path_id"
+        ]
+      },
+      "StepPresentation": {
+        "description": "Describes the presentation style of the EXPRESS exchange format.",
+        "oneOf": [
+          {
+            "description": "Condenses the text to reduce the size of the file.",
+            "type": "string",
+            "enum": [
+              "compact"
+            ]
+          },
+          {
+            "description": "Add extra spaces to make the text more easily readable.\n\nThis is the default setting.",
+            "type": "string",
+            "enum": [
+              "pretty"
+            ]
+          }
         ]
       },
       "StlStorage": {

@@ -7,10 +7,7 @@ use serde::{Deserialize, Serialize};
 pub mod import {
     use super::*;
     /// Options for importing FBX.
-    #[derive(
-        Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder,
-    )]
-    #[display("")]
+    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(rename = "FbxImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -67,22 +64,6 @@ pub mod export {
         /// Set the options to their defaults.
         pub fn new() -> Self {
             Default::default()
-        }
-    }
-
-    impl std::fmt::Display for Options {
-        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            write!(f, "storage: {}", self.storage)
-        }
-    }
-
-    impl std::str::FromStr for Options {
-        type Err = <Storage as std::str::FromStr>::Err;
-        fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-            Ok(Self {
-                storage: <Storage as std::str::FromStr>::from_str(s)?,
-                created: None,
-            })
         }
     }
 
