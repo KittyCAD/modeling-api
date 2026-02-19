@@ -907,8 +907,14 @@ define_modeling_cmd_enum! {
             pub start_angle: Angle,
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
-            /// Edge reference about which to make the helix.
-            pub edge_reference: EdgeReference,
+            /// Edge ID about which to make the helix (legacy API, for backwards compatibility).
+            /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_id: Option<Uuid>,
+            /// Edge reference about which to make the helix (new API).
+            /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_reference: Option<EdgeReference>,
         }
 
         /// Mirror the input entities over the specified axis. (Currently only supports sketches)
