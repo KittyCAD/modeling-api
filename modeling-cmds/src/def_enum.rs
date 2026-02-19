@@ -937,8 +937,8 @@ define_modeling_cmd_enum! {
         pub struct EntityMirrorAcrossEdge {
             /// ID of the mirror entities.
             pub ids: Vec<Uuid>,
-            /// The edge reference to use as the mirror axis, must be linear and lie in the plane of the solid
-            pub edge_reference: EdgeReference,
+            /// The edge to use as the mirror axis, must be linear and lie in the plane of the solid
+            pub edge_id: Uuid,
         }
 
         /// Modifies the selection by simulating a "mouse click" at the given x,y window coordinate
