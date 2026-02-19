@@ -907,8 +907,8 @@ define_modeling_cmd_enum! {
             pub start_angle: Angle,
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
-            /// Edge about which to make the helix.
-            pub edge_id: Uuid,
+            /// Edge reference about which to make the helix.
+            pub edge_reference: EdgeReference,
         }
 
         /// Mirror the input entities over the specified axis. (Currently only supports sketches)
@@ -937,8 +937,8 @@ define_modeling_cmd_enum! {
         pub struct EntityMirrorAcrossEdge {
             /// ID of the mirror entities.
             pub ids: Vec<Uuid>,
-            /// The edge to use as the mirror axis, must be linear and lie in the plane of the solid
-            pub edge_id: Uuid,
+            /// The edge reference to use as the mirror axis, must be linear and lie in the plane of the solid
+            pub edge_reference: EdgeReference,
         }
 
         /// Modifies the selection by simulating a "mouse click" at the given x,y window coordinate
