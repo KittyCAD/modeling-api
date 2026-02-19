@@ -1302,6 +1302,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub edge_ids: Vec<Uuid>,
+            /// A struct containing the information required to reference an edge.
+            #[serde(default)]
+            #[builder(default)]
+            pub edges_references: Vec<EdgeReference>,
             /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
             pub radius: LengthUnit,
             /// The maximum acceptable surface gap computed between the filleted surfaces. Must be positive (i.e. greater than zero).

@@ -485,7 +485,9 @@ define_ok_modeling_cmd_response_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct HighlightQueryEntity {
             /// The EntityReference of the entity that was hovered.
-            pub reference: EntityReference,
+            /// None if no entity was found at the given location (clicked in empty space).
+            #[serde(skip_serializing_if = "Option::is_none")]
+            pub reference: Option<EntityReference>,
             /// If the client sent a sequence ID with its request, the backend sends it back.
             pub sequence: Option<u32>,
         }
