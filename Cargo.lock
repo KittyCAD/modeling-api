@@ -2394,7 +2394,6 @@ dependencies = [
  "euler",
  "expectorate",
  "http",
- "kittycad",
  "kittycad-modeling-cmds-macros",
  "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "measurements",
