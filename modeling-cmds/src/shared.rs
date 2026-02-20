@@ -42,13 +42,11 @@ pub enum EntityReference {
     /// A uuid referencing a plane.
     Plane {
         /// Id of the plane being referenced.
-        #[serde(rename = "planeId")]
         plane_id: Uuid,
     },
     /// A uuid referencing a face.
     Face {
         /// Id of the face being referenced.
-        #[serde(rename = "faceId")]
         face_id: Uuid,
     },
     /// A collection of ids that uniquely identify an edge.
@@ -76,20 +74,17 @@ pub enum EntityReference {
     /// A uuid referencing a solid2d (profile).
     Solid2d {
         /// Id of the solid2d being referenced.
-        #[serde(rename = "solid2dId")]
         solid2d_id: Uuid,
     },
     /// A uuid referencing a solid3d (body).
     Solid3d {
         /// Id of the solid3d being referenced.
-        #[serde(rename = "solid3dId")]
         solid3d_id: Uuid,
     },
     /// A uuid referencing an edge on a solid2d (profile) - used for raw sketch/profile edges.
     /// This is distinct from the face-based Edge reference which is used for BRep/swept body edges.
     Solid2dEdge {
         /// Id of the edge being referenced.
-        #[serde(rename = "edgeId")]
         edge_id: Uuid,
     },
 }
