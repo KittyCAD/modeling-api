@@ -10,8 +10,7 @@ pub mod import {
     use super::*;
 
     /// Options for importing STEP format.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder)]
-    #[display("coords: {coords}, split_closed_faces: {split_closed_faces}")]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(default, rename = "StepImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -62,10 +61,37 @@ pub mod import {
 /// Export models in STEP format.
 pub mod export {
     use super::*;
+    use crate::units::UnitLength;
+
+    /// Describes the presentation style of the EXPRESS exchange format.
+    #[derive(
+        Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
+    )]
+    #[display(style = "snake_case")]
+    #[serde(rename = "StepPresentation", rename_all = "snake_case")]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(
+        feature = "python",
+        pyo3_stub_gen::derive::gen_stub_pyclass_enum,
+        pyo3::pyclass(name = "StepPresentation")
+    )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+    pub enum Presentation {
+        /// Condenses the text to reduce the size of the file.
+        Compact,
+
+        /// Add extra spaces to make the text more easily readable.
+        ///
+        /// This is the default setting.
+        #[default]
+        Pretty,
+    }
 
     /// Options for exporting STEP format.
     #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize, Builder)]
-    #[serde(rename = "StepExportOptions")]
+    #[serde(default, rename = "StepExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(
@@ -81,11 +107,21 @@ pub mod export {
         /// Defaults to the [KittyCAD co-ordinate system].
         ///
         /// [KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html
-        #[builder(default = *coord::KITTYCAD)]
+        #[builder(default = default_coords())]
         pub coords: coord::System,
 
         /// Timestamp override.
         pub created: Option<chrono::DateTime<chrono::Utc>>,
+
+        /// Export length unit.
+        ///
+        /// Defaults to meters.
+        #[builder(default = default_units())]
+        pub units: UnitLength,
+
+        /// Presentation style.
+        #[builder(default = default_presentation())]
+        pub presentation: Presentation,
     }
 
     #[cfg(feature = "python")]
@@ -102,25 +138,23 @@ pub mod export {
     impl Default for Options {
         fn default() -> Self {
             Self {
-                coords: *coord::KITTYCAD,
+                coords: default_coords(),
                 created: None,
+                units: default_units(),
+                presentation: default_presentation(),
             }
         }
     }
 
-    impl std::fmt::Display for Options {
-        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            write!(f, "coords: {}", self.coords)
-        }
+    const fn default_presentation() -> Presentation {
+        Presentation::Pretty
     }
 
-    impl std::str::FromStr for Options {
-        type Err = <coord::System as std::str::FromStr>::Err;
-        fn from_str(s: &str) -> Result<Self, Self::Err> {
-            Ok(Self {
-                coords: <coord::System as std::str::FromStr>::from_str(s)?,
-                created: None,
-            })
-        }
+    const fn default_coords() -> coord::System {
+        *coord::KITTYCAD
+    }
+
+    const fn default_units() -> UnitLength {
+        UnitLength::Meters
     }
 }

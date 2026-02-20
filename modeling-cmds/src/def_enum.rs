@@ -2196,6 +2196,10 @@ define_modeling_cmd_enum! {
             /// Which solids to union together.
             /// Cannot be empty.
             pub solid_ids: Vec<Uuid>,
+            /// If true, non-contiguous bodies in the result will be returned as separate objects
+            #[serde(default)]
+            #[builder(default)]
+            pub separate_bodies: bool,
             /// The maximum acceptable surface gap computed between the joined solids. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }
@@ -2214,6 +2218,10 @@ define_modeling_cmd_enum! {
         {
             /// Which solids to intersect together
             pub solid_ids: Vec<Uuid>,
+            /// If true, non-contiguous bodies in the result will be returned as separate objects
+            #[serde(default)]
+            #[builder(default)]
+            pub separate_bodies: bool,
             /// The maximum acceptable surface gap computed between the joined solids. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }
@@ -2235,6 +2243,10 @@ define_modeling_cmd_enum! {
             pub target_ids: Vec<Uuid>,
             /// Will be cut out from the 'target'.
             pub tool_ids: Vec<Uuid>,
+            /// If true, non-contiguous bodies in the result will be returned as separate objects
+            #[serde(default)]
+            #[builder(default)]
+            pub separate_bodies: bool,
             /// The maximum acceptable surface gap computed between the target and the solids cut out from it. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }
@@ -2252,6 +2264,10 @@ define_modeling_cmd_enum! {
         {
             /// Which input bodies to intersect.  Inputs with non-solid body types are permitted
             pub body_ids: Vec<Uuid>,
+            /// If true, bodies will be separated into multiple objects at their intersection boundaries.
+            #[serde(default)]
+            #[builder(default)]
+            pub separate_bodies: bool,
             /// The maximum acceptable surface gap between the intersected bodies. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }

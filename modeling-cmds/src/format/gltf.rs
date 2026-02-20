@@ -8,10 +8,7 @@ pub mod import {
     use super::*;
 
     /// Options for importing glTF 2.0.
-    #[derive(
-        Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder,
-    )]
-    #[display("")]
+    #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(rename = "GltfImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -40,10 +37,7 @@ pub mod import {
 pub mod export {
     use super::*;
     /// Options for exporting glTF 2.0.
-    #[derive(
-        Default, Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr, Builder,
-    )]
-    #[display("storage: {storage}, presentation: {presentation}")]
+    #[derive(Default, Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(rename = "GltfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
