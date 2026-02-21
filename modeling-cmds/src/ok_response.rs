@@ -1230,10 +1230,10 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct BoundingBox {
-            /// Corner of the box
-            pub corner: Point3d,
-            /// Dimensions of the box, starting from the corner.
-            pub dimensions: Point3d,
+            /// Center of the box.
+            pub center: Point3d<f64>,
+            /// Dimensions of the box along each axis.
+            pub dimensions: Point3d<f64>,
         }
 
     }
