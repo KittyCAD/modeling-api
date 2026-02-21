@@ -2395,6 +2395,19 @@ define_modeling_cmd_enum! {
             /// Where in the window was selected
             pub selected_at_window: Point2d,
         }
+
+        /// Get the smallest box that could contain the given parts.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct BoundingBox {
+            /// IDs of the entities to be included in the box.
+            /// If this is empty, then all entities are included (the entire scene).
+            #[builder(default)]
+            pub entity_ids: Vec<Uuid>,
+        }
     }
 }
 

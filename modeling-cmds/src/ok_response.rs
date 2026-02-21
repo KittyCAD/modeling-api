@@ -1226,5 +1226,15 @@ define_ok_modeling_cmd_response_enum! {
             pub region: Option<crate::shared::SelectedRegion>,
         }
 
+        /// The response from the 'BoundingBox'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct BoundingBox {
+            /// Center of the box.
+            pub center: Point3d<f64>,
+            /// Dimensions of the box along each axis.
+            pub dimensions: Point3d<f64>,
+        }
+
     }
 }
