@@ -31,6 +31,8 @@ define_modeling_cmd_enum! {
                 CutType, CutTypeV2,
                 CutStrategy,
                 CameraMovement,
+                EdgeReference,
+                EntityReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
@@ -398,6 +400,35 @@ define_modeling_cmd_enum! {
             pub target: ModelingCmdId,
             /// The edge to use as the axis of revolution, must be linear and lie in the plane of the solid
             pub edge_id: Uuid,
+            /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
+            pub angle: Angle,
+            /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+            /// Should the revolution also revolve in the opposite direction along the given axis?
+            /// If so, this specifies its angle.
+            #[serde(default)]
+            #[builder(default)]
+            pub opposite: Opposite<Angle>,
+            /// Should this extrude create a solid body or a surface?
+            #[serde(default)]
+            #[builder(default)]
+            pub body_type: BodyType,
+        }
+
+        /// Command for revolving a solid 2d about an edge reference (with faces, disambiguators, index).
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RevolveAboutEdgeReference {
+            /// Which sketch to revolve.
+            /// Must be a closed 2D solid.
+            pub target: ModelingCmdId,
+            /// The edge reference to use as the axis of revolution, must be linear and lie in the plane of the solid
+            pub edge_reference: EdgeReference,
             /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
             pub angle: Angle,
             /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
@@ -876,8 +907,14 @@ define_modeling_cmd_enum! {
             pub start_angle: Angle,
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
-            /// Edge about which to make the helix.
-            pub edge_id: Uuid,
+            /// Edge ID about which to make the helix (legacy API, for backwards compatibility).
+            /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_id: Option<Uuid>,
+            /// Edge reference about which to make the helix (new API).
+            /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_reference: Option<EdgeReference>,
         }
 
         /// Mirror the input entities over the specified axis. (Currently only supports sketches)
@@ -922,6 +959,30 @@ define_modeling_cmd_enum! {
             pub selected_at_window: Point2d,
             /// What entity was selected?
             pub selection_type: SceneSelectionType,
+        }
+
+        /// Query the type of entity that was selected. E.g. if a face is selected the face id is
+        /// returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are
+        /// returned (typically two).
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct QueryEntityTypeWithPoint {
+            /// Where in the window was selected
+            pub selected_at_window: Point2d,
+            /// What entity was selected?
+            pub selection_type: SceneSelectionType,
+        }
+
+        /// Query the type of entity given its id. E.g. if a face is selected the face id is
+        /// returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are
+        /// returned (typically two).
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct QueryEntityType {
+            /// The entity id to query
+            pub entity_id: Uuid,
         }
 
         /// Adds one or more entities (by UUID) to the selection.
@@ -991,6 +1052,24 @@ define_modeling_cmd_enum! {
         pub struct HighlightSetEntities {
             /// Highlight these entities.
             pub entities: Vec<Uuid>,
+        }
+
+        /// Queries the entity at the given window coordinate and returns its EntityReference.
+        /// Used for hover highlighting with face-based references.
+        /// If there's no entity at this location, returns an empty EntityReference.
+        #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct HighlightQueryEntity {
+            /// Coordinates of the window being hovered
+            pub selected_at_window: Point2d,
+            /// Logical timestamp. The client should increment this
+            /// with every event in the current mouse drag. That way, if the
+            /// events are being sent over an unordered channel, the API
+            /// can ignore the older events.
+            pub sequence: Option<u32>,
         }
 
         /// Create a new annotation
@@ -1229,6 +1308,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub edge_ids: Vec<Uuid>,
+            /// A struct containing the information required to reference an edge.
+            #[serde(default)]
+            #[builder(default)]
+            pub edges_references: Vec<EdgeReference>,
             /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
             pub radius: LengthUnit,
             /// The maximum acceptable surface gap computed between the filleted surfaces. Must be positive (i.e. greater than zero).
@@ -1250,6 +1333,35 @@ define_modeling_cmd_enum! {
             /// the command ID used to send this command.
             #[serde(default)]
             #[builder(default)]
+            pub extra_face_ids: Vec<Uuid>,
+        }
+
+        /// Cut the list of edge references with the given cut parameters
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        pub struct Solid3dCutEdgeReferences {
+/// Which object is being cut.
+            pub object_id: Uuid,
+            /// A struct containing the information required to reference an edge.
+            #[serde(default)]
+            pub edges_references: Vec<EdgeReference>,
+            /// The cut type and information required to perform the cut.
+            pub cut_type: CutTypeV2,
+            /// The maximum acceptable surface gap computed between the cut surfaces. Must be
+            /// positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+            /// Which cutting algorithm to use.
+            #[serde(default)]
+            pub strategy: CutStrategy,
+            /// What IDs should the resulting faces have?
+            /// If you've only passed one edge ID, its ID will
+            /// be the command ID used to send this command, and this
+            /// field should be empty.
+            /// If you've passed `n` IDs (to cut `n` edges), then
+            /// this should be length `n-1`, and the first edge will use
+            /// the command ID used to send this command.
+            #[serde(default)]
             pub extra_face_ids: Vec<Uuid>,
         }
 
@@ -2145,6 +2257,18 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectClear {}
 
+        /// Set the selection to exactly these entities (replaces previous selection).
+        /// Empty array clears the selection.
+        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct SelectEntity {
+            /// Which entities to select (face-based references for edges/vertices, face_id for faces)
+            pub entities: Vec<EntityReference>,
+        }
+
         /// Find all IDs of selected entities
         #[derive(Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -2264,7 +2388,7 @@ define_modeling_cmd_enum! {
         {
             /// Which input bodies to intersect.  Inputs with non-solid body types are permitted
             pub body_ids: Vec<Uuid>,
-            /// If true, bodies will be separated into multiple objects at their intersection boundaries.
+            /// If true, non-contiguous bodies in the result will be returned as separate objects
             #[serde(default)]
             #[builder(default)]
             pub separate_bodies: bool,

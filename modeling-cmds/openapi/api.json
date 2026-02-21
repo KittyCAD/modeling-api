@@ -1205,6 +1205,60 @@
           }
         ]
       },
+      "EdgeReference": {
+        "description": "An edge can be referenced by its uuid or by the faces that uniquely define it.",
+        "oneOf": [
+          {
+            "description": "A uuid referencing an edge.",
+            "type": "object",
+            "properties": {
+              "edge": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "description": "Id of the edge being referenced.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "uuid"
+                ]
+              }
+            },
+            "required": [
+              "edge"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A collection of ids that uniquely identify an edge.",
+            "type": "object",
+            "properties": {
+              "face": {
+                "type": "object",
+                "properties": {
+                  "uuids": {
+                    "description": "List of face ids.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                },
+                "required": [
+                  "uuids"
+                ]
+              }
+            },
+            "required": [
+              "face"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "EntityType": {
         "description": "The type of entity",
         "type": "string",
@@ -3700,6 +3754,60 @@
             ]
           },
           {
+            "description": "Query the type of entity that was selected. E.g. if a face is selected the face id is returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are returned (typically two).",
+            "type": "object",
+            "properties": {
+              "selected_at_window": {
+                "description": "Where in the window was selected",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Point2d"
+                  }
+                ]
+              },
+              "selection_type": {
+                "description": "What entity was selected?",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/SceneSelectionType"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "query_entity_type_with_point"
+                ]
+              }
+            },
+            "required": [
+              "selected_at_window",
+              "selection_type",
+              "type"
+            ]
+          },
+          {
+            "description": "Query the type of entity given its id. E.g. if a face is selected the face id is returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are returned (typically two).",
+            "type": "object",
+            "properties": {
+              "entity_id": {
+                "description": "The entity id to query",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "query_entity_type"
+                ]
+              }
+            },
+            "required": [
+              "entity_id",
+              "type"
+            ]
+          },
+          {
             "description": "Adds one or more entities (by UUID) to the selection.",
             "type": "object",
             "properties": {
@@ -4401,6 +4509,71 @@
             "required": [
               "object_id",
               "radius",
+              "tolerance",
+              "type"
+            ]
+          },
+          {
+            "description": "Cut the list of edge references with the given cut parameters",
+            "type": "object",
+            "properties": {
+              "cut_type": {
+                "description": "The cut type and information required to perform the cut.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CutTypeV2"
+                  }
+                ]
+              },
+              "edges_references": {
+                "description": "A struct containing the information required to reference an edge.",
+                "default": [],
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EdgeReference"
+                }
+              },
+              "extra_face_ids": {
+                "description": "What IDs should the resulting faces have? If you've only passed one edge ID, its ID will be the command ID used to send this command, and this field should be empty. If you've passed `n` IDs (to cut `n` edges), then this should be length `n-1`, and the first edge will use the command ID used to send this command.",
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "object_id": {
+                "description": "Which object is being cut.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "strategy": {
+                "description": "Which cutting algorithm to use.",
+                "default": "automatic",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CutStrategy"
+                  }
+                ]
+              },
+              "tolerance": {
+                "description": "The maximum acceptable surface gap computed between the cut surfaces. Must be positive (i.e. greater than zero).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_cut_edge_references"
+                ]
+              }
+            },
+            "required": [
+              "cut_type",
+              "object_id",
               "tolerance",
               "type"
             ]
@@ -6196,11 +6369,6 @@
             "description": "Create a new solid from combining other smaller solids. In other words, every part of the input solids will be included in the output solid.",
             "type": "object",
             "properties": {
-              "separate_bodies": {
-                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
-                "default": false,
-                "type": "boolean"
-              },
               "solid_ids": {
                 "description": "Which solids to union together. Cannot be empty.",
                 "type": "array",
@@ -6234,11 +6402,6 @@
             "description": "Create a new solid from intersecting several other solids. In other words, the part of the input solids where they all overlap will be the output solid.",
             "type": "object",
             "properties": {
-              "separate_bodies": {
-                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
-                "default": false,
-                "type": "boolean"
-              },
               "solid_ids": {
                 "description": "Which solids to intersect together",
                 "type": "array",
@@ -6272,11 +6435,6 @@
             "description": "Create a new solid from subtracting several other solids. The 'target' is what will be cut from. The 'tool' is what will be cut out from 'target'.",
             "type": "object",
             "properties": {
-              "separate_bodies": {
-                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
-                "default": false,
-                "type": "boolean"
-              },
               "target_ids": {
                 "description": "Geometry to cut out from.",
                 "type": "array",
@@ -6326,11 +6484,6 @@
                   "type": "string",
                   "format": "uuid"
                 }
-              },
-              "separate_bodies": {
-                "description": "If true, bodies will be separated into multiple objects at their intersection boundaries.",
-                "default": false,
-                "type": "boolean"
               },
               "tolerance": {
                 "description": "The maximum acceptable surface gap between the intersected bodies. Must be positive (i.e. greater than zero).",

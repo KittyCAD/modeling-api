@@ -15,6 +15,7 @@ define_ok_modeling_cmd_response_enum! {
             CameraSettings,
             CameraViewState,
             BodyType,
+            EntityReference,
         };
 
         use crate::{self as kittycad_modeling_cmds};
@@ -129,6 +130,12 @@ define_ok_modeling_cmd_response_enum! {
         pub struct RevolveAboutEdge {
         }
 
+        /// The response from the `RevolveAboutEdgeReference` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RevolveAboutEdgeReference {
+        }
+
         /// The response from the `CameraDragStart` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
@@ -223,6 +230,12 @@ define_ok_modeling_cmd_response_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dFilletEdge {
         }
+
+        /// The response from the `Solid3dCutEdgeReferences` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dCutEdgeReferences {
+        }
+
 
         /// The response from the `Solid3dCutEdges` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
@@ -405,6 +418,12 @@ define_ok_modeling_cmd_response_enum! {
         pub struct SelectClear {
         }
 
+        /// The response from the `SelectEntity` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct SelectEntity {
+        }
+
         /// The response from the `Export2d` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
@@ -437,12 +456,38 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_id: Option<Uuid>,
         }
 
+        /// The response from the `QueryEntityTypeWithPoint` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct QueryEntityTypeWithPoint{
+            /// How to reference the selected entity using face ids.
+            pub reference: EntityReference,
+        }
+
+        /// The response from the `QueryEntityType` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct QueryEntityType {
+            /// How to reference the provided entity using face ids.
+            pub reference: EntityReference,
+        }
+
         /// The response from the `HighlightSetEntity` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct HighlightSetEntity {
             /// The UUID of the entity that was highlighted.
             pub entity_id: Option<Uuid>,
+            /// If the client sent a sequence ID with its request, the backend sends it back.
+            pub sequence: Option<u32>,
+        }
+
+        /// The response from the `HighlightQueryEntity` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct HighlightQueryEntity {
+            /// The EntityReference of the entity that was hovered.
+            /// None if no entity was found at the given location (clicked in empty space).
+            #[serde(skip_serializing_if = "Option::is_none")]
+            pub reference: Option<EntityReference>,
             /// If the client sent a sequence ID with its request, the backend sends it back.
             pub sequence: Option<u32>,
         }
