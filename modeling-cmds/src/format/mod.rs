@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::shared::{FileExportFormat, FileExportFormat2d, FileImportFormat};
 
+/// PTC Creo part (PRT) format.
+pub mod creo;
 /// AutoCAD drawing interchange format.
 pub mod dxf;
 /// Autodesk Filmbox (FBX) format.
@@ -83,6 +85,8 @@ pub type InputFormat = InputFormat3d;
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum InputFormat3d {
+    /// PTC Creo part (PRT) format.
+    Creo(creo::import::Options),
     /// Autodesk Filmbox (FBX) format.
     Fbx(fbx::import::Options),
     /// Binary glTF 2.0.
@@ -105,6 +109,7 @@ impl InputFormat3d {
     /// Get the name of this format.
     pub fn name(&self) -> &'static str {
         match self {
+            InputFormat3d::Creo(_) => "creo",
             InputFormat3d::Fbx(_) => "fbx",
             InputFormat3d::Gltf(_) => "gltf",
             InputFormat3d::Obj(_) => "obj",
@@ -242,6 +247,7 @@ impl From<FileExportFormat> for OutputFormat3d {
 impl From<InputFormat3d> for FileImportFormat {
     fn from(input_format: InputFormat3d) -> Self {
         match input_format {
+            InputFormat3d::Creo(_) => Self::Creo,
             InputFormat3d::Fbx(_) => Self::Fbx,
             InputFormat3d::Gltf(_) => Self::Gltf,
             InputFormat3d::Obj(_) => Self::Obj,
@@ -256,6 +262,7 @@ impl From<InputFormat3d> for FileImportFormat {
 impl From<FileImportFormat> for InputFormat3d {
     fn from(import_format: FileImportFormat) -> Self {
         match import_format {
+            FileImportFormat::Creo => InputFormat3d::Creo(Default::default()),
             FileImportFormat::Fbx => InputFormat3d::Fbx(Default::default()),
             FileImportFormat::Gltf => InputFormat3d::Gltf(Default::default()),
             FileImportFormat::Obj => InputFormat3d::Obj(Default::default()),

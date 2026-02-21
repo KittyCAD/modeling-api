@@ -1093,6 +1093,8 @@ pub enum FileExportFormat2d {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum FileImportFormat {
+    /// PTC Creo part (PRT) format.
+    Creo,
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
     Fbx,
     /// glTF 2.0.
