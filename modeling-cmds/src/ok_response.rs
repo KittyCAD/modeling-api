@@ -429,6 +429,16 @@ define_ok_modeling_cmd_response_enum! {
             pub files: Vec<ExportFile>,
         }
 
+        /// The response from the `Cache` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct Cache {
+        }
+
+        /// The response from the `LoadCache` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        pub struct LoadCache {
+        }
+
         /// The response from the `SelectWithPoint` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
