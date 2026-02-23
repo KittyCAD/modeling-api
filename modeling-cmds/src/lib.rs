@@ -5,9 +5,6 @@
 
 pub mod base64;
 
-#[cfg(feature = "convert_client_crate")]
-mod convert_client_crate;
-
 /// Various coordinate systems.
 pub mod coord;
 
