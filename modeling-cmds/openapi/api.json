@@ -1207,55 +1207,222 @@
       },
       "EdgeReference": {
         "description": "An edge can be referenced by its uuid or by the faces that uniquely define it.",
+        "type": "object",
+        "properties": {
+          "disambiguators": {
+            "description": "Optional disambiguator face ids for ambiguous edges.",
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "faces": {
+            "description": "List of face ids that uniquely identify the edge.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "index": {
+            "nullable": true,
+            "description": "Optional index for disambiguation when multiple edges share the same faces. If not provided (None), all matching edges will be used. If provided (Some(n)), only the edge at index n will be used.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "faces"
+        ]
+      },
+      "EntityReference": {
+        "description": "An edge/vertex can be defined by the faces that it is connected to.",
         "oneOf": [
           {
-            "description": "A uuid referencing an edge.",
+            "description": "A uuid referencing a plane.",
             "type": "object",
             "properties": {
-              "edge": {
-                "type": "object",
-                "properties": {
-                  "uuid": {
-                    "description": "Id of the edge being referenced.",
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                },
-                "required": [
-                  "uuid"
+              "plane_id": {
+                "description": "Id of the plane being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "plane"
                 ]
               }
             },
             "required": [
-              "edge"
-            ],
-            "additionalProperties": false
+              "plane_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing a face.",
+            "type": "object",
+            "properties": {
+              "face_id": {
+                "description": "Id of the face being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "face"
+                ]
+              }
+            },
+            "required": [
+              "face_id",
+              "type"
+            ]
           },
           {
             "description": "A collection of ids that uniquely identify an edge.",
             "type": "object",
             "properties": {
-              "face": {
-                "type": "object",
-                "properties": {
-                  "uuids": {
-                    "description": "List of face ids.",
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "uuid"
-                    }
-                  }
-                },
-                "required": [
-                  "uuids"
+              "disambiguators": {
+                "description": "Optional disambiguator face ids for ambiguous edge matches.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "faces": {
+                "description": "List of face ids that identify the edge.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "index": {
+                "nullable": true,
+                "description": "Optional index among the filtered candidates.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "edge"
                 ]
               }
             },
             "required": [
-              "face"
-            ],
-            "additionalProperties": false
+              "faces",
+              "type"
+            ]
+          },
+          {
+            "description": "A collection of ids that uniquely identify an vertex.",
+            "type": "object",
+            "properties": {
+              "disambiguators": {
+                "description": "Optional disambiguator face ids for ambiguous vertex matches.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "faces": {
+                "description": "List of face ids that identify the vertex.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "index": {
+                "nullable": true,
+                "description": "Optional index among the filtered candidates.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "vertex"
+                ]
+              }
+            },
+            "required": [
+              "faces",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing a solid2d (profile).",
+            "type": "object",
+            "properties": {
+              "solid2d_id": {
+                "description": "Id of the solid2d being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid2d"
+                ]
+              }
+            },
+            "required": [
+              "solid2d_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing a solid3d (body).",
+            "type": "object",
+            "properties": {
+              "solid3d_id": {
+                "description": "Id of the solid3d being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d"
+                ]
+              }
+            },
+            "required": [
+              "solid3d_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing an edge on a solid2d (profile) - used for raw sketch/profile edges. This is distinct from the face-based Edge reference which is used for BRep/swept body edges.",
+            "type": "object",
+            "properties": {
+              "edge_id": {
+                "description": "Id of the edge being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid2d_edge"
+                ]
+              }
+            },
+            "required": [
+              "edge_id",
+              "type"
+            ]
           }
         ]
       },
@@ -2597,6 +2764,75 @@
             ]
           },
           {
+            "description": "Command for revolving a solid 2d about an edge reference (with faces, disambiguators, index).",
+            "type": "object",
+            "properties": {
+              "angle": {
+                "description": "The signed angle of revolution (in degrees, must be <= 360 in either direction)",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Angle"
+                  }
+                ]
+              },
+              "body_type": {
+                "description": "Should this extrude create a solid body or a surface?",
+                "default": "solid",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/BodyType"
+                  }
+                ]
+              },
+              "edge_reference": {
+                "description": "The edge reference to use as the axis of revolution, must be linear and lie in the plane of the solid",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeReference"
+                  }
+                ]
+              },
+              "opposite": {
+                "description": "Should the revolution also revolve in the opposite direction along the given axis? If so, this specifies its angle.",
+                "default": "None",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/OppositeForAngle"
+                  }
+                ]
+              },
+              "target": {
+                "description": "Which sketch to revolve. Must be a closed 2D solid.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ModelingCmdId"
+                  }
+                ]
+              },
+              "tolerance": {
+                "description": "The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "revolve_about_edge_reference"
+                ]
+              }
+            },
+            "required": [
+              "angle",
+              "edge_reference",
+              "target",
+              "tolerance",
+              "type"
+            ]
+          },
+          {
             "description": "Command for lofting sections to create a solid",
             "type": "object",
             "properties": {
@@ -3591,9 +3827,19 @@
             "type": "object",
             "properties": {
               "edge_id": {
-                "description": "Edge about which to make the helix.",
+                "nullable": true,
+                "description": "Edge ID about which to make the helix (legacy API, for backwards compatibility). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
                 "type": "string",
                 "format": "uuid"
+              },
+              "edge_reference": {
+                "nullable": true,
+                "description": "Edge reference about which to make the helix (new API). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeReference"
+                  }
+                ]
               },
               "is_clockwise": {
                 "description": "Is the helix rotation clockwise?",
@@ -3641,7 +3887,6 @@
               }
             },
             "required": [
-              "edge_id",
               "is_clockwise",
               "radius",
               "revolutions",
@@ -3946,6 +4191,37 @@
             },
             "required": [
               "entities",
+              "type"
+            ]
+          },
+          {
+            "description": "Queries the entity at the given window coordinate and returns its EntityReference. Used for hover highlighting with face-based references. If there's no entity at this location, returns an empty EntityReference.",
+            "type": "object",
+            "properties": {
+              "selected_at_window": {
+                "description": "Coordinates of the window being hovered",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Point2d"
+                  }
+                ]
+              },
+              "sequence": {
+                "nullable": true,
+                "description": "Logical timestamp. The client should increment this with every event in the current mouse drag. That way, if the events are being sent over an unordered channel, the API can ignore the older events.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "highlight_query_entity"
+                ]
+              }
+            },
+            "required": [
+              "selected_at_window",
               "type"
             ]
           },
@@ -4458,6 +4734,14 @@
                 "items": {
                   "type": "string",
                   "format": "uuid"
+                }
+              },
+              "edges_references": {
+                "description": "A struct containing the information required to reference an edge.",
+                "default": [],
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EdgeReference"
                 }
               },
               "extra_face_ids": {
@@ -6307,6 +6591,29 @@
             ]
           },
           {
+            "description": "Set the selection to exactly these entities (replaces previous selection). Empty array clears the selection.",
+            "type": "object",
+            "properties": {
+              "entities": {
+                "description": "Which entities to select (face-based references for edges/vertices, face_id for faces)",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityReference"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "select_entity"
+                ]
+              }
+            },
+            "required": [
+              "entities",
+              "type"
+            ]
+          },
+          {
             "description": "Find all IDs of selected entities",
             "type": "object",
             "properties": {
@@ -6369,6 +6676,11 @@
             "description": "Create a new solid from combining other smaller solids. In other words, every part of the input solids will be included in the output solid.",
             "type": "object",
             "properties": {
+              "separate_bodies": {
+                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "default": false,
+                "type": "boolean"
+              },
               "solid_ids": {
                 "description": "Which solids to union together. Cannot be empty.",
                 "type": "array",
@@ -6402,6 +6714,11 @@
             "description": "Create a new solid from intersecting several other solids. In other words, the part of the input solids where they all overlap will be the output solid.",
             "type": "object",
             "properties": {
+              "separate_bodies": {
+                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "default": false,
+                "type": "boolean"
+              },
               "solid_ids": {
                 "description": "Which solids to intersect together",
                 "type": "array",
@@ -6435,6 +6752,11 @@
             "description": "Create a new solid from subtracting several other solids. The 'target' is what will be cut from. The 'tool' is what will be cut out from 'target'.",
             "type": "object",
             "properties": {
+              "separate_bodies": {
+                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "default": false,
+                "type": "boolean"
+              },
               "target_ids": {
                 "description": "Geometry to cut out from.",
                 "type": "array",
@@ -6484,6 +6806,11 @@
                   "type": "string",
                   "format": "uuid"
                 }
+              },
+              "separate_bodies": {
+                "description": "If true, non-contiguous bodies in the result will be returned as separate objects",
+                "default": false,
+                "type": "boolean"
               },
               "tolerance": {
                 "description": "The maximum acceptable surface gap between the intersected bodies. Must be positive (i.e. greater than zero).",
