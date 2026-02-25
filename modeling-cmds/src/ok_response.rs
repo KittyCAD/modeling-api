@@ -458,9 +458,12 @@ define_ok_modeling_cmd_response_enum! {
 
         /// The response from the `QueryEntityTypeWithPoint` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        pub struct QueryEntityTypeWithPoint{
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct QueryEntityTypeWithPoint {
             /// How to reference the selected entity using face ids.
-            pub reference: EntityReference,
+            /// None if no entity was found at the given point (e.g. clicked in empty space).
+            #[serde(skip_serializing_if = "Option::is_none")]
+            pub reference: Option<EntityReference>,
         }
 
         /// The response from the `QueryEntityType` command.
