@@ -2384,6 +2384,34 @@ define_modeling_cmd_enum! {
             pub curve_clockwise: bool,
         }
 
+        /// Create a region with a query point.
+        /// The region should have an ID taken from the ID of the
+        /// 'CreateRegionQueryPoint' modeling command.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct CreateRegionQueryPoint {
+            /// Which sketch object to create the region from.
+            pub object_id: Uuid,
+
+            /// The query point (in the same coordinates as the sketch itself)
+            /// if a possible sketch region contains this point, then that region will be created
+            pub query_point: Point2d<f64>,
+        }
+
+        /// Finds a suitable point inside the region for calling such that CreateRegionQueryPoint will generate an identical region.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RegionGetQueryPoint {
+            /// Which region object to search within
+            pub object_id: Uuid,
+        }
+
         /// The user clicked on a point in the window,
         /// returns the region the user clicked on, if any.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
