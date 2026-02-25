@@ -1215,18 +1215,18 @@ define_ok_modeling_cmd_response_enum! {
         pub struct CreateRegion {
         }
 
-        /// The response from the 'CreateRegionQueryPoint'.
+        /// The response from the 'CreateRegionFromQueryPoint'.
         /// The region should have an ID taken from the ID of the
         /// 'CreateRegionQueryPoint' modeling command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct CreateRegionQueryPoint {
+        pub struct CreateRegionFromQueryPoint {
         }
 
-        /// The response from 'CreateRegionFromQueryPoint' modeling command.
+        /// The response from 'RegionGetQueryPoint' modeling command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct CreateRegionFromQueryPoint {
+        pub struct RegionGetQueryPoint {
             ///A point that is inside of the queried region, in the same coordinate frame as the sketch itself
             pub query_point: Point2d<f64>,
         }
