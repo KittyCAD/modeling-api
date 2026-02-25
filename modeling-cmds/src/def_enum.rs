@@ -2386,13 +2386,13 @@ define_modeling_cmd_enum! {
 
         /// Create a region with a query point.
         /// The region should have an ID taken from the ID of the
-        /// 'CreateRegionQueryPoint' modeling command.
+        /// 'CreateRegionFromQueryPoint' modeling command.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct CreateRegionQueryPoint {
+        pub struct CreateRegionFromQueryPoint {
             /// Which sketch object to create the region from.
             pub object_id: Uuid,
 
@@ -2401,7 +2401,7 @@ define_modeling_cmd_enum! {
             pub query_point: Point2d<f64>,
         }
 
-        /// Finds a suitable point inside the region for calling such that CreateRegionQueryPoint will generate an identical region.
+        /// Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]

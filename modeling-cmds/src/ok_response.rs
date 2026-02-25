@@ -1223,10 +1223,10 @@ define_ok_modeling_cmd_response_enum! {
         pub struct CreateRegionQueryPoint {
         }
 
-        /// The response from 'RegionGetQueryPoint' modeling command.
+        /// The response from 'CreateRegionFromQueryPoint' modeling command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct RegionGetQueryPoint {
+        pub struct CreateRegionFromQueryPoint {
             ///A point that is inside of the queried region, in the same coordinate frame as the sketch itself
             pub query_point: Point2d<f64>,
         }
@@ -1241,6 +1241,5 @@ define_ok_modeling_cmd_response_enum! {
             /// this returns None.
             pub region: Option<crate::shared::SelectedRegion>,
         }
-
     }
 }
