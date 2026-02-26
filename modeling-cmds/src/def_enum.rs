@@ -2405,7 +2405,7 @@ define_modeling_cmd_enum! {
         pub struct ClosestEdge {
             /// Find the edge closest to this point.
             /// Assumed to be in absolute coordinates, relative to global (scene) origin.
-            pub closest_to: Point3d,
+            pub closest_to: Point3d<f64>,
         }
     }
 }
