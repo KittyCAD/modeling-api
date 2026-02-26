@@ -6590,8 +6590,8 @@
             "description": "Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.",
             "type": "object",
             "properties": {
-              "object_id": {
-                "description": "Which region object to search within",
+              "region_id": {
+                "description": "Which region to search within",
                 "type": "string",
                 "format": "uuid"
               },
@@ -6603,7 +6603,7 @@
               }
             },
             "required": [
-              "object_id",
+              "region_id",
               "type"
             ]
           },

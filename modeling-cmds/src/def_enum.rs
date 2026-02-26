@@ -2408,8 +2408,8 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct RegionGetQueryPoint {
-            /// Which region object to search within
-            pub object_id: Uuid,
+            /// Which region to search within
+            pub region_id: Uuid,
         }
 
         /// The user clicked on a point in the window,
