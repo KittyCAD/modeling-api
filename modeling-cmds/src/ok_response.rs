@@ -1226,5 +1226,13 @@ define_ok_modeling_cmd_response_enum! {
             pub region: Option<crate::shared::SelectedRegion>,
         }
 
+        /// The response from the 'ClosestEdge'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ClosestEdge {
+            /// The ID of the edge closest to the point given in the request.
+            pub edge_id: Uuid,
+        }
+
     }
 }
