@@ -2398,7 +2398,7 @@ define_modeling_cmd_enum! {
 
             /// The query point (in the same coordinates as the sketch itself)
             /// if a possible sketch region contains this point, then that region will be created
-            pub query_point: Point2d<f64>,
+            pub query_point: Point2d<LengthUnit>,
         }
 
         /// Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.

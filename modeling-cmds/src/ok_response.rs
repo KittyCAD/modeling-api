@@ -1228,7 +1228,7 @@ define_ok_modeling_cmd_response_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct RegionGetQueryPoint {
             ///A point that is inside of the queried region, in the same coordinate frame as the sketch itself
-            pub query_point: Point2d<f64>,
+            pub query_point: Point2d<LengthUnit>,
         }
 
         /// The response from the 'SelectRegionFromPoint'.
