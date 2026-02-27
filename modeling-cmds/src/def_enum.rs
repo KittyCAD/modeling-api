@@ -2264,10 +2264,17 @@ define_modeling_cmd_enum! {
         {
             /// Which input bodies to intersect.  Inputs with non-solid body types are permitted
             pub body_ids: Vec<Uuid>,
+            /// Geometry to imprint from, if provided, these bodies will be unmodified and body_ids will be used as imprint targets
+            #[serde(default)]
+            pub target_ids: Option<Vec<Uuid>>,
             /// If true, bodies will be separated into multiple objects at their intersection boundaries.
             #[serde(default)]
             #[builder(default)]
             pub separate_bodies: bool,
+            /// If true, the provided tool bodies will not be modified
+            #[serde(default)]
+            #[builder(default)]
+            pub keep_tools: bool,
             /// The maximum acceptable surface gap between the intersected bodies. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }
