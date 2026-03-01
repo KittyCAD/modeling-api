@@ -1423,6 +1423,33 @@
               "edge_id",
               "type"
             ]
+          },
+          {
+            "description": "A single segment (curve) within a path.",
+            "type": "object",
+            "properties": {
+              "path_id": {
+                "description": "Id of the path containing the segment.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "segment_id": {
+                "description": "Id of the segment (curve) being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "segment"
+                ]
+              }
+            },
+            "required": [
+              "path_id",
+              "segment_id",
+              "type"
+            ]
           }
         ]
       },
@@ -1433,6 +1460,7 @@
           "entity",
           "object",
           "path",
+          "segment",
           "curve",
           "solid2d",
           "solid3d",

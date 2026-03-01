@@ -89,6 +89,13 @@ pub enum EntityReference {
         /// Id of the edge being referenced.
         edge_id: Uuid,
     },
+    /// A single segment (curve) within a path.
+    Segment {
+        /// Id of the path containing the segment.
+        path_id: Uuid,
+        /// Id of the segment (curve) being referenced.
+        segment_id: Uuid,
+    },
 }
 
 /// What kind of cut to do
@@ -1050,6 +1057,7 @@ pub enum EntityType {
     Entity,
     Object,
     Path,
+    Segment,
     Curve,
     Solid2D,
     Solid3D,
