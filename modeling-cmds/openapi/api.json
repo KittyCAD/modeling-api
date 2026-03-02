@@ -6346,8 +6346,9 @@
                 ]
               },
               "tool_ids": {
-                "description": "Geometry to remove. If this is empty, nothing will be removed.",
-                "default": [],
+                "nullable": true,
+                "description": "If provided, only these bodies will be used to intersect with the target bodies in body_ids, Otherwise, all bodies in body_ids will be intersected with themselves.",
+                "default": null,
                 "type": "array",
                 "items": {
                   "type": "string",

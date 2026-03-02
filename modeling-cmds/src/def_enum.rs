@@ -2265,9 +2265,10 @@ define_modeling_cmd_enum! {
             /// Which target input bodies to intersect. Inputs with non-solid body types are permitted
             #[serde(alias = "target_ids")]
             pub body_ids: Vec<Uuid>,
-            /// Geometry to remove. If this is empty, nothing will be removed.
+            ///If provided, only these bodies will be used to intersect with the target bodies in body_ids,
+            ///Otherwise, all bodies in body_ids will be intersected with themselves.
             #[serde(default)]
-            pub tool_ids: Vec<Uuid>,
+            pub tool_ids: Option<Vec<Uuid>>,
             /// If true, target bodies will be separated into multiple objects at their intersection boundaries.
             #[serde(default)]
             #[builder(default)]
