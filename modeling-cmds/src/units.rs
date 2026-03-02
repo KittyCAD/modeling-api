@@ -193,7 +193,6 @@ impl UnitArea {
 /// The valid types for density units.
 #[derive(
     Display,
-    FromStr,
     Copy,
     Eq,
     PartialEq,
@@ -225,6 +224,18 @@ pub enum UnitDensity {
     #[serde(rename = "kg:m3")]
     #[display("kg:m3")]
     KilogramsPerCubicMeter,
+}
+
+impl std::str::FromStr for UnitDensity {
+    type Err = parse_display::ParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "lbft3" | "lb:ft3" | "lb-ft3" => Ok(Self::PoundsPerCubicFeet),
+            "kgm3" | "kg:m3" | "kg-m3" => Ok(Self::KilogramsPerCubicMeter),
+            _other => Err(Default::default()),
+        }
+    }
 }
 
 impl UnitDensity {
