@@ -2395,6 +2395,22 @@ define_modeling_cmd_enum! {
             /// Where in the window was selected
             pub selected_at_window: Point2d,
         }
+
+        ///Offset a surface by a given distance.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct OffsetSurface {
+            /// The surface to offset.
+            pub surface_id: Uuid,
+            /// The distance to offset the surface by.
+            pub distance: LengthUnit,
+            /// Flip the newly created face.
+            pub flip: bool,
+        }
+
     }
 }
 
