@@ -6594,6 +6594,41 @@
               "selected_at_window",
               "type"
             ]
+          },
+          {
+            "description": "Offset a surface by a given distance.",
+            "type": "object",
+            "properties": {
+              "distance": {
+                "description": "The distance to offset the surface by.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
+              "flip": {
+                "description": "Flip the newly created face.",
+                "type": "boolean"
+              },
+              "surface_id": {
+                "description": "The surface to offset.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "offset_surface"
+                ]
+              }
+            },
+            "required": [
+              "distance",
+              "flip",
+              "surface_id",
+              "type"
+            ]
           }
         ]
       },
