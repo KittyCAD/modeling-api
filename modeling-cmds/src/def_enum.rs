@@ -2262,12 +2262,13 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct BooleanImprint
         {
-            /// Which input bodies to intersect.  Inputs with non-solid body types are permitted
+            /// Which target input bodies to intersect. Inputs with non-solid body types are permitted
+            #[serde(alias = "target_ids")]
             pub body_ids: Vec<Uuid>,
-            /// Geometry to imprint from, if provided, these bodies will be unmodified and body_ids will be used as imprint targets
+            /// Geometry to remove. If this is empty, nothing will be removed.
             #[serde(default)]
-            pub target_ids: Option<Vec<Uuid>>,
-            /// If true, bodies will be separated into multiple objects at their intersection boundaries.
+            pub tool_ids: Vec<Uuid>,
+            /// If true, target bodies will be separated into multiple objects at their intersection boundaries.
             #[serde(default)]
             #[builder(default)]
             pub separate_bodies: bool,
