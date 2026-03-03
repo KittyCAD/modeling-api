@@ -1236,7 +1236,8 @@ define_ok_modeling_cmd_response_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ClosestEdge {
             /// The ID of the edge closest to the point given in the request.
-            pub edge_id: Uuid,
+            /// If there are no edges in the scene, returns None.
+            pub edge_id: Option<Uuid>,
         }
     }
 }
