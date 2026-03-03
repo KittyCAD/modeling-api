@@ -2262,12 +2262,21 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct BooleanImprint
         {
-            /// Which input bodies to intersect.  Inputs with non-solid body types are permitted
+            /// Which target input bodies to intersect. Inputs with non-solid body types are permitted
+            #[serde(alias = "target_ids")]
             pub body_ids: Vec<Uuid>,
-            /// If true, bodies will be separated into multiple objects at their intersection boundaries.
+            ///If provided, only these bodies will be used to intersect with the target bodies in body_ids,
+            ///Otherwise, all bodies in body_ids will be intersected with themselves.
+            #[serde(default)]
+            pub tool_ids: Option<Vec<Uuid>>,
+            /// If true, target bodies will be separated into multiple objects at their intersection boundaries.
             #[serde(default)]
             #[builder(default)]
             pub separate_bodies: bool,
+            /// If true, the provided tool bodies will not be modified
+            #[serde(default)]
+            #[builder(default)]
+            pub keep_tools: bool,
             /// The maximum acceptable surface gap between the intersected bodies. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }
