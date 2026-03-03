@@ -60,18 +60,20 @@ impl Session {
         let webrtc = Some(false);
         let (ws, _headers) = client
             .modeling()
-            .commands_ws(
-                None,
+            .commands_ws(kittycad::modeling::CommandsWsParams {
+                api_call_id: None,
                 fps,
-                None,
-                None,
-                None,
+                order_independent_transparency: None,
+                pool: None,
+                post_effect: None,
+                pr: None,
+                replay: None,
                 show_grid,
                 unlocked_framerate,
                 video_res_height,
                 video_res_width,
                 webrtc,
-            )
+            })
             .await?;
         // Now that we have a WebSocket connection, we can split it into two ends:
         // one for writing to and one for reading from.
