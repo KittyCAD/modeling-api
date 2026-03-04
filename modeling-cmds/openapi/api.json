@@ -6572,6 +6572,57 @@
             ]
           },
           {
+            "description": "Create a region with a query point. The region should have an ID taken from the ID of the 'CreateRegionFromQueryPoint' modeling command.",
+            "type": "object",
+            "properties": {
+              "object_id": {
+                "description": "Which sketch object to create the region from.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "query_point": {
+                "description": "The query point (in the same coordinates as the sketch itself) if a possible sketch region contains this point, then that region will be created",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Point2d"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "create_region_from_query_point"
+                ]
+              }
+            },
+            "required": [
+              "object_id",
+              "query_point",
+              "type"
+            ]
+          },
+          {
+            "description": "Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.",
+            "type": "object",
+            "properties": {
+              "region_id": {
+                "description": "Which region to search within",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "region_get_query_point"
+                ]
+              }
+            },
+            "required": [
+              "region_id",
+              "type"
+            ]
+          },
+          {
             "description": "The user clicked on a point in the window, returns the region the user clicked on, if any.",
             "type": "object",
             "properties": {
