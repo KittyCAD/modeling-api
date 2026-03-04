@@ -1217,7 +1217,7 @@ define_ok_modeling_cmd_response_enum! {
 
         /// The response from the 'CreateRegionFromQueryPoint'.
         /// The region should have an ID taken from the ID of the
-        /// 'CreateRegionQueryPoint' modeling command.
+        /// 'CreateRegionFromQueryPoint' modeling command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreateRegionFromQueryPoint {
