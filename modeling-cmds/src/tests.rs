@@ -30,12 +30,7 @@ async fn test_openapi() {
 }
 
 fn example_server() -> Result<ApiDescription<()>, String> {
-    use dropshot::endpoint;
-    use dropshot::ApiDescription;
-    use dropshot::HttpError;
-    use dropshot::HttpResponseUpdatedNoContent;
-    use dropshot::RequestContext;
-    use dropshot::TypedBody;
+    use dropshot::{endpoint, ApiDescription, HttpError, HttpResponseUpdatedNoContent, RequestContext, TypedBody};
 
     #[endpoint {
         method = PUT,
