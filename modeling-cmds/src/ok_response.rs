@@ -1246,5 +1246,14 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         pub struct OffsetSurface {
         }
+
+        /// The response from the 'ClosestEdge'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ClosestEdge {
+            /// The ID of the edge closest to the point given in the request.
+            /// If there are no edges in the scene, returns None.
+            pub edge_id: Option<Uuid>,
+        }
     }
 }
