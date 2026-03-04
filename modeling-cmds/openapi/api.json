@@ -6629,6 +6629,30 @@
               "surface_id",
               "type"
             ]
+          },
+          {
+            "description": "Returns the closest edge to this point.",
+            "type": "object",
+            "properties": {
+              "closest_to": {
+                "description": "Find the edge closest to this point. Assumed to be in absolute coordinates, relative to global (scene) origin.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Point3d"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "closest_edge"
+                ]
+              }
+            },
+            "required": [
+              "closest_to",
+              "type"
+            ]
           }
         ]
       },
