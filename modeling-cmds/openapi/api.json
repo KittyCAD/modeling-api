@@ -6685,7 +6685,7 @@
             "description": "Returns the closest edge to this point.",
             "type": "object",
             "properties": {
-              "body_id": {
+              "object_id": {
                 "nullable": true,
                 "description": "The body whose edges are being queried. If not given, will search all bodies in the scene.",
                 "default": null,

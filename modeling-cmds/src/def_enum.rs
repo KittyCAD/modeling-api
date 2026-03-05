@@ -2458,7 +2458,7 @@ define_modeling_cmd_enum! {
             /// The body whose edges are being queried.
             /// If not given, will search all bodies in the scene.
             #[serde(default)]
-            pub body_id: Option<Uuid>,
+            pub object_id: Option<Uuid>,
             /// Find the edge closest to this point.
             /// Assumed to be in absolute coordinates, relative to global (scene) origin.
             pub closest_to: Point3d<f64>,
