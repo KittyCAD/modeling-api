@@ -6685,13 +6685,6 @@
             "description": "Returns the closest edge to this point.",
             "type": "object",
             "properties": {
-              "object_id": {
-                "nullable": true,
-                "description": "The body whose edges are being queried. If not given, will search all bodies in the scene.",
-                "default": null,
-                "type": "string",
-                "format": "uuid"
-              },
               "closest_to": {
                 "description": "Find the edge closest to this point. Assumed to be in absolute coordinates, relative to global (scene) origin.",
                 "allOf": [
@@ -6699,6 +6692,13 @@
                     "$ref": "#/components/schemas/Point3d"
                   }
                 ]
+              },
+              "object_id": {
+                "nullable": true,
+                "description": "The body whose edges are being queried. If not given, will search all bodies in the scene.",
+                "default": null,
+                "type": "string",
+                "format": "uuid"
               },
               "type": {
                 "type": "string",
