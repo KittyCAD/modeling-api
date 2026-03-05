@@ -6647,6 +6647,30 @@
             ]
           },
           {
+            "description": "Get the smallest box that could contain the given parts.",
+            "type": "object",
+            "properties": {
+              "entity_ids": {
+                "description": "IDs of the entities to be included in the box. If this is empty, then all entities are included (the entire scene).",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "bounding_box"
+                ]
+              }
+            },
+            "required": [
+              "entity_ids",
+              "type"
+            ]
+          },
+          {
             "description": "Offset a surface by a given distance.",
             "type": "object",
             "properties": {
