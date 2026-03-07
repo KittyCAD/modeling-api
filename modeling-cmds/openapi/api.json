@@ -6209,6 +6209,11 @@
                   "format": "uuid"
                 }
               },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "default": false,
+                "type": "boolean"
+              },
               "tolerance": {
                 "description": "The maximum acceptable surface gap computed between the joined solids. Must be positive (i.e. greater than zero).",
                 "allOf": [
@@ -6247,6 +6252,11 @@
                   "format": "uuid"
                 }
               },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "default": false,
+                "type": "boolean"
+              },
               "tolerance": {
                 "description": "The maximum acceptable surface gap computed between the joined solids. Must be positive (i.e. greater than zero).",
                 "allOf": [
@@ -6284,6 +6294,11 @@
                   "type": "string",
                   "format": "uuid"
                 }
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "default": false,
+                "type": "boolean"
               },
               "tolerance": {
                 "description": "The maximum acceptable surface gap computed between the target and the solids cut out from it. Must be positive (i.e. greater than zero).",
@@ -6334,6 +6349,11 @@
               },
               "separate_bodies": {
                 "description": "If true, target bodies will be separated into multiple objects at their intersection boundaries.",
+                "default": false,
+                "type": "boolean"
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
                 "default": false,
                 "type": "boolean"
               },
