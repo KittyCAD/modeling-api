@@ -4383,6 +4383,11 @@
                   }
                 ]
               },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "default": false,
+                "type": "boolean"
+              },
               "tolerance": {
                 "description": "The maximum acceptable surface gap computed between the filleted surfaces. Must be positive (i.e. greater than zero).",
                 "allOf": [
@@ -4448,6 +4453,11 @@
                     "$ref": "#/components/schemas/CutStrategy"
                   }
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "default": false,
+                "type": "boolean"
               },
               "tolerance": {
                 "description": "The maximum acceptable surface gap computed between the cut surfaces. Must be positive (i.e. greater than zero).",
