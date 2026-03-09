@@ -1,4 +1,3 @@
-use crate::def_enum::negative_one;
 use bon::Builder;
 use enum_iterator::Sequence;
 use parse_display_derive::{Display, FromStr};
@@ -9,7 +8,7 @@ use uuid::Uuid;
 
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
-use crate::{length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle};
+use crate::{def_enum::negative_one, length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle};
 
 mod point;
 

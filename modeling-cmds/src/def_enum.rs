@@ -2389,12 +2389,21 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct BooleanImprint
         {
-            /// Which input bodies to intersect.  Inputs with non-solid body types are permitted
+            /// Which target input bodies to intersect. Inputs with non-solid body types are permitted
+            #[serde(alias = "target_ids")]
             pub body_ids: Vec<Uuid>,
-            /// If true, non-contiguous bodies in the result will be returned as separate objects
+            /// If provided, only these bodies will be used to intersect with the target bodies in body_ids.
+            /// Otherwise, all bodies in body_ids will be intersected with themselves.
+            #[serde(default)]
+            pub tool_ids: Option<Vec<Uuid>>,
+            /// If true, non-contiguous bodies in the result will be returned as separate objects.
             #[serde(default)]
             #[builder(default)]
             pub separate_bodies: bool,
+            /// If true, the provided tool bodies will not be modified
+            #[serde(default)]
+            #[builder(default)]
+            pub keep_tools: bool,
             /// The maximum acceptable surface gap between the intersected bodies. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }
@@ -2511,6 +2520,34 @@ define_modeling_cmd_enum! {
             pub curve_clockwise: bool,
         }
 
+        /// Create a region with a query point.
+        /// The region should have an ID taken from the ID of the
+        /// 'CreateRegionFromQueryPoint' modeling command.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct CreateRegionFromQueryPoint {
+            /// Which sketch object to create the region from.
+            pub object_id: Uuid,
+
+            /// The query point (in the same coordinates as the sketch itself)
+            /// if a possible sketch region contains this point, then that region will be created
+            pub query_point: Point2d<LengthUnit>,
+        }
+
+        /// Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RegionGetQueryPoint {
+            /// Which region to search within
+            pub region_id: Uuid,
+        }
+
         /// The user clicked on a point in the window,
         /// returns the region the user clicked on, if any.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
@@ -2521,6 +2558,46 @@ define_modeling_cmd_enum! {
         pub struct SelectRegionFromPoint {
             /// Where in the window was selected
             pub selected_at_window: Point2d,
+        }
+
+        /// Get the smallest box that could contain the given parts.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct BoundingBox {
+            /// IDs of the entities to be included in the box.
+            /// If this is empty, then all entities are included (the entire scene).
+            #[builder(default)]
+            pub entity_ids: Vec<Uuid>,
+        }
+
+        ///Offset a surface by a given distance.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct OffsetSurface {
+            /// The surface to offset.
+            pub surface_id: Uuid,
+            /// The distance to offset the surface by.
+            pub distance: LengthUnit,
+            /// Flip the newly created face.
+            pub flip: bool,
+        }
+
+        /// Returns the closest edge to this point.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ClosestEdge {
+            /// Find the edge closest to this point.
+            /// Assumed to be in absolute coordinates, relative to global (scene) origin.
+            pub closest_to: Point3d<f64>,
         }
     }
 }
