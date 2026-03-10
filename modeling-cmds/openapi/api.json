@@ -7166,6 +7166,15 @@
                   "format": "uuid"
                 }
               },
+              "output_unit": {
+                "description": "The output unit for the box's dimensions. Defaults to millimeters.",
+                "default": "mm",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitLength"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [

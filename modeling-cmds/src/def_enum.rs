@@ -46,6 +46,10 @@ define_modeling_cmd_enum! {
             0.4
         }
 
+        fn mm() -> crate::units::UnitLength {
+            crate::units::UnitLength::Millimeters
+        }
+
         /// Evaluates the position of a path in one shot (engine utility for kcl executor)
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
@@ -2571,6 +2575,10 @@ define_modeling_cmd_enum! {
             /// If this is empty, then all entities are included (the entire scene).
             #[builder(default)]
             pub entity_ids: Vec<Uuid>,
+            /// The output unit for the box's dimensions. Defaults to millimeters.
+            #[builder(default = mm())]
+            #[serde(default = "mm")]
+            pub output_unit: units::UnitLength,
         }
 
         ///Offset a surface by a given distance.
@@ -2604,6 +2612,8 @@ define_modeling_cmd_enum! {
             pub closest_to: Point3d<f64>,
         }
     }
+
+
 }
 
 pub(crate) fn negative_one() -> i32 {
