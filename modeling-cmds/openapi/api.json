@@ -7225,6 +7225,13 @@
                   }
                 ]
               },
+              "object_id": {
+                "nullable": true,
+                "description": "The body whose edges are being queried. If not given, will search all bodies in the scene.",
+                "default": null,
+                "type": "string",
+                "format": "uuid"
+              },
               "type": {
                 "type": "string",
                 "enum": [

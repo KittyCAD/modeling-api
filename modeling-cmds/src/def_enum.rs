@@ -2595,6 +2595,10 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ClosestEdge {
+            /// The body whose edges are being queried.
+            /// If not given, will search all bodies in the scene.
+            #[serde(default)]
+            pub object_id: Option<Uuid>,
             /// Find the edge closest to this point.
             /// Assumed to be in absolute coordinates, relative to global (scene) origin.
             pub closest_to: Point3d<f64>,
