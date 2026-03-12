@@ -1546,6 +1546,26 @@
         "description": "Input format specifier.",
         "oneOf": [
           {
+            "description": "PTC Creo part (PRT) format.",
+            "type": "object",
+            "properties": {
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "creo"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
             "description": "Autodesk Filmbox (FBX) format.",
             "type": "object",
             "properties": {
