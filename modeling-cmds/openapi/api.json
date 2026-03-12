@@ -1982,6 +1982,11 @@
                   }
                 ]
               },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two separate surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
+              },
               "merge_coplanar_faces": {
                 "nullable": true,
                 "description": "Only used if the extrusion is created from a face and extrude_method = Merge If true, coplanar faces will be merged and seams will be hidden. Otherwise, seams between the extrusion and original body will be shown.",
@@ -2056,6 +2061,11 @@
                     "$ref": "#/components/schemas/ExtrudedFaceInfo"
                   }
                 ]
+              },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
               },
               "reference": {
                 "description": "Reference to extrude to. Extrusion occurs along the target's normal until it is as close to the reference as possible.",
@@ -2149,6 +2159,11 @@
                   }
                 ]
               },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
+              },
               "segments": {
                 "nullable": true,
                 "description": "If given, extrude each of these segments into a separate body with the given ID.",
@@ -2208,6 +2223,11 @@
                     "$ref": "#/components/schemas/BodyType"
                   }
                 ]
+              },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
               },
               "relative_to": {
                 "description": "What is this sweep relative to?",
@@ -2301,6 +2321,11 @@
                     "$ref": "#/components/schemas/BodyType"
                   }
                 ]
+              },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
               },
               "opposite": {
                 "description": "Should the revolution also revolve in the opposite direction along the given axis? If so, this specifies its angle.",
@@ -2561,6 +2586,11 @@
                 "description": "The edge to use as the axis of revolution, must be linear and lie in the plane of the solid",
                 "type": "string",
                 "format": "uuid"
+              },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
               },
               "opposite": {
                 "description": "Should the revolution also revolve in the opposite direction along the given axis? If so, this specifies its angle.",

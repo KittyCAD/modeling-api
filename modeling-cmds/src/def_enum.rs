@@ -132,6 +132,12 @@ define_modeling_cmd_enum! {
             /// If given, extrude each of these segments into a separate body with the given ID.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub segments: Option<Vec<IdPair>>,
+            /// When two collinear segments are extruded, what should happen?
+            /// If true, creates a body with two separate surfaces.
+            /// If false, creates a body with one surface, spanning both collinear segments.
+            #[serde(default)]
+            #[builder(default)]
+            pub keep_seams: bool,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
             /// Which IDs should the new faces have?
@@ -174,6 +180,12 @@ define_modeling_cmd_enum! {
             /// If given, extrude each of these segments into a separate body with the given ID.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub segments: Option<Vec<IdPair>>,
+            /// When two collinear segments are extruded, what should happen?
+            /// If true, creates a body with two surfaces.
+            /// If false, creates a body with one surface, spanning both collinear segments.
+            #[serde(default)]
+            #[builder(default)]
+            pub keep_seams: bool,
             /// Reference to extrude to.
             /// Extrusion occurs along the target's normal until it is as close to the reference as possible.
             pub reference: ExtrudeReference,
@@ -210,6 +222,12 @@ define_modeling_cmd_enum! {
             /// If given, extrude each of these segments into a separate body with the given ID.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub segments: Option<Vec<IdPair>>,
+            /// When two collinear segments are extruded, what should happen?
+            /// If true, creates a body with two surfaces.
+            /// If false, creates a body with one surface, spanning both collinear segments.
+            #[serde(default)]
+            #[builder(default)]
+            pub keep_seams: bool,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
             /// Which IDs should the new faces have?
@@ -250,6 +268,12 @@ define_modeling_cmd_enum! {
             /// If given, extrude each of these segments into a separate body with the given ID.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub segments: Option<Vec<IdPair>>,
+            /// When two collinear segments are extruded, what should happen?
+            /// If true, creates a body with two surfaces.
+            /// If false, creates a body with one surface, spanning both collinear segments.
+            #[serde(default)]
+            #[builder(default)]
+            pub keep_seams: bool,
             /// Path along which to sweep.
             pub trajectory: ModelingCmdId,
             /// If true, the sweep will be broken up into sub-sweeps (extrusions, revolves, sweeps) based on the trajectory path components.
@@ -281,6 +305,12 @@ define_modeling_cmd_enum! {
             /// If given, extrude each of these segments into a separate body with the given ID.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub segments: Option<Vec<IdPair>>,
+            /// When two collinear segments are extruded, what should happen?
+            /// If true, creates a body with two surfaces.
+            /// If false, creates a body with one surface, spanning both collinear segments.
+            #[serde(default)]
+            #[builder(default)]
+            pub keep_seams: bool,
             /// The origin of the extrusion axis
             pub origin: Point3d<LengthUnit>,
             /// The axis of the extrusion (taken from the origin)
@@ -419,6 +449,12 @@ define_modeling_cmd_enum! {
             /// If given, extrude each of these segments into a separate body with the given ID.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub segments: Option<Vec<IdPair>>,
+            /// When two collinear segments are extruded, what should happen?
+            /// If true, creates a body with two surfaces.
+            /// If false, creates a body with one surface, spanning both collinear segments.
+            #[serde(default)]
+            #[builder(default)]
+            pub keep_seams: bool,
             /// The edge to use as the axis of revolution, must be linear and lie in the plane of the solid
             pub edge_id: Uuid,
             /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
