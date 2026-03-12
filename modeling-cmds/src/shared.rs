@@ -20,9 +20,9 @@ mod point;
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub struct IdPair {
     /// The ID being used for the transform/extrude/etc.
-    input: Uuid,
+    pub input: Uuid,
     /// The new ID to assign to the resulting geometry.
-    output: Uuid,
+    pub output: Uuid,
 }
 
 /// What kind of cut to do
