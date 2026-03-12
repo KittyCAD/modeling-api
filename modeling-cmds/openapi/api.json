@@ -1500,6 +1500,26 @@
           }
         ]
       },
+      "IdPair": {
+        "description": "An existing ID to target, and a new ID to create.",
+        "type": "object",
+        "properties": {
+          "input": {
+            "description": "The ID being used for the transform/extrude/etc.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "output": {
+            "description": "The new ID to assign to the resulting geometry.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "input",
+          "output"
+        ]
+      },
       "ImageFormat": {
         "description": "Enum containing the variety of image formats snapshots may be exported to.",
         "oneOf": [
@@ -1976,8 +1996,16 @@
                   }
                 ]
               },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
+              },
               "target": {
-                "description": "Which sketch to extrude. Must be a closed 2D solid.",
+                "description": "Which sketch to extrude. Must be a 2D sketch.",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/ModelingCmdId"
@@ -2036,6 +2064,14 @@
                     "$ref": "#/components/schemas/ExtrudeReference"
                   }
                 ]
+              },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
               },
               "target": {
                 "description": "Which sketch to extrude. Must be a closed 2D solid.",
@@ -2113,6 +2149,14 @@
                   }
                 ]
               },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
+              },
               "target": {
                 "description": "Which sketch to extrude. Must be a closed 2D solid.",
                 "allOf": [
@@ -2177,6 +2221,14 @@
               "sectional": {
                 "description": "If true, the sweep will be broken up into sub-sweeps (extrusions, revolves, sweeps) based on the trajectory path components.",
                 "type": "boolean"
+              },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
               },
               "target": {
                 "description": "Which sketch to sweep. Must be a closed 2D solid.",
@@ -2266,6 +2318,14 @@
                     "$ref": "#/components/schemas/Point3d"
                   }
                 ]
+              },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
               },
               "target": {
                 "description": "Which sketch to revolve. Must be a closed 2D solid.",
@@ -2510,6 +2570,14 @@
                     "$ref": "#/components/schemas/OppositeForAngle"
                   }
                 ]
+              },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
               },
               "target": {
                 "description": "Which sketch to revolve. Must be a closed 2D solid.",

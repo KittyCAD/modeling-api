@@ -12,6 +12,19 @@ use crate::{def_enum::negative_one, length_unit::LengthUnit, output::ExtrusionFa
 
 mod point;
 
+/// An existing ID to target, and a new ID to create.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct IdPair {
+    /// The ID being used for the transform/extrude/etc.
+    input: Uuid,
+    /// The new ID to assign to the resulting geometry.
+    output: Uuid,
+}
+
 /// What kind of cut to do
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]

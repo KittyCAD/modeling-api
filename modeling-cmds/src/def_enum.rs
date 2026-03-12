@@ -27,6 +27,7 @@ define_modeling_cmd_enum! {
                 BlendType,
                 BodyType,
                 ComponentTransform,
+                IdPair,
                 RelativeTo,
                 CutType, CutTypeV2,
                 CutStrategy,
@@ -126,8 +127,11 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Extrude {
             /// Which sketch to extrude.
-            /// Must be a closed 2D solid.
+            /// Must be a 2D sketch.
             pub target: ModelingCmdId,
+            /// If given, extrude each of these segments into a separate body with the given ID.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub segments: Option<Vec<IdPair>>,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
             /// Which IDs should the new faces have?
@@ -167,6 +171,9 @@ define_modeling_cmd_enum! {
             /// Which sketch to extrude.
             /// Must be a closed 2D solid.
             pub target: ModelingCmdId,
+            /// If given, extrude each of these segments into a separate body with the given ID.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub segments: Option<Vec<IdPair>>,
             /// Reference to extrude to.
             /// Extrusion occurs along the target's normal until it is as close to the reference as possible.
             pub reference: ExtrudeReference,
@@ -200,6 +207,9 @@ define_modeling_cmd_enum! {
             /// Which sketch to extrude.
             /// Must be a closed 2D solid.
             pub target: ModelingCmdId,
+            /// If given, extrude each of these segments into a separate body with the given ID.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub segments: Option<Vec<IdPair>>,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
             /// Which IDs should the new faces have?
@@ -237,6 +247,9 @@ define_modeling_cmd_enum! {
             /// Which sketch to sweep.
             /// Must be a closed 2D solid.
             pub target: ModelingCmdId,
+            /// If given, extrude each of these segments into a separate body with the given ID.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub segments: Option<Vec<IdPair>>,
             /// Path along which to sweep.
             pub trajectory: ModelingCmdId,
             /// If true, the sweep will be broken up into sub-sweeps (extrusions, revolves, sweeps) based on the trajectory path components.
@@ -265,6 +278,9 @@ define_modeling_cmd_enum! {
             /// Which sketch to revolve.
             /// Must be a closed 2D solid.
             pub target: ModelingCmdId,
+            /// If given, extrude each of these segments into a separate body with the given ID.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub segments: Option<Vec<IdPair>>,
             /// The origin of the extrusion axis
             pub origin: Point3d<LengthUnit>,
             /// The axis of the extrusion (taken from the origin)
@@ -400,6 +416,9 @@ define_modeling_cmd_enum! {
             /// Which sketch to revolve.
             /// Must be a closed 2D solid.
             pub target: ModelingCmdId,
+            /// If given, extrude each of these segments into a separate body with the given ID.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub segments: Option<Vec<IdPair>>,
             /// The edge to use as the axis of revolution, must be linear and lie in the plane of the solid
             pub edge_id: Uuid,
             /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
