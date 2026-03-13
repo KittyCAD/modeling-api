@@ -1786,6 +1786,28 @@ pub struct SurfaceEdgeReference {
     pub edges: Vec<FractionOfEdge>,
 }
 
+/// List of bodies that were created by an operation.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodiesCreated {
+    /// All bodies created by this operation.
+    pub bodies: Vec<BodyCreated>,
+}
+
+/// Details of a body that was created.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodyCreated {
+    /// The body's ID.
+    pub id: Uuid,
+}
+
 fn one() -> f32 {
     1.0
 }
