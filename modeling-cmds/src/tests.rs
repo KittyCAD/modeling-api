@@ -1,6 +1,6 @@
 use dropshot::ApiDescription;
 
-use crate::websocket::WebSocketRequest;
+use crate::websocket::{WebSocketRequest, WebSocketResponse};
 
 #[tokio::test]
 async fn test_openapi() {
@@ -30,7 +30,7 @@ async fn test_openapi() {
 }
 
 fn example_server() -> Result<ApiDescription<()>, String> {
-    use dropshot::{endpoint, ApiDescription, HttpError, HttpResponseUpdatedNoContent, RequestContext, TypedBody};
+    use dropshot::{endpoint, ApiDescription, HttpError, HttpResponseOk, RequestContext, TypedBody};
 
     #[endpoint {
         method = PUT,
@@ -39,8 +39,11 @@ fn example_server() -> Result<ApiDescription<()>, String> {
     async fn example(
         _: RequestContext<()>,
         _: TypedBody<WebSocketRequest>,
-    ) -> Result<HttpResponseUpdatedNoContent, HttpError> {
-        Ok(HttpResponseUpdatedNoContent())
+    ) -> Result<HttpResponseOk<WebSocketResponse>, HttpError> {
+        Ok(HttpResponseOk(WebSocketResponse::success(
+            None,
+            crate::websocket::OkWebSocketResponseData::Pong {},
+        )))
     }
 
     // Build a description of the API.
