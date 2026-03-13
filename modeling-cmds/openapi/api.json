@@ -1500,6 +1500,26 @@
           }
         ]
       },
+      "IdPair": {
+        "description": "An existing ID to target, and a new ID to create.",
+        "type": "object",
+        "properties": {
+          "input": {
+            "description": "The ID being used for the transform/extrude/etc.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "output": {
+            "description": "The new ID to assign to the resulting geometry.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "input",
+          "output"
+        ]
+      },
       "ImageFormat": {
         "description": "Enum containing the variety of image formats snapshots may be exported to.",
         "oneOf": [
@@ -1962,6 +1982,11 @@
                   }
                 ]
               },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two separate surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
+              },
               "merge_coplanar_faces": {
                 "nullable": true,
                 "description": "Only used if the extrusion is created from a face and extrude_method = Merge If true, coplanar faces will be merged and seams will be hidden. Otherwise, seams between the extrusion and original body will be shown.",
@@ -1976,8 +2001,16 @@
                   }
                 ]
               },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
+              },
               "target": {
-                "description": "Which sketch to extrude. Must be a closed 2D solid.",
+                "description": "Which sketch to extrude. Must be a 2D sketch.",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/ModelingCmdId"
@@ -2029,6 +2062,11 @@
                   }
                 ]
               },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
+              },
               "reference": {
                 "description": "Reference to extrude to. Extrusion occurs along the target's normal until it is as close to the reference as possible.",
                 "allOf": [
@@ -2036,6 +2074,14 @@
                     "$ref": "#/components/schemas/ExtrudeReference"
                   }
                 ]
+              },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
               },
               "target": {
                 "description": "Which sketch to extrude. Must be a closed 2D solid.",
@@ -2113,6 +2159,19 @@
                   }
                 ]
               },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
+              },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
+              },
               "target": {
                 "description": "Which sketch to extrude. Must be a closed 2D solid.",
                 "allOf": [
@@ -2165,6 +2224,11 @@
                   }
                 ]
               },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
+              },
               "relative_to": {
                 "description": "What is this sweep relative to?",
                 "default": "sketch_plane",
@@ -2177,6 +2241,14 @@
               "sectional": {
                 "description": "If true, the sweep will be broken up into sub-sweeps (extrusions, revolves, sweeps) based on the trajectory path components.",
                 "type": "boolean"
+              },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
               },
               "target": {
                 "description": "Which sketch to sweep. Must be a closed 2D solid.",
@@ -2250,6 +2322,11 @@
                   }
                 ]
               },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
+              },
               "opposite": {
                 "description": "Should the revolution also revolve in the opposite direction along the given axis? If so, this specifies its angle.",
                 "default": "None",
@@ -2266,6 +2343,14 @@
                     "$ref": "#/components/schemas/Point3d"
                   }
                 ]
+              },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
               },
               "target": {
                 "description": "Which sketch to revolve. Must be a closed 2D solid.",
@@ -2502,6 +2587,11 @@
                 "type": "string",
                 "format": "uuid"
               },
+              "keep_seams": {
+                "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two surfaces. If false, creates a body with one surface, spanning both collinear segments.",
+                "default": false,
+                "type": "boolean"
+              },
               "opposite": {
                 "description": "Should the revolution also revolve in the opposite direction along the given axis? If so, this specifies its angle.",
                 "default": "None",
@@ -2510,6 +2600,14 @@
                     "$ref": "#/components/schemas/OppositeForAngle"
                   }
                 ]
+              },
+              "segments": {
+                "nullable": true,
+                "description": "If given, extrude each of these segments into a separate body with the given ID.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IdPair"
+                }
               },
               "target": {
                 "description": "Which sketch to revolve. Must be a closed 2D solid.",

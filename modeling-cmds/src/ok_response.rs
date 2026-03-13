@@ -22,7 +22,7 @@ define_ok_modeling_cmd_response_enum! {
             base64::Base64Data,
             id::ModelingCmdId,
             length_unit::LengthUnit,
-            shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d},
+            shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d, BodiesCreated},
             units,
         };
 
@@ -56,30 +56,40 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Extrude {
+            /// Any new bodies created by the request.
+            pub bodies: BodiesCreated,
         }
 
         /// The response from the `ExtrudeToReference` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ExtrudeToReference {
+            /// Any new bodies created by the request.
+            pub bodies: BodiesCreated,
         }
 
         /// The response from the `TwistExtrude` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct TwistExtrude {
+            /// Any new bodies created by the request.
+            pub bodies: BodiesCreated,
         }
 
         /// The response from the `Sweep` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Sweep {
+            /// Any new bodies created by the request.
+            pub bodies: BodiesCreated,
         }
 
         /// The response from the `Revolve` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Revolve {
+            /// Any new bodies created by the request.
+            pub bodies: BodiesCreated,
         }
 
         /// The response from the `Solid3dShellFace` endpoint.
@@ -127,6 +137,8 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct RevolveAboutEdge {
+            /// Any new bodies created by the request.
+            pub bodies: BodiesCreated,
         }
 
         /// The response from the `CameraDragStart` endpoint.
