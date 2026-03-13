@@ -24,8 +24,15 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "resource updated"
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebSocketResponse"
+                }
+              }
+            }
           },
           "4XX": {
             "$ref": "#/components/responses/Error"
@@ -39,6 +46,56 @@
   },
   "components": {
     "schemas": {
+      "AddHoleFromOffset": {
+        "description": "The response from the `AddHoleFromOffset` command.",
+        "type": "object",
+        "properties": {
+          "entity_ids": {
+            "description": "If the offset path splits into multiple paths, this will contain the UUIDs of the new paths. If the offset path remains as a single path, this will be empty, and the resulting ID of the (single) new path will be the ID of the `AddHoleFromOffset` command.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "entity_ids"
+        ]
+      },
+      "AdjacencyInfo": {
+        "description": "Edge info struct (useful for maintaining mappings between edges and faces and adjacent/opposite edges).",
+        "type": "object",
+        "properties": {
+          "adjacent_info": {
+            "nullable": true,
+            "description": "Adjacent edge and face info.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EdgeInfo"
+              }
+            ]
+          },
+          "opposite_info": {
+            "nullable": true,
+            "description": "Opposite edge and face info.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EdgeInfo"
+              }
+            ]
+          },
+          "original_info": {
+            "nullable": true,
+            "description": "Original edge id and face info.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EdgeInfo"
+              }
+            ]
+          }
+        }
+      },
       "Angle": {
         "description": "An angle, with a specific unit.",
         "type": "object",
@@ -615,6 +672,28 @@
           }
         ]
       },
+      "ApiError": {
+        "description": "An error.",
+        "type": "object",
+        "properties": {
+          "error_code": {
+            "description": "The error code.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ErrorCode"
+              }
+            ]
+          },
+          "message": {
+            "description": "The error message.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "error_code",
+          "message"
+        ]
+      },
       "Axis": {
         "description": "Co-ordinate axis specifier.\n\nSee [cglearn.eu] for background reading.\n\n[cglearn.eu]: https://cglearn.eu/pub/computer-graphics/introduction-to-geometry#material-coordinate-systems-1",
         "oneOf": [
@@ -660,6 +739,44 @@
           "direction"
         ]
       },
+      "BatchResponse": {
+        "description": "Websocket responses can either be successful or unsuccessful. Slightly different schemas in either case.",
+        "anyOf": [
+          {
+            "description": "Response sent when a request succeeded.",
+            "type": "object",
+            "properties": {
+              "response": {
+                "description": "Response to the modeling command.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/OkModelingCmdResponse"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "response"
+            ]
+          },
+          {
+            "description": "Response sent when a request did not succeed.",
+            "type": "object",
+            "properties": {
+              "errors": {
+                "description": "Errors that occurred during the modeling command.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "required": [
+              "errors"
+            ]
+          }
+        ]
+      },
       "BlendType": {
         "description": "What kind of blend to do",
         "oneOf": [
@@ -689,6 +806,105 @@
               "surface"
             ]
           }
+        ]
+      },
+      "BooleanImprint": {
+        "description": "The response from the 'BooleanImprint'.",
+        "type": "object",
+        "properties": {
+          "extra_solid_ids": {
+            "description": "If the operation produced just one body, then its ID will be the ID of the modeling command request. But if any extra bodies are produced, then their IDs will be included here.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "BooleanIntersection": {
+        "description": "The response from the 'BooleanIntersection'.",
+        "type": "object",
+        "properties": {
+          "extra_solid_ids": {
+            "description": "If the operation produced just one solid, then its ID will be the ID of the modeling command request. But if any extra solids are produced, then their IDs will be included here.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "BooleanSubtract": {
+        "description": "The response from the 'BooleanSubtract'.",
+        "type": "object",
+        "properties": {
+          "extra_solid_ids": {
+            "description": "If the operation produced just one solid, then its ID will be the ID of the modeling command request. But if any extra solids are produced, then their IDs will be included here.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "BooleanUnion": {
+        "description": "The response from the 'BooleanUnion'.",
+        "type": "object",
+        "properties": {
+          "extra_solid_ids": {
+            "description": "If the operation produced just one solid, then its ID will be the ID of the modeling command request. But if any extra solids are produced, then their IDs will be included here.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "BoundingBox": {
+        "description": "The response from the 'BoundingBox'.",
+        "type": "object",
+        "properties": {
+          "center": {
+            "description": "Center of the box.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "dimensions": {
+            "description": "Dimensions of the box along each axis.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "center",
+          "dimensions"
+        ]
+      },
+      "CameraDragEnd": {
+        "description": "The response from the `CameraDragEnd` command.",
+        "type": "object",
+        "properties": {
+          "settings": {
+            "description": "Camera settings",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CameraSettings"
+              }
+            ]
+          }
+        },
+        "required": [
+          "settings"
         ]
       },
       "CameraDragInteractionType": {
@@ -724,6 +940,27 @@
           }
         ]
       },
+      "CameraDragMove": {
+        "description": "The response from the `CameraDragMove` command. Note this is an \"unreliable\" channel message, so this data may need more data like a \"sequence\"",
+        "type": "object",
+        "properties": {
+          "settings": {
+            "description": "Camera settings",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CameraSettings"
+              }
+            ]
+          }
+        },
+        "required": [
+          "settings"
+        ]
+      },
+      "CameraDragStart": {
+        "description": "The response from the `CameraDragStart` endpoint.",
+        "type": "object"
+      },
       "CameraMovement": {
         "description": "A type of camera movement applied after certain camera operations",
         "oneOf": [
@@ -741,6 +978,67 @@
               "none"
             ]
           }
+        ]
+      },
+      "CameraSettings": {
+        "description": "Camera settings including position, center, fov etc",
+        "type": "object",
+        "properties": {
+          "center": {
+            "description": "Camera's look-at center (center-pos gives viewing vector)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "fov_y": {
+            "nullable": true,
+            "description": "Camera's field-of-view angle (if ortho is false)",
+            "type": "number",
+            "format": "float"
+          },
+          "orientation": {
+            "description": "The Camera's orientation (in the form of a quaternion)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point4d"
+              }
+            ]
+          },
+          "ortho": {
+            "description": "Whether or not the camera is in ortho mode",
+            "type": "boolean"
+          },
+          "ortho_scale": {
+            "nullable": true,
+            "description": "The camera's ortho scale (derived from viewing distance if ortho is true)",
+            "type": "number",
+            "format": "float"
+          },
+          "pos": {
+            "description": "Camera position (vantage)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "up": {
+            "description": "Camera's world-space up vector",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "center",
+          "orientation",
+          "ortho",
+          "pos",
+          "up"
         ]
       },
       "CameraViewState": {
@@ -783,6 +1081,32 @@
           "pivot_position",
           "pivot_rotation",
           "world_coord_system"
+        ]
+      },
+      "CenterOfMass": {
+        "description": "The center of mass response.",
+        "type": "object",
+        "properties": {
+          "center_of_mass": {
+            "description": "The center of mass.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "output_unit": {
+            "description": "The output unit for the center of mass.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnitLength"
+              }
+            ]
+          }
+        },
+        "required": [
+          "center_of_mass",
+          "output_unit"
         ]
       },
       "ClientMetrics": {
@@ -892,6 +1216,32 @@
           }
         }
       },
+      "ClosePath": {
+        "description": "The response from the `ClosePath` command.",
+        "type": "object",
+        "properties": {
+          "face_id": {
+            "description": "The UUID of the lone face of the resulting solid2D.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "face_id"
+        ]
+      },
+      "ClosestEdge": {
+        "description": "The response from the 'ClosestEdge'.",
+        "type": "object",
+        "properties": {
+          "edge_id": {
+            "nullable": true,
+            "description": "The ID of the edge closest to the point given in the request. If there are no edges in the scene, returns None.",
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "Color": {
         "description": "An RGBA color",
         "type": "object",
@@ -922,6 +1272,29 @@
           "b",
           "g",
           "r"
+        ]
+      },
+      "ComplementaryEdges": {
+        "description": "Struct to contain the edge information of a wall of an extrude/rotate/loft/sweep.",
+        "type": "object",
+        "properties": {
+          "adjacent_ids": {
+            "description": "Every edge that shared one common vertex with the original edge.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "opposite_id": {
+            "nullable": true,
+            "description": "The opposite edge has no common vertices with the original edge. A wall may not have an opposite edge (i.e. a revolve that touches the axis of rotation).",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "adjacent_ids"
         ]
       },
       "ComponentTransform": {
@@ -965,6 +1338,86 @@
             ]
           }
         }
+      },
+      "CreateRegion": {
+        "description": "The response from the 'CreateRegion'. The region should have an ID taken from the ID of the 'CreateRegion' modeling command.",
+        "type": "object"
+      },
+      "CreateRegionFromQueryPoint": {
+        "description": "The response from the 'CreateRegionFromQueryPoint'. The region should have an ID taken from the ID of the 'CreateRegionFromQueryPoint' modeling command.",
+        "type": "object"
+      },
+      "CurveGetControlPoints": {
+        "description": "The response from the `CurveGetControlPoints` command.",
+        "type": "object",
+        "properties": {
+          "control_points": {
+            "description": "Control points in the curve.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Point3d"
+            }
+          }
+        },
+        "required": [
+          "control_points"
+        ]
+      },
+      "CurveGetEndPoints": {
+        "description": "Endpoints of a curve",
+        "type": "object",
+        "properties": {
+          "end": {
+            "description": "End",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "start": {
+            "description": "Start",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "end",
+          "start"
+        ]
+      },
+      "CurveGetType": {
+        "description": "The response from the `CurveGetType` command.",
+        "type": "object",
+        "properties": {
+          "curve_type": {
+            "description": "Curve type",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CurveType"
+              }
+            ]
+          }
+        },
+        "required": [
+          "curve_type"
+        ]
+      },
+      "CurveSetConstraint": {
+        "description": "The response from the `CurveSetConstraint` endpoint.",
+        "type": "object"
+      },
+      "CurveType": {
+        "description": "The type of Curve (embedded within path)",
+        "type": "string",
+        "enum": [
+          "line",
+          "arc",
+          "nurbs"
+        ]
       },
       "CutStrategy": {
         "description": "What strategy (algorithm) should be used for cutting? Defaults to Automatic.",
@@ -1123,6 +1576,112 @@
           }
         ]
       },
+      "DefaultCameraCenterToScene": {
+        "description": "The response from the `DefaultCameraCenterToScene` endpoint.",
+        "type": "object"
+      },
+      "DefaultCameraCenterToSelection": {
+        "description": "The response from the `DefaultCameraCenterToSelection` endpoint.",
+        "type": "object"
+      },
+      "DefaultCameraFocusOn": {
+        "description": "The response from the `DefaultCameraFocusOn` command.",
+        "type": "object"
+      },
+      "DefaultCameraGetSettings": {
+        "description": "The response from the `DefaultCameraGetSettings` command.",
+        "type": "object",
+        "properties": {
+          "settings": {
+            "description": "Camera settings",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CameraSettings"
+              }
+            ]
+          }
+        },
+        "required": [
+          "settings"
+        ]
+      },
+      "DefaultCameraGetView": {
+        "description": "The response from the `DefaultCameraGetView` command.",
+        "type": "object",
+        "properties": {
+          "view": {
+            "description": "Camera view state",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CameraViewState"
+              }
+            ]
+          }
+        },
+        "required": [
+          "view"
+        ]
+      },
+      "DefaultCameraLookAt": {
+        "description": "The response from the `DefaultCameraLookAt` endpoint.",
+        "type": "object"
+      },
+      "DefaultCameraPerspectiveSettings": {
+        "description": "The response from the `DefaultCameraPerspectiveSettings` endpoint.",
+        "type": "object"
+      },
+      "DefaultCameraSetOrthographic": {
+        "description": "The response from the `DefaultCameraSetOrthographic` endpoint.",
+        "type": "object"
+      },
+      "DefaultCameraSetPerspective": {
+        "description": "The response from the `DefaultCameraSetPerspective` endpoint.",
+        "type": "object"
+      },
+      "DefaultCameraSetView": {
+        "description": "The response from the `DefaultCameraSetView` command.",
+        "type": "object"
+      },
+      "DefaultCameraZoom": {
+        "description": "The response from the `DefaultCameraZoom` command.",
+        "type": "object",
+        "properties": {
+          "settings": {
+            "description": "Camera settings",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CameraSettings"
+              }
+            ]
+          }
+        },
+        "required": [
+          "settings"
+        ]
+      },
+      "Density": {
+        "description": "The density response.",
+        "type": "object",
+        "properties": {
+          "density": {
+            "description": "The density.",
+            "type": "number",
+            "format": "double"
+          },
+          "output_unit": {
+            "description": "The output unit for the density.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnitDensity"
+              }
+            ]
+          }
+        },
+        "required": [
+          "density",
+          "output_unit"
+        ]
+      },
       "Direction": {
         "description": "Specifies the sign of a co-ordinate axis.",
         "oneOf": [
@@ -1141,6 +1700,10 @@
             ]
           }
         ]
+      },
+      "DisableDryRun": {
+        "description": "The response from the `DisableDryRun` endpoint.",
+        "type": "object"
       },
       "DistanceType": {
         "description": "The type of distance Distances can vary depending on the objects used as input.",
@@ -1205,6 +1768,302 @@
           }
         ]
       },
+      "EdgeInfo": {
+        "description": "A list of faces for a specific edge.",
+        "type": "object",
+        "properties": {
+          "edge_id": {
+            "description": "The UUID of the id.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "faces": {
+            "description": "The faces of each edge.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "edge_id",
+          "faces"
+        ]
+      },
+      "EdgeLinesVisible": {
+        "description": "The response from the `EdgeLinesVisible` endpoint.",
+        "type": "object"
+      },
+      "EnableDryRun": {
+        "description": "The response from the `EnableDryRun` endpoint.",
+        "type": "object"
+      },
+      "EnableSketchMode": {
+        "description": "The response from the `EnableSketchMode` endpoint.",
+        "type": "object"
+      },
+      "EngineUtilEvaluatePath": {
+        "description": "The response of the `EngineUtilEvaluatePath` endpoint",
+        "type": "object",
+        "properties": {
+          "pos": {
+            "description": "The evaluated path curve position",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "pos"
+        ]
+      },
+      "EntityCircularPattern": {
+        "description": "The response from the `EntityCircularPattern` command.",
+        "type": "object",
+        "properties": {
+          "entity_face_edge_ids": {
+            "description": "The Face, edge, and entity ids of the patterned entities.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FaceEdgeInfo"
+            }
+          }
+        }
+      },
+      "EntityClone": {
+        "description": "The response from the `EntityClone` command.",
+        "type": "object",
+        "properties": {
+          "face_edge_ids": {
+            "description": "The Face and Edge Ids of the cloned entity.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FaceEdgeInfo"
+            }
+          }
+        }
+      },
+      "EntityDeleteChildren": {
+        "description": "The response from the `EntityDeleteChildren` command.",
+        "type": "object"
+      },
+      "EntityFade": {
+        "description": "The response from the `EntityFade` endpoint.",
+        "type": "object"
+      },
+      "EntityGetAllChildUuids": {
+        "description": "The response from the `EntityGetAllChildUuids` command.",
+        "type": "object",
+        "properties": {
+          "entity_ids": {
+            "description": "The UUIDs of the child entities.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "entity_ids"
+        ]
+      },
+      "EntityGetChildUuid": {
+        "description": "The response from the `EntityGetChildUuid` command.",
+        "type": "object",
+        "properties": {
+          "entity_id": {
+            "description": "The UUID of the child entity.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "entity_id"
+        ]
+      },
+      "EntityGetDistance": {
+        "description": "The response from the `EntitiesGetDistance` command.",
+        "type": "object",
+        "properties": {
+          "max_distance": {
+            "description": "The maximum distance between the input entities.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LengthUnit"
+              }
+            ]
+          },
+          "min_distance": {
+            "description": "The minimum distance between the input entities.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LengthUnit"
+              }
+            ]
+          }
+        },
+        "required": [
+          "max_distance",
+          "min_distance"
+        ]
+      },
+      "EntityGetIndex": {
+        "description": "The response from the `EntityGetIndex` command.",
+        "type": "object",
+        "properties": {
+          "entity_index": {
+            "description": "The child index of the entity.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "entity_index"
+        ]
+      },
+      "EntityGetNumChildren": {
+        "description": "The response from the `EntityGetNumChildren` command.",
+        "type": "object",
+        "properties": {
+          "num": {
+            "description": "The number of children the entity has.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "num"
+        ]
+      },
+      "EntityGetParentId": {
+        "description": "The response from the `EntityGetParentId` command.",
+        "type": "object",
+        "properties": {
+          "entity_id": {
+            "description": "The UUID of the parent entity.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "entity_id"
+        ]
+      },
+      "EntityGetPrimitiveIndex": {
+        "description": "The response from the `EntityGetPrimitiveIndex` command.",
+        "type": "object",
+        "properties": {
+          "entity_type": {
+            "description": "The type of this entity.  Helps infer whether this is an edge or a face index.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EntityType"
+              }
+            ]
+          },
+          "primitive_index": {
+            "description": "The primitive index of the entity.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "entity_type",
+          "primitive_index"
+        ]
+      },
+      "EntityGetSketchPaths": {
+        "description": "The response from the `EntityGetSketchPaths` command.",
+        "type": "object",
+        "properties": {
+          "entity_ids": {
+            "description": "The UUIDs of the sketch paths.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "entity_ids"
+        ]
+      },
+      "EntityLinearPattern": {
+        "description": "The response from the `EntityLinearPattern` command.",
+        "type": "object",
+        "properties": {
+          "entity_face_edge_ids": {
+            "description": "The Face, edge, and entity ids of the patterned entities.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FaceEdgeInfo"
+            }
+          }
+        }
+      },
+      "EntityLinearPatternTransform": {
+        "description": "The response from the `EntityLinearPatternTransform` command.",
+        "type": "object",
+        "properties": {
+          "entity_face_edge_ids": {
+            "description": "The Face, edge, and entity ids of the patterned entities.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FaceEdgeInfo"
+            }
+          }
+        }
+      },
+      "EntityMakeHelix": {
+        "description": "The response from the `EntityMakeHelix` endpoint.",
+        "type": "object"
+      },
+      "EntityMakeHelixFromEdge": {
+        "description": "The response from the `EntityMakeHelixFromEdge` endpoint.",
+        "type": "object"
+      },
+      "EntityMakeHelixFromParams": {
+        "description": "The response from the `EntityMakeHelixFromParams` endpoint.",
+        "type": "object"
+      },
+      "EntityMirror": {
+        "description": "The response from the `EntityMirror` endpoint.",
+        "type": "object",
+        "properties": {
+          "entity_face_edge_ids": {
+            "description": "The Face, edge, and entity ids of the patterned entities.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FaceEdgeInfo"
+            }
+          }
+        }
+      },
+      "EntityMirrorAcrossEdge": {
+        "description": "The response from the `EntityMirrorAcrossEdge` endpoint.",
+        "type": "object",
+        "properties": {
+          "entity_face_edge_ids": {
+            "description": "The Face, edge, and entity ids of the patterned entities.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FaceEdgeInfo"
+            }
+          }
+        }
+      },
+      "EntitySetOpacity": {
+        "description": "The response from the `EntitySetOpacity` endpoint.",
+        "type": "object"
+      },
       "EntityType": {
         "description": "The type of entity",
         "type": "string",
@@ -1239,6 +2098,164 @@
           "message",
           "request_id"
         ]
+      },
+      "ErrorCode": {
+        "description": "The type of error sent by the KittyCAD API.",
+        "oneOf": [
+          {
+            "description": "Graphics engine failed to complete request, consider retrying",
+            "type": "string",
+            "enum": [
+              "internal_engine"
+            ]
+          },
+          {
+            "description": "API failed to complete request, consider retrying",
+            "type": "string",
+            "enum": [
+              "internal_api"
+            ]
+          },
+          {
+            "description": "User requested something geometrically or graphically impossible. Don't retry this request, as it's inherently impossible. Instead, read the error message and change your request.",
+            "type": "string",
+            "enum": [
+              "bad_request"
+            ]
+          },
+          {
+            "description": "Auth token is missing from the request",
+            "type": "string",
+            "enum": [
+              "auth_token_missing"
+            ]
+          },
+          {
+            "description": "Auth token is invalid in some way (expired, incorrect format, etc)",
+            "type": "string",
+            "enum": [
+              "auth_token_invalid"
+            ]
+          },
+          {
+            "description": "Client sent invalid JSON.",
+            "type": "string",
+            "enum": [
+              "invalid_json"
+            ]
+          },
+          {
+            "description": "Client sent invalid BSON.",
+            "type": "string",
+            "enum": [
+              "invalid_bson"
+            ]
+          },
+          {
+            "description": "Client sent a message which is not accepted over this protocol.",
+            "type": "string",
+            "enum": [
+              "wrong_protocol"
+            ]
+          },
+          {
+            "description": "Problem sending data between client and KittyCAD API.",
+            "type": "string",
+            "enum": [
+              "connection_problem"
+            ]
+          },
+          {
+            "description": "Client sent a Websocket message type which the KittyCAD API does not handle.",
+            "type": "string",
+            "enum": [
+              "message_type_not_accepted"
+            ]
+          },
+          {
+            "description": "Client sent a Websocket message intended for WebRTC but it was configured as a WebRTC connection.",
+            "type": "string",
+            "enum": [
+              "message_type_not_accepted_for_web_r_t_c"
+            ]
+          }
+        ]
+      },
+      "Export": {
+        "description": "The response from the `Export` endpoint.",
+        "type": "object",
+        "properties": {
+          "files": {
+            "description": "The files that were exported.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExportFile"
+            }
+          }
+        },
+        "required": [
+          "files"
+        ]
+      },
+      "Export2d": {
+        "description": "The response from the `Export2d` endpoint.",
+        "type": "object",
+        "properties": {
+          "files": {
+            "description": "The files that were exported.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExportFile"
+            }
+          }
+        },
+        "required": [
+          "files"
+        ]
+      },
+      "Export3d": {
+        "description": "The response from the `Export3d` endpoint.",
+        "type": "object",
+        "properties": {
+          "files": {
+            "description": "The files that were exported.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExportFile"
+            }
+          }
+        },
+        "required": [
+          "files"
+        ]
+      },
+      "ExportFile": {
+        "description": "A file to be exported to the client.",
+        "type": "object",
+        "properties": {
+          "contents": {
+            "title": "String",
+            "description": "The contents of the file, base64 encoded.",
+            "type": "string",
+            "format": "byte"
+          },
+          "name": {
+            "description": "The name of the file.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contents",
+          "name"
+        ]
+      },
+      "ExtendPath": {
+        "description": "The response from the `ExtendPath` endpoint.",
+        "type": "object"
+      },
+      "Extrude": {
+        "description": "The response from the `Extrude` endpoint.",
+        "type": "object"
       },
       "ExtrudeMethod": {
         "description": "Extrusion method determining if the extrusion will be part of the existing object or an entirely new object.",
@@ -1352,6 +2369,10 @@
           }
         ]
       },
+      "ExtrudeToReference": {
+        "description": "The response from the `ExtrudeToReference` endpoint.",
+        "type": "object"
+      },
       "ExtrudedFaceInfo": {
         "description": "IDs for the extruded faces.",
         "type": "object",
@@ -1378,6 +2399,238 @@
         "required": [
           "sides",
           "top"
+        ]
+      },
+      "ExtrusionFaceCapType": {
+        "description": "Possible types of faces which can be extruded from a 3D solid.",
+        "oneOf": [
+          {
+            "description": "Uncapped.",
+            "type": "string",
+            "enum": [
+              "none"
+            ]
+          },
+          {
+            "description": "Capped on top.",
+            "type": "string",
+            "enum": [
+              "top"
+            ]
+          },
+          {
+            "description": "Capped below.",
+            "type": "string",
+            "enum": [
+              "bottom"
+            ]
+          },
+          {
+            "description": "Capped on both ends.",
+            "type": "string",
+            "enum": [
+              "both"
+            ]
+          }
+        ]
+      },
+      "ExtrusionFaceInfo": {
+        "description": "Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)",
+        "type": "object",
+        "properties": {
+          "cap": {
+            "description": "Whether or not this extrusion face is a top/bottom cap face or not. Note that top/bottom cap faces will not have associated curve IDs.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExtrusionFaceCapType"
+              }
+            ]
+          },
+          "curve_id": {
+            "nullable": true,
+            "description": "Path component (curve) UUID.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "face_id": {
+            "nullable": true,
+            "description": "Face uuid.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "cap"
+        ]
+      },
+      "FaceEdgeInfo": {
+        "description": "Faces and edges id info (most used in identifying geometry in patterned and mirrored objects).",
+        "type": "object",
+        "properties": {
+          "edges": {
+            "description": "The edges of each object.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "faces": {
+            "description": "The faces of each object.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "object_id": {
+            "description": "The UUID of the object.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "edges",
+          "faces",
+          "object_id"
+        ]
+      },
+      "FaceGetCenter": {
+        "description": "The 3D center of mass on the surface",
+        "type": "object",
+        "properties": {
+          "pos": {
+            "description": "The 3D position on the surface center of mass",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "pos"
+        ]
+      },
+      "FaceGetGradient": {
+        "description": "The gradient (dFdu, dFdv) + normal vector on a brep face",
+        "type": "object",
+        "properties": {
+          "df_du": {
+            "description": "dFdu",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "df_dv": {
+            "description": "dFdv",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "normal": {
+            "description": "Normal (||dFdu x dFdv||)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "df_du",
+          "df_dv",
+          "normal"
+        ]
+      },
+      "FaceGetPosition": {
+        "description": "The 3D position on the surface that was evaluated",
+        "type": "object",
+        "properties": {
+          "pos": {
+            "description": "The 3D position on the surface that was evaluated",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "pos"
+        ]
+      },
+      "FaceIsPlanar": {
+        "description": "Surface-local planar axes (if available)",
+        "type": "object",
+        "properties": {
+          "origin": {
+            "nullable": true,
+            "description": "plane's origin",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "x_axis": {
+            "nullable": true,
+            "description": "plane's local x-axis",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "y_axis": {
+            "nullable": true,
+            "description": "plane's local y-axis",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "z_axis": {
+            "nullable": true,
+            "description": "plane's local z-axis (normal)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        }
+      },
+      "FailureWebSocketResponse": {
+        "description": "Unsuccessful Websocket response.",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "description": "The errors that occurred.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiError"
+            }
+          },
+          "request_id": {
+            "nullable": true,
+            "description": "Which request this is a response to. If the request was a modeling command, this is the modeling command ID. If no request ID was sent, this will be null.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "success": {
+            "description": "Always false",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "errors",
+          "success"
         ]
       },
       "FbxStorage": {
@@ -1427,6 +2680,82 @@
         },
         "required": [
           "edge_id"
+        ]
+      },
+      "GetEntityType": {
+        "description": "The response from the `GetEntityType` command.",
+        "type": "object",
+        "properties": {
+          "entity_type": {
+            "description": "The type of the entity.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EntityType"
+              }
+            ]
+          }
+        },
+        "required": [
+          "entity_type"
+        ]
+      },
+      "GetNumObjects": {
+        "description": "The response from the `GetNumObjects` command.",
+        "type": "object",
+        "properties": {
+          "num_objects": {
+            "description": "The number of objects in the scene.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "num_objects"
+        ]
+      },
+      "GetSketchModePlane": {
+        "description": "The plane for sketch mode.",
+        "type": "object",
+        "properties": {
+          "origin": {
+            "description": "The origin.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "x_axis": {
+            "description": "The x axis.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "y_axis": {
+            "description": "The y axis.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "z_axis": {
+            "description": "The z axis (normal).",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "origin",
+          "x_axis",
+          "y_axis",
+          "z_axis"
         ]
       },
       "GlobalAxis": {
@@ -1500,6 +2829,67 @@
           }
         ]
       },
+      "HandleMouseDragEnd": {
+        "description": "The response from the `HandleMouseDragEnd` endpoint.",
+        "type": "object"
+      },
+      "HandleMouseDragMove": {
+        "description": "The response from the `HandleMouseDragMove` endpoint.",
+        "type": "object"
+      },
+      "HandleMouseDragStart": {
+        "description": "The response from the `HandleMouseDragStart` endpoint.",
+        "type": "object"
+      },
+      "HighlightSetEntities": {
+        "description": "The response from the `HighlightSetEntities` endpoint.",
+        "type": "object"
+      },
+      "HighlightSetEntity": {
+        "description": "The response from the `HighlightSetEntity` command.",
+        "type": "object",
+        "properties": {
+          "entity_id": {
+            "nullable": true,
+            "description": "The UUID of the entity that was highlighted.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "nullable": true,
+            "description": "If the client sent a sequence ID with its request, the backend sends it back.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          }
+        }
+      },
+      "IceServer": {
+        "description": "Representation of an ICE server used for STUN/TURN Used to initiate WebRTC connections based on <https://developer.mozilla.org/en-US/docs/Web/API/RTCIceServer>",
+        "type": "object",
+        "properties": {
+          "credential": {
+            "nullable": true,
+            "description": "Credentials for a given TURN server.",
+            "type": "string"
+          },
+          "urls": {
+            "description": "URLs for a given STUN/TURN server. IceServer urls can either be a string or an array of strings But, we choose to always convert to an array of strings for consistency",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "username": {
+            "nullable": true,
+            "description": "Username for a given TURN server.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "urls"
+        ]
+      },
       "ImageFormat": {
         "description": "Enum containing the variety of image formats snapshots may be exported to.",
         "oneOf": [
@@ -1540,6 +2930,42 @@
         "required": [
           "data",
           "path"
+        ]
+      },
+      "ImportFiles": {
+        "description": "Data from importing the files",
+        "type": "object",
+        "properties": {
+          "object_id": {
+            "description": "ID of the imported 3D models within the scene.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "object_id"
+        ]
+      },
+      "ImportedGeometry": {
+        "description": "Data from importing the files",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "ID of the imported 3D models within the scene.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "value": {
+            "description": "The original file paths that held the geometry.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "value"
         ]
       },
       "InputFormat3d": {
@@ -1737,6 +3163,68 @@
       "LengthUnit": {
         "type": "number",
         "format": "double"
+      },
+      "Loft": {
+        "description": "The response from the `Loft` command.",
+        "type": "object",
+        "properties": {
+          "solid_id": {
+            "description": "The UUID of the newly created solid loft.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "solid_id"
+        ]
+      },
+      "MakeAxesGizmo": {
+        "description": "The response from the `MakeAxesGizmo` endpoint.",
+        "type": "object"
+      },
+      "MakeOffsetPath": {
+        "description": "The response from the `MakeOffsetPath` command.",
+        "type": "object",
+        "properties": {
+          "entity_ids": {
+            "description": "If the offset path splits into multiple paths, this will contain the UUIDs of the new paths. If the offset path remains as a single path, this will be empty, and the resulting ID of the (single) new path will be the ID of the `MakeOffsetPath` command.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "entity_ids"
+        ]
+      },
+      "MakePlane": {
+        "description": "The response from the `MakePlane` endpoint.",
+        "type": "object"
+      },
+      "Mass": {
+        "description": "The mass response.",
+        "type": "object",
+        "properties": {
+          "mass": {
+            "description": "The mass.",
+            "type": "number",
+            "format": "double"
+          },
+          "output_unit": {
+            "description": "The output unit for the mass.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnitMass"
+              }
+            ]
+          }
+        },
+        "required": [
+          "mass",
+          "output_unit"
+        ]
       },
       "MbdSymbol": {
         "description": "MBD symbol type",
@@ -6778,11 +8266,3287 @@
           "cmd_id"
         ]
       },
+      "ModelingSessionData": {
+        "description": "Successful Websocket response.",
+        "type": "object",
+        "properties": {
+          "api_call_id": {
+            "description": "ID of the API call this modeling session is using. Useful for tracing and debugging.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "api_call_id"
+        ]
+      },
+      "MouseClick": {
+        "description": "The response from the `MouseClick` command.",
+        "type": "object",
+        "properties": {
+          "entities_modified": {
+            "description": "Entities that are modified.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "entities_selected": {
+            "description": "Entities that are selected.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "entities_modified",
+          "entities_selected"
+        ]
+      },
+      "MouseMove": {
+        "description": "The response from the `MouseMove` endpoint.",
+        "type": "object"
+      },
+      "MovePathPen": {
+        "description": "The response from the `MovePathPen` endpoint.",
+        "type": "object"
+      },
+      "NewAnnotation": {
+        "description": "The response from the `NewAnnotation` endpoint.",
+        "type": "object"
+      },
+      "ObjectBringToFront": {
+        "description": "The response from the `ObjectBringToFront` endpoint.",
+        "type": "object"
+      },
+      "ObjectSetMaterialParamsPbr": {
+        "description": "The response from the `ObjectSetMaterialParamsPbr` endpoint.",
+        "type": "object"
+      },
+      "ObjectVisible": {
+        "description": "The response from the `ObjectVisible` endpoint.",
+        "type": "object"
+      },
+      "OffsetSurface": {
+        "description": "The response from the 'OffsetSurface'.",
+        "type": "object"
+      },
+      "OkModelingCmdResponse": {
+        "description": "A successful response from a modeling command. This can be one of several types of responses, depending on the command.",
+        "oneOf": [
+          {
+            "description": "An empty response, used for any command that does not explicitly have a response defined here.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "empty"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EngineUtilEvaluatePath"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "engine_util_evaluate_path"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/StartPath"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "start_path"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/MovePathPen"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "move_path_pen"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ExtendPath"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "extend_path"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Extrude"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "extrude"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ExtrudeToReference"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "extrude_to_reference"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/TwistExtrude"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "twist_extrude"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Sweep"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "sweep"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Revolve"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "revolve"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dShellFace"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_shell_face"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dJoin"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_join"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SurfaceBlend"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "surface_blend"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dGetEdgeUuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_edge_uuid"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dGetFaceUuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_face_uuid"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dGetBodyType"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_body_type"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/RevolveAboutEdge"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "revolve_about_edge"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/CameraDragStart"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "camera_drag_start"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DefaultCameraLookAt"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "default_camera_look_at"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DefaultCameraPerspectiveSettings"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "default_camera_perspective_settings"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SelectAdd"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "select_add"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SelectRemove"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "select_remove"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SceneClearAll"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "scene_clear_all"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SelectReplace"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "select_replace"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/HighlightSetEntities"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "highlight_set_entities"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/NewAnnotation"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "new_annotation"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/UpdateAnnotation"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "update_annotation"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EdgeLinesVisible"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "edge_lines_visible"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ObjectVisible"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "object_visible"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ObjectBringToFront"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "object_bring_to_front"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ObjectSetMaterialParamsPbr"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "object_set_material_params_pbr"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid2dAddHole"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid2d_add_hole"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dFilletEdge"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_fillet_edge"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dCutEdges"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_cut_edges"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SendObject"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "send_object"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntitySetOpacity"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_set_opacity"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityFade"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_fade"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/MakePlane"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "make_plane"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/PlaneSetColor"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "plane_set_color"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetTool"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_tool"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/MouseMove"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "mouse_move"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SketchModeDisable"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "sketch_mode_disable"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EnableDryRun"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "enable_dry_run"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DisableDryRun"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "disable_dry_run"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/CurveSetConstraint"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "curve_set_constraint"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EnableSketchMode"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "enable_sketch_mode"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetBackgroundColor"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_background_color"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetCurrentToolProperties"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_current_tool_properties"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetDefaultSystemProperties"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_default_system_properties"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/MakeAxesGizmo"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "make_axes_gizmo"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/HandleMouseDragStart"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "handle_mouse_drag_start"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/HandleMouseDragMove"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "handle_mouse_drag_move"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/HandleMouseDragEnd"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "handle_mouse_drag_end"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/RemoveSceneObjects"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "remove_scene_objects"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ReconfigureStream"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "reconfigure_stream"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetSceneUnits"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_scene_units"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetSelectionType"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_selection_type"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetSelectionFilter"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_selection_filter"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DefaultCameraSetOrthographic"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "default_camera_set_orthographic"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DefaultCameraSetPerspective"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "default_camera_set_perspective"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DefaultCameraCenterToSelection"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "default_camera_center_to_selection"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DefaultCameraCenterToScene"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "default_camera_center_to_scene"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SelectClear"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "select_clear"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Export2d"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "export2d"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Export3d"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "export3d"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Export"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "export"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SelectWithPoint"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "select_with_point"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/HighlightSetEntity"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "highlight_set_entity"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityGetChildUuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_get_child_uuid"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityGetIndex"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_get_index"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityGetPrimitiveIndex"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_get_primitive_index"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityDeleteChildren"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_delete_children"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityGetNumChildren"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_get_num_children"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityGetParentId"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_get_parent_id"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityGetAllChildUuids"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_get_all_child_uuids"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityGetSketchPaths"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_get_sketch_paths"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Loft"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "loft"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ClosePath"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "close_path"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/CameraDragMove"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "camera_drag_move"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/CameraDragEnd"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "camera_drag_end"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DefaultCameraGetSettings"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "default_camera_get_settings"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DefaultCameraGetView"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "default_camera_get_view"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DefaultCameraSetView"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "default_camera_set_view"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DefaultCameraZoom"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "default_camera_zoom"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ZoomToFit"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "zoom_to_fit"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/OrientToFace"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "orient_to_face"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ViewIsometric"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "view_isometric"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/GetNumObjects"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "get_num_objects"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/MakeOffsetPath"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "make_offset_path"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetObjectTransform"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_object_transform"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/AddHoleFromOffset"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "add_hole_from_offset"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DefaultCameraFocusOn"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "default_camera_focus_on"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SelectGet"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "select_get"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dGetAdjacencyInfo"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_adjacency_info"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dGetAllEdgeFaces"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_all_edge_faces"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dFlip"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_flip"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dFlipFace"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_flip_face"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dGetAllOppositeEdges"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_all_opposite_edges"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dGetOppositeEdge"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_opposite_edge"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dGetNextAdjacentEdge"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_next_adjacent_edge"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dGetPrevAdjacentEdge"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_prev_adjacent_edge"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dGetCommonEdge"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_common_edge"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/GetEntityType"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "get_entity_type"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SceneGetEntityIds"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "scene_get_entity_ids"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/CurveGetControlPoints"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "curve_get_control_points"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ProjectEntityToPlane"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "project_entity_to_plane"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ProjectPointsToPlane"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "project_points_to_plane"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/CurveGetType"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "curve_get_type"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/MouseClick"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "mouse_click"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/TakeSnapshot"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "take_snapshot"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/PathGetInfo"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "path_get_info"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/PathSegmentInfo"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "path_segment_info"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/PathGetCurveUuidsForVertices"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "path_get_curve_uuids_for_vertices"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/PathGetCurveUuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "path_get_curve_uuid"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/PathGetVertexUuids"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "path_get_vertex_uuids"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/PathGetSketchTargetUuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "path_get_sketch_target_uuid"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/CurveGetEndPoints"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "curve_get_end_points"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/FaceIsPlanar"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "face_is_planar"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/FaceGetPosition"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "face_get_position"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/FaceGetCenter"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "face_get_center"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/FaceGetGradient"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "face_get_gradient"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/PlaneIntersectAndProject"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "plane_intersect_and_project"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ImportFiles"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "import_files"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ImportedGeometry"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "imported_geometry"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Mass"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "mass"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Volume"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "volume"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Density"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "density"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SurfaceArea"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "surface_area"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/CenterOfMass"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "center_of_mass"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/GetSketchModePlane"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "get_sketch_mode_plane"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityGetDistance"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_get_distance"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/FaceEdgeInfo"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "face_edge_info"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EdgeInfo"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "edge_info"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityClone"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_clone"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityLinearPatternTransform"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_linear_pattern_transform"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityLinearPattern"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_linear_pattern"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityCircularPattern"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_circular_pattern"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityMirror"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_mirror"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityMirrorAcrossEdge"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_mirror_across_edge"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityMakeHelix"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_make_helix"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityMakeHelixFromParams"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_make_helix_from_params"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/EntityMakeHelixFromEdge"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_make_helix_from_edge"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Solid3dGetExtrusionFaceInfo"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_get_extrusion_face_info"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ExtrusionFaceInfo"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "extrusion_face_info"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ComplementaryEdges"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "complementary_edges"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/AdjacencyInfo"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "adjacency_info"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetGridReferencePlane"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_grid_reference_plane"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/BooleanUnion"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "boolean_union"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/BooleanIntersection"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "boolean_intersection"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/BooleanSubtract"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "boolean_subtract"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/BooleanImprint"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "boolean_imprint"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetGridScale"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_grid_scale"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetGridAutoScale"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_grid_auto_scale"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SetOrderIndependentTransparency"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_order_independent_transparency"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/CreateRegion"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "create_region"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/CreateRegionFromQueryPoint"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "create_region_from_query_point"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/RegionGetQueryPoint"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "region_get_query_point"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/SelectRegionFromPoint"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "select_region_from_point"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/BoundingBox"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "bounding_box"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/OffsetSurface"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "offset_surface"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ClosestEdge"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "closest_edge"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          }
+        ]
+      },
+      "OkWebSocketResponseData": {
+        "description": "The websocket messages this server sends.",
+        "oneOf": [
+          {
+            "description": "Information about the ICE servers.",
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "ice_servers": {
+                    "description": "Information about the ICE servers.",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/IceServer"
+                    }
+                  }
+                },
+                "required": [
+                  "ice_servers"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "ice_server_info"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "description": "The trickle ICE candidate response.",
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "candidate": {
+                    "description": "Information about the ICE candidate.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/RtcIceCandidateInit"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "candidate"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "trickle_ice"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "description": "The SDP answer response.",
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "answer": {
+                    "description": "The session description.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/RtcSessionDescription"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "answer"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "sdp_answer"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "description": "The modeling command response.",
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "modeling_response": {
+                    "description": "The result of the command.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/OkModelingCmdResponse"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "modeling_response"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "modeling"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "description": "Response to a ModelingBatch.",
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "responses": {
+                    "description": "For each request in the batch, maps its ID to the request's outcome.",
+                    "type": "object",
+                    "additionalProperties": {
+                      "$ref": "#/components/schemas/BatchResponse"
+                    }
+                  }
+                },
+                "required": [
+                  "responses"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "modeling_batch"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "description": "The exported files.",
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "description": "The exported files",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/RawFile"
+                    }
+                  }
+                },
+                "required": [
+                  "files"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "export"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "description": "Request a collection of metrics, to include WebRTC.",
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "metrics_request"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "description": "Data about the Modeling Session (application-level).",
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "session": {
+                    "description": "Data about the Modeling Session (application-level).",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ModelingSessionData"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "session"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "modeling_session_data"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "description": "Pong response to a Ping message.",
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "pong"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          },
+          {
+            "description": "Information about the connected instance",
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "Instance name. This may or may not mean something.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "debug"
+                ]
+              }
+            },
+            "required": [
+              "data",
+              "type"
+            ]
+          }
+        ]
+      },
       "OppositeForAngle": {
         "type": "string"
       },
       "OppositeForLengthUnit": {
         "type": "string"
+      },
+      "OrientToFace": {
+        "description": "The response from the `OrientToFace` command.",
+        "type": "object",
+        "properties": {
+          "settings": {
+            "description": "Camera settings",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CameraSettings"
+              }
+            ]
+          }
+        },
+        "required": [
+          "settings"
+        ]
       },
       "OriginType": {
         "description": "The type of origin",
@@ -7133,6 +11897,17 @@
           }
         ]
       },
+      "PathCommand": {
+        "description": "The path component command type (within a Path)",
+        "type": "string",
+        "enum": [
+          "move_to",
+          "line_to",
+          "bez_curve_to",
+          "nurbs_curve_to",
+          "add_arc"
+        ]
+      },
       "PathComponentConstraintBound": {
         "description": "The path component constraint bounds type",
         "type": "string",
@@ -7152,6 +11927,82 @@
           "equal_length",
           "parallel",
           "angle_between"
+        ]
+      },
+      "PathGetCurveUuid": {
+        "description": "The response from the `PathGetCurveUuid` command.",
+        "type": "object",
+        "properties": {
+          "curve_id": {
+            "description": "The UUID of the curve entity.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "curve_id"
+        ]
+      },
+      "PathGetCurveUuidsForVertices": {
+        "description": "The response from the `PathGetCurveUuidsForVertices` command.",
+        "type": "object",
+        "properties": {
+          "curve_ids": {
+            "description": "The UUIDs of the curve entities.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "curve_ids"
+        ]
+      },
+      "PathGetInfo": {
+        "description": "The response from the `PathGetInfo` command.",
+        "type": "object",
+        "properties": {
+          "segments": {
+            "description": "All segments in the path, in the order they were added.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PathSegmentInfo"
+            }
+          }
+        },
+        "required": [
+          "segments"
+        ]
+      },
+      "PathGetSketchTargetUuid": {
+        "description": "The response from the `PathGetSketchTargetUuid` command.",
+        "type": "object",
+        "properties": {
+          "target_id": {
+            "nullable": true,
+            "description": "The UUID of the sketch target.",
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "PathGetVertexUuids": {
+        "description": "The response from the `PathGetVertexUuids` command.",
+        "type": "object",
+        "properties": {
+          "vertex_ids": {
+            "description": "The UUIDs of the vertex entities.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "vertex_ids"
         ]
       },
       "PathSegment": {
@@ -7558,6 +12409,37 @@
           }
         ]
       },
+      "PathSegmentInfo": {
+        "description": "Info about a path segment",
+        "type": "object",
+        "properties": {
+          "command": {
+            "description": "What is the path segment?",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PathCommand"
+              }
+            ]
+          },
+          "command_id": {
+            "nullable": true,
+            "description": "Which command created this path? This field is absent if the path command is not actually creating a path segment, e.g. moving the pen doesn't create a path segment.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ModelingCmdId"
+              }
+            ]
+          },
+          "relative": {
+            "description": "Whether or not this segment is a relative offset",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "command",
+          "relative"
+        ]
+      },
       "PerspectiveCameraParameters": {
         "description": "Defines a perspective view.",
         "type": "object",
@@ -7581,6 +12463,25 @@
             "format": "float"
           }
         }
+      },
+      "PlaneIntersectAndProject": {
+        "description": "Corresponding coordinates of given window coordinates, intersected on given plane.",
+        "type": "object",
+        "properties": {
+          "plane_coordinates": {
+            "nullable": true,
+            "description": "Corresponding coordinates of given window coordinates, intersected on given plane.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point2d"
+              }
+            ]
+          }
+        }
+      },
+      "PlaneSetColor": {
+        "description": "The response from the `PlaneSetColor` endpoint.",
+        "type": "object"
       },
       "PlyStorage": {
         "description": "The storage for the output PLY file.",
@@ -7672,6 +12573,82 @@
           "z"
         ]
       },
+      "ProjectEntityToPlane": {
+        "description": "The response from the `ProjectEntityToPlane` command.",
+        "type": "object",
+        "properties": {
+          "projected_points": {
+            "description": "Projected points.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Point3d"
+            }
+          }
+        },
+        "required": [
+          "projected_points"
+        ]
+      },
+      "ProjectPointsToPlane": {
+        "description": "The response from the `ProjectPointsToPlane` command.",
+        "type": "object",
+        "properties": {
+          "projected_points": {
+            "description": "Projected points.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Point3d"
+            }
+          }
+        },
+        "required": [
+          "projected_points"
+        ]
+      },
+      "RawFile": {
+        "description": "A raw file with unencoded contents to be passed over binary websockets. When raw files come back for exports it is sent as binary/bson, not text/json.",
+        "type": "object",
+        "properties": {
+          "contents": {
+            "description": "The contents of the file.",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "uint8",
+              "minimum": 0
+            }
+          },
+          "name": {
+            "description": "The name of the file.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contents",
+          "name"
+        ]
+      },
+      "ReconfigureStream": {
+        "description": "The response from the `ReconfigureStream` endpoint.",
+        "type": "object"
+      },
+      "RegionGetQueryPoint": {
+        "description": "The response from 'RegionGetQueryPoint' modeling command.",
+        "type": "object",
+        "properties": {
+          "query_point": {
+            "description": "A point that is inside of the queried region, in the same coordinate frame as the sketch itself",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point2d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "query_point"
+        ]
+      },
       "RelativeTo": {
         "description": "What is the given geometry relative to?",
         "oneOf": [
@@ -7690,6 +12667,18 @@
             ]
           }
         ]
+      },
+      "RemoveSceneObjects": {
+        "description": "The response from the `RemoveSceneObjects` endpoint.",
+        "type": "object"
+      },
+      "Revolve": {
+        "description": "The response from the `Revolve` endpoint.",
+        "type": "object"
+      },
+      "RevolveAboutEdge": {
+        "description": "The response from the `RevolveAboutEdge` endpoint.",
+        "type": "object"
       },
       "Rotation": {
         "description": "A rotation defined by an axis, origin of rotation, and an angle.",
@@ -7818,6 +12807,30 @@
           "type"
         ]
       },
+      "SceneClearAll": {
+        "description": "The response from the `SceneClearAll` endpoint.",
+        "type": "object"
+      },
+      "SceneGetEntityIds": {
+        "description": "The response from the `SceneGetEntityIds` command.",
+        "type": "object",
+        "properties": {
+          "entity_ids": {
+            "description": "The ids of the requested entities.",
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        },
+        "required": [
+          "entity_ids"
+        ]
+      },
       "SceneSelectionType": {
         "description": "The type of scene selection change",
         "oneOf": [
@@ -7855,6 +12868,97 @@
           "sketch_tangential_arc",
           "sketch_curve",
           "sketch_curve_mod"
+        ]
+      },
+      "SelectAdd": {
+        "description": "The response from the `SelectAdd` endpoint.",
+        "type": "object"
+      },
+      "SelectClear": {
+        "description": "The response from the `SelectClear` endpoint.",
+        "type": "object"
+      },
+      "SelectGet": {
+        "description": "The response from the `SelectGet` command.",
+        "type": "object",
+        "properties": {
+          "entity_ids": {
+            "description": "The UUIDs of the selected entities.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "entity_ids"
+        ]
+      },
+      "SelectRegionFromPoint": {
+        "description": "The response from the 'SelectRegionFromPoint'. If there are multiple ways to construct this region, this chooses arbitrarily.",
+        "type": "object",
+        "properties": {
+          "region": {
+            "nullable": true,
+            "description": "The region the user clicked on. If they clicked an open space which isn't a region, this returns None.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SelectedRegion"
+              }
+            ]
+          }
+        }
+      },
+      "SelectRemove": {
+        "description": "The response from the `SelectRemove` endpoint.",
+        "type": "object"
+      },
+      "SelectReplace": {
+        "description": "The response from the `SelectReplace` endpoint.",
+        "type": "object"
+      },
+      "SelectWithPoint": {
+        "description": "The response from the `SelectWithPoint` command.",
+        "type": "object",
+        "properties": {
+          "entity_id": {
+            "nullable": true,
+            "description": "The UUID of the entity that was selected.",
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "SelectedRegion": {
+        "description": "The region a user clicked on.",
+        "type": "object",
+        "properties": {
+          "curve_clockwise": {
+            "description": "By default (when this is false), curve counterclockwise at intersections. If this is true, instead curve clockwise.",
+            "default": false,
+            "type": "boolean"
+          },
+          "intersection_index": {
+            "description": "At which intersection between `segment` and `intersection_segment` should we stop following the `segment` and start following `intersection_segment`? Defaults to -1, which means the last intersection.",
+            "default": -1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "intersection_segment": {
+            "description": "Second segment to follow to find the region. Intersects the first segment.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "segment": {
+            "description": "First segment to follow to find the region.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "intersection_segment",
+          "segment"
         ]
       },
       "Selection": {
@@ -7961,6 +13065,67 @@
           }
         ]
       },
+      "SendObject": {
+        "description": "The response from the `SendObject` endpoint.",
+        "type": "object"
+      },
+      "SetBackgroundColor": {
+        "description": "The response from the `SetBackgroundColor` endpoint.",
+        "type": "object"
+      },
+      "SetCurrentToolProperties": {
+        "description": "The response from the `SetCurrentToolProperties` endpoint.",
+        "type": "object"
+      },
+      "SetDefaultSystemProperties": {
+        "description": "The response from the `SetDefaultSystemProperties` endpoint.",
+        "type": "object"
+      },
+      "SetGridAutoScale": {
+        "description": "The response from the 'SetGridScale'.",
+        "type": "object"
+      },
+      "SetGridReferencePlane": {
+        "description": "The response from the 'SetGridReferencePlane'.",
+        "type": "object"
+      },
+      "SetGridScale": {
+        "description": "The response from the 'SetGridScale'.",
+        "type": "object"
+      },
+      "SetObjectTransform": {
+        "description": "The response from the `SetObjectTransform` command.",
+        "type": "object"
+      },
+      "SetOrderIndependentTransparency": {
+        "description": "The response from the 'SetOrderIndependentTransparency'.",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "description": "Is it now enabled, or disabled?",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ]
+      },
+      "SetSceneUnits": {
+        "description": "The response from the `SetSceneUnits` endpoint.",
+        "type": "object"
+      },
+      "SetSelectionFilter": {
+        "description": "The response from the `SetSelectionFilter` endpoint.",
+        "type": "object"
+      },
+      "SetSelectionType": {
+        "description": "The response from the `SetSelectionType` endpoint.",
+        "type": "object"
+      },
+      "SetTool": {
+        "description": "The response from the `SetTool` endpoint.",
+        "type": "object"
+      },
       "SideFace": {
         "description": "IDs for a side face, extruded from the path of some sketch/2D shape.",
         "type": "object",
@@ -7980,6 +13145,203 @@
           "face_id",
           "path_id"
         ]
+      },
+      "SketchModeDisable": {
+        "description": "The response from the `SketchModeDisable` endpoint.",
+        "type": "object"
+      },
+      "Solid2dAddHole": {
+        "description": "The response from the `Solid2dAddHole` endpoint.",
+        "type": "object"
+      },
+      "Solid3dCutEdges": {
+        "description": "The response from the `Solid3dCutEdges` endpoint.",
+        "type": "object"
+      },
+      "Solid3dFilletEdge": {
+        "description": "The response from the `Solid3dFilletEdge` endpoint.",
+        "type": "object"
+      },
+      "Solid3dFlip": {
+        "description": "The response from the `Solid3dFlip` command.",
+        "type": "object"
+      },
+      "Solid3dFlipFace": {
+        "description": "The response from the `Solid3dFlipFace` command.",
+        "type": "object"
+      },
+      "Solid3dGetAdjacencyInfo": {
+        "description": "Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces) This includes the opposite and adjacent faces and edges.",
+        "type": "object",
+        "properties": {
+          "edges": {
+            "description": "Details of each edge.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdjacencyInfo"
+            }
+          }
+        },
+        "required": [
+          "edges"
+        ]
+      },
+      "Solid3dGetAllEdgeFaces": {
+        "description": "The response from the `Solid3dGetAllEdgeFaces` command.",
+        "type": "object",
+        "properties": {
+          "faces": {
+            "description": "The UUIDs of the faces.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "faces"
+        ]
+      },
+      "Solid3dGetAllOppositeEdges": {
+        "description": "The response from the `Solid3dGetAllOppositeEdges` command.",
+        "type": "object",
+        "properties": {
+          "edges": {
+            "description": "The UUIDs of the edges.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "edges"
+        ]
+      },
+      "Solid3dGetBodyType": {
+        "description": "The response from the `Solid3dGetBodyType` endpoint.",
+        "type": "object",
+        "properties": {
+          "body_type": {
+            "description": "The body type",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BodyType"
+              }
+            ]
+          }
+        },
+        "required": [
+          "body_type"
+        ]
+      },
+      "Solid3dGetCommonEdge": {
+        "description": "The response from the `Solid3DGetCommonEdge` command.",
+        "type": "object",
+        "properties": {
+          "edge": {
+            "nullable": true,
+            "description": "The UUID of the common edge, if any.",
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "Solid3dGetEdgeUuid": {
+        "description": "The response from the `Solid3dGetEdgeUuid` endpoint.",
+        "type": "object",
+        "properties": {
+          "edge_id": {
+            "description": "The UUID of the edge.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "edge_id"
+        ]
+      },
+      "Solid3dGetExtrusionFaceInfo": {
+        "description": "Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)",
+        "type": "object",
+        "properties": {
+          "faces": {
+            "description": "Details of each face.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExtrusionFaceInfo"
+            }
+          }
+        },
+        "required": [
+          "faces"
+        ]
+      },
+      "Solid3dGetFaceUuid": {
+        "description": "The response from the `Solid3dGetFaceUuid` endpoint.",
+        "type": "object",
+        "properties": {
+          "face_id": {
+            "description": "The UUID of the face.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "face_id"
+        ]
+      },
+      "Solid3dGetNextAdjacentEdge": {
+        "description": "The response from the `Solid3dGetNextAdjacentEdge` command.",
+        "type": "object",
+        "properties": {
+          "edge": {
+            "nullable": true,
+            "description": "The UUID of the edge.",
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "Solid3dGetOppositeEdge": {
+        "description": "The response from the `Solid3dGetOppositeEdge` command.",
+        "type": "object",
+        "properties": {
+          "edge": {
+            "description": "The UUID of the edge.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "edge"
+        ]
+      },
+      "Solid3dGetPrevAdjacentEdge": {
+        "description": "The response from the `Solid3dGetPrevAdjacentEdge` command.",
+        "type": "object",
+        "properties": {
+          "edge": {
+            "nullable": true,
+            "description": "The UUID of the edge.",
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "Solid3dJoin": {
+        "description": "The response from the `Solid3dJoin` endpoint.",
+        "type": "object"
+      },
+      "Solid3dShellFace": {
+        "description": "The response from the `Solid3dShellFace` endpoint.",
+        "type": "object"
+      },
+      "StartPath": {
+        "description": "The response from the `StartPath` endpoint.",
+        "type": "object"
       },
       "StepPresentation": {
         "description": "Describes the presentation style of the EXPRESS exchange format.",
@@ -8019,6 +13381,61 @@
           }
         ]
       },
+      "SuccessWebSocketResponse": {
+        "description": "Successful Websocket response.",
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "nullable": true,
+            "description": "Which request this is a response to. If the request was a modeling command, this is the modeling command ID. If no request ID was sent, this will be null.",
+            "type": "string",
+            "format": "uuid"
+          },
+          "resp": {
+            "description": "The data sent with a successful response. This will be flattened into a 'type' and 'data' field.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OkWebSocketResponseData"
+              }
+            ]
+          },
+          "success": {
+            "description": "Always true",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "resp",
+          "success"
+        ]
+      },
+      "SurfaceArea": {
+        "description": "The surface area response.",
+        "type": "object",
+        "properties": {
+          "output_unit": {
+            "description": "The output unit for the surface area.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnitArea"
+              }
+            ]
+          },
+          "surface_area": {
+            "description": "The surface area.",
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "output_unit",
+          "surface_area"
+        ]
+      },
+      "SurfaceBlend": {
+        "description": "The response from the `SurfaceBlend` endpoint.",
+        "type": "object"
+      },
       "SurfaceEdgeReference": {
         "description": "An object id, that corresponds to a surface body, and a list of edges of the surface.",
         "type": "object",
@@ -8040,6 +13457,10 @@
           "edges",
           "object_id"
         ]
+      },
+      "Sweep": {
+        "description": "The response from the `Sweep` endpoint.",
+        "type": "object"
       },
       "System": {
         "description": "Co-ordinate system definition.\n\nThe `up` axis must be orthogonal to the `forward` axis.\n\nSee [cglearn.eu] for background reading.\n\n[cglearn.eu](https://cglearn.eu/pub/computer-graphics/introduction-to-geometry#material-coordinate-systems-1)",
@@ -8065,6 +13486,21 @@
         "required": [
           "forward",
           "up"
+        ]
+      },
+      "TakeSnapshot": {
+        "description": "The response from the `TakeSnapshot` command.",
+        "type": "object",
+        "properties": {
+          "contents": {
+            "title": "String",
+            "description": "Contents of the image.",
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "contents"
         ]
       },
       "Transform": {
@@ -8191,6 +13627,10 @@
           "property",
           "set"
         ]
+      },
+      "TwistExtrude": {
+        "description": "The response from the `TwistExtrude` endpoint.",
+        "type": "object"
       },
       "UnitAngle": {
         "description": "The valid types of angle formats.",
@@ -8432,6 +13872,50 @@
           }
         ]
       },
+      "UpdateAnnotation": {
+        "description": "The response from the `UpdateAnnotation` endpoint.",
+        "type": "object"
+      },
+      "ViewIsometric": {
+        "description": "The response from the `ViewIsometric` command.",
+        "type": "object",
+        "properties": {
+          "settings": {
+            "description": "Camera settings",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CameraSettings"
+              }
+            ]
+          }
+        },
+        "required": [
+          "settings"
+        ]
+      },
+      "Volume": {
+        "description": "The volume response.",
+        "type": "object",
+        "properties": {
+          "output_unit": {
+            "description": "The output unit for the volume.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnitVolume"
+              }
+            ]
+          },
+          "volume": {
+            "description": "The volume.",
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "output_unit",
+          "volume"
+        ]
+      },
       "WebSocketRequest": {
         "description": "The websocket messages the server receives.",
         "oneOf": [
@@ -8632,11 +14116,49 @@
           }
         ]
       },
+      "WebSocketResponse": {
+        "description": "Websocket responses can either be successful or unsuccessful. Slightly different schemas in either case.",
+        "anyOf": [
+          {
+            "description": "Response sent when a request succeeded.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SuccessWebSocketResponse"
+              }
+            ]
+          },
+          {
+            "description": "Response sent when a request did not succeed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FailureWebSocketResponse"
+              }
+            ]
+          }
+        ]
+      },
       "WorldCoordinateSystem": {
         "type": "string",
         "enum": [
           "right_handed_up_z",
           "right_handed_up_y"
+        ]
+      },
+      "ZoomToFit": {
+        "description": "The response from the `ZoomToFit` command.",
+        "type": "object",
+        "properties": {
+          "settings": {
+            "description": "Camera settings",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CameraSettings"
+              }
+            ]
+          }
+        },
+        "required": [
+          "settings"
         ]
       }
     },
