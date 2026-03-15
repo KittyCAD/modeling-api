@@ -20,12 +20,12 @@ mod point;
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct EdgeReference {
-    /// List of face ids that uniquely identify the edge.
+    /// Adjacent face ids that uniquely identify the edge.
     pub faces: Vec<Uuid>,
-    /// Optional disambiguator face ids for ambiguous edges.
+    /// Optional end face ids for ambiguous edge matches.
     #[serde(default)]
     #[builder(default)]
-    pub disambiguators: Vec<Uuid>,
+    pub end_faces: Vec<Uuid>,
     /// Optional index for disambiguation when multiple edges share the same faces.
     /// If not provided (None), all matching edges will be used.
     /// If provided (Some(n)), only the edge at index n will be used.
@@ -52,22 +52,19 @@ pub enum EntityReference {
     },
     /// A collection of ids that uniquely identify an edge.
     Edge {
-        /// List of face ids that identify the edge.
+        /// Adjacent face ids that identify the edge.
         faces: Vec<Uuid>,
-        /// Optional disambiguator face ids for ambiguous edge matches.
+        /// Optional end face ids for ambiguous edge matches.
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
-        disambiguators: Vec<Uuid>,
+        end_faces: Vec<Uuid>,
         /// Optional index among the filtered candidates.
         #[serde(skip_serializing_if = "Option::is_none")]
         index: Option<u32>,
     },
     /// A collection of ids that uniquely identify an vertex.
     Vertex {
-        /// List of face ids that identify the vertex.
+        /// Adjacent face ids that identify the vertex.
         faces: Vec<Uuid>,
-        /// Optional disambiguator face ids for ambiguous vertex matches.
-        #[serde(default, skip_serializing_if = "Vec::is_empty")]
-        disambiguators: Vec<Uuid>,
         /// Optional index among the filtered candidates.
         #[serde(skip_serializing_if = "Option::is_none")]
         index: Option<u32>,

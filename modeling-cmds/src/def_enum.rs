@@ -419,7 +419,7 @@ define_modeling_cmd_enum! {
             pub body_type: BodyType,
         }
 
-        /// Command for revolving a solid 2d about an edge reference (with faces, disambiguators, index).
+        /// Command for revolving a solid 2d about an edge reference (with faces, end_faces, index).
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
         )]

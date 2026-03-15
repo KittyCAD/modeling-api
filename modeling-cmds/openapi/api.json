@@ -1209,8 +1209,8 @@
         "description": "An edge can be referenced by its uuid or by the faces that uniquely define it.",
         "type": "object",
         "properties": {
-          "disambiguators": {
-            "description": "Optional disambiguator face ids for ambiguous edges.",
+          "end_faces": {
+            "description": "Optional end face ids for ambiguous edge matches.",
             "default": [],
             "type": "array",
             "items": {
@@ -1219,7 +1219,7 @@
             }
           },
           "faces": {
-            "description": "List of face ids that uniquely identify the edge.",
+            "description": "Adjacent face ids that uniquely identify the edge.",
             "type": "array",
             "items": {
               "type": "string",
@@ -1287,8 +1287,8 @@
             "description": "A collection of ids that uniquely identify an edge.",
             "type": "object",
             "properties": {
-              "disambiguators": {
-                "description": "Optional disambiguator face ids for ambiguous edge matches.",
+              "end_faces": {
+                "description": "Optional end face ids for ambiguous edge matches.",
                 "type": "array",
                 "items": {
                   "type": "string",
@@ -1296,7 +1296,7 @@
                 }
               },
               "faces": {
-                "description": "List of face ids that identify the edge.",
+                "description": "Adjacent face ids that identify the edge.",
                 "type": "array",
                 "items": {
                   "type": "string",
@@ -1326,16 +1326,8 @@
             "description": "A collection of ids that uniquely identify an vertex.",
             "type": "object",
             "properties": {
-              "disambiguators": {
-                "description": "Optional disambiguator face ids for ambiguous vertex matches.",
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              },
               "faces": {
-                "description": "List of face ids that identify the vertex.",
+                "description": "Adjacent face ids that identify the vertex.",
                 "type": "array",
                 "items": {
                   "type": "string",
@@ -2792,7 +2784,7 @@
             ]
           },
           {
-            "description": "Command for revolving a solid 2d about an edge reference (with faces, disambiguators, index).",
+            "description": "Command for revolving a solid 2d about an edge reference (with faces, end_faces, index).",
             "type": "object",
             "properties": {
               "angle": {
