@@ -1211,15 +1211,6 @@
         "properties": {
           "end_faces": {
             "description": "Optional end face ids for ambiguous edge matches.",
-            "default": [],
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          "faces": {
-            "description": "Adjacent face ids that uniquely identify the edge.",
             "type": "array",
             "items": {
               "type": "string",
@@ -1232,10 +1223,18 @@
             "type": "integer",
             "format": "uint32",
             "minimum": 0
+          },
+          "side_faces": {
+            "description": "Side face ids that uniquely identify the edge.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         },
         "required": [
-          "faces"
+          "side_faces"
         ]
       },
       "EntityReference": {
@@ -1295,20 +1294,20 @@
                   "format": "uuid"
                 }
               },
-              "faces": {
-                "description": "Adjacent face ids that identify the edge.",
+              "index": {
+                "nullable": true,
+                "description": "Optional index for disambiguation when multiple edges share the same faces. If not provided (None), all matching edges will be used. If provided (Some(n)), only the edge at index n will be used.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "side_faces": {
+                "description": "Side face ids that uniquely identify the edge.",
                 "type": "array",
                 "items": {
                   "type": "string",
                   "format": "uuid"
                 }
-              },
-              "index": {
-                "nullable": true,
-                "description": "Optional index among the filtered candidates.",
-                "type": "integer",
-                "format": "uint32",
-                "minimum": 0
               },
               "type": {
                 "type": "string",
@@ -1318,7 +1317,7 @@
               }
             },
             "required": [
-              "faces",
+              "side_faces",
               "type"
             ]
           },
@@ -1326,20 +1325,20 @@
             "description": "A collection of ids that uniquely identify an vertex.",
             "type": "object",
             "properties": {
-              "faces": {
-                "description": "Adjacent face ids that identify the vertex.",
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              },
               "index": {
                 "nullable": true,
                 "description": "Optional index among the filtered candidates.",
                 "type": "integer",
                 "format": "uint32",
                 "minimum": 0
+              },
+              "side_faces": {
+                "description": "Side face ids that identify the vertex.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
               },
               "type": {
                 "type": "string",
@@ -1349,7 +1348,7 @@
               }
             },
             "required": [
-              "faces",
+              "side_faces",
               "type"
             ]
           },
