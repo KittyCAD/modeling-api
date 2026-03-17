@@ -130,12 +130,6 @@ define_ok_modeling_cmd_response_enum! {
         pub struct RevolveAboutEdge {
         }
 
-        /// The response from the `RevolveAboutEdgeReference` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
-        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct RevolveAboutEdgeReference {
-        }
-
         /// The response from the `CameraDragStart` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
@@ -462,7 +456,7 @@ define_ok_modeling_cmd_response_enum! {
         pub struct QueryEntityTypeWithPoint {
             /// How to reference the selected entity using face ids.
             /// None if no entity was found at the given point (e.g. clicked in empty space).
-            #[serde(skip_serializing_if = "Option::is_none")]
+            #[serde(default, skip_serializing_if = "Option::is_none")]
             pub reference: Option<EntityReference>,
         }
 
@@ -489,7 +483,7 @@ define_ok_modeling_cmd_response_enum! {
         pub struct HighlightQueryEntity {
             /// The EntityReference of the entity that was hovered.
             /// None if no entity was found at the given location (clicked in empty space).
-            #[serde(skip_serializing_if = "Option::is_none")]
+            #[serde(default,skip_serializing_if = "Option::is_none")]
             pub reference: Option<EntityReference>,
             /// If the client sent a sequence ID with its request, the backend sends it back.
             pub sequence: Option<u32>,

@@ -2738,9 +2738,19 @@
                 ]
               },
               "edge_id": {
+                "nullable": true,
                 "description": "The edge to use as the axis of revolution, must be linear and lie in the plane of the solid",
                 "type": "string",
                 "format": "uuid"
+              },
+              "edge_reference": {
+                "nullable": true,
+                "description": "Edge reference to use as the axis of revolution (new API). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeReference"
+                  }
+                ]
               },
               "opposite": {
                 "description": "Should the revolution also revolve in the opposite direction along the given axis? If so, this specifies its angle.",
@@ -2776,76 +2786,6 @@
             },
             "required": [
               "angle",
-              "edge_id",
-              "target",
-              "tolerance",
-              "type"
-            ]
-          },
-          {
-            "description": "Command for revolving a solid 2d about an edge reference (with faces, end_faces, index).",
-            "type": "object",
-            "properties": {
-              "angle": {
-                "description": "The signed angle of revolution (in degrees, must be <= 360 in either direction)",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/Angle"
-                  }
-                ]
-              },
-              "body_type": {
-                "description": "Should this extrude create a solid body or a surface?",
-                "default": "solid",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/BodyType"
-                  }
-                ]
-              },
-              "edge_reference": {
-                "description": "The edge reference to use as the axis of revolution, must be linear and lie in the plane of the solid",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/EdgeReference"
-                  }
-                ]
-              },
-              "opposite": {
-                "description": "Should the revolution also revolve in the opposite direction along the given axis? If so, this specifies its angle.",
-                "default": "None",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/OppositeForAngle"
-                  }
-                ]
-              },
-              "target": {
-                "description": "Which sketch to revolve. Must be a closed 2D solid.",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/ModelingCmdId"
-                  }
-                ]
-              },
-              "tolerance": {
-                "description": "The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/LengthUnit"
-                  }
-                ]
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "revolve_about_edge_reference"
-                ]
-              }
-            },
-            "required": [
-              "angle",
-              "edge_reference",
               "target",
               "tolerance",
               "type"
