@@ -1214,7 +1214,7 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreateRegion {
-            /// a mapping from the curves within this region to the parent component curves they were split from
+            /// a mapping from the curves within this region to the source component segment curves they were split from
             pub region_mapping: HashMap<Uuid, Uuid>,
         }
 
@@ -1224,7 +1224,7 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreateRegionFromQueryPoint {
-            /// a mapping from the curves within this region to the parent component curves they were split from
+            /// a mapping from the curves within this region to the source component segment curves they were split from
             pub region_mapping: HashMap<Uuid, Uuid>,
         }
 
