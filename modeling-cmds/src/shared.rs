@@ -1259,7 +1259,7 @@ pub enum ExtrudeMethod {
 }
 
 /// Type of reference geometry to extrude to.
-#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1267,10 +1267,14 @@ pub enum ExtrudeMethod {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum ExtrudeReference {
     /// Extrudes along the normal of the top face until it is as close to the entity as possible.
-    /// An entity can be a solid, a path, a face, etc.
+    /// An entity can be a solid, a path, a face, an edge (via `entity_reference`), etc.
     EntityReference {
-        /// The UUID of the entity to extrude to.
-        entity_id: Uuid,
+        /// Legacy UUID of the entity to extrude to. If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        entity_id: Option<Uuid>,
+        /// Entity reference (e.g. edge by side_faces). If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        entity_reference: Option<EntityReference>,
     },
     /// Extrudes until the top face is as close as possible to this given axis.
     Axis {
@@ -1820,8 +1824,12 @@ impl Default for SelectedRegion {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct FractionOfEdge {
-    /// The id of the edge
-    pub edge_id: Uuid,
+    /// The id of the edge (legacy). If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub edge_id: Option<Uuid>,
+    /// Edge specifier (side_faces, end_faces, index) identifying the edge. If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub edge_specifier: Option<EdgeSpecifier>,
     /// A value between [0.0, 1.0] (default 0.0) that is a percentage along the edge. This bound
     /// will control how much of the edge is used during the blend.
     /// If lower_bound is larger than upper_bound, the edge is effectively "flipped".

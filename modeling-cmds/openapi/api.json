@@ -1503,21 +1503,28 @@
         "description": "Type of reference geometry to extrude to.",
         "oneOf": [
           {
-            "description": "Extrudes along the normal of the top face until it is as close to the entity as possible. An entity can be a solid, a path, a face, etc.",
+            "description": "Extrudes along the normal of the top face until it is as close to the entity as possible. An entity can be a solid, a path, a face, an edge (via `entity_reference`), etc.",
             "type": "object",
             "properties": {
               "entity_reference": {
                 "type": "object",
                 "properties": {
                   "entity_id": {
-                    "description": "The UUID of the entity to extrude to.",
+                    "nullable": true,
+                    "description": "Legacy UUID of the entity to extrude to. If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
                     "type": "string",
                     "format": "uuid"
+                  },
+                  "entity_reference": {
+                    "nullable": true,
+                    "description": "Entity reference (e.g. edge by side_faces). If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EntityReference"
+                      }
+                    ]
                   }
-                },
-                "required": [
-                  "entity_id"
-                ]
+                }
               }
             },
             "required": [
@@ -1644,9 +1651,19 @@
         "type": "object",
         "properties": {
           "edge_id": {
-            "description": "The id of the edge",
+            "nullable": true,
+            "description": "The id of the edge (legacy). If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.",
             "type": "string",
             "format": "uuid"
+          },
+          "edge_specifier": {
+            "nullable": true,
+            "description": "Edge specifier (side_faces, end_faces, index) identifying the edge. If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EdgeSpecifier"
+              }
+            ]
           },
           "lower_bound": {
             "description": "A value between [0.0, 1.0] (default 0.0) that is a percentage along the edge. This bound will control how much of the edge is used during the blend. If lower_bound is larger than upper_bound, the edge is effectively \"flipped\".",
@@ -1664,10 +1681,7 @@
             "minimum": 0.0,
             "maximum": 1.0
           }
-        },
-        "required": [
-          "edge_id"
-        ]
+        }
       },
       "GlobalAxis": {
         "description": "The global axes.",
@@ -3899,9 +3913,19 @@
             "type": "object",
             "properties": {
               "edge_id": {
-                "description": "The edge to use as the mirror axis, must be linear and lie in the plane of the solid",
+                "nullable": true,
+                "description": "The edge to use as the mirror axis (legacy API). Must be linear and lie in the plane of the solid. If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
                 "type": "string",
                 "format": "uuid"
+              },
+              "edge_reference": {
+                "nullable": true,
+                "description": "Edge reference to use as the mirror axis (new API). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeSpecifier"
+                  }
+                ]
               },
               "ids": {
                 "description": "ID of the mirror entities.",
@@ -3919,7 +3943,6 @@
               }
             },
             "required": [
-              "edge_id",
               "ids",
               "type"
             ]
@@ -5518,12 +5541,22 @@
             "type": "object",
             "properties": {
               "entity_id": {
-                "description": "Which entity to project (vertex or edge).",
+                "nullable": true,
+                "description": "Which entity to project (vertex or edge). Legacy; if both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
                 "type": "string",
                 "format": "uuid"
               },
+              "entity_reference": {
+                "nullable": true,
+                "description": "Entity reference (e.g. edge by side_faces, vertex, face) to project. If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EntityReference"
+                  }
+                ]
+              },
               "plane_id": {
-                "description": "Which plane to project entity_id onto.",
+                "description": "Which plane to project the entity onto.",
                 "type": "string",
                 "format": "uuid"
               },
@@ -5539,7 +5572,6 @@
               }
             },
             "required": [
-              "entity_id",
               "plane_id",
               "type",
               "use_plane_coords"

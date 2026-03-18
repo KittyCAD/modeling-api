@@ -923,8 +923,14 @@ define_modeling_cmd_enum! {
         pub struct EntityMirrorAcrossEdge {
             /// ID of the mirror entities.
             pub ids: Vec<Uuid>,
-            /// The edge to use as the mirror axis, must be linear and lie in the plane of the solid
-            pub edge_id: Uuid,
+            /// The edge to use as the mirror axis (legacy API). Must be linear and lie in the plane of the solid.
+            /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_id: Option<Uuid>,
+            /// Edge reference to use as the mirror axis (new API).
+            /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_reference: Option<EdgeSpecifier>,
         }
 
         /// Modifies the selection by simulating a "mouse click" at the given x,y window coordinate
@@ -1691,9 +1697,13 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ProjectEntityToPlane {
-            /// Which entity to project (vertex or edge).
-            pub entity_id: Uuid,
-            /// Which plane to project entity_id onto.
+            /// Which entity to project (vertex or edge). Legacy; if both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub entity_id: Option<Uuid>,
+            /// Entity reference (e.g. edge by side_faces, vertex, face) to project. If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub entity_reference: Option<EntityReference>,
+            /// Which plane to project the entity onto.
             pub plane_id: Uuid,
             /// If true: the projected points are returned in the plane_id's coordinate system,
             /// else: the projected points are returned in the world coordinate system.
