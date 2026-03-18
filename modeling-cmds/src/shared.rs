@@ -19,7 +19,7 @@ mod point;
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct EdgeReference {
+pub struct EdgeSpecifier {
     /// Side face ids that uniquely identify the edge.
     pub side_faces: Vec<Uuid>,
     /// Optional end face ids for ambiguous edge matches.
@@ -54,7 +54,7 @@ pub enum EntityReference {
     Edge {
         /// Flattened edge reference (side_faces, end_faces, index).
         #[serde(flatten)]
-        inner: EdgeReference,
+        inner: EdgeSpecifier,
     },
     /// A collection of ids that uniquely identify an vertex.
     Vertex {

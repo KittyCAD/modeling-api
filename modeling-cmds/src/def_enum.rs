@@ -31,7 +31,7 @@ define_modeling_cmd_enum! {
                 CutType, CutTypeV2,
                 CutStrategy,
                 CameraMovement,
-                EdgeReference,
+                EdgeSpecifier,
                 EntityReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
@@ -408,7 +408,7 @@ define_modeling_cmd_enum! {
             /// Edge reference to use as the axis of revolution (new API).
             /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
             #[serde(default, skip_serializing_if = "Option::is_none")]
-            pub edge_reference: Option<EdgeReference>,
+            pub edge_reference: Option<EdgeSpecifier>,
             /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
             pub angle: Angle,
             /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
@@ -894,7 +894,7 @@ define_modeling_cmd_enum! {
             /// Edge reference about which to make the helix (new API).
             /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
             #[serde(default, skip_serializing_if = "Option::is_none")]
-            pub edge_reference: Option<EdgeReference>,
+            pub edge_reference: Option<EdgeSpecifier>,
         }
 
         /// Mirror the input entities over the specified axis. (Currently only supports sketches)
@@ -1293,7 +1293,7 @@ define_modeling_cmd_enum! {
             /// A struct containing the information required to reference an edge.
             #[serde(default)]
             #[builder(default)]
-            pub edges_references: Vec<EdgeReference>,
+            pub edges_references: Vec<EdgeSpecifier>,
             /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
             pub radius: LengthUnit,
             /// The maximum acceptable surface gap computed between the filleted surfaces. Must be positive (i.e. greater than zero).
@@ -1328,7 +1328,7 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
             /// A struct containing the information required to reference an edge.
             #[serde(default)]
-            pub edges_references: Vec<EdgeReference>,
+            pub edges_references: Vec<EdgeSpecifier>,
             /// The cut type and information required to perform the cut.
             pub cut_type: CutTypeV2,
             /// The maximum acceptable surface gap computed between the cut surfaces. Must be
