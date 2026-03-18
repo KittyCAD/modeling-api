@@ -253,6 +253,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub relative_to: RelativeTo,
+            /// What version of the sweeping algorithm to use. If None, or zero, the engine's
+            /// default algorithm will be used
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub version: Option<u8>,
         }
 
         /// Command for revolving a solid 2d.
