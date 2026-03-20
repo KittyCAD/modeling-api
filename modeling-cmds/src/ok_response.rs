@@ -17,6 +17,7 @@ define_ok_modeling_cmd_response_enum! {
             BodyType,
             EntityReference,
         };
+        use std::collections::HashMap;
 
         use crate::{self as kittycad_modeling_cmds};
         use crate::{
@@ -1255,6 +1256,8 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreateRegion {
+            /// a mapping from the curves within this region to the source component segment curves they were split from
+            pub region_mapping: HashMap<Uuid, Uuid>,
         }
 
         /// The response from the 'CreateRegionFromQueryPoint'.
@@ -1263,6 +1266,8 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreateRegionFromQueryPoint {
+            /// a mapping from the curves within this region to the source component segment curves they were split from
+            pub region_mapping: HashMap<Uuid, Uuid>,
         }
 
         /// The response from 'RegionGetQueryPoint' modeling command.
