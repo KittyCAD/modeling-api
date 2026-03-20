@@ -1249,6 +1249,15 @@
                 "type": "string",
                 "format": "uuid"
               },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Optional primitive topology on a parent (not used for planes today).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -1269,6 +1278,15 @@
                 "description": "Id of the face being referenced.",
                 "type": "string",
                 "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid3d UUID + face index on that body when `face_id` cannot be resolved client-side.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
               },
               "type": {
                 "type": "string",
@@ -1309,6 +1327,15 @@
                   "format": "uuid"
                 }
               },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid3d UUID + edge index on that body for 3D BREP edges (distinct from `inner.index`).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -1340,6 +1367,15 @@
                   "format": "uuid"
                 }
               },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid3d UUID + vertex index on that body.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -1360,6 +1396,15 @@
                 "description": "Id of the solid2d being referenced.",
                 "type": "string",
                 "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Typically omitted: `solid2d_id` is already the owning profile. Present for schema parity with other variants.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
               },
               "type": {
                 "type": "string",
@@ -1382,6 +1427,15 @@
                 "type": "string",
                 "format": "uuid"
               },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Typically omitted: `solid3d_id` is already the owning body. Present for schema parity with other variants.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -1402,6 +1456,15 @@
                 "description": "Id of the edge being referenced.",
                 "type": "string",
                 "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid2d UUID + curve index in that profile.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
               },
               "type": {
                 "type": "string",
@@ -1428,6 +1491,15 @@
                 "description": "Id of the segment (curve) being referenced.",
                 "type": "string",
                 "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: path UUID + segment curve index.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
               },
               "type": {
                 "type": "string",
@@ -8148,6 +8220,27 @@
           "x",
           "y",
           "z"
+        ]
+      },
+      "PrimitiveTopologyFallback": {
+        "description": "Optional fallback when primary UUIDs are missing from the client artifact graph (e.g. stale or engine-only ids). Identifies the same topology via a **parent** entity UUID and a **primitive index** on that parent.\n\nSemantics by selection kind (aligned with engine BREP topology):\n\n- **Face / Edge (3D)**: `parent_id` is the owning [`EntityType::Solid3D`] body UUID; `primitive_index` matches the index returned by **EntityGetPrimitiveIndex** for that face or edge (and matches **EntityGetParentId** → parent + **EntityGetPrimitiveIndex** → index). - **Vertex (3D)**: same `parent_id` (solid); `primitive_index` is the BREP vertex index on that solid. - **Solid2dEdge**: `parent_id` is the **Solid2D** profile UUID; `primitive_index` is the curve index within that profile. - **Segment**: `parent_id` is the **Path** UUID; `primitive_index` is the curve index within that path.\n\nOther [`EntityReference`] variants may omit this field or leave it unset when not applicable.",
+        "type": "object",
+        "properties": {
+          "parent_id": {
+            "description": "UUID of the parent entity that owns the primitive (solid3d, solid2d, or path).",
+            "type": "string",
+            "format": "uuid"
+          },
+          "primitive_index": {
+            "description": "Index of the face, edge, vertex, profile curve, or path segment on `parent_id`.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "parent_id",
+          "primitive_index"
         ]
       },
       "RelativeTo": {
