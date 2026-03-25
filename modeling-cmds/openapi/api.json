@@ -6883,7 +6883,7 @@
                 "type": "boolean"
               },
               "separate_bodies": {
-                "description": "If true, non-contiguous bodies in the result will be returned as separate objects.",
+                "description": "If true, target bodies will be separated into multiple objects at their intersection boundaries.",
                 "default": false,
                 "type": "boolean"
               },
@@ -6897,7 +6897,7 @@
               },
               "tool_ids": {
                 "nullable": true,
-                "description": "If provided, only these bodies will be used to intersect with the target bodies in body_ids. Otherwise, all bodies in body_ids will be intersected with themselves.",
+                "description": "If provided, only these bodies will be used to intersect with the target bodies in body_ids, Otherwise, all bodies in body_ids will be intersected with themselves.",
                 "default": null,
                 "type": "array",
                 "items": {
