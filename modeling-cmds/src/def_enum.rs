@@ -2386,11 +2386,11 @@ define_modeling_cmd_enum! {
             /// Which target input bodies to intersect. Inputs with non-solid body types are permitted
             #[serde(alias = "target_ids")]
             pub body_ids: Vec<Uuid>,
-            /// If provided, only these bodies will be used to intersect with the target bodies in body_ids.
-            /// Otherwise, all bodies in body_ids will be intersected with themselves.
+            ///If provided, only these bodies will be used to intersect with the target bodies in body_ids,
+            ///Otherwise, all bodies in body_ids will be intersected with themselves.
             #[serde(default)]
             pub tool_ids: Option<Vec<Uuid>>,
-            /// If true, non-contiguous bodies in the result will be returned as separate objects.
+            /// If true, target bodies will be separated into multiple objects at their intersection boundaries.
             #[serde(default)]
             #[builder(default)]
             pub separate_bodies: bool,
