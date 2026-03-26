@@ -1275,6 +1275,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub extra_face_ids: Vec<Uuid>,
+            /// If true, use the legacy CSG algorithm.
+            #[serde(default)]
+            #[builder(default)]
+            pub use_legacy: bool,
         }
 
         /// Cut the list of given edges with the given cut parameters.
@@ -1309,6 +1313,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub extra_face_ids: Vec<Uuid>,
+            /// If true, use the legacy CSG algorithm.
+            #[serde(default)]
+            #[builder(default)]
+            pub use_legacy: bool,
         }
 
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so
