@@ -6262,6 +6262,11 @@
                 "enum": [
                   "boolean_union"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "default": false,
+                "type": "boolean"
               }
             },
             "required": [
@@ -6300,6 +6305,11 @@
                 "enum": [
                   "boolean_intersection"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "default": false,
+                "type": "boolean"
               }
             },
             "required": [
@@ -6346,6 +6356,11 @@
                 "enum": [
                   "boolean_subtract"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "default": false,
+                "type": "boolean"
               }
             },
             "required": [
@@ -6400,6 +6415,11 @@
                 "enum": [
                   "boolean_imprint"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "default": false,
+                "type": "boolean"
               }
             },
             "required": [
