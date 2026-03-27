@@ -340,6 +340,8 @@ define_modeling_cmd_enum! {
         pub struct Solid3dMultiJoin {
             /// Which bodies are being joined.
             pub object_ids: Vec<Uuid>,
+            /// The maximum acceptable surface gap computed between the joints. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
         }
 
 
