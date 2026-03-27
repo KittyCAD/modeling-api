@@ -329,7 +329,7 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
         }
 
-        /// Command for joining a multiple Surfaces (non-manifold) to a Solid.
+        /// Command for joining multiple Surfaces (non-manifold) to a Solid.
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
         )]
@@ -338,7 +338,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dMultiJoin {
-            /// Which Solid3Ds are being joined.
+            /// Which bodies are being joined.
             pub object_ids: Vec<Uuid>,
         }
 
