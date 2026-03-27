@@ -2939,7 +2939,6 @@
                 "type": "string",
                 "format": "uuid"
               },
-<<<<<<< HEAD
               "edge_reference": {
                 "nullable": true,
                 "description": "Edge reference to use as the axis of revolution (new API). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
@@ -2948,13 +2947,11 @@
                     "$ref": "#/components/schemas/EdgeSpecifier"
                   }
                 ]
-||||||| parent of 3cb4bff (Configurable seams)
-=======
+              },
               "keep_seams": {
                 "description": "When two collinear segments are extruded, what should happen? If true, creates a body with two surfaces. If false, creates a body with one surface, spanning both collinear segments.",
                 "default": false,
                 "type": "boolean"
->>>>>>> 3cb4bff (Configurable seams)
               },
               "opposite": {
                 "description": "Should the revolution also revolve in the opposite direction along the given axis? If so, this specifies its angle.",

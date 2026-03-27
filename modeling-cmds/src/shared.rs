@@ -1911,7 +1911,7 @@ pub struct SurfaceEdgeReference {
 }
 
 /// List of bodies that were created by an operation.
-#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1919,6 +1919,31 @@ pub struct SurfaceEdgeReference {
 pub struct BodiesCreated {
     /// All bodies created by this operation.
     pub bodies: Vec<BodyCreated>,
+}
+
+impl BodiesCreated {
+    /// Are there any bodies in this list?
+    pub fn is_empty(&self) -> bool {
+        self.bodies.is_empty()
+    }
+}
+
+/// List of bodies that were updated by an operation.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodiesUpdated {
+    /// All bodies created by this operation.
+    pub bodies: Vec<BodyUpdated>,
+}
+
+impl BodiesUpdated {
+    /// Are there any bodies in this list?
+    pub fn is_empty(&self) -> bool {
+        self.bodies.is_empty()
+    }
 }
 
 /// Details of a body that was created.
@@ -1931,6 +1956,19 @@ pub struct BodyCreated {
     /// The body's ID.
     pub id: Uuid,
     /// Surfaces this body contains.
+    pub surfaces: Vec<SurfaceCreated>,
+}
+
+/// Details of a body that was updated.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodyUpdated {
+    /// The body's ID.
+    pub id: Uuid,
+    /// Surfaces added to this body.
     pub surfaces: Vec<SurfaceCreated>,
 }
 
