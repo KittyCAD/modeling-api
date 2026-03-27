@@ -2373,6 +2373,39 @@
             ]
           },
           {
+            "description": "Command for joining multiple Surfaces (non-manifold) to a Solid.",
+            "type": "object",
+            "properties": {
+              "object_ids": {
+                "description": "Which bodies are being joined.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "tolerance": {
+                "description": "The maximum acceptable surface gap computed between the joints. Must be positive (i.e. greater than zero).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_multi_join"
+                ]
+              }
+            },
+            "required": [
+              "object_ids",
+              "tolerance",
+              "type"
+            ]
+          },
+          {
             "description": "Command for creating a blend between the edge of two given surfaces",
             "type": "object",
             "properties": {
