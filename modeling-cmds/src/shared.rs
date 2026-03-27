@@ -12,134 +12,6 @@ use crate::{def_enum::negative_one, length_unit::LengthUnit, output::ExtrusionFa
 
 mod point;
 
-/// An edge can be referenced by its uuid or by the faces that uniquely define it.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
-#[serde(rename_all = "snake_case")]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct EdgeSpecifier {
-    /// Side face ids that uniquely identify the edge.
-    pub side_faces: Vec<Uuid>,
-    /// Optional end face ids for ambiguous edge matches.
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    #[builder(default)]
-    pub end_faces: Vec<Uuid>,
-    /// Optional index for disambiguation when multiple edges share the same faces.
-    /// If not provided (None), all matching edges will be used.
-    /// If provided (Some(n)), only the edge at index n will be used.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub index: Option<u32>,
-}
-
-/// Optional fallback when primary UUIDs are missing from the client artifact graph (e.g. stale or
-/// engine-only ids). Identifies the same topology via a **parent** entity UUID and a **primitive
-/// index** on that parent.
-///
-/// Semantics by selection kind (aligned with engine BREP topology):
-///
-/// - **Face / Edge (3D)**: `parent_id` is the owning [`EntityType::Solid3D`] body UUID; `primitive_index`
-///   matches the index returned by **EntityGetPrimitiveIndex** for that face or edge (and matches
-///   **EntityGetParentId** → parent + **EntityGetPrimitiveIndex** → index).
-/// - **Vertex (3D)**: same `parent_id` (solid); `primitive_index` is the BREP vertex index on that solid.
-/// - **Solid2dEdge**: `parent_id` is the **Solid2D** profile UUID; `primitive_index` is the curve index
-///   within that profile.
-/// - **Segment**: `parent_id` is the **Path** UUID; `primitive_index` is the curve index within that path.
-///
-/// Other [`EntityReference`] variants may omit this field or leave it unset when not applicable.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub struct PrimitiveTopologyFallback {
-    /// UUID of the parent entity that owns the primitive (solid3d, solid2d, or path).
-    pub parent_id: Uuid,
-    /// Index of the face, edge, vertex, profile curve, or path segment on `parent_id`.
-    pub primitive_index: u32,
-}
-
-/// An edge/vertex can be defined by the faces that it is connected to.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
-#[serde(tag = "type", rename_all = "snake_case")]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub enum EntityReference {
-    /// A uuid referencing a plane.
-    Plane {
-        /// Id of the plane being referenced.
-        plane_id: Uuid,
-        /// Optional primitive topology on a parent (not used for planes today).
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        topology_fallback: Option<PrimitiveTopologyFallback>,
-    },
-    /// A uuid referencing a face.
-    Face {
-        /// Id of the face being referenced.
-        face_id: Uuid,
-        /// Fallback: solid3d UUID + face index on that body when `face_id` cannot be resolved client-side.
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        topology_fallback: Option<PrimitiveTopologyFallback>,
-    },
-    /// A collection of ids that uniquely identify an edge.
-    Edge {
-        /// Flattened edge reference (side_faces, end_faces, index).
-        #[serde(flatten)]
-        inner: EdgeSpecifier,
-        /// Fallback: solid3d UUID + edge index on that body for 3D BREP edges (distinct from `inner.index`).
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        topology_fallback: Option<PrimitiveTopologyFallback>,
-    },
-    /// A collection of ids that uniquely identify an vertex.
-    Vertex {
-        /// Side face ids that identify the vertex.
-        side_faces: Vec<Uuid>,
-        /// Optional index among the filtered candidates.
-        #[serde(skip_serializing_if = "Option::is_none")]
-        index: Option<u32>,
-        /// Fallback: solid3d UUID + vertex index on that body.
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        topology_fallback: Option<PrimitiveTopologyFallback>,
-    },
-    /// A uuid referencing a solid2d (profile).
-    Solid2d {
-        /// Id of the solid2d being referenced.
-        solid2d_id: Uuid,
-        /// Typically omitted: `solid2d_id` is already the owning profile. Present for schema parity with other variants.
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        topology_fallback: Option<PrimitiveTopologyFallback>,
-    },
-    /// A uuid referencing a solid3d (body).
-    Solid3d {
-        /// Id of the solid3d being referenced.
-        solid3d_id: Uuid,
-        /// Typically omitted: `solid3d_id` is already the owning body. Present for schema parity with other variants.
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        topology_fallback: Option<PrimitiveTopologyFallback>,
-    },
-    /// A uuid referencing an edge on a solid2d (profile) - used for raw sketch/profile edges.
-    /// This is distinct from the face-based Edge reference which is used for BRep/swept body edges.
-    Solid2dEdge {
-        /// Id of the edge being referenced.
-        edge_id: Uuid,
-        /// Fallback: solid2d UUID + curve index in that profile.
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        topology_fallback: Option<PrimitiveTopologyFallback>,
-    },
-    /// A single segment (curve) within a path.
-    Segment {
-        /// Id of the path containing the segment.
-        path_id: Uuid,
-        /// Id of the segment (curve) being referenced.
-        segment_id: Uuid,
-        /// Fallback: path UUID + segment curve index.
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        topology_fallback: Option<PrimitiveTopologyFallback>,
-    },
-}
-
 /// What kind of cut to do
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
@@ -1099,7 +971,6 @@ pub enum EntityType {
     Entity,
     Object,
     Path,
-    Segment,
     Curve,
     Solid2D,
     Solid3D,
@@ -1310,7 +1181,7 @@ pub enum ExtrudeMethod {
 }
 
 /// Type of reference geometry to extrude to.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1318,14 +1189,10 @@ pub enum ExtrudeMethod {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum ExtrudeReference {
     /// Extrudes along the normal of the top face until it is as close to the entity as possible.
-    /// An entity can be a solid, a path, a face, an edge (via `entity_reference`), etc.
+    /// An entity can be a solid, a path, a face, etc.
     EntityReference {
-        /// Legacy UUID of the entity to extrude to. If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        entity_id: Option<Uuid>,
-        /// Entity reference (e.g. edge by side_faces). If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.
-        #[serde(default, skip_serializing_if = "Option::is_none")]
-        entity_reference: Option<EntityReference>,
+        /// The UUID of the entity to extrude to.
+        entity_id: Uuid,
     },
     /// Extrudes until the top face is as close as possible to this given axis.
     Axis {
@@ -1875,12 +1742,8 @@ impl Default for SelectedRegion {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct FractionOfEdge {
-    /// The id of the edge (legacy). If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub edge_id: Option<Uuid>,
-    /// Edge specifier (side_faces, end_faces, index) identifying the edge. If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub edge_specifier: Option<EdgeSpecifier>,
+    /// The id of the edge
+    pub edge_id: Uuid,
     /// A value between [0.0, 1.0] (default 0.0) that is a percentage along the edge. This bound
     /// will control how much of the edge is used during the blend.
     /// If lower_bound is larger than upper_bound, the edge is effectively "flipped".
