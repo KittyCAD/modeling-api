@@ -331,6 +331,22 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
         }
 
+        /// Command for joining multiple Surfaces (non-manifold) to a Solid.
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct Solid3dMultiJoin {
+            /// Which bodies are being joined.
+            pub object_ids: Vec<Uuid>,
+            /// The maximum acceptable surface gap computed between the joints. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+        }
+
+
         /// Command for creating a blend between the edge of two given surfaces
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
