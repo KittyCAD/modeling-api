@@ -1205,6 +1205,317 @@
           }
         ]
       },
+      "EdgeSpecifier": {
+        "description": "An edge can be referenced by its uuid or by the faces that uniquely define it.",
+        "type": "object",
+        "properties": {
+          "end_faces": {
+            "description": "Optional end face ids for ambiguous edge matches.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "index": {
+            "nullable": true,
+            "description": "Optional index for disambiguation when multiple edges share the same faces. If not provided (None), all matching edges will be used. If provided (Some(n)), only the edge at index n will be used.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          },
+          "side_faces": {
+            "description": "Side face ids that uniquely identify the edge.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "side_faces"
+        ]
+      },
+      "EntityReference": {
+        "description": "An edge/vertex can be defined by the faces that it is connected to.",
+        "oneOf": [
+          {
+            "description": "A uuid referencing a plane.",
+            "type": "object",
+            "properties": {
+              "plane_id": {
+                "description": "Id of the plane being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Optional primitive topology on a parent (not used for planes today).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "plane"
+                ]
+              }
+            },
+            "required": [
+              "plane_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing a face.",
+            "type": "object",
+            "properties": {
+              "face_id": {
+                "description": "Id of the face being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid3d UUID + face index on that body when `face_id` cannot be resolved client-side.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "face"
+                ]
+              }
+            },
+            "required": [
+              "face_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A collection of ids that uniquely identify an edge.",
+            "type": "object",
+            "properties": {
+              "end_faces": {
+                "description": "Optional end face ids for ambiguous edge matches.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "index": {
+                "nullable": true,
+                "description": "Optional index for disambiguation when multiple edges share the same faces. If not provided (None), all matching edges will be used. If provided (Some(n)), only the edge at index n will be used.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "side_faces": {
+                "description": "Side face ids that uniquely identify the edge.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid3d UUID + edge index on that body for 3D BREP edges (distinct from `inner.index`).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "edge"
+                ]
+              }
+            },
+            "required": [
+              "side_faces",
+              "type"
+            ]
+          },
+          {
+            "description": "A collection of ids that uniquely identify an vertex.",
+            "type": "object",
+            "properties": {
+              "index": {
+                "nullable": true,
+                "description": "Optional index among the filtered candidates.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "side_faces": {
+                "description": "Side face ids that identify the vertex.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid3d UUID + vertex index on that body.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "vertex"
+                ]
+              }
+            },
+            "required": [
+              "side_faces",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing a solid2d (profile).",
+            "type": "object",
+            "properties": {
+              "solid2d_id": {
+                "description": "Id of the solid2d being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Typically omitted: `solid2d_id` is already the owning profile. Present for schema parity with other variants.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid2d"
+                ]
+              }
+            },
+            "required": [
+              "solid2d_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing a solid3d (body).",
+            "type": "object",
+            "properties": {
+              "solid3d_id": {
+                "description": "Id of the solid3d being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Typically omitted: `solid3d_id` is already the owning body. Present for schema parity with other variants.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d"
+                ]
+              }
+            },
+            "required": [
+              "solid3d_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing an edge on a solid2d (profile) - used for raw sketch/profile edges. This is distinct from the face-based Edge reference which is used for BRep/swept body edges.",
+            "type": "object",
+            "properties": {
+              "edge_id": {
+                "description": "Id of the edge being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid2d UUID + curve index in that profile.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid2d_edge"
+                ]
+              }
+            },
+            "required": [
+              "edge_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A single segment (curve) within a path.",
+            "type": "object",
+            "properties": {
+              "path_id": {
+                "description": "Id of the path containing the segment.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "segment_id": {
+                "description": "Id of the segment (curve) being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: path UUID + segment curve index.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "segment"
+                ]
+              }
+            },
+            "required": [
+              "path_id",
+              "segment_id",
+              "type"
+            ]
+          }
+        ]
+      },
       "EntityType": {
         "description": "The type of entity",
         "type": "string",
@@ -1212,6 +1523,7 @@
           "entity",
           "object",
           "path",
+          "segment",
           "curve",
           "solid2d",
           "solid3d",
@@ -1263,21 +1575,28 @@
         "description": "Type of reference geometry to extrude to.",
         "oneOf": [
           {
-            "description": "Extrudes along the normal of the top face until it is as close to the entity as possible. An entity can be a solid, a path, a face, etc.",
+            "description": "Extrudes along the normal of the top face until it is as close to the entity as possible. An entity can be a solid, a path, a face, an edge (via `entity_reference`), etc.",
             "type": "object",
             "properties": {
               "entity_reference": {
                 "type": "object",
                 "properties": {
                   "entity_id": {
-                    "description": "The UUID of the entity to extrude to.",
+                    "nullable": true,
+                    "description": "Legacy UUID of the entity to extrude to. If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
                     "type": "string",
                     "format": "uuid"
+                  },
+                  "entity_reference": {
+                    "nullable": true,
+                    "description": "Entity reference (e.g. edge by side_faces). If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EntityReference"
+                      }
+                    ]
                   }
-                },
-                "required": [
-                  "entity_id"
-                ]
+                }
               }
             },
             "required": [
@@ -1404,9 +1723,19 @@
         "type": "object",
         "properties": {
           "edge_id": {
-            "description": "The id of the edge",
+            "nullable": true,
+            "description": "The id of the edge (legacy). If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.",
             "type": "string",
             "format": "uuid"
+          },
+          "edge_specifier": {
+            "nullable": true,
+            "description": "Edge specifier (side_faces, end_faces, index) identifying the edge. If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EdgeSpecifier"
+              }
+            ]
           },
           "lower_bound": {
             "description": "A value between [0.0, 1.0] (default 0.0) that is a percentage along the edge. This bound will control how much of the edge is used during the blend. If lower_bound is larger than upper_bound, the edge is effectively \"flipped\".",
@@ -1424,10 +1753,7 @@
             "minimum": 0.0,
             "maximum": 1.0
           }
-        },
-        "required": [
-          "edge_id"
-        ]
+        }
       },
       "GlobalAxis": {
         "description": "The global axes.",
@@ -2538,9 +2864,19 @@
                 ]
               },
               "edge_id": {
+                "nullable": true,
                 "description": "The edge to use as the axis of revolution, must be linear and lie in the plane of the solid",
                 "type": "string",
                 "format": "uuid"
+              },
+              "edge_reference": {
+                "nullable": true,
+                "description": "Edge reference to use as the axis of revolution (new API). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeSpecifier"
+                  }
+                ]
               },
               "opposite": {
                 "description": "Should the revolution also revolve in the opposite direction along the given axis? If so, this specifies its angle.",
@@ -2576,7 +2912,6 @@
             },
             "required": [
               "angle",
-              "edge_id",
               "target",
               "tolerance",
               "type"
@@ -3577,9 +3912,19 @@
             "type": "object",
             "properties": {
               "edge_id": {
-                "description": "Edge about which to make the helix.",
+                "nullable": true,
+                "description": "Edge ID about which to make the helix (legacy API, for backwards compatibility). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
                 "type": "string",
                 "format": "uuid"
+              },
+              "edge_reference": {
+                "nullable": true,
+                "description": "Edge reference about which to make the helix (new API). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeSpecifier"
+                  }
+                ]
               },
               "is_clockwise": {
                 "description": "Is the helix rotation clockwise?",
@@ -3627,7 +3972,6 @@
               }
             },
             "required": [
-              "edge_id",
               "is_clockwise",
               "radius",
               "revolutions",
@@ -3681,9 +4025,19 @@
             "type": "object",
             "properties": {
               "edge_id": {
-                "description": "The edge to use as the mirror axis, must be linear and lie in the plane of the solid",
+                "nullable": true,
+                "description": "The edge to use as the mirror axis (legacy API). Must be linear and lie in the plane of the solid. If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
                 "type": "string",
                 "format": "uuid"
+              },
+              "edge_reference": {
+                "nullable": true,
+                "description": "Edge reference to use as the mirror axis (new API). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeSpecifier"
+                  }
+                ]
               },
               "ids": {
                 "description": "ID of the mirror entities.",
@@ -3701,7 +4055,6 @@
               }
             },
             "required": [
-              "edge_id",
               "ids",
               "type"
             ]
@@ -3736,6 +4089,60 @@
             "required": [
               "selected_at_window",
               "selection_type",
+              "type"
+            ]
+          },
+          {
+            "description": "Query the type of entity that was selected. E.g. if a face is selected the face id is returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are returned (typically two).",
+            "type": "object",
+            "properties": {
+              "selected_at_window": {
+                "description": "Where in the window was selected",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Point2d"
+                  }
+                ]
+              },
+              "selection_type": {
+                "description": "What entity was selected?",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/SceneSelectionType"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "query_entity_type_with_point"
+                ]
+              }
+            },
+            "required": [
+              "selected_at_window",
+              "selection_type",
+              "type"
+            ]
+          },
+          {
+            "description": "Query the type of entity given its id. E.g. if a face is selected the face id is returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are returned (typically two).",
+            "type": "object",
+            "properties": {
+              "entity_id": {
+                "description": "The entity id to query",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "query_entity_type"
+                ]
+              }
+            },
+            "required": [
+              "entity_id",
               "type"
             ]
           },
@@ -3878,6 +4285,37 @@
             },
             "required": [
               "entities",
+              "type"
+            ]
+          },
+          {
+            "description": "Queries the entity at the given window coordinate and returns its EntityReference. Used for hover highlighting with face-based references. If there's no entity at this location, returns an empty EntityReference.",
+            "type": "object",
+            "properties": {
+              "selected_at_window": {
+                "description": "Coordinates of the window being hovered",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Point2d"
+                  }
+                ]
+              },
+              "sequence": {
+                "nullable": true,
+                "description": "Logical timestamp. The client should increment this with every event in the current mouse drag. That way, if the events are being sent over an unordered channel, the API can ignore the older events.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "highlight_query_entity"
+                ]
+              }
+            },
+            "required": [
+              "selected_at_window",
               "type"
             ]
           },
@@ -4392,6 +4830,13 @@
                   "format": "uuid"
                 }
               },
+              "edges_references": {
+                "description": "A struct containing the information required to reference an edge.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EdgeSpecifier"
+                }
+              },
               "extra_face_ids": {
                 "description": "What IDs should the resulting faces have? If you've only passed one edge ID, its ID will be the command ID used to send this command, and this field should be empty. If you've passed `n` IDs (to fillet `n` edges), then this should be length `n-1`, and the first edge will use the command ID used to send this command.",
                 "default": [],
@@ -4441,6 +4886,70 @@
             "required": [
               "object_id",
               "radius",
+              "tolerance",
+              "type"
+            ]
+          },
+          {
+            "description": "Cut the list of edge references with the given cut parameters",
+            "type": "object",
+            "properties": {
+              "cut_type": {
+                "description": "The cut type and information required to perform the cut.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CutTypeV2"
+                  }
+                ]
+              },
+              "edges_references": {
+                "description": "A struct containing the information required to reference an edge.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EdgeSpecifier"
+                }
+              },
+              "extra_face_ids": {
+                "description": "What IDs should the resulting faces have? If you've only passed one edge ID, its ID will be the command ID used to send this command, and this field should be empty. If you've passed `n` IDs (to cut `n` edges), then this should be length `n-1`, and the first edge will use the command ID used to send this command.",
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "object_id": {
+                "description": "Which object is being cut.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "strategy": {
+                "description": "Which cutting algorithm to use.",
+                "default": "automatic",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CutStrategy"
+                  }
+                ]
+              },
+              "tolerance": {
+                "description": "The maximum acceptable surface gap computed between the cut surfaces. Must be positive (i.e. greater than zero).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_cut_edge_references"
+                ]
+              }
+            },
+            "required": [
+              "cut_type",
+              "object_id",
               "tolerance",
               "type"
             ]
@@ -5142,12 +5651,22 @@
             "type": "object",
             "properties": {
               "entity_id": {
-                "description": "Which entity to project (vertex or edge).",
+                "nullable": true,
+                "description": "Which entity to project (vertex or edge). Legacy; if both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
                 "type": "string",
                 "format": "uuid"
               },
+              "entity_reference": {
+                "nullable": true,
+                "description": "Entity reference (e.g. edge by side_faces, vertex, face) to project. If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EntityReference"
+                  }
+                ]
+              },
               "plane_id": {
-                "description": "Which plane to project entity_id onto.",
+                "description": "Which plane to project the entity onto.",
                 "type": "string",
                 "format": "uuid"
               },
@@ -5163,7 +5682,6 @@
               }
             },
             "required": [
-              "entity_id",
               "plane_id",
               "type",
               "use_plane_coords"
@@ -6170,6 +6688,29 @@
               }
             },
             "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "Set the selection to exactly these entities (replaces previous selection). Empty array clears the selection.",
+            "type": "object",
+            "properties": {
+              "entities": {
+                "description": "Which entities to select (face-based references for edges/vertices, face_id for faces)",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityReference"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "select_entity"
+                ]
+              }
+            },
+            "required": [
+              "entities",
               "type"
             ]
           },
@@ -7710,6 +8251,27 @@
           "x",
           "y",
           "z"
+        ]
+      },
+      "PrimitiveTopologyFallback": {
+        "description": "Optional fallback when primary UUIDs are missing from the client artifact graph (e.g. stale or engine-only ids). Identifies the same topology via a **parent** entity UUID and a **primitive index** on that parent.\n\nSemantics by selection kind (aligned with engine BREP topology):\n\n- **Face / Edge (3D)**: `parent_id` is the owning [`EntityType::Solid3D`] body UUID; `primitive_index` matches the index returned by **EntityGetPrimitiveIndex** for that face or edge (and matches **EntityGetParentId** → parent + **EntityGetPrimitiveIndex** → index). - **Vertex (3D)**: same `parent_id` (solid); `primitive_index` is the BREP vertex index on that solid. - **Solid2dEdge**: `parent_id` is the **Solid2D** profile UUID; `primitive_index` is the curve index within that profile. - **Segment**: `parent_id` is the **Path** UUID; `primitive_index` is the curve index within that path.\n\nOther [`EntityReference`] variants may omit this field or leave it unset when not applicable.",
+        "type": "object",
+        "properties": {
+          "parent_id": {
+            "description": "UUID of the parent entity that owns the primitive (solid3d, solid2d, or path).",
+            "type": "string",
+            "format": "uuid"
+          },
+          "primitive_index": {
+            "description": "Index of the face, edge, vertex, profile curve, or path segment on `parent_id`.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "parent_id",
+          "primitive_index"
         ]
       },
       "RelativeTo": {
