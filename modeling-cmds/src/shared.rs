@@ -1191,23 +1191,51 @@ pub enum ExtrudeReference {
     /// Extrudes along the normal of the top face until it is as close to the entity as possible.
     /// An entity can be a solid, a path, a face, etc.
     EntityReference {
-        /// The UUID of the entity to extrude to.
-        entity_id: Uuid,
+        /// What to extrude to.
+        #[serde(flatten)]
+        target: ExtrudeReferenceEntity,
     },
     /// Extrudes until the top face is as close as possible to this given axis.
     Axis {
-        /// The axis to extrude to.
-        axis: Point3d<f64>,
-        /// Point the axis goes through.
-        /// Defaults to (0, 0, 0).
-        #[serde(default)]
-        point: Point3d<LengthUnit>,
+        /// What to extrude to.
+        #[serde(flatten)]
+        target: ExtrudeReferenceAxis,
     },
     /// Extrudes until the top face is as close as possible to this given point.
     Point {
         /// The point to extrude to.
         point: Point3d<LengthUnit>,
     },
+}
+
+/// Extrudes until the top face is as close as possible to this given axis.
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct ExtrudeReferenceAxis {
+    /// The axis to extrude to.
+    pub axis: Point3d<f64>,
+    /// Point the axis goes through.
+    /// Defaults to (0, 0, 0).
+    #[serde(default)]
+    #[builder(default)]
+    pub point: Point3d<LengthUnit>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+/// Extrudes along the normal of the top face until it is as close to the entity as possible.
+/// An entity can be a solid, a path, a face, etc.
+pub struct ExtrudeReferenceEntity {
+    /// The UUID of the entity to extrude to.
+    pub entity_id: Uuid,
 }
 
 /// IDs for the extruded faces.
