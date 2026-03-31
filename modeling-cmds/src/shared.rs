@@ -1862,6 +1862,18 @@ impl From<BodyUpdated> for BodyCreated {
     }
 }
 
+impl From<BodiesCreated> for BodiesUpdated {
+    fn from(bodies: BodiesCreated) -> Self {
+        Self { bodies: bodies.bodies.into_iter().map(Into::into).collect() }
+    }
+}
+
+impl From<BodiesUpdated> for BodiesCreated {
+    fn from(bodies: BodiesUpdated) -> Self {
+        Self { bodies: bodies.bodies.into_iter().map(Into::into).collect() }
+    }
+}
+
 fn one() -> f32 {
     1.0
 }
