@@ -1850,6 +1850,18 @@ pub struct SurfaceCreated {
     pub from_segments: Vec<Uuid>,
 }
 
+impl From<BodyCreated> for BodyUpdated {
+    fn from(body: BodyCreated) -> Self {
+        Self { id: body.id, surfaces: body.surfaces }
+    }
+}
+
+impl From<BodyUpdated> for BodyCreated {
+    fn from(body: BodyUpdated) -> Self {
+        Self { id: body.id, surfaces: body.surfaces }
+    }
+}
+
 fn one() -> f32 {
     1.0
 }
