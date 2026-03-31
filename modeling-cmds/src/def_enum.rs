@@ -1275,6 +1275,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub extra_face_ids: Vec<Uuid>,
+            /// If true, use the legacy CSG algorithm.
+            #[serde(default)]
+            #[builder(default)]
+            pub use_legacy: bool,
         }
 
         /// Cut the list of given edges with the given cut parameters.
@@ -1309,6 +1313,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub extra_face_ids: Vec<Uuid>,
+            /// If true, use the legacy CSG algorithm.
+            #[serde(default)]
+            #[builder(default)]
+            pub use_legacy: bool,
         }
 
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so
@@ -2224,6 +2232,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub separate_bodies: bool,
+            /// If true, use the legacy CSG algorithm.
+            #[serde(default)]
+            #[builder(default)]
+            pub use_legacy: bool,
             /// The maximum acceptable surface gap computed between the joined solids. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }
@@ -2246,6 +2258,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub separate_bodies: bool,
+            /// If true, use the legacy CSG algorithm.
+            #[serde(default)]
+            #[builder(default)]
+            pub use_legacy: bool,
             /// The maximum acceptable surface gap computed between the joined solids. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }
@@ -2271,6 +2287,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub separate_bodies: bool,
+            /// If true, use the legacy CSG algorithm.
+            #[serde(default)]
+            #[builder(default)]
+            pub use_legacy: bool,
             /// The maximum acceptable surface gap computed between the target and the solids cut out from it. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
         }
@@ -2297,6 +2317,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub separate_bodies: bool,
+            /// If true, use the legacy CSG algorithm.
+            #[serde(default)]
+            #[builder(default)]
+            pub use_legacy: bool,
             /// If true, the provided tool bodies will not be modified
             #[serde(default)]
             #[builder(default)]
