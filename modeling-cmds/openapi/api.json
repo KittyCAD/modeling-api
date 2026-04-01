@@ -4439,7 +4439,6 @@
               },
               "use_legacy": {
                 "description": "If true, use the legacy CSG algorithm.",
-                "default": false,
                 "type": "boolean"
               }
             },
@@ -4510,7 +4509,6 @@
               },
               "use_legacy": {
                 "description": "If true, use the legacy CSG algorithm.",
-                "default": false,
                 "type": "boolean"
               }
             },
@@ -6275,7 +6273,6 @@
               },
               "use_legacy": {
                 "description": "If true, use the legacy CSG algorithm.",
-                "default": false,
                 "type": "boolean"
               }
             },
@@ -6318,7 +6315,6 @@
               },
               "use_legacy": {
                 "description": "If true, use the legacy CSG algorithm.",
-                "default": false,
                 "type": "boolean"
               }
             },
@@ -6369,7 +6365,6 @@
               },
               "use_legacy": {
                 "description": "If true, use the legacy CSG algorithm.",
-                "default": false,
                 "type": "boolean"
               }
             },
@@ -6428,7 +6423,6 @@
               },
               "use_legacy": {
                 "description": "If true, use the legacy CSG algorithm.",
-                "default": false,
                 "type": "boolean"
               }
             },

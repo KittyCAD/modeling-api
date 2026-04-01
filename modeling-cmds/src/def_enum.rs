@@ -1276,7 +1276,7 @@ define_modeling_cmd_enum! {
             #[builder(default)]
             pub extra_face_ids: Vec<Uuid>,
             /// If true, use the legacy CSG algorithm.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
         }
@@ -1314,7 +1314,7 @@ define_modeling_cmd_enum! {
             #[builder(default)]
             pub extra_face_ids: Vec<Uuid>,
             /// If true, use the legacy CSG algorithm.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
         }
@@ -2233,7 +2233,7 @@ define_modeling_cmd_enum! {
             #[builder(default)]
             pub separate_bodies: bool,
             /// If true, use the legacy CSG algorithm.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
             /// The maximum acceptable surface gap computed between the joined solids. Must be positive (i.e. greater than zero).
@@ -2259,7 +2259,7 @@ define_modeling_cmd_enum! {
             #[builder(default)]
             pub separate_bodies: bool,
             /// If true, use the legacy CSG algorithm.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
             /// The maximum acceptable surface gap computed between the joined solids. Must be positive (i.e. greater than zero).
@@ -2288,7 +2288,7 @@ define_modeling_cmd_enum! {
             #[builder(default)]
             pub separate_bodies: bool,
             /// If true, use the legacy CSG algorithm.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
             /// The maximum acceptable surface gap computed between the target and the solids cut out from it. Must be positive (i.e. greater than zero).
@@ -2318,7 +2318,7 @@ define_modeling_cmd_enum! {
             #[builder(default)]
             pub separate_bodies: bool,
             /// If true, use the legacy CSG algorithm.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
             /// If true, the provided tool bodies will not be modified
@@ -2531,6 +2531,10 @@ define_modeling_cmd_enum! {
     }
 
 
+}
+
+pub(crate) fn is_false(b: &bool) -> bool {
+    !b
 }
 
 pub(crate) fn negative_one() -> i32 {
