@@ -5092,6 +5092,26 @@
                   }
                 ]
               },
+              "highlight_color": {
+                "nullable": true,
+                "description": "The default color to use for highlight",
+                "default": null,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Color"
+                  }
+                ]
+              },
+              "selection_color": {
+                "nullable": true,
+                "description": "The default color to use for selection",
+                "default": null,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Color"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
