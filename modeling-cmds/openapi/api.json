@@ -4882,6 +4882,10 @@
                 "enum": [
                   "solid3d_fillet_edge"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "type": "boolean"
               }
             },
             "required": [
@@ -5013,6 +5017,10 @@
                 "enum": [
                   "solid3d_cut_edges"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "type": "boolean"
               }
             },
             "required": [
@@ -5588,6 +5596,26 @@
               "color": {
                 "nullable": true,
                 "description": "The default system color.",
+                "default": null,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Color"
+                  }
+                ]
+              },
+              "highlight_color": {
+                "nullable": true,
+                "description": "The default color to use for highlight",
+                "default": null,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Color"
+                  }
+                ]
+              },
+              "selection_color": {
+                "nullable": true,
+                "description": "The default color to use for selection",
                 "default": null,
                 "allOf": [
                   {
@@ -6805,6 +6833,10 @@
                 "enum": [
                   "boolean_union"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "type": "boolean"
               }
             },
             "required": [
@@ -6843,6 +6875,10 @@
                 "enum": [
                   "boolean_intersection"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "type": "boolean"
               }
             },
             "required": [
@@ -6889,6 +6925,10 @@
                 "enum": [
                   "boolean_subtract"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "type": "boolean"
               }
             },
             "required": [
@@ -6943,6 +6983,10 @@
                 "enum": [
                   "boolean_imprint"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "type": "boolean"
               }
             },
             "required": [
