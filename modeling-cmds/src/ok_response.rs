@@ -74,7 +74,7 @@ define_ok_modeling_cmd_response_enum! {
             pub bodies_created: BodiesCreated,
             /// Any existing bodies updated by the request.
             #[serde(default, skip_serializing_if = "BodiesUpdated::is_empty")]
-            pub bodies: BodiesUpdated,
+            pub bodies_updated: BodiesUpdated,
         }
 
         /// The response from the `TwistExtrude` endpoint.
@@ -86,7 +86,7 @@ define_ok_modeling_cmd_response_enum! {
             pub bodies_created: BodiesCreated,
             /// Any existing bodies updated by the request.
             #[serde(default, skip_serializing_if = "BodiesUpdated::is_empty")]
-            pub bodies: BodiesUpdated,
+            pub bodies_updated: BodiesUpdated,
         }
 
         /// The response from the `Sweep` endpoint.
@@ -98,7 +98,7 @@ define_ok_modeling_cmd_response_enum! {
             pub bodies_created: BodiesCreated,
             /// Any existing bodies updated by the request.
             #[serde(default, skip_serializing_if = "BodiesUpdated::is_empty")]
-            pub bodies: BodiesUpdated,
+            pub bodies_updated: BodiesUpdated,
         }
 
         /// The response from the `Revolve` endpoint.
@@ -110,7 +110,7 @@ define_ok_modeling_cmd_response_enum! {
             pub bodies_created: BodiesCreated,
             /// Any existing bodies updated by the request.
             #[serde(default, skip_serializing_if = "BodiesUpdated::is_empty")]
-            pub bodies: BodiesUpdated,
+            pub bodies_updated: BodiesUpdated,
         }
 
         /// The response from the `Solid3dShellFace` endpoint.
