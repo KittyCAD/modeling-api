@@ -1651,6 +1651,12 @@ define_modeling_cmd_enum! {
             /// The default color to use for all backfaces
             #[serde(default)]
             pub backface_color: Option<Color>,
+            /// The default color to use for highlight
+            #[serde(default)]
+            pub highlight_color: Option<Color>,
+            /// The default color to use for selection 
+            #[serde(default)]
+            pub selection_color: Option<Color>,
         }
 
         /// Get type of the given curve.
