@@ -1349,15 +1349,16 @@ define_modeling_cmd_enum! {
         }
 
         /// Cut the list of edge references with the given cut parameters
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         pub struct Solid3dCutEdgeReferences {
-/// Which object is being cut.
+            /// Which object is being cut.
             pub object_id: Uuid,
             /// A struct containing the information required to reference an edge.
             #[serde(default)]
+            #[builder(default)]
             pub edges_references: Vec<EdgeSpecifier>,
             /// The cut type and information required to perform the cut.
             pub cut_type: CutTypeV2,
@@ -1366,6 +1367,7 @@ define_modeling_cmd_enum! {
             pub tolerance: LengthUnit,
             /// Which cutting algorithm to use.
             #[serde(default)]
+            #[builder(default)]
             pub strategy: CutStrategy,
             /// What IDs should the resulting faces have?
             /// If you've only passed one edge ID, its ID will
@@ -1375,7 +1377,12 @@ define_modeling_cmd_enum! {
             /// this should be length `n-1`, and the first edge will use
             /// the command ID used to send this command.
             #[serde(default)]
+            #[builder(default)]
             pub extra_face_ids: Vec<Uuid>,
+            /// If true, use the legacy CSG algorithm.
+            #[serde(default, skip_serializing_if = "super::is_false")]
+            #[builder(default)]
+            pub use_legacy: bool,
         }
 
         /// Cut the list of given edges with the given cut parameters.
@@ -1697,7 +1704,7 @@ define_modeling_cmd_enum! {
             /// The default color to use for highlight
             #[serde(default)]
             pub highlight_color: Option<Color>,
-            /// The default color to use for selection 
+            /// The default color to use for selection
             #[serde(default)]
             pub selection_color: Option<Color>,
         }
