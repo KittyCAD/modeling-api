@@ -620,7 +620,7 @@ pub enum CameraDragInteractionType {
 
 /// A segment of a path.
 /// Paths are composed of many segments.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -731,6 +731,11 @@ pub enum PathSegment {
         end_tangent: Point2d<LengthUnit>,
         /// Whether or not the interior and end points are relative to the previous path position.
         relative: bool,
+    },
+    ///Extract the contours out of the text to form the path
+    Text {
+        /// The text to convert into a path
+        text: String,
     },
 }
 
