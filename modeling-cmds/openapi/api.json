@@ -1807,6 +1807,92 @@
           "modifierspace"
         ]
       },
+      "MirrorAcross": {
+        "description": "What to reflect mirrored geometry across",
+        "oneOf": [
+          {
+            "description": "Reflect across an edge If used with a 3D mirror, the global scene Z-up will be the second axis.",
+            "type": "object",
+            "properties": {
+              "edge": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Edge ID.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "edge"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Reflect across an axis (that goes through a point) If used with a 3D mirror, the global scene Z-up will be the second axis.",
+            "type": "object",
+            "properties": {
+              "axis": {
+                "type": "object",
+                "properties": {
+                  "axis": {
+                    "description": "Axis to use as mirror.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Point3d"
+                      }
+                    ]
+                  },
+                  "point": {
+                    "description": "Point through which the mirror axis passes.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Point3d"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "axis",
+                  "point"
+                ]
+              }
+            },
+            "required": [
+              "axis"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Reflect across a plane (which gives two axes) Cannot be used with 2D mirrors.",
+            "type": "object",
+            "properties": {
+              "plane": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Plane ID.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "plane"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "ModelingCmd": {
         "description": "Commands that the KittyCAD engine can execute.",
         "oneOf": [
@@ -3635,7 +3721,40 @@
             ]
           },
           {
-            "description": "Mirror the input entities over the specified axis. (Currently only supports sketches)",
+            "description": "Mirror the input entities over the specified axis.",
+            "type": "object",
+            "properties": {
+              "across": {
+                "description": "What to mirror across",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MirrorAcross"
+                  }
+                ]
+              },
+              "ids": {
+                "description": "ID of the mirror entities.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_mirror_across"
+                ]
+              }
+            },
+            "required": [
+              "across",
+              "ids",
+              "type"
+            ]
+          },
+          {
+            "description": "Mirror the input entities over the specified axis. Deprecated; please use `EntityMirrorAcross`",
             "type": "object",
             "properties": {
               "axis": {
@@ -3677,7 +3796,7 @@
             ]
           },
           {
-            "description": "Mirror the input entities over the specified edge. (Currently only supports sketches)",
+            "description": "Mirror the input entities over the specified edge. (Currently only supports sketches) Deprecated; please use `EntityMirrorAcross`",
             "type": "object",
             "properties": {
               "edge_id": {
