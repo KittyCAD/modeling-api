@@ -1852,25 +1852,35 @@ pub struct SurfaceCreated {
 
 impl From<BodyCreated> for BodyUpdated {
     fn from(body: BodyCreated) -> Self {
-        Self { id: body.id, surfaces: body.surfaces }
+        Self {
+            id: body.id,
+            surfaces: body.surfaces,
+        }
     }
 }
 
 impl From<BodyUpdated> for BodyCreated {
     fn from(body: BodyUpdated) -> Self {
-        Self { id: body.id, surfaces: body.surfaces }
+        Self {
+            id: body.id,
+            surfaces: body.surfaces,
+        }
     }
 }
 
 impl From<BodiesCreated> for BodiesUpdated {
     fn from(bodies: BodiesCreated) -> Self {
-        Self { bodies: bodies.bodies.into_iter().map(Into::into).collect() }
+        Self {
+            bodies: bodies.bodies.into_iter().map(Into::into).collect(),
+        }
     }
 }
 
 impl From<BodiesUpdated> for BodiesCreated {
     fn from(bodies: BodiesUpdated) -> Self {
-        Self { bodies: bodies.bodies.into_iter().map(Into::into).collect() }
+        Self {
+            bodies: bodies.bodies.into_iter().map(Into::into).collect(),
+        }
     }
 }
 
