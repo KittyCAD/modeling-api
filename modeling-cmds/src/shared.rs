@@ -1802,6 +1802,117 @@ pub struct SurfaceEdgeReference {
     pub edges: Vec<FractionOfEdge>,
 }
 
+/// List of bodies that were created by an operation.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodiesCreated {
+    /// All bodies created by this operation.
+    pub bodies: Vec<BodyCreated>,
+}
+
+impl BodiesCreated {
+    /// Are there any bodies in this list?
+    pub fn is_empty(&self) -> bool {
+        self.bodies.is_empty()
+    }
+}
+
+/// List of bodies that were updated by an operation.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodiesUpdated {
+    /// All bodies created by this operation.
+    pub bodies: Vec<BodyUpdated>,
+}
+
+impl BodiesUpdated {
+    /// Are there any bodies in this list?
+    pub fn is_empty(&self) -> bool {
+        self.bodies.is_empty()
+    }
+}
+
+/// Details of a body that was created.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodyCreated {
+    /// The body's ID.
+    pub id: Uuid,
+    /// Surfaces this body contains.
+    pub surfaces: Vec<SurfaceCreated>,
+}
+
+/// Details of a body that was updated.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodyUpdated {
+    /// The body's ID.
+    pub id: Uuid,
+    /// Surfaces added to this body.
+    pub surfaces: Vec<SurfaceCreated>,
+}
+
+/// Details of a surface that was created under some body.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct SurfaceCreated {
+    /// The surface's ID.
+    pub id: Uuid,
+    /// Which number face of the parent body is this?
+    pub primitive_face_index: u32,
+    /// Which segment IDs was this surface swept from?
+    pub from_segments: Vec<Uuid>,
+}
+
+impl From<BodyCreated> for BodyUpdated {
+    fn from(body: BodyCreated) -> Self {
+        Self {
+            id: body.id,
+            surfaces: body.surfaces,
+        }
+    }
+}
+
+impl From<BodyUpdated> for BodyCreated {
+    fn from(body: BodyUpdated) -> Self {
+        Self {
+            id: body.id,
+            surfaces: body.surfaces,
+        }
+    }
+}
+
+impl From<BodiesCreated> for BodiesUpdated {
+    fn from(bodies: BodiesCreated) -> Self {
+        Self {
+            bodies: bodies.bodies.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<BodiesUpdated> for BodiesCreated {
+    fn from(bodies: BodiesUpdated) -> Self {
+        Self {
+            bodies: bodies.bodies.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
 fn one() -> f32 {
     1.0
 }
