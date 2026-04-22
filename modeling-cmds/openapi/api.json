@@ -4289,37 +4289,6 @@
             ]
           },
           {
-            "description": "Queries the entity at the given window coordinate and returns its EntityReference. Used for hover highlighting with face-based references. If there's no entity at this location, returns an empty EntityReference.",
-            "type": "object",
-            "properties": {
-              "selected_at_window": {
-                "description": "Coordinates of the window being hovered",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/Point2d"
-                  }
-                ]
-              },
-              "sequence": {
-                "nullable": true,
-                "description": "Logical timestamp. The client should increment this with every event in the current mouse drag. That way, if the events are being sent over an unordered channel, the API can ignore the older events.",
-                "type": "integer",
-                "format": "uint32",
-                "minimum": 0
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "highlight_query_entity"
-                ]
-              }
-            },
-            "required": [
-              "selected_at_window",
-              "type"
-            ]
-          },
-          {
             "description": "Create a new annotation",
             "type": "object",
             "properties": {

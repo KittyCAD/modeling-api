@@ -1062,24 +1062,6 @@ define_modeling_cmd_enum! {
             pub entities: Vec<Uuid>,
         }
 
-        /// Queries the entity at the given window coordinate and returns its EntityReference.
-        /// Used for hover highlighting with face-based references.
-        /// If there's no entity at this location, returns an empty EntityReference.
-        #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
-        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct HighlightQueryEntity {
-            /// Coordinates of the window being hovered
-            pub selected_at_window: Point2d,
-            /// Logical timestamp. The client should increment this
-            /// with every event in the current mouse drag. That way, if the
-            /// events are being sent over an unordered channel, the API
-            /// can ignore the older events.
-            pub sequence: Option<u32>,
-        }
-
         /// Create a new annotation
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
