@@ -1267,6 +1267,7 @@
             "type": "object",
             "properties": {
               "entity_reference": {
+                "description": "Extrudes along the normal of the top face until it is as close to the entity as possible. An entity can be a solid, a path, a face, etc.",
                 "type": "object",
                 "properties": {
                   "entity_id": {
@@ -1290,6 +1291,7 @@
             "type": "object",
             "properties": {
               "axis": {
+                "description": "Extrudes until the top face is as close as possible to this given axis.",
                 "type": "object",
                 "properties": {
                   "axis": {
