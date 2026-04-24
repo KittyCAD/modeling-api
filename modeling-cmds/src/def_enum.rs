@@ -31,6 +31,7 @@ define_modeling_cmd_enum! {
                 CutType, CutTypeV2,
                 CutStrategy,
                 CameraMovement,
+                DrawingDimensionKind,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
@@ -1627,6 +1628,19 @@ define_modeling_cmd_enum! {
             pub curve_id: Uuid,
         }
 
+        /// Create a complete projection (hidden line render) of a solid.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct MakeProjection {
+            /// Which entities to project.
+            pub entity_id: Vec<Uuid>,
+            /// Which plane to project the entities onto.
+            pub plane_id: Uuid,
+        }
+
         /// Project an entity on to a plane.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -2534,9 +2548,27 @@ define_modeling_cmd_enum! {
             /// Assumed to be in absolute coordinates, relative to global (scene) origin.
             pub closest_to: Point3d<f64>,
         }
+
+        /// Creates a dimension for an entity belonging to a drawing.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct MakeDimension {
+            /// The drawing entity to be given a dimension.
+            pub entity_id: Uuid,
+            /// The desired dimension subtype.
+            #[serde(default)]
+            pub kind: DrawingDimensionKind,
+            /// The desired off of the dimension text along the dimension line.
+            #[serde(default)]
+            pub text_shift: Option<f64>,
+            /// The desired offset of the dimension line from its initial point.
+            #[serde(default)]
+            pub line_shift: Option<f64>,
+        }
     }
-
-
 }
 
 pub(crate) fn is_false(b: &bool) -> bool {
