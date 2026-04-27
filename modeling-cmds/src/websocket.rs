@@ -156,7 +156,7 @@ impl ModelingBatch {
 /// Representation of an ICE server used for STUN/TURN
 /// Used to initiate WebRTC connections
 /// based on <https://developer.mozilla.org/en-US/docs/Web/API/RTCIceServer>
-#[derive(serde::Serialize, serde::Deserialize, Debug, JsonSchema, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, JsonSchema, Clone, PartialEq)]
 pub struct IceServer {
     /// URLs for a given STUN/TURN server.
     /// IceServer urls can either be a string or an array of strings
@@ -169,7 +169,7 @@ pub struct IceServer {
 }
 
 /// The websocket messages this server sends.
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(tag = "type", content = "data", rename_all = "snake_case")]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
@@ -227,7 +227,7 @@ pub enum OkWebSocketResponseData {
 }
 
 /// Successful Websocket response.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub struct SuccessWebSocketResponse {
@@ -243,7 +243,7 @@ pub struct SuccessWebSocketResponse {
 }
 
 /// Unsuccessful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub struct FailureWebSocketResponse {
     /// Always false
@@ -258,7 +258,7 @@ pub struct FailureWebSocketResponse {
 
 /// Websocket responses can either be successful or unsuccessful.
 /// Slightly different schemas in either case.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", untagged)]
 pub enum WebSocketResponse {
@@ -270,7 +270,7 @@ pub enum WebSocketResponse {
 
 /// Websocket responses can either be successful or unsuccessful.
 /// Slightly different schemas in either case.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", untagged)]
 pub enum BatchResponse {
@@ -326,7 +326,7 @@ impl WebSocketResponse {
 
 /// A raw file with unencoded contents to be passed over binary websockets.
 /// When raw files come back for exports it is sent as binary/bson, not text/json.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, PartialEq)]
 #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
 pub struct RawFile {
     /// The name of the file.
@@ -774,7 +774,7 @@ impl From<RtcIceCandidateInit> for webrtc::ice_transport::ice_candidate::RTCIceC
 }
 
 /// SessionDescription is used to expose local and remote session descriptions.
-#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct RtcSessionDescription {
     /// SDP type.
@@ -876,7 +876,7 @@ impl From<RtcSdpType> for webrtc::peer_connection::sdp::sdp_type::RTCSdpType {
     }
 }
 /// Successful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone)]
+#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub struct ModelingSessionData {
     /// ID of the API call this modeling session is using.
