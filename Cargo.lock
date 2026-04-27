@@ -2423,7 +2423,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds-macros"
-version = "0.1.12"
+version = "0.1.13"
 dependencies = [
  "anyhow",
  "insta",
