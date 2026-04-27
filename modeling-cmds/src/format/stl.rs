@@ -39,6 +39,17 @@ pub mod import {
         pub units: UnitLength,
     }
 
+    #[cfg(feature = "python")]
+    #[pyo3_stub_gen::derive::gen_stub_pymethods]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
+    }
+
     impl Default for Options {
         fn default() -> Self {
             Self {
