@@ -12,6 +12,33 @@ use crate::{def_enum::negative_one, length_unit::LengthUnit, output::ExtrusionFa
 
 mod point;
 
+/// Specifies a subtype of a dimension within a drawing.
+#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, JsonSchema, Hash, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum DrawingDimensionKind {
+    /// Indicates the Euclidean distance between two points.
+    #[default]
+    Linear,
+
+    /// Indicates distance along the drawing X axis.
+    Horizontal,
+
+    /// Indicates distance along the drawing Y axis.
+    Vertical,
+
+    /// Indicates the Euclidean distance between an arc and
+    /// its center point.
+    Radial,
+
+    /// Indicates the Euclidean distance between two points
+    /// on an arc through its center point.
+    Diametric,
+}
+
 /// What kind of cut to do
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]

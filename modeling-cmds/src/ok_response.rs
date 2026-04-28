@@ -776,6 +776,17 @@ define_ok_modeling_cmd_response_enum! {
             pub control_points: Vec<Point3d<f64>>,
         }
 
+        /// The response from the `MakeProjection` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct MakeProjection {
+            /// ID of the created projection.
+            pub projection_id: Uuid,
+
+            /// IDs of created projection curves.
+            pub curve_ids: Vec<Uuid>,
+        }
+
         /// The response from the `ProjectEntityToPlane` command.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
@@ -1311,6 +1322,14 @@ define_ok_modeling_cmd_response_enum! {
             /// The ID of the edge closest to the point given in the request.
             /// If there are no edges in the scene, returns None.
             pub edge_id: Option<Uuid>,
+        }
+
+        /// The response from the 'MakeDimension'.
+        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct MakeDimension {
+            /// The ID of the dimension created.
+            pub dimension_id: Uuid,
         }
     }
 }
