@@ -905,7 +905,7 @@ define_modeling_cmd_enum! {
             pub edge_id: Uuid,
         }
 
-        /// Mirror the input entities over the specified axis.
+        /// Mirror the input entities over the specified axis, edge, or plane.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -935,7 +935,7 @@ define_modeling_cmd_enum! {
             pub point: Point3d<LengthUnit>,
         }
 
-        /// Mirror the input entities over the specified edge. (Currently only supports sketches)
+        /// Mirror the input entities over the specified edge.
         /// Deprecated; please use `EntityMirrorAcross`
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
