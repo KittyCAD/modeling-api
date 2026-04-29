@@ -1258,6 +1258,8 @@ define_ok_modeling_cmd_response_enum! {
         pub struct CreateRegion {
             /// a mapping from the curves within this region to the source component segment curves they were split from
             pub region_mapping: HashMap<Uuid, Uuid>,
+            /// a mapping from the curves within this region to the source component segment curves they were split from, allowing multiple mappings
+            pub region_mapping_multi: HashMap<Uuid, Vec<Uuid>>,
         }
 
         /// The response from the 'CreateRegionFromQueryPoint'.
@@ -1268,6 +1270,8 @@ define_ok_modeling_cmd_response_enum! {
         pub struct CreateRegionFromQueryPoint {
             /// a mapping from the curves within this region to the source component segment curves they were split from
             pub region_mapping: HashMap<Uuid, Uuid>,
+            /// a mapping from the curves within this region to the source component segment curves they were split from, allowing multiple mappings
+            pub region_mapping_multi: HashMap<Uuid, Vec<Uuid>>,
         }
 
         /// The response from 'RegionGetQueryPoint' modeling command.
