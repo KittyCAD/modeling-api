@@ -28,6 +28,9 @@ pub struct RenderPacket {
 
     /// Explicit engine-authored edge polylines with stable engine metadata.
     pub edges: Vec<RenderPacketEdge>,
+
+    /// Explicit engine-authored sketch/wire polylines with sketch-local metadata.
+    pub sketches: Vec<RenderPacketSketchSegment>,
 }
 
 /// A single renderable primitive in a render packet.
@@ -100,4 +103,30 @@ pub struct RenderPacketEdge {
 
     /// The edge index within the solid at export time.
     pub edge_index: u32,
+}
+
+/// A single renderable sketch/wire polyline in a render packet.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "camelCase")]
+pub struct RenderPacketSketchSegment {
+    /// Packed xyz positions in OpenGL/glTF coordinates and meters.
+    pub positions: Vec<f32>,
+
+    /// Stable engine scene object UUID for the sketch owner.
+    pub sketch_id: uuid::Uuid,
+
+    /// Stable artifact/entity UUID for the underlying sketch segment, when available.
+    pub segment_id: Option<uuid::Uuid>,
+
+    /// Curve index within the sketch path or hole loop.
+    pub segment_index: u32,
+
+    /// Hole index when this segment belongs to a hole loop.
+    pub hole_index: Option<u32>,
+
+    /// Whether the underlying curve is closed.
+    pub closed: bool,
 }
