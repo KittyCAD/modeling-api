@@ -34,13 +34,13 @@ pub enum CutType {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum MirrorAcross {
     /// Reflect across an edge
-    /// If used with a 3D mirror, the global scene Z-up will be the second axis.
+    /// If used with a 3D mirror, the edge will define the normal of the mirror plane.
     Edge {
         /// Edge ID.
         id: Uuid,
     },
     /// Reflect across an axis (that goes through a point)
-    /// If used with a 3D mirror, the global scene Z-up will be the second axis.
+    /// If used with a 3D mirror, the axis will define the normal of the mirror plane.
     Axis {
         /// Axis to use as mirror.
         axis: Point3d<f64>,
