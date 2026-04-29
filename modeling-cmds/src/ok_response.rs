@@ -7,6 +7,10 @@ pub(crate) fn is_true(b: &bool) -> bool {
     *b
 }
 
+fn bool_true() -> bool {
+    true
+}
+
 define_ok_modeling_cmd_response_enum! {
     /// Output from Modeling API commands.
     pub mod output {
@@ -30,6 +34,7 @@ define_ok_modeling_cmd_response_enum! {
             shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d, BodiesCreated, BodiesUpdated},
             units,
         };
+        use super::bool_true;
 
         /// The response of the `EngineUtilEvaluatePath` endpoint
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
@@ -1208,7 +1213,7 @@ define_ok_modeling_cmd_response_enum! {
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
             /// If the operation involved any intersecting solids.
-            #[serde(default, skip_serializing_if = "super::is_true")]
+            #[serde(default = "bool_true", skip_serializing_if = "super::is_true")]
             pub any_intersections: bool,
         }
 
@@ -1223,7 +1228,7 @@ define_ok_modeling_cmd_response_enum! {
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
             /// If the operation involved any intersecting solids.
-            #[serde(default, skip_serializing_if = "super::is_true")]
+            #[serde(default = "bool_true", skip_serializing_if = "super::is_true")]
             pub any_intersections: bool,
         }
 
@@ -1238,7 +1243,7 @@ define_ok_modeling_cmd_response_enum! {
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
             /// If the operation involved any intersecting solids.
-            #[serde(default, skip_serializing_if = "super::is_true")]
+            #[serde(default = "bool_true", skip_serializing_if = "super::is_true")]
             pub any_intersections: bool,
         }
 
@@ -1253,7 +1258,7 @@ define_ok_modeling_cmd_response_enum! {
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
             /// If the operation involved any intersecting solids.
-            #[serde(default, skip_serializing_if = "super::is_true")]
+            #[serde(default = "bool_true", skip_serializing_if = "super::is_true")]
             pub any_intersections: bool,
         }
 
