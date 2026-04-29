@@ -3,6 +3,10 @@ use serde::{Deserialize, Serialize};
 
 impl crate::ModelingCmdOutput for () {}
 
+pub(crate) fn is_true(b: &bool) -> bool {
+    *b
+}
+
 define_ok_modeling_cmd_response_enum! {
     /// Output from Modeling API commands.
     pub mod output {
@@ -1203,6 +1207,9 @@ define_ok_modeling_cmd_response_enum! {
             /// here.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
+            /// If the operation involved any intersecting solids.
+            #[serde(default, skip_serializing_if = "super::is_true")]
+            pub any_intersections: bool,
         }
 
         /// The response from the 'BooleanIntersection'.
@@ -1215,6 +1222,9 @@ define_ok_modeling_cmd_response_enum! {
             /// here.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
+            /// If the operation involved any intersecting solids.
+            #[serde(default, skip_serializing_if = "super::is_true")]
+            pub any_intersections: bool,
         }
 
         /// The response from the 'BooleanSubtract'.
@@ -1227,6 +1237,9 @@ define_ok_modeling_cmd_response_enum! {
             /// here.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
+            /// If the operation involved any intersecting solids.
+            #[serde(default, skip_serializing_if = "super::is_true")]
+            pub any_intersections: bool,
         }
 
         /// The response from the 'BooleanImprint'.
@@ -1239,6 +1252,9 @@ define_ok_modeling_cmd_response_enum! {
             /// here.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
+            /// If the operation involved any intersecting solids.
+            #[serde(default, skip_serializing_if = "super::is_true")]
+            pub any_intersections: bool,
         }
 
         /// The response from the 'SetGridScale'.
