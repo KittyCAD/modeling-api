@@ -269,7 +269,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Solid3dCutEdgeReferences` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dCutEdgeReferences {
         }
 
@@ -456,7 +456,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `SelectEntity` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectEntity {
         }
@@ -494,7 +494,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `QueryEntityTypeWithPoint` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct QueryEntityTypeWithPoint {
             /// How to reference the selected entity using face ids.
@@ -504,7 +504,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `QueryEntityType` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         pub struct QueryEntityType {
             /// How to reference the provided entity using face ids.
             pub reference: EntityReference,
@@ -1133,7 +1133,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityMirrorAcross` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityMirrorAcross {
             /// The Face, edge, and entity ids of the patterned entities.

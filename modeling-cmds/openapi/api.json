@@ -2137,7 +2137,7 @@
         "description": "What to reflect mirrored geometry across",
         "oneOf": [
           {
-            "description": "Reflect across an edge If used with a 3D mirror, the global scene Z-up will be the second axis.",
+            "description": "Reflect across an edge If used with a 3D mirror, the edge will define the normal of the mirror plane.",
             "type": "object",
             "properties": {
               "edge": {
@@ -2160,7 +2160,7 @@
             "additionalProperties": false
           },
           {
-            "description": "Reflect across an axis (that goes through a point) If used with a 3D mirror, the global scene Z-up will be the second axis.",
+            "description": "Reflect across an axis (that goes through a point) If used with a 3D mirror, the axis will define the normal of the mirror plane.",
             "type": "object",
             "properties": {
               "axis": {
@@ -4065,7 +4065,7 @@
             ]
           },
           {
-            "description": "Mirror the input entities over the specified axis.",
+            "description": "Mirror the input entities over the specified axis, edge, or plane.",
             "type": "object",
             "properties": {
               "across": {
@@ -4140,7 +4140,7 @@
             ]
           },
           {
-            "description": "Mirror the input entities over the specified edge. (Currently only supports sketches) Deprecated; please use `EntityMirrorAcross`",
+            "description": "Mirror the input entities over the specified edge. Deprecated; please use `EntityMirrorAcross`",
             "type": "object",
             "properties": {
               "edge_id": {
@@ -5039,6 +5039,10 @@
                 "enum": [
                   "solid3d_cut_edge_references"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "type": "boolean"
               }
             },
             "required": [
