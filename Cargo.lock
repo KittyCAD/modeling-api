@@ -2384,7 +2384,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds"
-version = "0.2.188"
+version = "0.2.189"
 dependencies = [
  "anyhow",
  "arbitrary",
@@ -2423,7 +2423,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds-macros"
-version = "0.1.12"
+version = "0.1.13"
 dependencies = [
  "anyhow",
  "insta",
@@ -2437,7 +2437,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds-macros-impl"
-version = "0.1.13"
+version = "0.1.14"
 dependencies = [
  "anyhow",
  "criterion",

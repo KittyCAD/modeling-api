@@ -1126,7 +1126,7 @@ pub enum CurveType {
 }
 
 /// A file to be exported to the client.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, Builder)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, PartialEq, Builder)]
 #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct ExportFile {
@@ -1375,7 +1375,7 @@ pub struct SideFace {
 }
 
 /// Camera settings including position, center, fov etc
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, Builder)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, PartialEq, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
