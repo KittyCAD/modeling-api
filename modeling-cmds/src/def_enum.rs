@@ -2466,7 +2466,7 @@ define_modeling_cmd_enum! {
             /// Which version of the Region endpoint to call.
             #[serde(default)]
             #[builder(default)]
-            version: RegionVersion,
+            pub version: RegionVersion,
         }
 
         /// Create a region with a query point.
@@ -2487,7 +2487,7 @@ define_modeling_cmd_enum! {
             /// Which version of the Region endpoint to call.
             #[serde(default)]
             #[builder(default)]
-            version: RegionVersion,
+            pub version: RegionVersion,
         }
 
         /// Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.
