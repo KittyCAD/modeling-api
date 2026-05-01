@@ -1102,7 +1102,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityMirrorAcross` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityMirrorAcross {
             /// The Face, edge, and entity ids of the patterned entities.
