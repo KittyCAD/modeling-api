@@ -4920,7 +4920,6 @@
               },
               "edges_references": {
                 "description": "A struct containing the information required to reference an edge.",
-                "default": [],
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/EdgeSpecifier"
