@@ -4920,6 +4920,10 @@
                 "enum": [
                   "solid3d_cut_edge_references"
                 ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "type": "boolean"
               }
             },
             "required": [
