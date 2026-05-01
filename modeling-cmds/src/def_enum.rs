@@ -1299,7 +1299,7 @@ define_modeling_cmd_enum! {
             #[builder(default)]
             pub edge_ids: Vec<Uuid>,
             /// A struct containing the information required to reference an edge.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
             #[builder(default)]
             pub edges_references: Vec<EdgeSpecifier>,
             /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
