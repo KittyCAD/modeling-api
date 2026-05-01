@@ -25,6 +25,7 @@ define_modeling_cmd_enum! {
             length_unit::LengthUnit,
             shared::{
                 Angle,
+                RegionVersion,
                 BlendType,
                 BodyType,
                 ComponentTransform,
@@ -2564,6 +2565,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub curve_clockwise: bool,
+            /// Which version of the Region endpoint to call.
+            #[serde(default)]
+            #[builder(default)]
+            version: RegionVersion,
         }
 
         /// Create a region with a query point.
@@ -2581,6 +2586,10 @@ define_modeling_cmd_enum! {
             /// The query point (in the same coordinates as the sketch itself)
             /// if a possible sketch region contains this point, then that region will be created
             pub query_point: Point2d<LengthUnit>,
+            /// Which version of the Region endpoint to call.
+            #[serde(default)]
+            #[builder(default)]
+            version: RegionVersion,
         }
 
         /// Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.

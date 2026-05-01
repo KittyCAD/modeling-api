@@ -2016,6 +2016,22 @@ pub struct SurfaceCreated {
     pub from_segments: Vec<Uuid>,
 }
 
+/// Region-creation algorithm version.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum RegionVersion {
+    /// The original region creation method. This should NOT be used anymore,
+    /// but is maintained to avoid breaking old models.
+    #[default]
+    V0,
+    /// Fixes the bug in V0 where creating a region would shuffle the mapping
+    /// from segment names/IDs to actual segment geometry.
+    V1,
+}
+
 impl From<BodyCreated> for BodyUpdated {
     fn from(body: BodyCreated) -> Self {
         Self {
