@@ -17,6 +17,7 @@ define_modeling_cmd_enum! {
         use serde::{Deserialize, Serialize};
         use uuid::Uuid;
         use crate::shared::CameraViewState;
+        use crate::shared::MirrorAcross;
 
         use crate::{
             format::{OutputFormat2d, OutputFormat3d},
@@ -917,7 +918,22 @@ define_modeling_cmd_enum! {
             pub edge_reference: Option<EdgeSpecifier>,
         }
 
-        /// Mirror the input entities over the specified axis. (Currently only supports sketches)
+        /// Mirror the input entities over the specified axis, edge, or plane.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EntityMirrorAcross {
+            /// ID of the mirror entities.
+            pub ids: Vec<Uuid>,
+            /// What to mirror across
+            pub across: MirrorAcross,
+        }
+
+
+        /// Mirror the input entities over the specified axis.
+        /// Deprecated; please use `EntityMirrorAcross`
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -932,7 +948,8 @@ define_modeling_cmd_enum! {
             pub point: Point3d<LengthUnit>,
         }
 
-        /// Mirror the input entities over the specified edge. (Currently only supports sketches)
+        /// Mirror the input entities over the specified edge.
+        /// Deprecated; please use `EntityMirrorAcross`
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
         )]
