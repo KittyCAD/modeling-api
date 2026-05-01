@@ -1101,6 +1101,15 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
+        /// The response from the `EntityMirrorAcross` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EntityMirrorAcross {
+            /// The Face, edge, and entity ids of the patterned entities.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
+        }
+
         /// The response from the `EntityMirrorAcrossEdge` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]

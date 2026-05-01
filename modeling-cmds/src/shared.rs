@@ -26,6 +26,35 @@ pub enum CutType {
     Chamfer,
 }
 
+/// What to reflect mirrored geometry across
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum MirrorAcross {
+    /// Reflect across an edge
+    /// If used with a 3D mirror, the edge will define the normal of the mirror plane.
+    Edge {
+        /// Edge ID.
+        id: Uuid,
+    },
+    /// Reflect across an axis (that goes through a point)
+    /// If used with a 3D mirror, the axis will define the normal of the mirror plane.
+    Axis {
+        /// Axis to use as mirror.
+        axis: Point3d<f64>,
+        /// Point through which the mirror axis passes.
+        point: Point3d<LengthUnit>,
+    },
+    /// Reflect across a plane (which gives two axes)
+    /// Cannot be used with 2D mirrors.
+    Plane {
+        /// Plane ID.
+        id: Uuid,
+    },
+}
+
 /// What kind of cut to perform when cutting an edge.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
