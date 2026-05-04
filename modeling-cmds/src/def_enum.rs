@@ -2566,9 +2566,9 @@ define_modeling_cmd_enum! {
             #[builder(default)]
             pub curve_clockwise: bool,
             /// Which version of the Region endpoint to call.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "RegionVersion::is_zero")]
             #[builder(default)]
-            version: RegionVersion,
+            pub version: RegionVersion,
         }
 
         /// Create a region with a query point.
@@ -2587,9 +2587,9 @@ define_modeling_cmd_enum! {
             /// if a possible sketch region contains this point, then that region will be created
             pub query_point: Point2d<LengthUnit>,
             /// Which version of the Region endpoint to call.
-            #[serde(default)]
+            #[serde(default, skip_serializing_if = "RegionVersion::is_zero")]
             #[builder(default)]
-            version: RegionVersion,
+            pub version: RegionVersion,
         }
 
         /// Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.

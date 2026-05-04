@@ -7314,7 +7314,6 @@
               },
               "version": {
                 "description": "Which version of the Region endpoint to call.",
-                "default": "V0",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/RegionVersion"
@@ -7354,7 +7353,6 @@
               },
               "version": {
                 "description": "Which version of the Region endpoint to call.",
-                "default": "V0",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/RegionVersion"

@@ -2041,6 +2041,13 @@ pub enum RegionVersion {
     V1,
 }
 
+impl RegionVersion {
+    /// Is the version V0?
+    pub fn is_zero(&self) -> bool {
+        matches!(self, Self::V0)
+    }
+}
+
 impl From<BodyCreated> for BodyUpdated {
     fn from(body: BodyCreated) -> Self {
         Self {
