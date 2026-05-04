@@ -1725,7 +1725,33 @@ impl ExtrudedFaceInfo {
 
 #[cfg(test)]
 mod tests {
+    use std::str::FromStr;
+
+    use crate::CreateRegionFromQueryPoint;
+
     use super::*;
+
+    #[test]
+    fn test_region_default() {
+        let msg = crate::CreateRegionFromQueryPoint {
+            object_id: Uuid::from_str("511d18fa-e521-49e0-9c15-dd8583b0082d").unwrap(),
+            query_point: Point2d {
+                x: LengthUnit(1.0),
+                y: LengthUnit(1.0),
+            },
+            version: RegionVersion::default(),
+        };
+
+        // When serializing `version: v0`, the serialized msg should
+        // not contain the version, because it's the default.
+        let serialized = serde_json::to_string(&msg).unwrap();
+        assert!(!serialized.contains("version"));
+
+        // But reading that msg and deserializing it, the missing version
+        // should be treated as the default, v0.
+        let deserialized: CreateRegionFromQueryPoint = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(deserialized.version, RegionVersion::V0);
+    }
 
     #[test]
     fn test_angle_comparison() {
