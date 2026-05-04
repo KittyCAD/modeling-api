@@ -138,6 +138,14 @@ pub enum EntityReference {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         topology_fallback: Option<PrimitiveTopologyFallback>,
     },
+    /// A closed sketch region/profile area.
+    Region {
+        /// Id of the region being referenced.
+        region_id: Uuid,
+        /// Fallback: path UUID + region index on that path.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        topology_fallback: Option<PrimitiveTopologyFallback>,
+    },
 }
 
 /// What kind of cut to do
@@ -1136,6 +1144,7 @@ pub enum EntityType {
     Face,
     Plane,
     Vertex,
+    Region,
 }
 
 /// The type of Curve (embedded within path)

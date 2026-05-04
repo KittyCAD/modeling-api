@@ -1513,6 +1513,36 @@
               "segment_id",
               "type"
             ]
+          },
+          {
+            "description": "A closed sketch region/profile area.",
+            "type": "object",
+            "properties": {
+              "region_id": {
+                "description": "Id of the region being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: path UUID + region index on that path.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "region"
+                ]
+              }
+            },
+            "required": [
+              "region_id",
+              "type"
+            ]
           }
         ]
       },
@@ -1530,7 +1560,8 @@
           "edge",
           "face",
           "plane",
-          "vertex"
+          "vertex",
+          "region"
         ]
       },
       "Error": {
