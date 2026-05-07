@@ -37,7 +37,8 @@ euler = "0.4.1"
 http = "1.4.0"
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
-measurements = "0.11.0"
+# Fork of <crates.io/crates/measurements>
+measurements = { package = "kittycad-measurements", version = "0.11.2" }
 parse-display = "0.10.0"
 parse-display-derive = "0.10.0"
 pyo3 = { version = "0.25.1", optional = true }

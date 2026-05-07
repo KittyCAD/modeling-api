@@ -2383,6 +2383,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "kittycad-measurements"
+version = "0.11.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7412b22b064c31f34dcc35097a1c2d16dd73c4d2f7bf1b059d39eed9accfc332"
+dependencies = [
+ "libm",
+]
+
+[[package]]
 name = "kittycad-modeling-cmds"
 version = "0.2.195"
 dependencies = [
@@ -2399,9 +2408,9 @@ dependencies = [
  "euler",
  "expectorate",
  "http",
+ "kittycad-measurements",
  "kittycad-modeling-cmds-macros",
  "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "measurements",
  "openapi-lint",
  "openapiv3",
  "parse-display",
@@ -2651,15 +2660,6 @@ checksum = "d89e7ee0cfbedfc4da3340218492196241d89eefb6dab27de5df917a6d2e78cf"
 dependencies = [
  "cfg-if",
  "digest",
-]
-
-[[package]]
-name = "measurements"
-version = "0.11.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f72b38901c571007811f0483e64a7e215ac9e6e3688e9f83705a717621d81513"
-dependencies = [
- "libm",
 ]
 
 [[package]]
