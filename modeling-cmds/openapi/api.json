@@ -3505,6 +3505,13 @@
                   "format": "uuid"
                 }
               },
+              "entity_names": {
+                "description": "Map the engine ID for each entity (face or edge) to its desired name.",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
               "format": {
                 "description": "The file format to export to.",
                 "allOf": [
