@@ -662,15 +662,15 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Export {
-               /// IDs of the entities to be exported. If this is empty, then all entities are exported.
-               #[builder(default)]
-               pub entity_ids: Vec<Uuid>,
-               /// The file format to export to.
-               pub format: OutputFormat3d,
-               /// Map the engine ID for each entity (face or edge) to its desired name.
-               #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
-               #[builder(default)]
-               pub entity_names: IndexMap<Uuid, String>,
+            /// IDs of the entities to be exported. If this is empty, then all entities are exported.
+            #[builder(default)]
+            pub entity_ids: Vec<Uuid>,
+            /// The file format to export to.
+            pub format: OutputFormat3d,
+            /// Map the engine ID for each entity (face or edge) to its desired name.
+            #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
+            #[builder(default)]
+            pub entity_names: IndexMap<Uuid, String>,
         }
 
         /// What is this entity's parent?
