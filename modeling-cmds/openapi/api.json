@@ -3425,6 +3425,13 @@
                   "format": "uuid"
                 }
               },
+              "face_names": {
+                "description": "Map the engine ID for each face to its desired name.",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
               "format": {
                 "description": "The file format to export to.",
                 "allOf": [
@@ -3456,6 +3463,13 @@
                 "items": {
                   "type": "string",
                   "format": "uuid"
+                }
+              },
+              "face_names": {
+                "description": "Map the engine ID for each face to its desired name.",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
                 }
               },
               "format": {

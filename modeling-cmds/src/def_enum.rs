@@ -8,6 +8,7 @@ use crate::{self as kittycad_modeling_cmds};
 define_modeling_cmd_enum! {
     pub mod each_cmd {
         use std::collections::HashSet;
+        use std::collections::HashMap;
 
         use bon::Builder;
         use crate::{self as kittycad_modeling_cmds};
@@ -630,6 +631,10 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.
             pub format: OutputFormat2d,
+            /// Map the engine ID for each face to its desired name.
+            #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+            #[builder(default)]
+            pub face_names: HashMap<Uuid, String>,
         }
 
         /// Export the scene to a file.
@@ -644,6 +649,10 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.
             pub format: OutputFormat3d,
+            /// Map the engine ID for each face to its desired name.
+            #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+            #[builder(default)]
+            pub face_names: HashMap<Uuid, String>,
         }
 
         /// Export the scene to a file.
