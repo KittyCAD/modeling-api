@@ -2170,6 +2170,7 @@ version = "2.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
 dependencies = [
+ "arbitrary",
  "equivalent",
  "hashbrown 0.17.1",
  "serde",
@@ -2408,6 +2409,7 @@ dependencies = [
  "euler",
  "expectorate",
  "http",
+ "indexmap 2.14.0",
  "kittycad-measurements",
  "kittycad-modeling-cmds-macros",
  "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -4263,6 +4265,7 @@ dependencies = [
  "bytes",
  "chrono",
  "dyn-clone",
+ "indexmap 2.14.0",
  "schemars_derive",
  "serde",
  "serde_json",
@@ -5356,6 +5359,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "756050066659291d47a554a9f558125db17428b073c5ffce1daf5dcb0f7231d8"
 dependencies = [
  "chrono",
+ "indexmap 2.14.0",
  "serde_json",
  "thiserror 2.0.18",
  "ts-rs-macros",

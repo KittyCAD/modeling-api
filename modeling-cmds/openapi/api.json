@@ -3425,8 +3425,8 @@
                   "format": "uuid"
                 }
               },
-              "face_names": {
-                "description": "Map the engine ID for each face to its desired name.",
+              "entity_names": {
+                "description": "Map the engine ID for each entity (face or edge) to its desired name.",
                 "type": "object",
                 "additionalProperties": {
                   "type": "string"
@@ -3465,8 +3465,8 @@
                   "format": "uuid"
                 }
               },
-              "face_names": {
-                "description": "Map the engine ID for each face to its desired name.",
+              "entity_names": {
+                "description": "Map the engine ID for each entity (face or edge) to its desired name.",
                 "type": "object",
                 "additionalProperties": {
                   "type": "string"
