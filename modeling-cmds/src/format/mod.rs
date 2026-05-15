@@ -22,9 +22,6 @@ pub mod step;
 /// **ST**ereo**L**ithography format.
 pub mod stl;
 
-/// SolidWorks part (SLDPRT) format.
-pub mod sldprt;
-
 /// Output 2D format specifier.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case")]
@@ -83,14 +80,26 @@ pub type InputFormat = InputFormat3d;
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum InputFormat3d {
+    /// ACIS part format.
+    Acis(acis::import::Options),
+    /// CATIA part format.
+    Catia(catia::import::Options),
+    /// PTC Creo part format.
+    Creo(creo::import::Options),
     /// Autodesk Filmbox (FBX) format.
     Fbx(fbx::import::Options),
     /// Binary glTF 2.0.
     /// We refer to this as glTF since that is how our customers refer to it,
     /// but this can also import binary glTF (glb).
     Gltf(gltf::import::Options),
+    /// Autodesk Inventor part format.
+    Inventor(inventor::import::Options),
+    /// Siemens NX part format.
+    Nx(nx::import::Options),
     /// Wavefront OBJ format.
     Obj(obj::import::Options),
+    /// Parasolid part format.
+    Parasolid(parasolid::import::Options),
     /// The PLY Polygon File Format.
     Ply(ply::import::Options),
     /// SolidWorks part (SLDPRT) format.
@@ -105,8 +114,14 @@ impl InputFormat3d {
     /// Get the name of this format.
     pub fn name(&self) -> &'static str {
         match self {
+            InputFormat3d::Acis(_) => "acis",
+            InputFormat3d::Catia(_) => "catia",
+            InputFormat3d::Creo(_) => "creo",
             InputFormat3d::Fbx(_) => "fbx",
             InputFormat3d::Gltf(_) => "gltf",
+            InputFormat3d::Inventor(_) => "inventor",
+            InputFormat3d::Nx(_) => "nx",
+            InputFormat3d::Parasolid(_) => "parasolid",
             InputFormat3d::Obj(_) => "obj",
             InputFormat3d::Ply(_) => "ply",
             InputFormat3d::Sldprt(_) => "sldprt",
@@ -242,9 +257,15 @@ impl From<FileExportFormat> for OutputFormat3d {
 impl From<InputFormat3d> for FileImportFormat {
     fn from(input_format: InputFormat3d) -> Self {
         match input_format {
+            InputFormat3d::Acis(_) => Self::Acis,
+            InputFormat3d::Catia(_) => Self::Catia,
+            InputFormat3d::Creo(_) => Self::Creo,
             InputFormat3d::Fbx(_) => Self::Fbx,
             InputFormat3d::Gltf(_) => Self::Gltf,
+            InputFormat3d::Inventor(_) => Self::Inventor,
+            InputFormat3d::Nx(_) => Self::Nx,
             InputFormat3d::Obj(_) => Self::Obj,
+            InputFormat3d::Parasolid(_) => Self::Parasolid,
             InputFormat3d::Ply(_) => Self::Ply,
             InputFormat3d::Sldprt(_) => Self::Sldprt,
             InputFormat3d::Step(_) => Self::Step,
@@ -256,9 +277,15 @@ impl From<InputFormat3d> for FileImportFormat {
 impl From<FileImportFormat> for InputFormat3d {
     fn from(import_format: FileImportFormat) -> Self {
         match import_format {
+            FileImportFormat::Acis => InputFormat3d::Acis(Default::default()),
+            FileImportFormat::Catia => InputFormat3d::Catia(Default::default()),
+            FileImportFormat::Creo => InputFormat3d::Creo(Default::default()),
             FileImportFormat::Fbx => InputFormat3d::Fbx(Default::default()),
             FileImportFormat::Gltf => InputFormat3d::Gltf(Default::default()),
+            FileImportFormat::Inventor => InputFormat3d::Inventor(Default::default()),
+            FileImportFormat::Nx => InputFormat3d::Nx(Default::default()),
             FileImportFormat::Obj => InputFormat3d::Obj(Default::default()),
+            FileImportFormat::Parasolid => InputFormat3d::Parasolid(Default::default()),
             FileImportFormat::Ply => InputFormat3d::Ply(Default::default()),
             FileImportFormat::Sldprt => InputFormat3d::Sldprt(Default::default()),
             FileImportFormat::Step => InputFormat3d::Step(Default::default()),
@@ -336,4 +363,83 @@ impl OutputFormat3d {
             }),
         }
     }
+}
+
+macro_rules! proprietary_brep_formats {
+    {
+        $(
+            (
+                $mod_name:ident,
+                $spec_name:literal,
+                $format_description:literal,
+                $coordinate_system:expr
+            )
+        )*
+    } => {
+        $(
+            #[doc = $format_description]
+            pub mod $mod_name {
+                /// Import functionality
+                pub mod import {
+                    use bon::Builder;
+                    use schemars::JsonSchema;
+                    use serde::{Deserialize, Serialize};
+                    use crate::coord;
+
+                    #[doc = std::concat!("Options for importing ", $format_description, ".")]
+                    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+                    #[serde(default, rename = $spec_name)]
+                    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+                    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+                    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+                    #[cfg_attr(
+                        feature = "python",
+                        pyo3_stub_gen::derive::gen_stub_pyclass,
+                        pyo3::pyclass(name = $spec_name)
+                    )]
+                    pub struct Options {
+                        /// Co-ordinate system of input data.
+                        #[builder(default = *$coordinate_system)]
+                        pub coords: coord::System,
+
+                        /// Splits all closed faces into two open faces.
+                        ///
+                        /// Defaults to `false` but is implicitly `true` when importing into the engine.
+                        #[builder(default)]
+                        pub split_closed_faces: bool,
+                    }
+
+                    #[cfg(feature = "python")]
+                    #[pyo3_stub_gen::derive::gen_stub_pymethods]
+                    #[pyo3::pymethods]
+                    impl Options {
+                        #[new]
+                        /// Set the options to their defaults.
+                        pub fn new() -> Self {
+                            Default::default()
+                        }
+                    }
+
+                    impl Default for Options {
+                        fn default() -> Self {
+                            Self {
+                                coords: *$coordinate_system,
+                                split_closed_faces: false,
+                            }
+                        }
+                    }
+                }
+            }
+        )*
+    };
+}
+
+proprietary_brep_formats! {
+    (acis, "AcisImportOptions", "ACIS part format", coord::KITTYCAD)
+    (catia, "CatiaImportOptions", "CATIA part format", coord::KITTYCAD)
+    (creo, "CreoImportOptions", "PTC Creo part format", coord::OPENGL)
+    (inventor, "InventorImportOptions", "Autodesk Inventor part format", coord::KITTYCAD)
+    (nx, "NxImportOptions", "Siemens NX part format", coord::KITTYCAD)
+    (parasolid, "ParasolidImportOptions", "Parasolid part format", coord::KITTYCAD)
+    (sldprt, "SldprtImportOptions", "SolidWorks part format", coord::OPENGL)
 }

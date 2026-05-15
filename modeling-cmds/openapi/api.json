@@ -1903,6 +1903,66 @@
         "description": "Input format specifier.",
         "oneOf": [
           {
+            "description": "ACIS part format.",
+            "type": "object",
+            "properties": {
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "acis"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "CATIA part format.",
+            "type": "object",
+            "properties": {
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "catia"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "PTC Creo part format.",
+            "type": "object",
+            "properties": {
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "creo"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
             "description": "Autodesk Filmbox (FBX) format.",
             "type": "object",
             "properties": {
@@ -1925,6 +1985,46 @@
                 "type": "string",
                 "enum": [
                   "gltf"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "Autodesk Inventor part format.",
+            "type": "object",
+            "properties": {
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "inventor"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "Siemens NX part format.",
+            "type": "object",
+            "properties": {
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "nx"
                 ]
               }
             },
@@ -1963,6 +2063,26 @@
               "coords",
               "type",
               "units"
+            ]
+          },
+          {
+            "description": "Parasolid part format.",
+            "type": "object",
+            "properties": {
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "parasolid"
+                ]
+              }
+            },
+            "required": [
+              "type"
             ]
           },
           {
