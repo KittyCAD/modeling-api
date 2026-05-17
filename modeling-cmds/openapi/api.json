@@ -8055,6 +8055,46 @@
             ]
           },
           {
+            "description": "A general exact curve segment. Start at the current path \"pen\" and end at the final control point. In the first pass this is used for non-rational open-uniform spline curves.",
+            "type": "object",
+            "properties": {
+              "degree": {
+                "description": "Degree of the curve.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "points": {
+                "description": "Ordered control points for the curve. The final 3D point becomes the new path \"pen\" position.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Point4d"
+                }
+              },
+              "rational": {
+                "description": "Whether to use the homogeneous `w` component as a rational weight.",
+                "type": "boolean"
+              },
+              "relative": {
+                "description": "Whether or not this curve is a relative offset",
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "curve"
+                ]
+              }
+            },
+            "required": [
+              "degree",
+              "points",
+              "rational",
+              "relative",
+              "type"
+            ]
+          },
+          {
             "description": "Adds a tangent arc from current pen position with the given radius and angle.",
             "type": "object",
             "properties": {
@@ -8414,20 +8454,16 @@
         "type": "object",
         "properties": {
           "w": {
-            "type": "number",
-            "format": "float"
+            "$ref": "#/components/schemas/LengthUnit"
           },
           "x": {
-            "type": "number",
-            "format": "float"
+            "$ref": "#/components/schemas/LengthUnit"
           },
           "y": {
-            "type": "number",
-            "format": "float"
+            "$ref": "#/components/schemas/LengthUnit"
           },
           "z": {
-            "type": "number",
-            "format": "float"
+            "$ref": "#/components/schemas/LengthUnit"
           }
         },
         "required": [
