@@ -138,7 +138,7 @@ define_modeling_cmd_enum! {
             /// Negative values indicate an outward draft, 
             /// while positive values indicate an inward draft
             #[serde(default)]
-            pub draft_angle: f64,
+            pub draft_angle: Angle,
             /// Which IDs should the new faces have?
             /// If this isn't given, the engine will generate IDs.
             #[serde(default)]
