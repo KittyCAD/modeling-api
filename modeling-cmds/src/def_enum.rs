@@ -137,7 +137,6 @@ define_modeling_cmd_enum! {
             /// What draft angle should be used in this extrusion?
             /// Negative values indicate an outward draft, 
             /// while positive values indicate an inward draft
-            #[builder(default)]
             #[serde(default)]
             pub draft_angle: Option<Angle>,
             /// Which IDs should the new faces have?
