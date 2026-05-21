@@ -4631,6 +4631,31 @@
             ]
           },
           {
+            "description": "Set the name of an object",
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Name of the object. Using a zero-length name unsets the name.",
+                "type": "string"
+              },
+              "object_id": {
+                "description": "Which object to change",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "object_set_name"
+                ]
+              }
+            },
+            "required": [
+              "object_id",
+              "type"
+            ]
+          },
+          {
             "description": "What type of entity is this?",
             "type": "object",
             "properties": {

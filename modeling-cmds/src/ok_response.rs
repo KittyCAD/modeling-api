@@ -265,6 +265,12 @@ define_ok_modeling_cmd_response_enum! {
         pub struct ObjectSetMaterialParamsPbr {
         }
 
+        /// The response from the `ObjectSetName` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ObjectSetName {
+        }
+
         /// The response from the `Solid2dAddHole` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]

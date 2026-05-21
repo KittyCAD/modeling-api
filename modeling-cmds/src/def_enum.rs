@@ -1165,6 +1165,21 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub backface_color: Option<Color>,
         }
+
+        /// Set the name of an object
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ObjectSetName {
+            /// Which object to change
+            pub object_id: Uuid,
+            /// Name of the object. Using a zero-length name unsets the name.
+            #[serde(default, skip_serializing_if = "String::is_empty")]
+            pub name: String,
+        }
+
         /// What type of entity is this?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
