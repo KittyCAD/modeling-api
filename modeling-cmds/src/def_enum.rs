@@ -134,6 +134,11 @@ define_modeling_cmd_enum! {
             pub target: ModelingCmdId,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
+            /// What draft angle should be used in this extrusion?
+            /// Negative values indicate an outward draft, 
+            /// while positive values indicate an inward draft
+            #[serde(default)]
+            pub draft_angle: Option<Angle>,
             /// Which IDs should the new faces have?
             /// If this isn't given, the engine will generate IDs.
             #[serde(default)]

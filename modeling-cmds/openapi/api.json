@@ -2386,6 +2386,16 @@
                   }
                 ]
               },
+              "draft_angle": {
+                "nullable": true,
+                "description": "What draft angle should be used in this extrusion? Negative values indicate an outward draft, while positive values indicate an inward draft",
+                "default": null,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Angle"
+                  }
+                ]
+              },
               "extrude_method": {
                 "description": "Should the extrusion create a new object or be part of the existing object.",
                 "default": "merge",
