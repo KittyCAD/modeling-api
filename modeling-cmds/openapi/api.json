@@ -1906,6 +1906,24 @@
             "description": "ACIS part format.",
             "type": "object",
             "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
               "split_closed_faces": {
                 "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
                 "default": false,
@@ -1926,6 +1944,24 @@
             "description": "CATIA part format.",
             "type": "object",
             "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
               "split_closed_faces": {
                 "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
                 "default": false,
@@ -1946,6 +1982,24 @@
             "description": "PTC Creo part format.",
             "type": "object",
             "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "z",
+                    "direction": "positive"
+                  },
+                  "up": {
+                    "axis": "y",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
               "split_closed_faces": {
                 "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
                 "default": false,
@@ -1996,6 +2050,24 @@
             "description": "Autodesk Inventor part format.",
             "type": "object",
             "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
               "split_closed_faces": {
                 "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
                 "default": false,
@@ -2016,6 +2088,24 @@
             "description": "Siemens NX part format.",
             "type": "object",
             "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
               "split_closed_faces": {
                 "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
                 "default": false,
@@ -2069,6 +2159,24 @@
             "description": "Parasolid part format.",
             "type": "object",
             "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
               "split_closed_faces": {
                 "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
                 "default": false,
@@ -2122,6 +2230,24 @@
             "description": "SolidWorks part (SLDPRT) format.",
             "type": "object",
             "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "z",
+                    "direction": "positive"
+                  },
+                  "up": {
+                    "axis": "y",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
               "split_closed_faces": {
                 "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
                 "default": false,
