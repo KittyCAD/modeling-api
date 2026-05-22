@@ -1259,14 +1259,26 @@ pub enum FileExportFormat2d {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum FileImportFormat {
+    /// ACIS part format.
+    Acis,
+    /// CATIA part format.
+    Catia,
+    /// PTC Creo part format.
+    Creo,
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
     Fbx,
     /// glTF 2.0.
     Gltf,
+    /// Autodesk Inventor part format.
+    Inventor,
+    /// Siemens NX part format.
+    Nx,
     /// The OBJ file format. <https://en.wikipedia.org/wiki/Wavefront_.obj_file>
     /// It may or may not have an an attached material (mtl // mtllib) within the file,
     /// but we interact with it as if it does not.
     Obj,
+    /// Parasolid part format.
+    Parasolid,
     /// The PLY file format. <https://en.wikipedia.org/wiki/PLY_(file_format)>
     Ply,
     /// SolidWorks part (SLDPRT) format.
