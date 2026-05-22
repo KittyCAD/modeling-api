@@ -557,12 +557,12 @@ pub enum DistanceType {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OriginType {
-    /// Local Origin (center of object bounding box).
+    /// Local Origin ([0, 0, 0] in object space).
     #[default]
     Local,
-    /// Global Origin (0, 0, 0).
+    /// Global Origin ([0, 0, 0] in world space).
     Global,
-    /// Custom Origin (user specified point).
+    /// Custom Origin (user specified point in world space).
     Custom {
         /// Custom origin point.
         origin: Point3d<f64>,

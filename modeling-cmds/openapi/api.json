@@ -7588,7 +7588,7 @@
         "description": "The type of origin",
         "oneOf": [
           {
-            "description": "Local Origin (center of object bounding box).",
+            "description": "Local Origin ([0, 0, 0] in object space).",
             "type": "object",
             "properties": {
               "type": {
@@ -7603,7 +7603,7 @@
             ]
           },
           {
-            "description": "Global Origin (0, 0, 0).",
+            "description": "Global Origin ([0, 0, 0] in world space).",
             "type": "object",
             "properties": {
               "type": {
@@ -7618,7 +7618,7 @@
             ]
           },
           {
-            "description": "Custom Origin (user specified point).",
+            "description": "Custom Origin (user specified point in world space).",
             "type": "object",
             "properties": {
               "origin": {
