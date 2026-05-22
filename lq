@@ -1,0 +1,1644 @@
+[33mcommit 6321cd7e9579c401127c81fcc2f64934090f849c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32malteous/proprietary-formats[m[33m, [m[1;31morigin/alteous/proprietary-formats[m[33m)[m
+Author: alteous <alteous@outlook.com>
+Date:   Fri May 15 11:36:42 2026 +0100
+
+    Add more proprietary formats
+
+[33mcommit 0eaad04180a1715eca9022ed5757a0dfc777ef27[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Sat May 9 23:29:03 2026 -0400
+
+    Bump crate-ci/typos from 1.45.1 to 1.46.0 in the minor group (#1194)
+
+[33mcommit 89d1bae965e68c4b2b36902e2279ad44a41ca5fc[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Wed May 6 21:34:54 2026 -0700
+
+    Release modeling-cmds 0.2.196 (#1192)
+    
+    ## Added
+    
+    * Support Cubic Millimeter as a volume (#1191)
+
+[33mcommit 2aa3036acbcb286aee6783d40805a11a2abbbd90[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Wed May 6 21:16:20 2026 -0700
+
+    Cubic millimeter support (#1191)
+    
+    Part of https://github.com/KittyCAD/modeling-app/issues/11474
+    
+    Relies on
+    https://github.com/rust-embedded-community/rust-measurements/pull/68
+
+[33mcommit e90f42093967b86a4d48c85119709ab2e3c7358f[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Wed May 6 17:56:43 2026 -0400
+
+    Bump openssl from 0.10.78 to 0.10.79 in the security group across 1 directory (#1190)
+    
+    Bumps the security group with 1 update in the / directory:
+    [openssl](https://github.com/rust-openssl/rust-openssl).
+    
+    Updates `openssl` from 0.10.78 to 0.10.79
+    <details>
+    <summary>Release notes</summary>
+    <p><em>Sourced from <a
+    href="https://github.com/rust-openssl/rust-openssl/releases">openssl's
+    releases</a>.</em></p>
+    <blockquote>
+    <h2>openssl-v0.10.79</h2>
+    <h2>What's Changed</h2>
+    <ul>
+    <li>Bump actions/cache from 5.0.4 to 5.0.5 by <a
+    href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
+    in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2610">rust-openssl/rust-openssl#2610</a></li>
+    <li>Try to fix OpenSSL 1.1.0l download by <a
+    href="https://github.com/botovq"><code>@​botovq</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2614">rust-openssl/rust-openssl#2614</a></li>
+    <li>Require &amp;mut BigNumContextRef for EcPointRef mul/invert by <a
+    href="https://github.com/alex"><code>@​alex</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2615">rust-openssl/rust-openssl#2615</a></li>
+    <li>Fix UB in EcGroupRef::generator on groups without a generator by <a
+    href="https://github.com/alex"><code>@​alex</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2617">rust-openssl/rust-openssl#2617</a></li>
+    <li>Replace <code>use libc::*;</code> with targeted imports in
+    openssl-sys by <a href="https://github.com/alex"><code>@​alex</code></a>
+    in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2618">rust-openssl/rust-openssl#2618</a></li>
+    <li>Add PKeyRef::is_a and KeyType for name-based key identification by
+    <a href="https://github.com/reaperhulk"><code>@​reaperhulk</code></a> in
+    <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2619">rust-openssl/rust-openssl#2619</a></li>
+    <li>Add PKey::{public,private}_key_from_raw_bytes_ex by <a
+    href="https://github.com/reaperhulk"><code>@​reaperhulk</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2620">rust-openssl/rust-openssl#2620</a></li>
+    <li>Bump MSRV to 1.80 by <a
+    href="https://github.com/reaperhulk"><code>@​reaperhulk</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2622">rust-openssl/rust-openssl#2622</a></li>
+    <li>Drop once_cell in favor of std::sync::{LazyLock, OnceLock} by <a
+    href="https://github.com/reaperhulk"><code>@​reaperhulk</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2623">rust-openssl/rust-openssl#2623</a></li>
+    <li>Add PKey::private_key_from_seed for ML-DSA/ML-KEM key import by <a
+    href="https://github.com/reaperhulk"><code>@​reaperhulk</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2621">rust-openssl/rust-openssl#2621</a></li>
+    <li>parallelize more builds in CI for cold caches by <a
+    href="https://github.com/reaperhulk"><code>@​reaperhulk</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2625">rust-openssl/rust-openssl#2625</a></li>
+    <li>Add PKeyRef::seed_into for ML-DSA/ML-KEM seed extraction by <a
+    href="https://github.com/reaperhulk"><code>@​reaperhulk</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2626">rust-openssl/rust-openssl#2626</a></li>
+    <li>Fix process abort when verify/PSK callbacks fire after SSL_CTX swap
+    by <a href="https://github.com/alex"><code>@​alex</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2624">rust-openssl/rust-openssl#2624</a></li>
+    <li>Bind OSSL_PARAM_modified and use it for seed_into by <a
+    href="https://github.com/reaperhulk"><code>@​reaperhulk</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2628">rust-openssl/rust-openssl#2628</a></li>
+    <li>Add PkeyCtxRef::set_context_string for ML-DSA by <a
+    href="https://github.com/reaperhulk"><code>@​reaperhulk</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2629">rust-openssl/rust-openssl#2629</a></li>
+    <li>Reject non-UTF-8 OCSP responder URLs in X509Ref::ocsp_responders by
+    <a href="https://github.com/alex"><code>@​alex</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2631">rust-openssl/rust-openssl#2631</a></li>
+    <li>Fix output buffer overflow for AES key-wrap-with-padding ciphers by
+    <a href="https://github.com/alex"><code>@​alex</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2630">rust-openssl/rust-openssl#2630</a></li>
+    <li>Release openssl 0.10.79 and openssl-sys 0.9.115 by <a
+    href="https://github.com/reaperhulk"><code>@​reaperhulk</code></a> in <a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/pull/2632">rust-openssl/rust-openssl#2632</a></li>
+    </ul>
+    <p><strong>Full Changelog</strong>: <a
+    href="https://github.com/rust-openssl/rust-openssl/compare/openssl-v0.10.78...openssl-v0.10.79">https://github.com/rust-openssl/rust-openssl/compare/openssl-v0.10.78...openssl-v0.10.79</a></p>
+    </blockquote>
+    </details>
+    <details>
+    <summary>Commits</summary>
+    <ul>
+    <li><a
+    href="https://github.com/rust-openssl/rust-openssl/commit/649f2d9e37f3aa701e20bd8ab5cd7eb5afa0a90f"><code>649f2d9</code></a>
+    Release openssl 0.10.79 and openssl-sys 0.9.115 (<a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/issues/2632">#2632</a>)</li>
+    <li><a
+    href="https://github.com/rust-openssl/rust-openssl/commit/257f9b20c001b888986f93579f118fa2a57d4f45"><code>257f9b2</code></a>
+    Fix output buffer overflow for AES key-wrap-with-padding ciphers (<a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/issues/2630">#2630</a>)</li>
+    <li><a
+    href="https://github.com/rust-openssl/rust-openssl/commit/d43e9179b1885fc66269a42361cc7a80f631ac8f"><code>d43e917</code></a>
+    Reject non-UTF-8 OCSP responder URLs in X509Ref::ocsp_responders (<a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/issues/2631">#2631</a>)</li>
+    <li><a
+    href="https://github.com/rust-openssl/rust-openssl/commit/f46519c8694a3e121091dafe38aab77c2f756546"><code>f46519c</code></a>
+    Add PkeyCtxRef::set_context_string for ML-DSA (<a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/issues/2629">#2629</a>)</li>
+    <li><a
+    href="https://github.com/rust-openssl/rust-openssl/commit/ad9ae312771f898749a9471549519d45eba6a033"><code>ad9ae31</code></a>
+    Bind OSSL_PARAM_modified and use it for seed_into (<a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/issues/2628">#2628</a>)</li>
+    <li><a
+    href="https://github.com/rust-openssl/rust-openssl/commit/4e25c9be20dae1e78f1a3815950cd0973addae82"><code>4e25c9b</code></a>
+    Fix process abort when verify/PSK callbacks fire after SSL_CTX swap (<a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/issues/2624">#2624</a>)</li>
+    <li><a
+    href="https://github.com/rust-openssl/rust-openssl/commit/3dd8f425ef34a069b5bec46f3971b67db1c295c7"><code>3dd8f42</code></a>
+    Add PKeyRef::seed_into for ML-DSA/ML-KEM seed extraction (<a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/issues/2626">#2626</a>)</li>
+    <li><a
+    href="https://github.com/rust-openssl/rust-openssl/commit/2c5e5a8f1483d5ec85580c07f721de9057d58e69"><code>2c5e5a8</code></a>
+    parallelize more builds in CI for cold caches (<a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/issues/2625">#2625</a>)</li>
+    <li><a
+    href="https://github.com/rust-openssl/rust-openssl/commit/668559171168538cd190574373abfc9e120263ca"><code>6685591</code></a>
+    Add PKey::private_key_from_seed for ML-DSA/ML-KEM key import (<a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/issues/2621">#2621</a>)</li>
+    <li><a
+    href="https://github.com/rust-openssl/rust-openssl/commit/8f8fdce627fb3c553673b8c688d9f1dc10ea0cc8"><code>8f8fdce</code></a>
+    Drop once_cell in favor of std::sync::{LazyLock, OnceLock} (<a
+    href="https://redirect.github.com/rust-openssl/rust-openssl/issues/2623">#2623</a>)</li>
+    <li>Additional commits viewable in <a
+    href="https://github.com/rust-openssl/rust-openssl/compare/openssl-v0.10.78...openssl-v0.10.79">compare
+    view</a></li>
+    </ul>
+    </details>
+    <br />
+    
+    
+    [![Dependabot compatibility
+    score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=openssl&package-manager=cargo&previous-version=0.10.78&new-version=0.10.79)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)
+    
+    Dependabot will resolve any conflicts with this PR as long as you don't
+    alter it yourself. You can also trigger a rebase manually by commenting
+    `@dependabot rebase`.
+    
+    [//]: # (dependabot-automerge-start)
+    [//]: # (dependabot-automerge-end)
+    
+    ---
+    
+    <details>
+    <summary>Dependabot commands and options</summary>
+    <br />
+    
+    You can trigger Dependabot actions by commenting on this PR:
+    - `@dependabot rebase` will rebase this PR
+    - `@dependabot recreate` will recreate this PR, overwriting any edits
+    that have been made to it
+    - `@dependabot show <dependency name> ignore conditions` will show all
+    of the ignore conditions of the specified dependency
+    - `@dependabot ignore <dependency name> major version` will close this
+    group update PR and stop Dependabot creating any more for the specific
+    dependency's major version (unless you unignore this specific
+    dependency's major version or upgrade to it yourself)
+    - `@dependabot ignore <dependency name> minor version` will close this
+    group update PR and stop Dependabot creating any more for the specific
+    dependency's minor version (unless you unignore this specific
+    dependency's minor version or upgrade to it yourself)
+    - `@dependabot ignore <dependency name>` will close this group update PR
+    and stop Dependabot creating any more for the specific dependency
+    (unless you unignore this specific dependency or upgrade to it yourself)
+    - `@dependabot unignore <dependency name>` will remove all of the ignore
+    conditions of the specified dependency
+    - `@dependabot unignore <dependency name> <ignore condition>` will
+    remove the ignore condition of the specified dependency and ignore
+    conditions
+    You can disable automated security fix PRs for this repo from the
+    [Security Alerts
+    page](https://github.com/KittyCAD/modeling-api/network/alerts).
+    
+    </details>
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+    Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+[33mcommit 5fb705ed41d06c92b99ff7569ca97b4170b3cd59[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Mon May 4 13:38:19 2026 -0500
+
+    Release modeling-cmds 0.2.195 (#1189)
+    
+    # Changed
+    
+     - Added face API (#1163)
+
+[33mcommit c78a9682966587bd9353fdd9200b7d1b4e879ecd[m
+Author: Kurt Hutten <k.hutten@protonmail.ch>
+Date:   Tue May 5 04:32:14 2026 +1000
+
+    Face api (#1163)
+    
+    Redo of https://github.com/KittyCAD/modeling-api/pull/1091
+    After it got reverted in
+    https://github.com/KittyCAD/modeling-api/pull/1143
+    
+    Tweaks to allow for the face api changes, see
+    https://github.com/KittyCAD/engine/pull/4194
+    
+    ---------
+    
+    Co-authored-by: benjamaan476 <ben@zoo.dev>
+    Co-authored-by: ben <ben.crabbe@hotmail.co.uk>
+    Co-authored-by: Adam Chalmers <adam.chalmers@zoo.dev>
+
+[33mcommit cbb499d97f8c4cd5fe17a2c24ea8b86ff22371bb[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Sun May 3 11:02:13 2026 -0500
+
+    Release modeling-cmds 0.2.194 (#1188)
+    
+    * Bumps required kcmc macro crate versions
+
+[33mcommit c6cdbd54bd1557b84327b14e8fbf0f616d271acd[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Sun May 3 10:55:09 2026 -0500
+
+    Bump the required macro impl version (#1187)
+
+[33mcommit 0dd4e3e13a8e12c2832a4b9eea81d0b65e4d3816[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Sat May 2 19:56:19 2026 -0400
+
+    Bump openssl from 0.10.75 to 0.10.78 in the security group across 1 directory (#1164)
+
+[33mcommit df63398540a2df3c119baf3630c342cfb132d2a3[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri May 1 19:20:26 2026 -0500
+
+    Release modeling-cmds 0.2.193 (#1186)
+    
+    # Changed
+    
+     - skip serializing RegionVersion if it's v0
+
+[33mcommit 904b90f9f6b91b1b0ac968ca1256323b42abdf4f[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri May 1 19:15:18 2026 -0500
+
+    Skip serializing region v0 (#1185)
+
+[33mcommit a9978d9232173ae7dffab2827711df3f2342d20e[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri May 1 16:06:37 2026 -0500
+
+    Release modeling-cmds 0.2.192 (#1184)
+    
+    Fixed
+    
+     - make fields of CreateRegion pub #1183
+
+[33mcommit d14f84fb79ff739a0d1f428f50cde70c0860d2ca[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri May 1 16:02:22 2026 -0500
+
+    Make region fields pub (#1183)
+
+[33mcommit 87009c53ec93a4c5efff480c99c132374aba277f[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri May 1 15:03:15 2026 -0500
+
+    Release modeling-cmds 0.2.191 (#1182)
+    
+    # Added
+    
+     - Region creation requests have new `version` field #1181
+     - CSG responses have new `any_intersections` field #1177
+
+[33mcommit 278c33b71ff3adf6554c97b9b1381f9ce401ff8d[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri May 1 14:58:30 2026 -0500
+
+    Adds any_intersections to Boolean responses (#1177)
+    
+    Co-authored-by: Austin Knutson <austin@zoo.dev>
+
+[33mcommit ea5a5cf6ec4345f7aa3f1a399ced04824f741a10[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri May 1 14:18:46 2026 -0500
+
+    Add region version (#1181)
+    
+    Part of https://github.com/KittyCAD/modeling-app/issues/11398
+
+[33mcommit 48046e8d011eff4f24d5dbb79dcaf31ab6364331[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri May 1 09:53:38 2026 -0500
+
+    Release modeling-cmds 0.2.190 (#1179)
+    
+    # Added
+    
+     - Mirror3d API
+
+[33mcommit 05f3d9db9aee1edf35f83d30708980a89d3bd848[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri May 1 09:38:53 2026 -0500
+
+    API for mirror 3D (#1159)
+    
+    Deprecated the old mirror 2D endpoints, one mirror endpoint for all
+    kinds now.
+    
+    ---------
+    
+    Co-authored-by: Serena Gandhi <60444726+gserena01@users.noreply.github.com>
+
+[33mcommit 0f89b821947e4884d54269d108483835ea2e31db[m
+Author: Ryan Barton <ryan@ryanbarton.dev>
+Date:   Mon Apr 27 14:24:57 2026 -0400
+
+    fix stl missing new constructor method (#1171)
+
+[33mcommit 18efc863a7e152802eb62cbe1026107196bc467b[m
+Author: Jonathan Tran <jonnytran@gmail.com>
+Date:   Mon Apr 27 13:10:20 2026 -0400
+
+    Release modeling-cmds-macros-impl 0.1.14 (#1175)
+    
+    - #1170
+
+[33mcommit 60cc9df29d8c80a140b87f63be3c8610712c1a06[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Mon Apr 27 11:00:37 2026 -0500
+
+    Release modeling-cmds-macros 0.1.13 (#1173)
+
+[33mcommit 6380502f39ff57da27e83f4f5bbd17bb55a6ba41[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Mon Apr 27 09:45:12 2026 -0500
+
+    Release modeling-cmds 0.2.189 (#1172)
+    
+    # Added
+    
+     - impl `PartialEq` on WebSocketResponse (#1170)
+
+[33mcommit d185c957ad8ffee4bf6ff3af8035ba5988ff56f7[m
+Author: Jonathan Tran <jonnytran@gmail.com>
+Date:   Mon Apr 27 10:38:46 2026 -0400
+
+    Add PartialEq impl for WebSocketResponse (#1170)
+    
+    Resolves #1162.
+
+[33mcommit b2c93b2a13abf27697481aa622e2d3b935441e54[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Sat Apr 25 20:47:48 2026 -0400
+
+    Bump crate-ci/typos from 1.45.0 to 1.45.1 in the patch group (#1165)
+
+[33mcommit ec70af5315afd544b12c502bb0216a5b1989dea3[m[33m ([m[1;32mmain[m[33m)[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Mon Apr 20 12:36:41 2026 -0500
+
+    Release modeling-cmds 0.2.188 (#1161)
+    
+    # Added
+    
+     - Add bodies created/updated to sweep responses (#1160)
+
+[33mcommit 9a59f7bc98fc718c036d4e51919aa84e217bf29f[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Mon Apr 20 12:31:53 2026 -0500
+
+    Add bodies created/updated to sweep responses (#1160)
+    
+    Extracted out of https://github.com/KittyCAD/modeling-api/pull/1130,
+    which got too big, so we're going to do in pieces instead.
+
+[33mcommit 76655065749644a87c740f4d92ffed4fef3db2dd[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Sat Apr 11 19:18:03 2026 -0400
+
+    Bump crate-ci/typos from 1.44.0 to 1.45.0 in the minor group (#1155)
+
+[33mcommit 22cb44947ebceecb93944278d2eb51f4e53dbfda[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Mon Apr 6 19:38:44 2026 -0500
+
+    Release modeling-cmds 0.2.187 (#1154)
+
+[33mcommit f34da35873b0145b144fc2a8c5377d1772f54e8e[m
+Author: Pierre Jacquier <pierrejacquier39@gmail.com>
+Date:   Mon Apr 6 20:36:41 2026 -0400
+
+    Customizable selection and highlight colours (#1150)
+    
+    Closes #1149. Follow-up to https://github.com/KittyCAD/engine/pull/4280,
+    needed for https://github.com/KittyCAD/modeling-app/pull/10740
+
+[33mcommit c7bef4fb208a56fbd8ff8575899e621e7a0baffa[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Wed Apr 1 13:30:49 2026 -0500
+
+    Release modeling-cmds 0.2.186 (#1148)
+    
+    # Tweaked
+    
+     - skip serializing the 'legacy_csg' field if it's default (false)
+
+[33mcommit 4675f22d81d6b25e0d84b7ab39d75be19a50a9c1[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Wed Apr 1 13:11:03 2026 -0500
+
+    Tweak: Don't serialize the legacy_csg field if it's false (#1147)
+    
+    This reduces churn in our sim tests
+
+[33mcommit e0a9c9205aee80a9dc94c6c15b0c5257200aa514[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Wed Apr 1 12:04:05 2026 -0500
+
+    Release modeling-cmds 0.2.185 (#1146)
+    
+    # Added
+    
+     - Switch to enable/disable legacy CSG algorithm (#1132)
+
+[33mcommit 002c2467202a095f53808c76e1fc002564235e22[m
+Author: Austin Knutson <austin.j.knutson@gmail.com>
+Date:   Tue Mar 31 18:23:54 2026 -0500
+
+    Switch to enable/disable legacy CSG algorithm (#1132)
+    
+    This accompanies https://github.com/KittyCAD/engine/pull/4142
+
+[33mcommit 44dd2c382005323656e68a89c38fad301b13599b[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri Mar 27 17:24:26 2026 -0500
+
+    Release modeling-cmds 0.2.184 (#1144)
+    
+    # Removed
+    
+     - Reverted the Face API (#1143) due to breaking changes in engine
+
+[33mcommit 88939fb8781433e34b9b758e7fb2351e2c904949[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri Mar 27 17:18:21 2026 -0500
+
+    Revert the Face API (#1143)
+    
+    It had breaking changes to structs in `shared.rs` that were difficult
+    for engine to integrate and we're rushing to get something out for
+    Surface Modeling.
+
+[33mcommit ecb6c6e2802e9bc8ec74d4fae42cefcac8c54b52[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri Mar 27 15:26:05 2026 -0500
+
+    Release modeling-cmds 0.2.183 (#1142)
+    
+    # Changed
+    
+    - Add `skip_serializing_if = "Vec::is_empty"` on `Vec<EdgeReference>`
+    fields.
+
+[33mcommit 408a9e31074425140916652315aeaae8dbc9e11e[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri Mar 27 14:48:15 2026 -0500
+
+    Skip serializing EdgeReferences if it's empty (#1141)
+    
+    This will minimize lines changed in our simulation tests. Without this
+    change, redoing the sim tests makes a lot of diffs like this:
+    
+    ```diff
+      "edge_ids": [ ... ],
+    + "edges_references": [],
+    ```
+
+[33mcommit 40787580336416fe2e33b768fcc07d0166f7b29a[m
+Author: Ben Crabbe <ben@zoo.dev>
+Date:   Fri Mar 27 13:49:37 2026 +0000
+
+    Release modeling-cmds 0.2.182 (#1140)
+
+[33mcommit bca89f3fb169845e70c1c0fc598cf3e9429efcc9[m
+Author: Ben Crabbe <ben@zoo.dev>
+Date:   Fri Mar 27 13:41:52 2026 +0000
+
+    Joining multiple surfaces together (#1139)
+    
+    This is the other half of post-imprint join. Take multiple disjoint
+    surfaces and create on poly surface. Any coincident edges are merged
+    together
+
+[33mcommit b4193efccc4d7a1e95d4e73543f2ee26157cbdab[m
+Author: Kurt Hutten <k.hutten@protonmail.ch>
+Date:   Thu Mar 26 05:42:34 2026 +1100
+
+    Face api (#1091)
+    
+    Tweaks to allow for the face api changes, see
+    https://github.com/KittyCAD/engine/pull/4194
+    
+    ---------
+    
+    Co-authored-by: benjamaan476 <ben@zoo.dev>
+    Co-authored-by: ben <ben.crabbe@hotmail.co.uk>
+
+[33mcommit d9b9df8e761713a62d3af3686d4329e9db677bf2[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Mon Mar 23 22:19:08 2026 -0400
+
+    Bump Swatinem/rust-cache from 2.8.2 to 2.9.1 in the minor group (#1138)
+
+[33mcommit 50f66e3a40291ad9a61683ddd309c16e366d8d49[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Thu Mar 19 16:24:39 2026 -0500
+
+    Release modeling-cmds 0.2.181 (#1137)
+
+[33mcommit f586726a119535d862628c7eff822eb98c7095bd[m
+Author: Mike Farrell <michael.l.farrell@gmail.com>
+Date:   Thu Mar 19 14:07:09 2026 -0700
+
+    Add region mapping to create region responses (#1134)
+    
+    Part of https://github.com/KittyCAD/engine/pull/4307
+
+[33mcommit 1f137cee387d93d9437fa6d39dc3762590fc9663[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Wed Mar 18 11:59:32 2026 -0400
+
+    Bump criterion from 0.7.0 to 0.8.2 (#1104)
+    
+    Bumps [criterion](https://github.com/criterion-rs/criterion.rs) from
+    0.7.0 to 0.8.2.
+    <details>
+    <summary>Release notes</summary>
+    <p><em>Sourced from <a
+    href="https://github.com/criterion-rs/criterion.rs/releases">criterion's
+    releases</a>.</em></p>
+    <blockquote>
+    <h2>criterion-plot-v0.8.2</h2>
+    <h3>Other</h3>
+    <ul>
+    <li>Update Readme</li>
+    </ul>
+    <h2>criterion-v0.8.2</h2>
+    <h3>Fixed</h3>
+    <ul>
+    <li>don't build alloca on unsupported targets</li>
+    </ul>
+    <h3>Other</h3>
+    <ul>
+    <li><em>(deps)</em> bump crate-ci/typos from 1.40.0 to 1.43.0</li>
+    <li>Fix panic with uniform iteration durations in benchmarks</li>
+    <li>Update Readme</li>
+    <li>Exclude development scripts from published package</li>
+    </ul>
+    <h2>criterion-plot-v0.8.1</h2>
+    <h3>Fixed</h3>
+    <ul>
+    <li>Typo</li>
+    </ul>
+    <h2>criterion-v0.8.1</h2>
+    <h3>Fixed</h3>
+    <ul>
+    <li>Homepage link</li>
+    </ul>
+    <h3>Other</h3>
+    <ul>
+    <li><em>(deps)</em> bump crate-ci/typos from 1.23.5 to 1.40.0</li>
+    <li><em>(deps)</em> bump jontze/action-mdbook from 3 to 4</li>
+    <li><em>(deps)</em> bump actions/checkout from 4 to 6</li>
+    </ul>
+    <h2>criterion-plot-v0.8.0</h2>
+    <p>No release notes provided.</p>
+    <h2>criterion-v0.8.0</h2>
+    <h3>BREAKING</h3>
+    <ul>
+    <li>Drop async-std support</li>
+    </ul>
+    <h3>Changed</h3>
+    <ul>
+    <li>Bump MSRV to 1.86, stable to 1.91.1</li>
+    </ul>
+    <h3>Added</h3>
+    <ul>
+    <li>Add ability to plot throughput on summary page.</li>
+    <li>Add support for reporting throughput in elements and bytes -
+    <code>Throughput::ElementsAndBytes</code> allows the text summary to
+    report throughput in both units simultaneously.</li>
+    <li>Add alloca-based memory layout randomisation to mitigate memory
+    effects on measurements.</li>
+    </ul>
+    <!-- raw HTML omitted -->
+    </blockquote>
+    <p>... (truncated)</p>
+    </details>
+    <details>
+    <summary>Changelog</summary>
+    <p><em>Sourced from <a
+    href="https://github.com/criterion-rs/criterion.rs/blob/master/CHANGELOG.md">criterion's
+    changelog</a>.</em></p>
+    <blockquote>
+    <h2><a
+    href="https://github.com/criterion-rs/criterion.rs/compare/criterion-v0.8.1...criterion-v0.8.2">0.8.2</a>
+    - 2026-02-04</h2>
+    <h3>Fixed</h3>
+    <ul>
+    <li>don't build alloca on unsupported targets</li>
+    </ul>
+    <h3>Other</h3>
+    <ul>
+    <li><em>(deps)</em> bump crate-ci/typos from 1.40.0 to 1.43.0</li>
+    <li>Fix panic with uniform iteration durations in benchmarks</li>
+    <li>Update Readme</li>
+    <li>Exclude development scripts from published package</li>
+    </ul>
+    <h2><a
+    href="https://github.com/criterion-rs/criterion.rs/compare/criterion-v0.8.0...criterion-v0.8.1">0.8.1</a>
+    - 2025-12-07</h2>
+    <h3>Fixed</h3>
+    <ul>
+    <li>Homepage link</li>
+    </ul>
+    <h3>Other</h3>
+    <ul>
+    <li><em>(deps)</em> bump crate-ci/typos from 1.23.5 to 1.40.0</li>
+    <li><em>(deps)</em> bump jontze/action-mdbook from 3 to 4</li>
+    <li><em>(deps)</em> bump actions/checkout from 4 to 6</li>
+    </ul>
+    <h2><a
+    href="https://github.com/criterion-rs/criterion.rs/compare/criterion-v0.7.0...criterion-v0.8.0">0.8.0</a>
+    - 2025-11-29</h2>
+    <h3>BREAKING</h3>
+    <ul>
+    <li>Drop async-std support</li>
+    </ul>
+    <h3>Changed</h3>
+    <ul>
+    <li>Bump MSRV to 1.86, stable to 1.91.1</li>
+    </ul>
+    <h3>Added</h3>
+    <ul>
+    <li>Add ability to plot throughput on summary page.</li>
+    <li>Add support for reporting throughput in elements and bytes -
+    <code>Throughput::ElementsAndBytes</code> allows the text summary to
+    report throughput in both units simultaneously.</li>
+    <li>Add alloca-based memory layout randomisation to mitigate memory
+    effects on measurements.</li>
+    <li>Add doc comment to benchmark runner in criterion_group macro
+    (removes linter warnings)</li>
+    </ul>
+    <h3>Fixed</h3>
+    <ul>
+    <li>Fix plotting NaN bug</li>
+    </ul>
+    <h3>Other</h3>
+    <ul>
+    <li>Remove Master API Docs links temporarily while we restore the docs
+    publishing.</li>
+    </ul>
+    </blockquote>
+    </details>
+    <details>
+    <summary>Commits</summary>
+    <ul>
+    <li><a
+    href="https://github.com/criterion-rs/criterion.rs/commit/7f0d745532e3c7b2e11bbf9de9b911f91790d3b1"><code>7f0d745</code></a>
+    chore: release v0.8.2</li>
+    <li><a
+    href="https://github.com/criterion-rs/criterion.rs/commit/4a467ce964052ae9bd9266c0706b470b817613e0"><code>4a467ce</code></a>
+    chore(deps): bump crate-ci/typos from 1.40.0 to 1.43.0</li>
+    <li><a
+    href="https://github.com/criterion-rs/criterion.rs/commit/b277a751453cf9ce0595e41bddf819210a6d6e47"><code>b277a75</code></a>
+    Fix panic with uniform iteration durations in benchmarks</li>
+    <li><a
+    href="https://github.com/criterion-rs/criterion.rs/commit/828af1450d648c599a92a077b75e292747761d99"><code>828af14</code></a>
+    fix: don't build alloca on unsupported targets</li>
+    <li><a
+    href="https://github.com/criterion-rs/criterion.rs/commit/b01316b76e42028f3b1cf3731f643bea7f354f39"><code>b01316b</code></a>
+    Update Readme</li>
+    <li><a
+    href="https://github.com/criterion-rs/criterion.rs/commit/4c02a3b4e560fe1f296c0ed1e9b53e3154a3cac6"><code>4c02a3b</code></a>
+    Exclude development scripts from published package</li>
+    <li><a
+    href="https://github.com/criterion-rs/criterion.rs/commit/e4e06dfdc3813d9a6d37e0e6e5db3de3fdd530a6"><code>e4e06df</code></a>
+    chore: release v0.8.1</li>
+    <li><a
+    href="https://github.com/criterion-rs/criterion.rs/commit/aa548b9f58ea5ddb7d2d16f3f4abfa7491b8f569"><code>aa548b9</code></a>
+    fix: Homepage link</li>
+    <li><a
+    href="https://github.com/criterion-rs/criterion.rs/commit/950c3b727a09d10067ea686e2ac6f1f23569168f"><code>950c3b7</code></a>
+    fix: Typo</li>
+    <li><a
+    href="https://github.com/criterion-rs/criterion.rs/commit/7e3e50c369194f735224215e3ea8210b86f09adb"><code>7e3e50c</code></a>
+    chore(deps): bump crate-ci/typos from 1.23.5 to 1.40.0</li>
+    <li>Additional commits viewable in <a
+    href="https://github.com/criterion-rs/criterion.rs/compare/criterion-plot-v0.7.0...criterion-v0.8.2">compare
+    view</a></li>
+    </ul>
+    </details>
+    <br />
+    
+    
+    [![Dependabot compatibility
+    score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=criterion&package-manager=cargo&previous-version=0.7.0&new-version=0.8.2)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)
+    
+    Dependabot will resolve any conflicts with this PR as long as you don't
+    alter it yourself. You can also trigger a rebase manually by commenting
+    `@dependabot rebase`.
+    
+    [//]: # (dependabot-automerge-start)
+    [//]: # (dependabot-automerge-end)
+    
+    ---
+    
+    <details>
+    <summary>Dependabot commands and options</summary>
+    <br />
+    
+    You can trigger Dependabot actions by commenting on this PR:
+    - `@dependabot rebase` will rebase this PR
+    - `@dependabot recreate` will recreate this PR, overwriting any edits
+    that have been made to it
+    - `@dependabot show <dependency name> ignore conditions` will show all
+    of the ignore conditions of the specified dependency
+    - `@dependabot ignore this major version` will close this PR and stop
+    Dependabot creating any more for this major version (unless you reopen
+    the PR or upgrade to it yourself)
+    - `@dependabot ignore this minor version` will close this PR and stop
+    Dependabot creating any more for this minor version (unless you reopen
+    the PR or upgrade to it yourself)
+    - `@dependabot ignore this dependency` will close this PR and stop
+    Dependabot creating any more for this dependency (unless you reopen the
+    PR or upgrade to it yourself)
+    
+    
+    </details>
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+    Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+[33mcommit 49f25b932fc0ad28a63257b2f9a26e6f24214e32[m
+Author: Ben Crabbe <ben@zoo.dev>
+Date:   Wed Mar 18 13:10:48 2026 +0000
+
+    Release modeling-cmds 0.2.180 (#1135)
+    
+    Includes the sweeping algorithm versioning release
+
+[33mcommit 24ad5160c3cc602fc1bfe3fb96d1ba08317f4389[m
+Author: Ben Crabbe <ben@zoo.dev>
+Date:   Wed Mar 18 10:33:39 2026 +0000
+
+    Add version field to sweep endpoint (#1133)
+    
+    There are now two sweeping algorithms available on the sweep endpoint.
+    These are accessed via the new version field of the endpoint. If not
+    provided or set to zero, the engine's default algorithm will be used.
+    This can change in the future so if a user wants to ensure a version for
+    a model they should specify the version
+
+[33mcommit b1c364354b0bff148e314e6b0ef70a083b05883e[m
+Author: Jonathan Tran <jonnytran@gmail.com>
+Date:   Wed Mar 11 10:48:20 2026 -0400
+
+    Drop ts-rs 11 support (#1127)
+    
+    Now that modeling-app has upgraded, we can leave the old version behind.
+
+[33mcommit 2ff33e713e42bb08b422c7c8e1ff75269587d889[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Tue Mar 10 23:29:37 2026 -0400
+
+    Bump quinn-proto from 0.11.13 to 0.11.14 in the security group across 1 directory (#1128)
+
+[33mcommit 0a2bb1dae614fceaaa2a99a603e17115996113f3[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Tue Mar 10 12:25:00 2026 -0500
+
+    Release modeling-cmds 0.2.179 (#1125)
+    
+    # Added
+    
+     - `output_unit` field for BoundingBox endpoint
+
+[33mcommit d7ea7639a233bb6a5332ea37971a21c563f3012b[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Tue Mar 10 12:22:56 2026 -0500
+
+    Bounding box param to choose output units (#1124)
+    
+    Lets user choose if the box's units are mm, cm, inches, etc.
+
+[33mcommit e1129be18f174b98606a5a6de3cf71f627fd6d2b[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Mon Mar 9 16:02:45 2026 -0500
+
+    Release modeling-cmds 0.2.178 (#1123)
+    
+    # Added
+    
+     - Closest edge lookup can limit to a given body (#1120)
+
+[33mcommit d5ce5a429422711e0cacfe0d5265a31ce403486f[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Mon Mar 9 15:58:49 2026 -0500
+
+    Closest edge lookup can limit to a given body (#1120)
+    
+    Users will almost always know the ID of the solid/surface whose edge
+    they're looking for, so we should allow scoping the search to only edges
+    in that body.
+    
+    ---------
+    
+    Co-authored-by: Caleb Goates <caleb@zoo.dev>
+
+[33mcommit 3d5b260fd45dfc9f9f123ecea2f2d481b0fca947[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Sat Mar 7 19:59:22 2026 -0500
+
+    Bump crate-ci/typos from 1.42.0 to 1.44.0 in the minor group (#1122)
+
+[33mcommit ffbda63d2e5cccc6b9e94aa961cbfd973cdd5722[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Thu Mar 5 16:39:44 2026 -0600
+
+    Release modeling-cmds 0.2.177 (#1121)
+    
+    # Added
+    
+     - New command, BoundingBox (#1096)
+
+[33mcommit b159827af9ee35e17e31b27442a4d6ee233c80f0[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Thu Mar 5 16:37:54 2026 -0600
+
+    New command, BoundingBox (#1096)
+    
+    Co-authored-by: Mike Farrell <michael@kittycad.io>
+
+[33mcommit 5250e43f6e05b8fa187248d625ad747aea1f6e14[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Wed Mar 4 18:26:49 2026 -0600
+
+    Release modeling-cmds 0.2.176 (#1119)
+    
+    # Added
+    
+     - Querypoint regions (#1106)
+
+[33mcommit 8fe16528d6072b5e3a0f7d30f483154136132e10[m
+Author: Mike Farrell <michael.l.farrell@gmail.com>
+Date:   Wed Mar 4 15:43:35 2026 -0800
+
+    Querypoint regions (#1106)
+    
+    https://github.com/KittyCAD/engine/pull/4222
+
+[33mcommit f430a2fd6c9b575944a8bc4edec30b62032bb600[m
+Author: Caleb Goates <53098881+cgoates@users.noreply.github.com>
+Date:   Wed Mar 4 10:25:12 2026 -0700
+
+    Release modeling-cmds 0.2.175 (#1117)
+
+[33mcommit 32b04d0d323d530cc255e4ddcbe2f68d9216a636[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Wed Mar 4 11:14:38 2026 -0600
+
+    Fmt (#1118)
+
+[33mcommit dcb11a7acb4f6fdac4ad6e7976e6f9d4c90e019d[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Wed Mar 4 10:22:53 2026 -0600
+
+    New cmd, ClosestEdge (#1107)
+    
+    Co-authored-by: Caleb Goates <caleb@zoo.dev>
+
+[33mcommit d9a46a15d2432b0c2fc2e37729bcfb6263b00e81[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Tue Mar 3 12:04:43 2026 -0500
+
+    Bump kittycad from 0.4.5 to 0.4.7 (#1105)
+
+[33mcommit 3728eb2104972674ce98e8b5fb04a43149d1bd45[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Mon Mar 2 19:52:22 2026 -0600
+
+    Release modeling-cmds 0.2.174 (#1114)
+    
+    # Added
+    
+     - More options to CSG imprint
+
+[33mcommit b6c7451a9cfb46008c19e91405e2381e9df19a09[m
+Author: Mike Farrell <michael.l.farrell@gmail.com>
+Date:   Mon Mar 2 17:50:13 2026 -0800
+
+    Safe modification to imprint API for preserved targets support (#1108)
+    
+    Used with https://github.com/KittyCAD/engine/pull/4230
+    
+    ---------
+    
+    Co-authored-by: Adam Chalmers <adam.chalmers@zoo.dev>
+
+[33mcommit cb0b3e87a60c555e794d40e61530f03f7cb52fbb[m
+Author: Ben Crabbe <ben@zoo.dev>
+Date:   Mon Mar 2 15:14:55 2026 +0000
+
+    Release modeling-cmds 0.2.173 (#1112)
+
+[33mcommit 76b7c7120f89f953202595de9cc78f7bc80a97f8[m
+Author: Ben Crabbe <ben@zoo.dev>
+Date:   Mon Mar 2 14:56:12 2026 +0000
+
+    Surface offset (#1111)
+    
+    Basic endpoint to offset a surface by a given amount.
+    
+    Currently the engine only supports planar or cylindrical surfaces and
+    errors on other surface types
+
+[33mcommit a1f682cd08ea0a71c8c4dc098c3d156e4b3df914[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri Feb 20 20:39:46 2026 -0600
+
+    Release modeling-cmds 0.2.172 (#1100)
+    
+    # Removed
+    
+    - Conversions between the file format types in modeling-cmds and
+    kittycad.rs (#1099)
+
+[33mcommit 8ba5cda46b5f6a2396b39d7e0a5b925d504d42bf[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Fri Feb 20 20:35:12 2026 -0600
+
+    kcmc no longer needs kittycad.rs (#1099)
+    
+    CLI was using these conversion features, I've integrated this PR into CLI here: https://github.com/KittyCAD/cli/pull/1479
+    
+    ---------
+    
+    Co-authored-by: alteous <alteous@outlook.com>
+
+[33mcommit 1711bf38571dd16542931df3cd339ba632721ceb[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Thu Feb 19 13:14:19 2026 -0700
+
+    Bump the minor group across 1 directory with 6 updates (#1090)
+    
+    Bumps the minor group with 6 updates in the / directory:
+    
+    | Package | From | To |
+    | --- | --- | --- |
+    | [anyhow](https://github.com/dtolnay/anyhow) | `1.0.100` | `1.0.101` |
+    | [clap](https://github.com/clap-rs/clap) | `4.5.54` | `4.5.57` |
+    | [uuid](https://github.com/uuid-rs/uuid) | `1.19.0` | `1.20.0` |
+    | [dropshot](https://github.com/oxidecomputer/dropshot) | `0.16.6` |
+    `0.16.7` |
+    | [insta](https://github.com/mitsuhiko/insta) | `1.46.1` | `1.46.3` |
+    | [regex](https://github.com/rust-lang/regex) | `1.12.2` | `1.12.3` |
+    
+    
+    Updates `anyhow` from 1.0.100 to 1.0.101
+    <details>
+    <summary>Release notes</summary>
+    <p><em>Sourced from <a
+    href="https://github.com/dtolnay/anyhow/releases">anyhow's
+    releases</a>.</em></p>
+    <blockquote>
+    <h2>1.0.101</h2>
+    <ul>
+    <li>Add #[inline] to anyhow::Ok helper (<a
+    href="https://redirect.github.com/dtolnay/anyhow/issues/437">#437</a>,
+    thanks <a
+    href="https://github.com/Ibitier"><code>@​Ibitier</code></a>)</li>
+    </ul>
+    </blockquote>
+    </details>
+    <details>
+    <summary>Commits</summary>
+    <ul>
+    <li><a
+    href="https://github.com/dtolnay/anyhow/commit/80bfe291b16071c70f141e90e67e7032d966826b"><code>80bfe29</code></a>
+    Release 1.0.101</li>
+    <li><a
+    href="https://github.com/dtolnay/anyhow/commit/dff8c432f95095cac19aa446da5047880b8ebdf3"><code>dff8c43</code></a>
+    Merge pull request <a
+    href="https://redirect.github.com/dtolnay/anyhow/issues/437">#437</a>
+    from Ibitier/inline-ok-helper</li>
+    <li><a
+    href="https://github.com/dtolnay/anyhow/commit/85d9ea9a1c7d7490578865e16ff64787efc7d01d"><code>85d9ea9</code></a>
+    Add #[inline] to anyhow::Ok helper</li>
+    <li><a
+    href="https://github.com/dtolnay/anyhow/commit/54036cc289b754775b884485f486e000bcda2875"><code>54036cc</code></a>
+    Update ui test suite to nightly-2026-01-21</li>
+    <li><a
+    href="https://github.com/dtolnay/anyhow/commit/cce0579d85fd1f6352a5955a9c134fc8655c853d"><code>cce0579</code></a>
+    Update actions/upload-artifact@v5 -&gt; v6</li>
+    <li><a
+    href="https://github.com/dtolnay/anyhow/commit/f2c598ca0e8ffd7ffcbcf93b8a6ad4df57c719fd"><code>f2c598c</code></a>
+    Update actions/upload-artifact@v4 -&gt; v5</li>
+    <li><a
+    href="https://github.com/dtolnay/anyhow/commit/2c0bda4ce944d943e7141f0316b0ea996602238e"><code>2c0bda4</code></a>
+    Update to 2021 edition</li>
+    <li><a
+    href="https://github.com/dtolnay/anyhow/commit/0d822681293d71c72440c9cdd635b4f15da064c4"><code>0d82268</code></a>
+    Remove rustc version requirement from readme</li>
+    <li><a
+    href="https://github.com/dtolnay/anyhow/commit/67df01216d29bc3bede925ab4483353b66c159f2"><code>67df012</code></a>
+    Merge pull request <a
+    href="https://redirect.github.com/dtolnay/anyhow/issues/436">#436</a>
+    from dtolnay/up</li>
+    <li><a
+    href="https://github.com/dtolnay/anyhow/commit/c8984880a87ae4fd4b04c956cfdc9af5f69eab55"><code>c898488</code></a>
+    Raise required compiler to Rust 1.68</li>
+    <li>Additional commits viewable in <a
+    href="https://github.com/dtolnay/anyhow/compare/1.0.100...1.0.101">compare
+    view</a></li>
+    </ul>
+    </details>
+    <br />
+    
+    Updates `clap` from 4.5.54 to 4.5.57
+    <details>
+    <summary>Release notes</summary>
+    <p><em>Sourced from <a
+    href="https://github.com/clap-rs/clap/releases">clap's
+    releases</a>.</em></p>
+    <blockquote>
+    <h2>v4.5.57</h2>
+    <h2>[4.5.57] - 2026-02-03</h2>
+    <h3>Fixes</h3>
+    <ul>
+    <li>Regression from 4.5.55 where having an argument with
+    <code>.value_terminator(&quot;--&quot;)</code> caused problems with an
+    argument with <code>.last(true)</code></li>
+    </ul>
+    <h2>v4.5.56</h2>
+    <h2>[4.5.56] - 2026-01-29</h2>
+    <h3>Fixes</h3>
+    <ul>
+    <li>On conflict error, don't show conflicting arguments in the
+    usage</li>
+    </ul>
+    <h2>v4.5.55</h2>
+    <h2>[4.5.55] - 2026-01-27</h2>
+    <h3>Fixes</h3>
+    <ul>
+    <li>Fix inconsistency in precedence between positionals with a
+    <code>value_terminator(&quot;--&quot;)</code> and escapes
+    (<code>--</code>) where <code>./foo -- bar</code> means the first arg is
+    empty, rather than escaping future args</li>
+    </ul>
+    </blockquote>
+    </details>
+    <details>
+    <summary>Changelog</summary>
+    <p><em>Sourced from <a
+    href="https://github.com/clap-rs/clap/blob/master/CHANGELOG.md">clap's
+    changelog</a>.</em></p>
+    <blockquote>
+    <h2>[4.5.57] - 2026-02-03</h2>
+    <h3>Fixes</h3>
+    <ul>
+    <li>Regression from 4.5.55 where having an argument with
+    <code>.value_terminator(&quot;--&quot;)</code> caused problems with an
+    argument with <code>.last(true)</code></li>
+    </ul>
+    <h2>[4.5.56] - 2026-01-29</h2>
+    <h3>Fixes</h3>
+    <ul>
+    <li>On conflict error, don't show conflicting arguments in the
+    usage</li>
+    </ul>
+    <h2>[4.5.55] - 2026-01-27</h2>
+    <h3>Fixes</h3>
+    <ul>
+    <li>Fix inconsistency in precedence between positionals with a
+    <code>value_terminator(&quot;--&quot;)</code> and escapes
+    (<code>--</code>) where <code>./foo -- bar</code> means the first arg is
+    empty, rather than escaping future args</li>
+    </ul>
+    </blockquote>
+    </details>
+    <details>
+    <summary>Commits</summary>
+    <ul>
+    <li><a
+    href="https://github.com/clap-rs/clap/commit/69c0ddbbfb56db1bccbb5954b62bb89a567a3c8d"><code>69c0ddb</code></a>
+    chore: Release</li>
+    <li><a
+    href="https://github.com/clap-rs/clap/commit/8206bba73fd6c5d567cb95949fd1c3c6c48e4e20"><code>8206bba</code></a>
+    docs: Update changelog</li>
+    <li><a
+    href="https://github.com/clap-rs/clap/commit/c109d67ea493823727411f60f354edb3d83117ee"><code>c109d67</code></a>
+    Merge pull request <a
+    href="https://redirect.github.com/clap-rs/clap/issues/6104">#6104</a>
+    from epage/hide</li>
+    <li><a
+    href="https://github.com/clap-rs/clap/commit/9d7f2128f77023941b53b7cfc311120a2ead75a2"><code>9d7f212</code></a>
+    fix(complete): Hide dot files on dynamic completer</li>
+    <li><a
+    href="https://github.com/clap-rs/clap/commit/77b3fdbbea64ae0b0b3a51309bcbb861360de8d1"><code>77b3fdb</code></a>
+    test(complete): Show dot file behavior</li>
+    <li><a
+    href="https://github.com/clap-rs/clap/commit/f89b9b8d1b818a2eb3863745be48725ace2d8f12"><code>f89b9b8</code></a>
+    test(derive): Make stable across upgrade</li>
+    <li><a
+    href="https://github.com/clap-rs/clap/commit/58eb8a937ac6ca4a59614dc26deedb6cfe16c424"><code>58eb8a9</code></a>
+    chore: Release</li>
+    <li><a
+    href="https://github.com/clap-rs/clap/commit/10a2a7559b0663143d56c850c0c40ed31620cb5b"><code>10a2a75</code></a>
+    docs: Update changelog</li>
+    <li><a
+    href="https://github.com/clap-rs/clap/commit/a42eebf56bf20d587347abb03105f95c98bfda51"><code>a42eebf</code></a>
+    Merge pull request <a
+    href="https://redirect.github.com/clap-rs/clap/issues/6103">#6103</a>
+    from epage/mut_subcommands</li>
+    <li><a
+    href="https://github.com/clap-rs/clap/commit/5335f54d73eef9276c13313661fcfffb720c87cf"><code>5335f54</code></a>
+    feat: Add Command::mut_subcommands</li>
+    <li>Additional commits viewable in <a
+    href="https://github.com/clap-rs/clap/compare/clap_complete-v4.5.54...clap_complete-v4.5.57">compare
+    view</a></li>
+    </ul>
+    </details>
+    <br />
+    
+    Updates `uuid` from 1.19.0 to 1.20.0
+    <details>
+    <summary>Release notes</summary>
+    <p><em>Sourced from <a
+    href="https://github.com/uuid-rs/uuid/releases">uuid's
+    releases</a>.</em></p>
+    <blockquote>
+    <h2>v1.20.0</h2>
+    <h2>What's Changed</h2>
+    <ul>
+    <li>Derive Ord and PartialOrd for NonNilUuid by <a
+    href="https://github.com/mivort"><code>@​mivort</code></a> in <a
+    href="https://redirect.github.com/uuid-rs/uuid/pull/854">uuid-rs/uuid#854</a></li>
+    <li>Implement Deserialize on adapter types by <a
+    href="https://github.com/KodrAus"><code>@​KodrAus</code></a> in <a
+    href="https://redirect.github.com/uuid-rs/uuid/pull/855">uuid-rs/uuid#855</a></li>
+    <li>Deprecate <code>macro-diagnostics</code> by <a
+    href="https://github.com/KodrAus"><code>@​KodrAus</code></a> in <a
+    href="https://redirect.github.com/uuid-rs/uuid/pull/856">uuid-rs/uuid#856</a></li>
+    <li>Prepare for 1.20.0 release by <a
+    href="https://github.com/KodrAus"><code>@​KodrAus</code></a> in <a
+    href="https://redirect.github.com/uuid-rs/uuid/pull/857">uuid-rs/uuid#857</a></li>
+    </ul>
+    <h2>New Contributors</h2>
+    <ul>
+    <li><a href="https://github.com/mivort"><code>@​mivort</code></a> made
+    their first contribution in <a
+    href="https://redirect.github.com/uuid-rs/uuid/pull/854">uuid-rs/uuid#854</a></li>
+    </ul>
+    <p><strong>Full Changelog</strong>: <a
+    href="https://github.com/uuid-rs/uuid/compare/v1.19.0...v1.20.0">https://github.com/uuid-rs/uuid/compare/v1.19.0...v1.20.0</a></p>
+    </blockquote>
+    </details>
+    <details>
+    <summary>Commits</summary>
+    <ul>
+    <li><a
+    href="https://github.com/uuid-rs/uuid/commit/c3346ddf2a78ecadefbadaa83d22e263342745ca"><code>c3346dd</code></a>
+    Merge pull request <a
+    href="https://redirect.github.com/uuid-rs/uuid/issues/857">#857</a> from
+    uuid-rs/cargo/v1.20.0</li>
+    <li><a
+    href="https://github.com/uuid-rs/uuid/commit/66eebc34ae2f8e0ff60291260c813f77b4e00a29"><code>66eebc3</code></a>
+    prepare for 1.20.0 release</li>
+    <li><a
+    href="https://github.com/uuid-rs/uuid/commit/3b66758622516f1041cea5b6f04a3938f63d963c"><code>3b66758</code></a>
+    Merge pull request <a
+    href="https://redirect.github.com/uuid-rs/uuid/issues/856">#856</a> from
+    uuid-rs/docs/bytes-le-ordering</li>
+    <li><a
+    href="https://github.com/uuid-rs/uuid/commit/e2bdd44ec30afa3df9ee7ab061b3622f08c690e3"><code>e2bdd44</code></a>
+    don't run UI tests in wasm</li>
+    <li><a
+    href="https://github.com/uuid-rs/uuid/commit/b6dc7ece22a29190ff6dbfdfd7df22cd7bee3bcc"><code>b6dc7ec</code></a>
+    note that ordering applies to fields in to/from_bytes_le</li>
+    <li><a
+    href="https://github.com/uuid-rs/uuid/commit/a0281cd2f78255381d16a4c3319af05129d04dae"><code>a0281cd</code></a>
+    Merge pull request <a
+    href="https://redirect.github.com/uuid-rs/uuid/issues/855">#855</a> from
+    uuid-rs/feat/serde-fmt</li>
+    <li><a
+    href="https://github.com/uuid-rs/uuid/commit/db27b67d87f653eb2c136ee5d86b104a2aa56d6a"><code>db27b67</code></a>
+    Merge pull request <a
+    href="https://redirect.github.com/uuid-rs/uuid/issues/854">#854</a> from
+    mivort/non-nil-uuid-ord</li>
+    <li><a
+    href="https://github.com/uuid-rs/uuid/commit/efb06f21eb5b01b6d6f2d5e8e993ac2679826822"><code>efb06f2</code></a>
+    implement Deserialize on adapter types</li>
+    <li><a
+    href="https://github.com/uuid-rs/uuid/commit/50d44ad3c501c2592069e8709ede89addeaafd1d"><code>50d44ad</code></a>
+    Derive Ord and PartialOrd for NonNilUuid</li>
+    <li>See full diff in <a
+    href="https://github.com/uuid-rs/uuid/compare/v1.19.0...v1.20.0">compare
+    view</a></li>
+    </ul>
+    </details>
+    <br />
+    
+    Updates `dropshot` from 0.16.6 to 0.16.7
+    <details>
+    <summary>Changelog</summary>
+    <p><em>Sourced from <a
+    href="https://github.com/oxidecomputer/dropshot/blob/main/CHANGELOG.adoc">dropshot's
+    changelog</a>.</em></p>
+    <blockquote>
+    <p>== 0.16.7 (released 2026-01-27)</p>
+    <p><a
+    href="https://github.com/oxidecomputer/dropshot/compare/v0.16.6%5C...v0.16.7%5BFull">https://github.com/oxidecomputer/dropshot/compare/v0.16.6\...v0.16.7[Full</a>
+    list of commits]</p>
+    <ul>
+    <li><a
+    href="https://redirect.github.com/oxidecomputer/dropshot/pull/1520%5B#1520%5D(https://redirect.github.com/oxidecomputer/dropshot/issues/1520)">oxidecomputer/dropshot#1520</a>
+    Added <code>From&lt;T&gt;</code> for <code>TypedBody&lt;T&gt;</code>,
+    <code>Path&lt;T&gt;</code>, <code>Query&lt;T&gt;</code>, and
+    <code>Header&lt;T&gt;</code> as constructors</li>
+    </ul>
+    </blockquote>
+    </details>
+    <details>
+    <summary>Commits</summary>
+    <ul>
+    <li><a
+    href="https://github.com/oxidecomputer/dropshot/commit/63c0e4910b97ab75fd43675645210cb79e3c6bae"><code>63c0e49</code></a>
+    release 0.16.7</li>
+    <li><a
+    href="https://github.com/oxidecomputer/dropshot/commit/532c5c529532cf19a985a9fe06b818e09bc0a444"><code>532c5c5</code></a>
+    update cpufeatures and crossbeam-channel past yanked versions (<a
+    href="https://redirect.github.com/oxidecomputer/dropshot/issues/1527">#1527</a>)</li>
+    <li><a
+    href="https://github.com/oxidecomputer/dropshot/commit/dfd01aa19a145359530e253e884d1bd639530861"><code>dfd01aa</code></a>
+    add From&lt;T&gt; implementations for common Extractors (<a
+    href="https://redirect.github.com/oxidecomputer/dropshot/issues/1520">#1520</a>)</li>
+    <li><a
+    href="https://github.com/oxidecomputer/dropshot/commit/252c425df2b30ee85a1709101adb3744189e692c"><code>252c425</code></a>
+    Bump chrono from 0.4.42 to 0.4.43 (<a
+    href="https://redirect.github.com/oxidecomputer/dropshot/issues/1518">#1518</a>)</li>
+    <li><a
+    href="https://github.com/oxidecomputer/dropshot/commit/ffed26f67ba75cc5e601f133fec4097a4e36d02f"><code>ffed26f</code></a>
+    Bump rustls-pki-types from 1.13.2 to 1.14.0 (<a
+    href="https://redirect.github.com/oxidecomputer/dropshot/issues/1517">#1517</a>)</li>
+    <li><a
+    href="https://github.com/oxidecomputer/dropshot/commit/5e638417eb80c3a61cb1a179d50ef8f89d2c9ffb"><code>5e63841</code></a>
+    Bump thiserror from 2.0.17 to 2.0.18 (<a
+    href="https://redirect.github.com/oxidecomputer/dropshot/issues/1516">#1516</a>)</li>
+    <li><a
+    href="https://github.com/oxidecomputer/dropshot/commit/ec9d2ac84f81dc3b86b6b234aaf111f8426744eb"><code>ec9d2ac</code></a>
+    fix typo in message about panicking handler (<a
+    href="https://redirect.github.com/oxidecomputer/dropshot/issues/1515">#1515</a>)</li>
+    <li><a
+    href="https://github.com/oxidecomputer/dropshot/commit/65962605ea98fa86b273ca521a7b1c747d080bf9"><code>6596260</code></a>
+    Bump libc from 0.2.179 to 0.2.180 (<a
+    href="https://redirect.github.com/oxidecomputer/dropshot/issues/1510">#1510</a>)</li>
+    <li><a
+    href="https://github.com/oxidecomputer/dropshot/commit/f20ce087da1ec421948a1f875f35e756ed7a8aff"><code>f20ce08</code></a>
+    Bump reqwest from 0.12.26 to 0.12.28 (<a
+    href="https://redirect.github.com/oxidecomputer/dropshot/issues/1500">#1500</a>)</li>
+    <li><a
+    href="https://github.com/oxidecomputer/dropshot/commit/07e2975805ca4e9b768384a0bf4fb7cf3b7a4390"><code>07e2975</code></a>
+    Bump serde_json from 1.0.148 to 1.0.149 (<a
+    href="https://redirect.github.com/oxidecomputer/dropshot/issues/1514">#1514</a>)</li>
+    <li>Additional commits viewable in <a
+    href="https://github.com/oxidecomputer/dropshot/compare/v0.16.6...v0.16.7">compare
+    view</a></li>
+    </ul>
+    </details>
+    <br />
+    
+    Updates `insta` from 1.46.1 to 1.46.3
+    <details>
+    <summary>Release notes</summary>
+    <p><em>Sourced from <a
+    href="https://github.com/mitsuhiko/insta/releases">insta's
+    releases</a>.</em></p>
+    <blockquote>
+    <h2>1.46.3</h2>
+    <h2>Release Notes</h2>
+    <ul>
+    <li>Fix inline escaped snapshots incorrectly stripping leading newlines
+    when content contains control characters like carriage returns. The
+    escaped format (used for snapshots with control chars) now correctly
+    preserves the original content without stripping a non-existent
+    formatting newline. <a
+    href="https://redirect.github.com/mitsuhiko/insta/issues/865">#865</a></li>
+    </ul>
+    <h2>Install cargo-insta 1.46.3</h2>
+    <h3>Install prebuilt binaries via shell script</h3>
+    <pre lang="sh"><code>curl --proto '=https' --tlsv1.2 -LsSf
+    https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-installer.sh
+    | sh
+    </code></pre>
+    <h3>Install prebuilt binaries via powershell script</h3>
+    <pre lang="sh"><code>powershell -ExecutionPolicy Bypass -c &quot;irm
+    https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-installer.ps1
+    | iex&quot;
+    </code></pre>
+    <h2>Download cargo-insta 1.46.3</h2>
+    <table>
+    <thead>
+    <tr>
+    <th>File</th>
+    <th>Platform</th>
+    <th>Checksum</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td><a
+    href="https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-aarch64-apple-darwin.tar.xz">cargo-insta-aarch64-apple-darwin.tar.xz</a></td>
+    <td>Apple Silicon macOS</td>
+    <td><a
+    href="https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-aarch64-apple-darwin.tar.xz.sha256">checksum</a></td>
+    </tr>
+    <tr>
+    <td><a
+    href="https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-x86_64-apple-darwin.tar.xz">cargo-insta-x86_64-apple-darwin.tar.xz</a></td>
+    <td>Intel macOS</td>
+    <td><a
+    href="https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-x86_64-apple-darwin.tar.xz.sha256">checksum</a></td>
+    </tr>
+    <tr>
+    <td><a
+    href="https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-x86_64-pc-windows-msvc.zip">cargo-insta-x86_64-pc-windows-msvc.zip</a></td>
+    <td>x64 Windows</td>
+    <td><a
+    href="https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-x86_64-pc-windows-msvc.zip.sha256">checksum</a></td>
+    </tr>
+    <tr>
+    <td><a
+    href="https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-x86_64-unknown-linux-gnu.tar.xz">cargo-insta-x86_64-unknown-linux-gnu.tar.xz</a></td>
+    <td>x64 Linux</td>
+    <td><a
+    href="https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-x86_64-unknown-linux-gnu.tar.xz.sha256">checksum</a></td>
+    </tr>
+    <tr>
+    <td><a
+    href="https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-x86_64-unknown-linux-musl.tar.xz">cargo-insta-x86_64-unknown-linux-musl.tar.xz</a></td>
+    <td>x64 MUSL Linux</td>
+    <td><a
+    href="https://github.com/mitsuhiko/insta/releases/download/1.46.3/cargo-insta-x86_64-unknown-linux-musl.tar.xz.sha256">checksum</a></td>
+    </tr>
+    </tbody>
+    </table>
+    <h2>1.46.2</h2>
+    <h2>Release Notes</h2>
+    <ul>
+    <li>Fix inline snapshot corruption with carriage returns. The
+    <code>leading_space()</code> function incorrectly treated
+    <code>\r</code> as indentation, causing carriage returns to be stripped
+    from snapshot content. <a
+    href="https://redirect.github.com/mitsuhiko/insta/issues/866">#866</a></li>
+    <li>Remove <code>&lt; 0.4.17</code> upper bound on globset dependency.
+    <a
+    href="https://redirect.github.com/mitsuhiko/insta/issues/864">#864</a></li>
+    </ul>
+    <h2>Install cargo-insta 1.46.2</h2>
+    <h3>Install prebuilt binaries via shell script</h3>
+    <pre lang="sh"><code>curl --proto '=https' --tlsv1.2 -LsSf
+    https://github.com/mitsuhiko/insta/releases/download/1.46.2/cargo-insta-installer.sh
+    | sh
+    </code></pre>
+    <h3>Install prebuilt binaries via powershell script</h3>
+    <pre lang="sh"><code>powershell -ExecutionPolicy Bypass -c &quot;irm
+    https://github.com/mitsuhiko/insta/releases/download/1.46.2/cargo-insta-installer.ps1
+    | iex&quot;
+    </code></pre>
+    <h2>Download cargo-insta 1.46.2</h2>
+    <!-- raw HTML omitted -->
+    </blockquote>
+    <p>... (truncated)</p>
+    </details>
+    <details>
+    <summary>Changelog</summary>
+    <p><em>Sourced from <a
+    href="https://github.com/mitsuhiko/insta/blob/master/CHANGELOG.md">insta's
+    changelog</a>.</em></p>
+    <blockquote>
+    <h2>1.46.3</h2>
+    <ul>
+    <li>Fix inline escaped snapshots incorrectly stripping leading newlines
+    when content contains control characters like carriage returns. The
+    escaped format (used for snapshots with control chars) now correctly
+    preserves the original content without stripping a non-existent
+    formatting newline. <a
+    href="https://redirect.github.com/mitsuhiko/insta/issues/865">#865</a></li>
+    </ul>
+    <h2>1.46.2</h2>
+    <ul>
+    <li>Fix inline snapshot corruption with carriage returns. The
+    <code>leading_space()</code> function incorrectly treated
+    <code>\r</code> as indentation, causing carriage returns to be stripped
+    from snapshot content. <a
+    href="https://redirect.github.com/mitsuhiko/insta/issues/866">#866</a></li>
+    <li>Remove <code>&lt; 0.4.17</code> upper bound on globset dependency.
+    <a
+    href="https://redirect.github.com/mitsuhiko/insta/issues/864">#864</a></li>
+    </ul>
+    </blockquote>
+    </details>
+    <details>
+    <summary>Commits</summary>
+    <ul>
+    <li><a
+    href="https://github.com/mitsuhiko/insta/commit/13245901751701f45677b9cfe3537c182b47af02"><code>1324590</code></a>
+    Release 1.46.3 (<a
+    href="https://redirect.github.com/mitsuhiko/insta/issues/870">#870</a>)</li>
+    <li><a
+    href="https://github.com/mitsuhiko/insta/commit/b26bc7ffe1653d42e274077bb711559f2cd5a553"><code>b26bc7f</code></a>
+    Fix escaped format inline snapshots not stripping formatting newline (<a
+    href="https://redirect.github.com/mitsuhiko/insta/issues/869">#869</a>)</li>
+    <li><a
+    href="https://github.com/mitsuhiko/insta/commit/2ab00cc119bdb962735e0d249e641f18ffb2921f"><code>2ab00cc</code></a>
+    Release 1.46.2 (<a
+    href="https://redirect.github.com/mitsuhiko/insta/issues/867">#867</a>)</li>
+    <li><a
+    href="https://github.com/mitsuhiko/insta/commit/97c6f57879d8f17416958149587d6b657a0b52ff"><code>97c6f57</code></a>
+    Fix inline snapshot corruption with carriage returns (<a
+    href="https://redirect.github.com/mitsuhiko/insta/issues/866">#866</a>)</li>
+    <li><a
+    href="https://github.com/mitsuhiko/insta/commit/2a9f7adb06381655b648681494415ac3d5f14970"><code>2a9f7ad</code></a>
+    Remove globset version cap (<a
+    href="https://redirect.github.com/mitsuhiko/insta/issues/864">#864</a>)</li>
+    <li>See full diff in <a
+    href="https://github.com/mitsuhiko/insta/compare/1.46.1...1.46.3">compare
+    view</a></li>
+    </ul>
+    </details>
+    <br />
+    
+    Updates `regex` from 1.12.2 to 1.12.3
+    <details>
+    <summary>Changelog</summary>
+    <p><em>Sourced from <a
+    href="https://github.com/rust-lang/regex/blob/master/CHANGELOG.md">regex's
+    changelog</a>.</em></p>
+    <blockquote>
+    <h1>1.12.3 (2025-02-03)</h1>
+    <p>This release excludes some unnecessary things from the archive
+    published to
+    crates.io. Specifically, fuzzing data and various shell scripts are now
+    excluded. If you run into problems, please file an issue.</p>
+    <p>Improvements:</p>
+    <ul>
+    <li><a
+    href="https://redirect.github.com/rust-lang/regex/pull/1319">#1319</a>:
+    Switch from a Cargo <code>exclude</code> list to an <code>include</code>
+    list, and exclude some
+    unnecessary stuff.</li>
+    </ul>
+    </blockquote>
+    </details>
+    <details>
+    <summary>Commits</summary>
+    <ul>
+    <li><a
+    href="https://github.com/rust-lang/regex/commit/b028e4f40eac8959d05e82abf8404906b1c565c0"><code>b028e4f</code></a>
+    1.12.3</li>
+    <li><a
+    href="https://github.com/rust-lang/regex/commit/5e195de266e203441b2c8001d6ebefab1161a59e"><code>5e195de</code></a>
+    regex-automata-0.4.14</li>
+    <li><a
+    href="https://github.com/rust-lang/regex/commit/a3433f691863d80300dfd6a52e332cb5a568e895"><code>a3433f6</code></a>
+    regex-syntax-0.8.9</li>
+    <li><a
+    href="https://github.com/rust-lang/regex/commit/0c07fae444adf0802d84455e689f1143d2dd7790"><code>0c07fae</code></a>
+    regex-lite-0.1.9</li>
+    <li><a
+    href="https://github.com/rust-lang/regex/commit/6a810068f030c023a12c93ccae49bc5fd907c4f6"><code>6a81006</code></a>
+    cargo: exclude development scripts and fuzzing data</li>
+    <li><a
+    href="https://github.com/rust-lang/regex/commit/4733e28ba4f281f643ce93e4089eccbb9a9d5a5a"><code>4733e28</code></a>
+    automata: fix <code>onepass::DFA::try_search_slots</code> panic when too
+    many slots are ...</li>
+    <li>See full diff in <a
+    href="https://github.com/rust-lang/regex/compare/1.12.2...1.12.3">compare
+    view</a></li>
+    </ul>
+    </details>
+    <br />
+    
+    
+    Dependabot will resolve any conflicts with this PR as long as you don't
+    alter it yourself. You can also trigger a rebase manually by commenting
+    `@dependabot rebase`.
+    
+    [//]: # (dependabot-automerge-start)
+    [//]: # (dependabot-automerge-end)
+    
+    ---
+    
+    <details>
+    <summary>Dependabot commands and options</summary>
+    <br />
+    
+    You can trigger Dependabot actions by commenting on this PR:
+    - `@dependabot rebase` will rebase this PR
+    - `@dependabot recreate` will recreate this PR, overwriting any edits
+    that have been made to it
+    - `@dependabot show <dependency name> ignore conditions` will show all
+    of the ignore conditions of the specified dependency
+    - `@dependabot ignore <dependency name> major version` will close this
+    group update PR and stop Dependabot creating any more for the specific
+    dependency's major version (unless you unignore this specific
+    dependency's major version or upgrade to it yourself)
+    - `@dependabot ignore <dependency name> minor version` will close this
+    group update PR and stop Dependabot creating any more for the specific
+    dependency's minor version (unless you unignore this specific
+    dependency's minor version or upgrade to it yourself)
+    - `@dependabot ignore <dependency name>` will close this group update PR
+    and stop Dependabot creating any more for the specific dependency
+    (unless you unignore this specific dependency or upgrade to it yourself)
+    - `@dependabot unignore <dependency name>` will remove all of the ignore
+    conditions of the specified dependency
+    - `@dependabot unignore <dependency name> <ignore condition>` will
+    remove the ignore condition of the specified dependency and ignore
+    conditions
+    
+    
+    </details>
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+    Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+[33mcommit 0012a45df4d2cb7839f9d12ecae0988708884b26[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Wed Feb 18 16:53:26 2026 -0600
+
+    Release modeling-cmds 0.2.171 (#1095)
+    
+    # Added
+    
+     - Add param separate_bodies to CSG APIs (#1088)
+
+[33mcommit a759c55142376a8a2c029179331d2476d41486ab[m
+Author: Mike Farrell <michael.l.farrell@gmail.com>
+Date:   Wed Feb 18 14:51:43 2026 -0800
+
+    Add param separate_bodies to CSG APIs (#1088)
+    
+    For https://github.com/KittyCAD/engine/pull/4187
+    
+    ---------
+    
+    Co-authored-by: Adam Chalmers <adam.chalmers@zoo.dev>
+
+[33mcommit f72054b98e0163f60d66e82fc51c490445607ed4[m
+Author: alteous <alteous@outlook.com>
+Date:   Wed Feb 18 17:51:20 2026 +0000
+
+    Release modeling-cmds 0.2.170 (#1094)
+    
+     - Relax ts-rs requirement for v12 (#1092)
+     - Add unit and presentation options for STEP export (#1087)
+
+[33mcommit 7f40f75c178ffb771a37ac7cb4d3951d135a08a7[m
+Author: Jonathan Tran <jonnytran@gmail.com>
+Date:   Wed Feb 18 12:50:09 2026 -0500
+
+    Relax ts-rs requirement for v12 (#1092)
+    
+    Replaces/closes #1078.
+    
+    Allow both v11 and v12 so that modeling-app can upgrade at its leisure.
+
+[33mcommit e519be83026ee137814ea08ea4b1eb94a444f1db[m
+Author: alteous <alteous@outlook.com>
+Date:   Wed Feb 18 17:13:17 2026 +0000
+
+    Add unit and presentation options for STEP export (#1087)
+    
+    Co-authored-by: Adam Chalmers <adam.chalmers@zoo.dev>
+
+[33mcommit 5e2d284f87e3fd4696e1b0c34bdafd2e9723ac15[m
+Author: Pierre Jacquier <pierrejacquier39@gmail.com>
+Date:   Thu Feb 12 12:52:01 2026 -0500
+
+    Release modeling-cmds 0.2.169 (#1086)
+    
+    BodyType has been added to the sweep endpoint
+
+[33mcommit 01b213e41860e4a8bf1b59eca0127bb133d05d10[m
+Author: Pierre Jacquier <pierrejacquier39@gmail.com>
+Date:   Thu Feb 12 09:43:50 2026 -0500
+
+    Add body_type to sweep (#1074)
+    
+    Fixes #1073
+    
+    Did like it @benjamaan476's
+    https://github.com/KittyCAD/modeling-api/pull/1030
+
+[33mcommit 11ed5dd7de433efbeea0caaa29d56d935debfb61[m
+Author: Adam Chalmers <adam.chalmers@zoo.dev>
+Date:   Tue Feb 10 11:26:35 2026 -0600
+
+    Release modeling-cmds 0.2.168 (#1085)
+    
+    # Added
+    
+     - derive `Builder` trait on `SurfaceEdgeReference` (#1084)
