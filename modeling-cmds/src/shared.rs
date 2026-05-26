@@ -8,7 +8,7 @@ use uuid::Uuid;
 
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
-use crate::{def_enum::negative_one, length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle};
+use crate::{def_enum::negative_one, length_unit::LengthUnit, output::ExtrusionFaceInfo, units, units::UnitAngle};
 
 mod point;
 
@@ -312,6 +312,9 @@ pub struct AnnotationOptions {
     pub color: Option<Color>,
     /// Position to put the annotation
     pub position: Option<Point3d<f32>>,
+    /// Length Units to use for this individual annotation.  If not provided, the units set by SetSceneUnits will be used.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub units: Option<units::UnitLength>,
     /// Set as an MBD measured basic dimension annotation
     pub dimension: Option<AnnotationBasicDimension>,
     /// Set as an MBD Feature control annotation
