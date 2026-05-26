@@ -1168,7 +1168,11 @@ pub enum CurveType {
 
 /// A file to be exported to the client.
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, PartialEq, Builder)]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
+#[cfg_attr(
+    feature = "python",
+    pyo3::pyclass(from_py_object),
+    pyo3_stub_gen::derive::gen_stub_pyclass
+)]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct ExportFile {
     /// The name of the file.
@@ -1201,7 +1205,11 @@ impl ExportFile {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+#[cfg_attr(
+    feature = "python",
+    pyo3::pyclass(from_py_object),
+    pyo3_stub_gen::derive::gen_stub_pyclass_enum
+)]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum FileExportFormat {
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
