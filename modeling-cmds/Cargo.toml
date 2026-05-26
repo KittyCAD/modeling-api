@@ -42,7 +42,11 @@ measurements = { package = "kittycad-measurements", version = "0.11.2" }
 parse-display = "0.10.0"
 parse-display-derive = "0.10.0"
 pyo3 = { version = "0.28.3", optional = true }
-pyo3-stub-gen = { version = "0.22.3", optional = true }
+pyo3-stub-gen = { version = "0.22.3", optional = true, default-features = false, features = [
+  "either",
+  "numpy",
+  "ordered-float",
+] }
 schemars = { version = "0.8.22", features = ["bigdecimal04", "chrono", "url", "uuid1"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_bytes = "0.11.19"
