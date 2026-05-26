@@ -1998,6 +1998,7 @@ define_modeling_cmd_enum! {
         /// For all following commands, the units will be interpreted as the given units.
         /// Any previously executed commands will not be affected or have their units changed.
         /// They will remain in the units they were originally executed in.
+        /// If not set, engine units default to mm.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
