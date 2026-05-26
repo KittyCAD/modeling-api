@@ -537,6 +537,15 @@
                 "$ref": "#/components/schemas/AnnotationTextOptions"
               }
             ]
+          },
+          "units": {
+            "nullable": true,
+            "description": "Length Units to use for this individual annotation.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnitLength"
+              }
+            ]
           }
         }
       },

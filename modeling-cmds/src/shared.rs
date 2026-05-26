@@ -312,7 +312,8 @@ pub struct AnnotationOptions {
     pub color: Option<Color>,
     /// Position to put the annotation
     pub position: Option<Point3d<f32>>,
-    /// Length Units to use for this individual annotation
+    /// Length Units to use for this individual annotation.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub units: Option<units::UnitLength>,
     /// Set as an MBD measured basic dimension annotation
     pub dimension: Option<AnnotationBasicDimension>,
