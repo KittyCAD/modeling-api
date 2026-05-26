@@ -72,7 +72,7 @@ pub type InputFormat = InputFormat3d;
 #[serde(tag = "type", rename_all = "snake_case")]
 #[cfg_attr(
     feature = "python",
-    pyo3::pyclass,
+    pyo3::pyclass(from_py_object),
     pyo3_stub_gen::derive::gen_stub_pyclass_complex_enum
 )]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -395,7 +395,7 @@ macro_rules! proprietary_brep_formats {
                     #[cfg_attr(
                         feature = "python",
                         pyo3_stub_gen::derive::gen_stub_pyclass,
-                        pyo3::pyclass(name = $spec_name)
+                        pyo3::pyclass(name = $spec_name, from_py_object)
                     )]
                     pub struct Options {
                         /// Co-ordinate system of input data.

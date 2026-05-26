@@ -13,7 +13,7 @@ pub mod export {
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass_enum,
-        pyo3::pyclass(name = "DxfStorage")
+        pyo3::pyclass(name = "DxfStorage", from_py_object)
     )]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub enum Storage {
@@ -36,7 +36,7 @@ pub mod export {
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
-        pyo3::pyclass(name = "DxfExportOptions")
+        pyo3::pyclass(name = "DxfExportOptions", from_py_object)
     )]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
