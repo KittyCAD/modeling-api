@@ -540,7 +540,7 @@
           },
           "units": {
             "nullable": true,
-            "description": "Length Units to use for this individual annotation.",
+            "description": "Length Units to use for this individual annotation.  If not provided, the units set by SetSceneUnits will be used.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/UnitLength"
@@ -6564,7 +6564,7 @@
             ]
           },
           {
-            "description": "Set the units of the scene. For all following commands, the units will be interpreted as the given units. Any previously executed commands will not be affected or have their units changed. They will remain in the units they were originally executed in.",
+            "description": "Set the units of the scene. For all following commands, the units will be interpreted as the given units. Any previously executed commands will not be affected or have their units changed. They will remain in the units they were originally executed in. If not set, engine units default to mm.",
             "type": "object",
             "properties": {
               "type": {
