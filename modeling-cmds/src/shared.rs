@@ -168,7 +168,7 @@ pub enum CutType {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-pub enum DirectionTypes {
+pub enum DirectionType {
     /// Uses the direction of an edge, if linear
     Edge {
         /// Edge ID.
