@@ -1080,6 +1080,14 @@ define_ok_modeling_cmd_response_enum! {
             pub max_distance: LengthUnit,
         }
 
+        /// The response from the `EdgeGetLength` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EdgeGetLength {
+            /// The length of the edge.
+            pub length: LengthUnit,
+        }
+
         /// Faces and edges id info (most used in identifying geometry in patterned and mirrored objects).
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]

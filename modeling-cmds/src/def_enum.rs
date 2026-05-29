@@ -135,9 +135,9 @@ define_modeling_cmd_enum! {
             /// How far off the plane to extrude
             pub distance: LengthUnit,
             /// What draft angle should be used in this extrusion?
-            /// Negative values indicate an outward draft,
+            /// Negative values indicate an outward draft, 
             /// while positive values indicate an inward draft
-            #[serde(default, skip_serializing_if = "Option::is_none")]
+            #[serde(default)]
             pub draft_angle: Option<Angle>,
             /// Which IDs should the new faces have?
             /// If this isn't given, the engine will generate IDs.
@@ -773,6 +773,17 @@ define_modeling_cmd_enum! {
             pub distance_type: DistanceType,
         }
 
+        /// What is the length of this edge? 
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EdgeGetLength {
+            /// ID of the edge being queried.
+            pub edge_id: Uuid,
+        }
+
         /// Create a pattern using this entity by specifying the transform for each desired repetition.
         /// Transformations are performed in the following order (first applied to last applied): scale, rotate, translate.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
@@ -1170,21 +1181,6 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub backface_color: Option<Color>,
         }
-
-        /// Set the name of an object
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
-        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct ObjectSetName {
-            /// Which object to change
-            pub object_id: Uuid,
-            /// Name of the object. Using a zero-length name unsets the name.
-            #[serde(default, skip_serializing_if = "String::is_empty")]
-            pub name: String,
-        }
-
         /// What type of entity is this?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -1794,7 +1790,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        #[cfg_attr(feature = "python", pyo3::pyclass(from_py_object), pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+        #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub enum ImageFormat {
             /// .png format
@@ -1998,7 +1994,6 @@ define_modeling_cmd_enum! {
         /// For all following commands, the units will be interpreted as the given units.
         /// Any previously executed commands will not be affected or have their units changed.
         /// They will remain in the units they were originally executed in.
-        /// If not set, engine units default to mm.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
