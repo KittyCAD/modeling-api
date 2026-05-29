@@ -1218,24 +1218,17 @@
         "description": "Edge cut algorithm version.",
         "oneOf": [
           {
-            "description": "Engine can use whichever version it considers to be the default. If you're OK with future engine changes altering your models, choose this. Otherwise, lock to a particular version.",
-            "type": "string",
-            "enum": [
-              "any"
-            ]
-          },
-          {
             "description": "Our original edge cut algorithm.",
             "type": "string",
             "enum": [
-              "v1"
+              "v0"
             ]
           },
           {
             "description": "Adds support for rolling ball fillets. Still experimental.",
             "type": "string",
             "enum": [
-              "v2"
+              "v1"
             ]
           }
         ]

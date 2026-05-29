@@ -2073,22 +2073,18 @@ pub enum RegionVersion {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 #[serde(rename_all = "snake_case")]
 pub enum EdgeCutVersion {
-    /// Engine can use whichever version it considers to be the default.
-    /// If you're OK with future engine changes altering your models, choose this.
-    /// Otherwise, lock to a particular version.
-    #[default]
-    Any,
     /// Our original edge cut algorithm.
-    V1,
+    #[default]
+    V0,
     /// Adds support for rolling ball fillets.
     /// Still experimental.
-    V2,
+    V1,
 }
 
 impl EdgeCutVersion {
     /// Is this the default edge cut algorithm version?
     pub fn is_default(&self) -> bool {
-        matches!(self, Self::Any)
+        matches!(self, Self::V0)
     }
 }
 
