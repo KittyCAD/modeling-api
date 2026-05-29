@@ -28,6 +28,7 @@ define_modeling_cmd_enum! {
                 RegionVersion,
                 BlendType,
                 BodyType,
+                EdgeCutVersion,
                 ComponentTransform,
                 RelativeTo,
                 CutType, CutTypeV2,
@@ -1368,6 +1369,10 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
+            /// Which version of the edge cut algorithm to use.
+            #[serde(default, skip_serializing_if = "EdgeCutVersion::is_default")]
+            #[builder(default)]
+            pub version: EdgeCutVersion,
         }
 
         /// Cut the list of edge references with the given cut parameters
@@ -1406,6 +1411,10 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
+            /// Which version of the edge cut algorithm to use.
+            #[serde(default, skip_serializing_if = "EdgeCutVersion::is_default")]
+            #[builder(default)]
+            pub version: EdgeCutVersion,
         }
 
         /// Cut the list of given edges with the given cut parameters.
@@ -1444,6 +1453,10 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
+            /// Which version of the edge cut algorithm to use.
+            #[serde(default, skip_serializing_if = "EdgeCutVersion::is_default")]
+            #[builder(default)]
+            pub version: EdgeCutVersion,
         }
 
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so

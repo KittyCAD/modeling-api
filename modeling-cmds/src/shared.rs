@@ -2065,6 +2065,33 @@ pub enum RegionVersion {
     V1,
 }
 
+/// Edge cut algorithm version.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "snake_case")]
+pub enum EdgeCutVersion {
+    /// Engine can use whichever version it considers to be the default.
+    /// If you're OK with future engine changes altering your models, choose this.
+    /// Otherwise, lock to a particular version.
+    #[default]
+    Any,
+    /// Our original edge cut algorithm.
+    V1,
+    /// Adds support for rolling ball fillets.
+    /// Still experimental.
+    V2,
+}
+
+impl EdgeCutVersion {
+    /// Is this the default edge cut algorithm version?
+    pub fn is_default(&self) -> bool {
+        matches!(self, Self::Any)
+    }
+}
+
 impl RegionVersion {
     /// Is the version V0?
     pub fn is_zero(&self) -> bool {
