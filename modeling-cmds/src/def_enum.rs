@@ -2700,11 +2700,11 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct AddToAssembly {
             ///The id of the assembly being added to
-            assembly_id: Uuid,
+            pub assembly_id: Uuid,
             ///The id of the object to be added. Should be an Object or an Assembly
-            object_id: Uuid,
+            pub object_id: Uuid,
             ///Initial transform within the space of the assembly
-            transform: crate::shared::Transform,
+            pub transform: crate::shared::Transform,
         }
 
 
