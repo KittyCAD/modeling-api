@@ -1379,5 +1379,18 @@ define_ok_modeling_cmd_response_enum! {
             /// If there are no edges in the scene, returns None.
             pub edge_id: Option<Uuid>,
         }
+
+        /// The response from the 'CreateAssembly'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct CreateAssembly {
+        }
+
+        /// The response from the 'AddToAssembly'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AddToAssembly {
+        }
+
     }
 }
