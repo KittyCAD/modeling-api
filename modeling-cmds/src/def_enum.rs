@@ -2703,8 +2703,6 @@ define_modeling_cmd_enum! {
             pub assembly_id: Uuid,
             ///The id of the object to be added. Should be an Object or an Assembly
             pub object_id: Uuid,
-            ///Initial transform within the space of the assembly
-            pub transform: crate::shared::Transform,
         }
 
 
