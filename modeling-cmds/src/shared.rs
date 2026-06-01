@@ -2066,7 +2066,7 @@ pub enum RegionVersion {
 }
 
 /// Edge cut algorithm version.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Copy)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2085,6 +2085,19 @@ impl EdgeCutVersion {
     /// Is this the default edge cut algorithm version?
     pub fn is_default(&self) -> bool {
         matches!(self, Self::V0)
+    }
+}
+
+/// Try to match an integer to a version number.
+impl TryFrom<u32> for EdgeCutVersion {
+    type Error = ();
+
+    fn try_from(version: u32) -> Result<Self, Self::Error> {
+        match version {
+            0 => Ok(Self::V0),
+            1 => Ok(Self::V1),
+            _ => Err(()),
+        }
     }
 }
 
