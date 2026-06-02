@@ -2690,7 +2690,10 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct CreateAssembly {}
+        pub struct CreateAssembly {
+            ///The name of the assembly
+            pub name: String,
+        }
 
         /// Add an object to an assembly
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
@@ -2701,11 +2704,9 @@ define_modeling_cmd_enum! {
         pub struct AddToAssembly {
             ///The id of the assembly being added to
             pub assembly_id: Uuid,
-            ///The id of the object to be added. Should be an Object or an Assembly
+            ///The id of the object to be added. Should be a Body or an Assembly
             pub object_id: Uuid,
         }
-
-
     }
 
 
