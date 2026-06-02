@@ -2108,6 +2108,7 @@ impl TryFrom<u32> for EdgeCutVersion {
         match version {
             0 => Ok(Self::V0),
             1 => Ok(Self::V1),
+            2 => Ok(Self::V2),
             _ => Err(()),
         }
     }
