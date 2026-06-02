@@ -2066,25 +2066,37 @@ pub enum RegionVersion {
 }
 
 /// Edge cut algorithm version.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Copy)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Copy)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 #[serde(rename_all = "snake_case")]
 pub enum EdgeCutVersion {
-    /// Our original edge cut algorithm.
-    #[default]
+    /// Let the engine choose whichever version it wants.
     V0,
-    /// Adds support for rolling ball fillets.
-    /// Still experimental.
+    /// The original fillet algorithm Zoo 1.0 shipped with.
+    /// Limitations: doesn't support rolling ball fillets, has several bugs
+    /// that will not be fixed.
     V1,
+    /// Adds support for rolling ball fillets.
+    /// Fixes bugs from V1.
+    /// Still experimental.
+    V2,
 }
+
+const DEFAULT_EDGE_CUT_VERSION: EdgeCutVersion = EdgeCutVersion::V1;
 
 impl EdgeCutVersion {
     /// Is this the default edge cut algorithm version?
     pub fn is_default(&self) -> bool {
-        matches!(self, Self::V0)
+        self == &DEFAULT_EDGE_CUT_VERSION
+    }
+}
+
+impl Default for EdgeCutVersion {
+    fn default() -> Self {
+        DEFAULT_EDGE_CUT_VERSION
     }
 }
 

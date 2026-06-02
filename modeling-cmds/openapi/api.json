@@ -1218,17 +1218,24 @@
         "description": "Edge cut algorithm version.",
         "oneOf": [
           {
-            "description": "Our original edge cut algorithm.",
+            "description": "Let the engine choose whichever version it wants.",
             "type": "string",
             "enum": [
               "v0"
             ]
           },
           {
-            "description": "Adds support for rolling ball fillets. Still experimental.",
+            "description": "The original fillet algorithm Zoo 1.0 shipped with. Limitations: doesn't support rolling ball fillets, has several bugs that will not be fixed.",
             "type": "string",
             "enum": [
               "v1"
+            ]
+          },
+          {
+            "description": "Adds support for rolling ball fillets. Fixes bugs from V1. Still experimental.",
+            "type": "string",
+            "enum": [
+              "v2"
             ]
           }
         ]
