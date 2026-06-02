@@ -7798,6 +7798,53 @@
               "closest_to",
               "type"
             ]
+          },
+          {
+            "description": "Create an assembly",
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "The name of the assembly",
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "create_assembly"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "type"
+            ]
+          },
+          {
+            "description": "Add an object to an assembly",
+            "type": "object",
+            "properties": {
+              "assembly_id": {
+                "description": "The id of the assembly being added to",
+                "type": "string",
+                "format": "uuid"
+              },
+              "object_id": {
+                "description": "The id of the object to be added. Should be a Body or an Assembly",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "add_to_assembly"
+                ]
+              }
+            },
+            "required": [
+              "assembly_id",
+              "object_id",
+              "type"
+            ]
           }
         ]
       },
