@@ -1214,6 +1214,32 @@
           }
         ]
       },
+      "EdgeCutVersion": {
+        "description": "Edge cut algorithm version.",
+        "oneOf": [
+          {
+            "description": "Let the engine choose whichever version it wants.",
+            "type": "string",
+            "enum": [
+              "v0"
+            ]
+          },
+          {
+            "description": "The original fillet algorithm Zoo 1.0 shipped with. Limitations: doesn't support rolling ball fillets, has several bugs that will not be fixed.",
+            "type": "string",
+            "enum": [
+              "v1"
+            ]
+          },
+          {
+            "description": "Adds support for rolling ball fillets. Fixes bugs from V1. Still experimental.",
+            "type": "string",
+            "enum": [
+              "v2"
+            ]
+          }
+        ]
+      },
       "EdgeSpecifier": {
         "description": "An edge can be referenced by its uuid or by the faces that uniquely define it.",
         "type": "object",
@@ -5293,6 +5319,14 @@
               "use_legacy": {
                 "description": "If true, use the legacy CSG algorithm.",
                 "type": "boolean"
+              },
+              "version": {
+                "description": "Which version of the edge cut algorithm to use.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeCutVersion"
+                  }
+                ]
               }
             },
             "required": [
@@ -5362,6 +5396,14 @@
               "use_legacy": {
                 "description": "If true, use the legacy CSG algorithm.",
                 "type": "boolean"
+              },
+              "version": {
+                "description": "Which version of the edge cut algorithm to use.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeCutVersion"
+                  }
+                ]
               }
             },
             "required": [
@@ -5432,6 +5474,14 @@
               "use_legacy": {
                 "description": "If true, use the legacy CSG algorithm.",
                 "type": "boolean"
+              },
+              "version": {
+                "description": "Which version of the edge cut algorithm to use.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeCutVersion"
+                  }
+                ]
               }
             },
             "required": [

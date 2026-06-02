@@ -2065,6 +2065,55 @@ pub enum RegionVersion {
     V1,
 }
 
+/// Edge cut algorithm version.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Copy)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "snake_case")]
+pub enum EdgeCutVersion {
+    /// Let the engine choose whichever version it wants.
+    V0,
+    /// The original fillet algorithm Zoo 1.0 shipped with.
+    /// Limitations: doesn't support rolling ball fillets, has several bugs
+    /// that will not be fixed.
+    V1,
+    /// Adds support for rolling ball fillets.
+    /// Fixes bugs from V1.
+    /// Still experimental.
+    V2,
+}
+
+const DEFAULT_EDGE_CUT_VERSION: EdgeCutVersion = EdgeCutVersion::V1;
+
+impl EdgeCutVersion {
+    /// Is this the default edge cut algorithm version?
+    pub fn is_default(&self) -> bool {
+        self == &DEFAULT_EDGE_CUT_VERSION
+    }
+}
+
+impl Default for EdgeCutVersion {
+    fn default() -> Self {
+        DEFAULT_EDGE_CUT_VERSION
+    }
+}
+
+/// Try to match an integer to a version number.
+impl TryFrom<u32> for EdgeCutVersion {
+    type Error = ();
+
+    fn try_from(version: u32) -> Result<Self, Self::Error> {
+        match version {
+            0 => Ok(Self::V0),
+            1 => Ok(Self::V1),
+            2 => Ok(Self::V2),
+            _ => Err(()),
+        }
+    }
+}
+
 impl RegionVersion {
     /// Is the version V0?
     pub fn is_zero(&self) -> bool {
