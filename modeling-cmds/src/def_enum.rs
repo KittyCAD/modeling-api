@@ -28,6 +28,7 @@ define_modeling_cmd_enum! {
                 RegionVersion,
                 BlendType,
                 BodyType,
+                EdgeCutVersion,
                 ComponentTransform,
                 RelativeTo,
                 CutType, CutTypeV2,
@@ -1008,6 +1009,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct QueryEntityTypeWithPoint {
             /// Where in the window was selected
             pub selected_at_window: Point2d,
@@ -1022,6 +1024,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct QueryEntityType {
             /// The entity id to query
             pub entity_id: Uuid,
@@ -1377,6 +1380,10 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
+            /// Which version of the edge cut algorithm to use.
+            #[serde(default, skip_serializing_if = "EdgeCutVersion::is_default")]
+            #[builder(default)]
+            pub version: EdgeCutVersion,
         }
 
         /// Cut the list of edge references with the given cut parameters
@@ -1384,6 +1391,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dCutEdgeReferences {
             /// Which object is being cut.
             pub object_id: Uuid,
@@ -1414,6 +1422,10 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
+            /// Which version of the edge cut algorithm to use.
+            #[serde(default, skip_serializing_if = "EdgeCutVersion::is_default")]
+            #[builder(default)]
+            pub version: EdgeCutVersion,
         }
 
         /// Cut the list of given edges with the given cut parameters.
@@ -1452,6 +1464,10 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
+            /// Which version of the edge cut algorithm to use.
+            #[serde(default, skip_serializing_if = "EdgeCutVersion::is_default")]
+            #[builder(default)]
+            pub version: EdgeCutVersion,
         }
 
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so
