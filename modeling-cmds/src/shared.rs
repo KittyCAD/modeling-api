@@ -48,11 +48,12 @@ pub struct EdgeSpecifier {
 /// - **Segment**: `parent_id` is the **Path** UUID; `primitive_index` is the curve index within that path.
 ///
 /// Other [`EntityReference`] variants may omit this field or leave it unset when not applicable.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct PrimitiveTopologyFallback {
     /// UUID of the parent entity that owns the primitive (solid3d, solid2d, or path).
     pub parent_id: Uuid,
