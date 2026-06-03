@@ -34,6 +34,7 @@ define_modeling_cmd_enum! {
                 CutType, CutTypeV2,
                 CutStrategy,
                 CameraMovement,
+                DirectionType,
                 EdgeSpecifier,
                 EntityReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
@@ -135,6 +136,9 @@ define_modeling_cmd_enum! {
             pub target: ModelingCmdId,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
+            /// What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub direction: Option<DirectionType>,
             /// What draft angle should be used in this extrusion?
             /// Negative values indicate an outward draft,
             /// while positive values indicate an inward draft

@@ -1151,6 +1151,60 @@
           }
         ]
       },
+      "DirectionType": {
+        "description": "What to use as a direction when one is needed (e.g. for an extrusion).",
+        "oneOf": [
+          {
+            "description": "Uses the direction of an edge, if linear",
+            "type": "object",
+            "properties": {
+              "edge": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Edge ID.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "edge"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Uses the provided vector as the direction.",
+            "type": "object",
+            "properties": {
+              "axis": {
+                "type": "object",
+                "properties": {
+                  "direction": {
+                    "description": "Direction.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Point3d"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "direction"
+                ]
+              }
+            },
+            "required": [
+              "axis"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "DistanceType": {
         "description": "The type of distance Distances can vary depending on the objects used as input.",
         "oneOf": [
@@ -2656,6 +2710,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/BodyType"
+                  }
+                ]
+              },
+              "direction": {
+                "nullable": true,
+                "description": "What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/DirectionType"
                   }
                 ]
               },

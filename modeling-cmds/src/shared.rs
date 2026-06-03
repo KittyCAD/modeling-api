@@ -163,6 +163,25 @@ pub enum CutType {
     Chamfer,
 }
 
+/// What to use as a direction when one is needed (e.g. for an extrusion).
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum DirectionType {
+    /// Uses the direction of an edge, if linear
+    Edge {
+        /// Edge ID.
+        id: Uuid,
+    },
+    /// Uses the provided vector as the direction.
+    Axis {
+        /// Direction.
+        direction: Point3d<f64>,
+    },
+}
+
 /// What to reflect mirrored geometry across
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
