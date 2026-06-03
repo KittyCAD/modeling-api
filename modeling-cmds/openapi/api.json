@@ -4881,6 +4881,30 @@
             ]
           },
           {
+            "description": "Show or hide annotation.",
+            "type": "object",
+            "properties": {
+              "show_these_symbols": {
+                "description": "Which symbols should be shown?",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ShowTheseSymbols"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "annotation_set_visible"
+                ]
+              }
+            },
+            "required": [
+              "show_these_symbols",
+              "type"
+            ]
+          },
+          {
             "description": "Changes visibility of scene-wide edge lines on brep solids",
             "type": "object",
             "properties": {
@@ -9186,6 +9210,67 @@
               "name",
               "type"
             ]
+          }
+        ]
+      },
+      "ShowTheseSymbols": {
+        "description": "MBD standard",
+        "oneOf": [
+          {
+            "description": "Show all annotations.",
+            "type": "object",
+            "properties": {
+              "all": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "all"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Show no annotations.",
+            "type": "object",
+            "properties": {
+              "none": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "none"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Show only the annotations with these symbols.",
+            "type": "object",
+            "properties": {
+              "some": {
+                "type": "object",
+                "properties": {
+                  "show_annotations_with_no_symbol": {
+                    "description": "If an annotation has _no_ MBD symbol, should it be shown?",
+                    "type": "boolean"
+                  },
+                  "symbols_to_show": {
+                    "description": "If the annotation's MBD symbol is in this list, it will be shown.",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/MbdSymbol"
+                    }
+                  }
+                },
+                "required": [
+                  "show_annotations_with_no_symbol",
+                  "symbols_to_show"
+                ]
+              }
+            },
+            "required": [
+              "some"
+            ],
+            "additionalProperties": false
           }
         ]
       },

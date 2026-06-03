@@ -36,6 +36,7 @@ define_modeling_cmd_enum! {
                 CameraMovement,
                 DirectionType,
                 EdgeSpecifier,
+                ShowTheseSymbols,
                 EntityReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
@@ -778,7 +779,7 @@ define_modeling_cmd_enum! {
             pub distance_type: DistanceType,
         }
 
-        /// What is the length of this edge? 
+        /// What is the length of this edge?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1130,6 +1131,17 @@ define_modeling_cmd_enum! {
             /// If any of these fields are set, they will overwrite the previous options for the
             /// annotation.
             pub options: AnnotationOptions,
+        }
+
+        /// Show or hide annotation.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AnnotationSetVisible {
+            /// Which symbols should be shown?
+            pub show_these_symbols: ShowTheseSymbols,
         }
 
         /// Changes visibility of scene-wide edge lines on brep solids

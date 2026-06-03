@@ -383,7 +383,7 @@ pub struct AnnotationTextOptions {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationMbdControlFrame {
-    ///Geometric symbol, the type of geometric control specified
+    /// Geometric symbol, the type of geometric control specified
     pub symbol: MbdSymbol,
     /// Diameter symbol (if required) whether the geometric control requires a cylindrical or diameter tolerance
     pub diameter_symbol: Option<MbdSymbol>,
@@ -692,6 +692,29 @@ pub enum AnnotationType {
 pub enum MbdStandard {
     /// ASME Y14.5 GD&T
     AsmeY14_5,
+}
+
+/// MBD standard
+#[derive(Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
+#[serde(rename_all = "lowercase")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum ShowTheseSymbols {
+    /// Show all annotations.
+    All {},
+    /// Show no annotations.
+    None {},
+    /// Show only the annotations with these symbols.
+    Some {
+        /// If the annotation's MBD symbol is in this list,
+        /// it will be shown.
+        symbols_to_show: Vec<MbdSymbol>,
+        /// If an annotation has _no_ MBD symbol,
+        /// should it be shown?
+        show_annotations_with_no_symbol: bool,
+    },
 }
 
 //SEE MIKE BEFORE MAKING ANY CHANGES TO THIS ENUM
