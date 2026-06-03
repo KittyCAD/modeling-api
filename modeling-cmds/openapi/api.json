@@ -4087,6 +4087,27 @@
             ]
           },
           {
+            "description": "What is the length of this edge?",
+            "type": "object",
+            "properties": {
+              "edge_id": {
+                "description": "ID of the edge being queried.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "edge_get_length"
+                ]
+              }
+            },
+            "required": [
+              "edge_id",
+              "type"
+            ]
+          },
+          {
             "description": "Create a pattern using this entity by specifying the transform for each desired repetition. Transformations are performed in the following order (first applied to last applied): scale, rotate, translate.",
             "type": "object",
             "properties": {
