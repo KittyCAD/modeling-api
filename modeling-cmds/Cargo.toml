@@ -39,7 +39,7 @@ kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
 # Fork of <crates.io/crates/measurements>
 measurements = { package = "kittycad-measurements", version = "0.11.2" }
-parse-display = "0.10.0"
+parse-display = "0.11.0"
 parse-display-derive = "0.10.0"
 pyo3 = { version = "0.28.3", optional = true }
 pyo3-stub-gen = { version = "0.22.3", optional = true, default-features = false, features = [
