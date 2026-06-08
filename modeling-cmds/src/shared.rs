@@ -8,9 +8,16 @@ use uuid::Uuid;
 
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
-use crate::{def_enum::negative_one, length_unit::LengthUnit, output::ExtrusionFaceInfo, units, units::UnitAngle};
+use crate::{
+    def_enum::negative_one,
+    length_unit::LengthUnit,
+    output::ExtrusionFaceInfo,
+    shared::safe_filepath::SafeFilepath,
+    units::{self, UnitAngle},
+};
 
 mod point;
+mod safe_filepath;
 
 /// An edge can be referenced by its uuid or by the faces that uniquely define it.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
@@ -2176,4 +2183,30 @@ impl From<BodiesUpdated> for BodiesCreated {
 
 fn one() -> f32 {
     1.0
+}
+
+/// A KCL project that can be executed.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Builder)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct KclProject {
+    /// All files in the project.
+    files: Vec<KclFile>,
+}
+
+/// Region-creation algorithm version.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Builder)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct KclFile {
+    /// Where is the file, relative to the project directory?
+    pub path: SafeFilepath,
+    /// Contents of the file, as UTF-8 encoded bytes.
+    #[serde(deserialize_with = "serde_bytes::deserialize")]
+    #[serde(serialize_with = "serde_bytes::serialize")]
+    pub contents: Vec<u8>,
 }

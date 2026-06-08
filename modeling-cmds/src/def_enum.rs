@@ -28,6 +28,7 @@ define_modeling_cmd_enum! {
                 RegionVersion,
                 BlendType,
                 BodyType,
+                KclProject,
                 EdgeCutVersion,
                 ComponentTransform,
                 RelativeTo,
@@ -778,7 +779,7 @@ define_modeling_cmd_enum! {
             pub distance_type: DistanceType,
         }
 
-        /// What is the length of this edge? 
+        /// What is the length of this edge?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -2713,6 +2714,17 @@ define_modeling_cmd_enum! {
             /// Find the edge closest to this point.
             /// Assumed to be in absolute coordinates, relative to global (scene) origin.
             pub closest_to: Point3d<f64>,
+        }
+
+        /// Execute this KCL project.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ExecKclProject {
+            /// The KCL project to execute.
+            pub project: KclProject,
         }
     }
 
