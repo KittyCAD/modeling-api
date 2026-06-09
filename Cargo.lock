@@ -2408,6 +2408,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "kcl-api"
+version = "0.2.161"
+source = "git+https://github.com/KittyCAD/modeling-app?branch=achalmers/kcl-in-engine#8b00c1128d762ed8c4a5cf9df2c01a9cba044314"
+dependencies = [
+ "schemars",
+ "serde",
+ "ts-rs",
+]
+
+[[package]]
 name = "kittycad"
 version = "0.4.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2473,6 +2483,7 @@ dependencies = [
  "euler",
  "expectorate",
  "http",
+ "kcl-api",
  "kittycad-measurements",
  "kittycad-modeling-cmds-macros",
  "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
