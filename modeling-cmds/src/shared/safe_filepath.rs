@@ -1,3 +1,4 @@
+//! Filepaths safe to use in KCL projects because they cannot escape the KCL project root.
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::path::{Component, PathBuf};
@@ -57,5 +58,48 @@ impl SafeFilepath {
 
         // All checks passed, so it's OK.
         Ok(Self(user_path.to_owned()))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::assert_matches;
+
+    #[test]
+    fn test_absolute_not_allowed_unix() {
+        // Absolute paths could allow reading from arbitrary files
+        let input = "/foo/bar";
+        let actual = SafeFilepath::validate(input);
+        assert_matches!(actual, Err(PathNotSafe::CannotBeAbsolute));
+    }
+
+    #[test]
+    fn test_absolute_not_allowed_windows() {
+        // Test windows-style absolute paths.
+        let input = r"C:\programs\bar";
+        let actual = SafeFilepath::validate(input);
+        assert_matches!(actual, Err(PathNotSafe::CannotBeAbsolute));
+    }
+
+    #[test]
+    fn test_parent_not_allowed() {
+        let input = "../../passwords/secret.txt";
+        let actual = SafeFilepath::validate(input);
+        assert_matches!(actual, Err(PathNotSafe::CannotUseParent));
+    }
+
+    #[test]
+    fn test_success() {
+        let input = "main.kcl";
+        let actual = SafeFilepath::validate(input);
+        assert!(actual.is_ok());
+    }
+
+    #[test]
+    fn test_success_nested_file() {
+        let input = "assets/bolt.step";
+        let actual = SafeFilepath::validate(input);
+        assert!(actual.is_ok());
     }
 }

@@ -23,12 +23,12 @@ define_modeling_cmd_enum! {
             format::{OutputFormat2d, OutputFormat3d},
             id::ModelingCmdId,
             length_unit::LengthUnit,
+            exec_kcl::KclProject,
             shared::{
                 Angle,
                 RegionVersion,
                 BlendType,
                 BodyType,
-                KclProject,
                 EdgeCutVersion,
                 ComponentTransform,
                 RelativeTo,
