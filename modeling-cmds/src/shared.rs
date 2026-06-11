@@ -437,7 +437,7 @@ pub struct AnnotationBasicDimension {
 
     /// Entity to measure the dimension to
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub to_entity_id: Option<EdgeSpecifier>,
+    pub to_entity_id: Option<Uuid>,
 
     /// Edge reference to use to measure the dimension from
     /// If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence.
