@@ -2967,8 +2967,9 @@
                 "type": "boolean"
               },
               "relative_to": {
+                "nullable": true,
                 "description": "What is this sweep relative to? Deprecated; please use `translate_profile_to_path` and `orient_profile_perpendicular` instead.",
-                "default": "sketch_plane",
+                "default": null,
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/RelativeTo"
