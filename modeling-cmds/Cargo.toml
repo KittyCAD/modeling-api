@@ -63,7 +63,7 @@ dropshot = { version = "0.16.7", default-features = false }
 expectorate = "1.1.0"
 openapi-lint = { git = "https://github.com/KittyCAD/openapi-lint", branch = "kittycad" }
 openapiv3 = "2.2.0"
-reqwest = "0.12.23"
+reqwest = "0.13.4"
 tokio = { version = "1.52.3", features = ["macros"] }
 
 [lints]
