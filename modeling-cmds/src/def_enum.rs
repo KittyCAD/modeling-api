@@ -262,6 +262,7 @@ define_modeling_cmd_enum! {
             #[builder(default)]
             pub body_type: BodyType,
             /// What is this sweep relative to?
+            /// Deprecated; please use `translate_profile_to_path` and `orient_profile_perpendicular` instead.
             #[serde(default)]
             #[builder(default)]
             pub relative_to: RelativeTo,
@@ -269,6 +270,18 @@ define_modeling_cmd_enum! {
             /// default algorithm will be used
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub version: Option<u8>,
+            /// If true, the profile being swept will be moved to the path being swept along,
+            /// before the sweep starts.
+            /// If false, the profile stays where it is, and the sweep starts from there.
+            /// Defaults to false.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub translate_profile_to_path: Option<bool>,
+            /// If true, before the sweep starts, the profile will be re-oriented
+            /// so that it is perpendicular to the path being swept along.
+            /// If false, the profile is left in its current orientation.
+            /// Defaults to false.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub orient_profile_perpendicular: Option<bool>,
         }
 
         /// Command for revolving a solid 2d.
@@ -778,7 +791,7 @@ define_modeling_cmd_enum! {
             pub distance_type: DistanceType,
         }
 
-        /// What is the length of this edge? 
+        /// What is the length of this edge?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
