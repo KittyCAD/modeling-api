@@ -8,9 +8,15 @@ use uuid::Uuid;
 
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
-use crate::{def_enum::negative_one, length_unit::LengthUnit, output::ExtrusionFaceInfo, units, units::UnitAngle};
+use crate::{
+    def_enum::negative_one,
+    length_unit::LengthUnit,
+    output::ExtrusionFaceInfo,
+    units::{self, UnitAngle},
+};
 
 mod point;
+pub mod safe_filepath;
 
 /// An edge can be referenced by its uuid or by the faces that uniquely define it.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]

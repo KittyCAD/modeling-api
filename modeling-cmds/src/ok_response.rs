@@ -1387,5 +1387,13 @@ define_ok_modeling_cmd_response_enum! {
             /// If there are no edges in the scene, returns None.
             pub edge_id: Option<Uuid>,
         }
+
+        /// The response from the 'ExecKclProject'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ExecKclProject {
+            /// Result after executing KCL.
+            pub result: Result<crate::exec_kcl::ExecKclProjectOk, crate::exec_kcl::ExecKclProjectErr>,
+        }
     }
 }
