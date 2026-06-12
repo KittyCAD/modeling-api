@@ -424,13 +424,25 @@ pub struct AnnotationMbdBasicDimension {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationBasicDimension {
     /// Entity to measure the dimension from
-    pub from_entity_id: Uuid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub from_entity_id: Option<Uuid>,
+
+    /// Edge reference to use to measure the dimension from
+    /// If both `from_entity_id` and `from_edge_reference` are provided, `from_edge_reference` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub from_edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the dimension from
     pub from_entity_pos: Point2d<f64>,
 
     /// Entity to measure the dimension to
-    pub to_entity_id: Uuid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub to_entity_id: Option<Uuid>,
+
+    /// Edge reference to use to measure the dimension from
+    /// If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub to_edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the dimension to
     pub to_entity_pos: Point2d<f64>,
@@ -467,7 +479,13 @@ pub struct AnnotationBasicDimension {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationFeatureControl {
     /// Entity to place the annotation leader from
-    pub entity_id: Uuid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_id: Option<Uuid>,
+
+    /// Edge reference to use to place the annotation leader from
+    /// If both `entity_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the annotation leader from
     pub entity_pos: Point2d<f64>,
@@ -519,7 +537,13 @@ pub struct AnnotationFeatureControl {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationFeatureTag {
     /// Entity to place the annotation leader from
-    pub entity_id: Uuid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_id: Option<Uuid>,
+
+    /// Edge reference to use to place the annotation leader from
+    /// If both `entity_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the annotation leader from
     pub entity_pos: Point2d<f64>,
