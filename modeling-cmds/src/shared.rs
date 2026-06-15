@@ -424,25 +424,15 @@ pub struct AnnotationMbdBasicDimension {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationBasicDimension {
     /// Entity to measure the dimension from
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub from_entity_id: Option<Uuid>,
-
-    /// Edge reference to use to measure the dimension from
-    /// If both `from_entity_id` and `from_edge_reference` are provided, `from_edge_reference` takes precedence.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub from_edge_reference: Option<EdgeSpecifier>,
+    #[builder(into)]
+    pub from_entity_id: EdgeIdOrSpec,
 
     /// Normalized position within the entity to position the dimension from
     pub from_entity_pos: Point2d<f64>,
 
     /// Entity to measure the dimension to
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub to_entity_id: Option<Uuid>,
-
-    /// Edge reference to use to measure the dimension from
-    /// If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub to_edge_reference: Option<EdgeSpecifier>,
+    #[builder(into)]
+    pub to_entity_id: EdgeIdOrSpec,
 
     /// Normalized position within the entity to position the dimension to
     pub to_entity_pos: Point2d<f64>,
@@ -479,13 +469,8 @@ pub struct AnnotationBasicDimension {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationFeatureControl {
     /// Entity to place the annotation leader from
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub entity_id: Option<Uuid>,
-
-    /// Edge reference to use to place the annotation leader from
-    /// If both `entity_id` and `edge_reference` are provided, `edge_reference` takes precedence.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub edge_reference: Option<EdgeSpecifier>,
+    #[builder(into)]
+    pub entity_id: EdgeIdOrSpec,
 
     /// Normalized position within the entity to position the annotation leader from
     pub entity_pos: Point2d<f64>,
@@ -537,13 +522,8 @@ pub struct AnnotationFeatureControl {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationFeatureTag {
     /// Entity to place the annotation leader from
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub entity_id: Option<Uuid>,
-
-    /// Edge reference to use to place the annotation leader from
-    /// If both `entity_id` and `edge_reference` are provided, `edge_reference` takes precedence.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub edge_reference: Option<EdgeSpecifier>,
+    #[builder(into)]
+    pub entity_id: EdgeIdOrSpec,
 
     /// Normalized position within the entity to position the annotation leader from
     pub entity_pos: Point2d<f64>,
@@ -1793,6 +1773,82 @@ impl ExtrudedFaceInfo {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::str::FromStr;
+
+    #[test]
+    fn backwards_compat_edge_spec_mbd() {
+        let old_json = r#"{
+  "from_entity_id": "f2719dee-ea58-4f34-84d7-e32afbbbd296",
+  "from_entity_pos": {
+    "x": 1.0,
+    "y": 1.0
+  },
+  "to_entity_id": "75d4f761-9fb1-4b0f-98bb-e7757a6bcc5d",
+  "to_entity_pos": {
+    "x": 22.0,
+    "y": 23.0
+  },
+  "dimension": {
+    "symbol": null,
+    "dimension": null,
+    "tolerance": 33.44
+  },
+  "plane_id": "58eab9b3-4027-4a39-b1be-0436864b1566",
+  "offset": {
+    "x": 0.0,
+    "y": 0.0
+  },
+  "precision": 1,
+  "font_scale": 1.0,
+  "font_point_size": 7,
+  "arrow_scale": 1.0
+}"#;
+        let expected = crate::shared::AnnotationBasicDimension::builder()
+            .from_entity_id(EdgeIdOrSpec::Entity {
+                id: "f2719dee-ea58-4f34-84d7-e32afbbbd296".parse().unwrap(),
+            })
+            .to_entity_id(Uuid::from_str("75d4f761-9fb1-4b0f-98bb-e7757a6bcc5d").unwrap())
+            .plane_id("58eab9b3-4027-4a39-b1be-0436864b1566".parse().unwrap())
+            .from_entity_pos(Point2d { x: 1.0, y: 1.0 })
+            .to_entity_pos(Point2d { x: 22.0, y: 23.0 })
+            .arrow_scale(1.0)
+            .font_point_size(7)
+            .dimension(AnnotationMbdBasicDimension::builder().tolerance(33.44).build())
+            .font_scale(1.0)
+            .precision(1)
+            .offset(Point2d::default())
+            .build();
+        let actual: crate::shared::AnnotationBasicDimension = serde_json::from_str(old_json).unwrap();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn edge_id_or_spec_serde_accepts_legacy_and_new_representations() {
+        let id: Uuid = "f2719dee-ea58-4f34-84d7-e32afbbbd296".parse().unwrap();
+        let edge = EdgeSpecifier {
+            side_faces: vec!["75d4f761-9fb1-4b0f-98bb-e7757a6bcc5d".parse().unwrap()],
+            end_faces: vec![],
+            index: Some(1),
+        };
+
+        let legacy_entity: EdgeIdOrSpec = serde_json::from_value(serde_json::json!(id)).unwrap();
+        assert_eq!(legacy_entity, EdgeIdOrSpec::Entity { id });
+
+        let new_entity_json = serde_json::json!({ "id": id });
+        let new_entity: EdgeIdOrSpec = serde_json::from_value(new_entity_json.clone()).unwrap();
+        assert_eq!(new_entity, EdgeIdOrSpec::Entity { id });
+        assert_eq!(serde_json::to_value(new_entity).unwrap(), new_entity_json);
+
+        let new_edge_json = serde_json::json!({ "reference": edge.clone() });
+        let new_edge: EdgeIdOrSpec = serde_json::from_value(new_edge_json.clone()).unwrap();
+        assert_eq!(
+            new_edge,
+            EdgeIdOrSpec::Edge {
+                reference: edge.clone(),
+            }
+        );
+        assert_eq!(serde_json::to_value(new_edge).unwrap(), new_edge_json);
+    }
 
     #[test]
     fn test_angle_comparison() {
@@ -2200,4 +2256,60 @@ impl From<BodiesUpdated> for BodiesCreated {
 
 fn one() -> f32 {
     1.0
+}
+
+/// What to measure the dimension from
+#[derive(Debug, Clone, PartialEq, JsonSchema, Serialize)]
+#[serde(untagged, rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum EdgeIdOrSpec {
+    /// Entity to measure the dimension from
+    Entity {
+        /// ID of the entity.
+        id: Uuid,
+    },
+    /// Edge reference to use to measure the dimension from
+    Edge {
+        /// Specifies the edge.
+        reference: EdgeSpecifier,
+    },
+}
+
+impl<'de> Deserialize<'de> for EdgeIdOrSpec {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        #[serde(untagged)]
+        enum EdgeIdOrSpecDeserialize {
+            LegacyEntity(Uuid),
+            Entity { id: Uuid },
+            Edge { reference: EdgeSpecifier },
+        }
+
+        match EdgeIdOrSpecDeserialize::deserialize(deserializer)? {
+            EdgeIdOrSpecDeserialize::LegacyEntity(id) | EdgeIdOrSpecDeserialize::Entity { id } => {
+                Ok(Self::Entity { id })
+            }
+            EdgeIdOrSpecDeserialize::Edge { reference } => Ok(Self::Edge { reference }),
+        }
+    }
+}
+
+/// Constructor for the Entity ID case
+impl From<Uuid> for EdgeIdOrSpec {
+    fn from(id: Uuid) -> Self {
+        Self::Entity { id }
+    }
+}
+
+/// Constructor for the Edge Specifier case.
+impl From<EdgeSpecifier> for EdgeIdOrSpec {
+    fn from(reference: EdgeSpecifier) -> Self {
+        Self::Edge { reference }
+    }
 }
