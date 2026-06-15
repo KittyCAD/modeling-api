@@ -1803,6 +1803,7 @@ mod tests {
   "font_point_size": 7,
   "arrow_scale": 1.0
 }"#;
+        // The old JSON should deserialize into the same struct as previously.
         let expected = crate::shared::AnnotationBasicDimension::builder()
             .from_entity_id(EdgeIdOrSpec::Entity {
                 id: "f2719dee-ea58-4f34-84d7-e32afbbbd296".parse().unwrap(),
@@ -1820,6 +1821,10 @@ mod tests {
             .build();
         let actual: crate::shared::AnnotationBasicDimension = serde_json::from_str(old_json).unwrap();
         assert_eq!(actual, expected);
+
+        // Serializing the new struct should produce the same JSON as previously.
+        let actual_ser = serde_json::to_string_pretty(&actual).unwrap();
+        assert_eq!(actual_ser, old_json);
     }
 
     #[test]
@@ -1837,7 +1842,7 @@ mod tests {
         let new_entity_json = serde_json::json!({ "id": id });
         let new_entity: EdgeIdOrSpec = serde_json::from_value(new_entity_json.clone()).unwrap();
         assert_eq!(new_entity, EdgeIdOrSpec::Entity { id });
-        assert_eq!(serde_json::to_value(new_entity).unwrap(), new_entity_json);
+        assert_eq!(serde_json::to_value(new_entity).unwrap(), serde_json::json!(id));
 
         let new_edge_json = serde_json::json!({ "reference": edge.clone() });
         let new_edge: EdgeIdOrSpec = serde_json::from_value(new_edge_json.clone()).unwrap();
@@ -2259,7 +2264,7 @@ fn one() -> f32 {
 }
 
 /// What to measure the dimension from
-#[derive(Debug, Clone, PartialEq, JsonSchema, Serialize)]
+#[derive(Debug, Clone, PartialEq, JsonSchema)]
 #[serde(untagged, rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -2276,6 +2281,25 @@ pub enum EdgeIdOrSpec {
         /// Specifies the edge.
         reference: EdgeSpecifier,
     },
+}
+
+impl Serialize for EdgeIdOrSpec {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        #[derive(Serialize)]
+        #[serde(untagged)]
+        enum EdgeIdOrSpecSerialize<'a> {
+            Entity(&'a Uuid),
+            Edge { reference: &'a EdgeSpecifier },
+        }
+
+        match self {
+            Self::Entity { id } => EdgeIdOrSpecSerialize::Entity(id).serialize(serializer),
+            Self::Edge { reference } => EdgeIdOrSpecSerialize::Edge { reference }.serialize(serializer),
+        }
+    }
 }
 
 impl<'de> Deserialize<'de> for EdgeIdOrSpec {
