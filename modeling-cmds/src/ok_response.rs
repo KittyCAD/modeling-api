@@ -1335,6 +1335,22 @@ define_ok_modeling_cmd_response_enum! {
             pub region_mapping: HashMap<Uuid, Uuid>,
         }
 
+        /// The response from the 'RegionGetResolvableIntersectionInfo'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RegionGetResolvableIntersectionInfo {
+            /// The UUID of the walking curve that borders the queried region
+            pub segment: Uuid,
+            /// The UUID of the curve that intersects the walking curve that also borders the queried region
+            pub intersection_segment: Uuid,
+            /// Disambiguator providing the index of the intersection.  Can be non-zero if the two curves intersect multiple times
+            pub intersection_index: u32,
+            /// The total number of intersections between the two curves.
+            pub intersection_count: u32,
+            /// True if the region lies within the clockwise interior of the two intersections (inside a "right" turn from the segment to the intersection segment)
+            pub curve_clockwise: bool,
+        }
+
         /// The response from the 'CreateRegionFromQueryPoint'.
         /// The region should have an ID taken from the ID of the
         /// 'CreateRegionFromQueryPoint' modeling command.
