@@ -1192,7 +1192,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
-        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetExtrusionFaceInfo {
             /// Details of each face.
@@ -1200,7 +1200,8 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
-        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        // Require's `Builder` so we can construct a mock on the client side (non_exhaustive otherwise prevents us).
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder, Copy)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ExtrusionFaceInfo {
             /// Path component (curve) UUID.

@@ -158,3 +158,12 @@ fn requires_hyphens() {
         ))
     );
 }
+
+/// Namespace all client generated references.
+const NAMESPACE_CLIENT_REFS: uuid::Uuid = uuid::uuid!("b7b9c2f1-1a7b-4e5a-9d7f-3c2d8e6f4a11");
+
+/// Method to generate a dynamic client reference.
+pub fn client_ref_from(obj: (uuid::Uuid, &str)) -> uuid::Uuid {
+  Uuid::new_v5(&NAMESPACE_CLIENT_REFS, format!("{}_{}", obj.0, obj.1).as_bytes())
+}
+

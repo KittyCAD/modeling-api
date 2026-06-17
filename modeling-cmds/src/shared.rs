@@ -2201,3 +2201,25 @@ impl From<BodiesUpdated> for BodiesCreated {
 fn one() -> f32 {
     1.0
 }
+
+/// Primarily used so clients can prepare fully batched programs.
+/// As modeling commands walk their trees or lists, they will increment a value
+/// starting from this seed. The client and server will then have matching
+/// references. The client specifying items to walk also specifies order.
+/// Check out `CreateRegionFromQueryPoint` for a real example.
+/// Conceptual example:
+/// Starting from a seed, p1 through p5 are created.
+/// client side                 server side
+/// l1 -> p1 --modeling call--> l1 -> p1 -> none
+/// l2 -> p2 --modeling call--> l2 -> p2 -> none
+/// l3 -> p3 --modeling call--> l3 -> p3 -> none
+/// l4 -> p4 --modeling call--> l4 -> p4 -> none
+/// l5 -> p5 --modeling call--> l5 -> p5 -> none
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Copy)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[serde(rename_all = "snake_case")]
+pub struct RefsSeed(pub Uuid);
+
