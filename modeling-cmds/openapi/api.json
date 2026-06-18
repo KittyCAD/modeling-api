@@ -4064,19 +4064,12 @@
                 "type": "string",
                 "format": "uuid"
               },
-              "items_expected_at_most": {
-                "nullable": true,
-                "description": "The amount of items we *expect* back at most. Bounds our dynamic UUIDs to some upper limit.",
-                "type": "integer",
-                "format": "uint",
-                "minimum": 0
-              },
               "refs_seed": {
                 "nullable": true,
-                "description": "A client provided seed to generate id references.",
+                "description": "A client provided seed to generate id references. Total references created is bounded by the amount of items we *expect* back at most.",
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/RefsSeed"
+                    "$ref": "#/components/schemas/RefsSeedForT"
                   }
                 ]
               },
@@ -7269,15 +7262,6 @@
                 "type": "string",
                 "format": "uuid"
               },
-              "edge_ids": {
-                "nullable": true,
-                "description": "Edges used with `refs_seed` to map to client-controlled UUIDs.",
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              },
               "object_id": {
                 "description": "The Solid3d object whose extrusion is being queried.",
                 "type": "string",
@@ -7285,10 +7269,10 @@
               },
               "refs_seed": {
                 "nullable": true,
-                "description": "A client provided seed to generate id references.",
+                "description": "A client provided seed to generate id references. Total references created bounded by the edge ids related to the extruded face.",
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/RefsSeed"
+                    "$ref": "#/components/schemas/RefsSeedForT"
                   }
                 ]
               },
@@ -7851,21 +7835,12 @@
               },
               "refs_seed": {
                 "nullable": true,
-                "description": "A client provided seed to generate id references.",
+                "description": "A client provided seed to generate id references. Total references created are bounded by the sketch paths which are related to the region being created.",
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/RefsSeed"
+                    "$ref": "#/components/schemas/RefsSeedForT"
                   }
                 ]
-              },
-              "sketch_path_ids": {
-                "nullable": true,
-                "description": "Which sketch paths to create a region from. If specified, overrides `object_id`. Primarily used to allow programs to specify what paths to walk and in what order, so they can prepare other calls, in order to fully batch all modeling commands.",
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uuid"
-                }
               },
               "type": {
                 "type": "string",
@@ -8980,10 +8955,26 @@
           "primitive_index"
         ]
       },
-      "RefsSeed": {
-        "description": "Primarily used so clients can prepare fully batched programs. As modeling commands walk their trees or lists, they will increment a value starting from this seed. The client and server will then have matching references. The client specifying items to walk also specifies order. Check out `CreateRegionFromQueryPoint` for a real example. Conceptual example: Starting from a seed, p1 through p5 are created. client side                 server side l1 -> p1 --modeling call--> l1 -> p1 -> none l2 -> p2 --modeling call--> l2 -> p2 -> none l3 -> p3 --modeling call--> l3 -> p3 -> none l4 -> p4 --modeling call--> l4 -> p4 -> none l5 -> p5 --modeling call--> l5 -> p5 -> none",
-        "type": "string",
-        "format": "uuid"
+      "RefsSeedForT": {
+        "description": "Primarily used so clients can prepare fully batched programs. As modeling commands walk their trees or lists, they will increment a value starting from this seed. The client and server will then have matching references. The client specifying items to walk also specifies order. Check out `CreateRegionFromQueryPoint` for a real example. Conceptual example: Starting from a seed, p1 through p5 are created. client side                 server side l1 -> p1 --modeling call--> p1 -> none l2 -> p2 --modeling call--> p2 -> l2 -> geometry l3 -> p3 --modeling call--> p3 -> none l4 -> p4 --modeling call--> p4 -> none l5 -> p5 --modeling call--> p5 -> l5 -> geometry",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The data a modeling command will \"bounds\" to when creating client refs.",
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          },
+          "uuid": {
+            "description": "The seed UUID to start generating client refs from.",
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "data",
+          "uuid"
+        ]
       },
       "RegionVersion": {
         "description": "Region-creation algorithm version.",

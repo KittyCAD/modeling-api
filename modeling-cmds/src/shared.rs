@@ -2217,10 +2217,11 @@ fn one() -> f32 {
 /// l5 -> p5 --modeling call--> p5 -> l5 -> geometry
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Copy)]
+#[schemars(rename = "RefsSeedForT")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[serde(rename_all = "snake_case")]
+#[serde(rename = "RefsSeedForT", rename_all = "snake_case")]
 pub struct RefsSeed<T: Sized> {
     /// The seed UUID to start generating client refs from.
     pub uuid: Uuid,
