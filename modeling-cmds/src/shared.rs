@@ -2222,4 +2222,3 @@ fn one() -> f32 {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[serde(rename_all = "snake_case")]
 pub struct RefsSeed(pub Uuid);
-

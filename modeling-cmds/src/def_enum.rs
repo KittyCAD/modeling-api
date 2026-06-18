@@ -45,7 +45,7 @@ define_modeling_cmd_enum! {
             },
             units,
         };
-        
+
 
         /// Mike says this usually looks nice.
         fn default_animation_seconds() -> f64 {
