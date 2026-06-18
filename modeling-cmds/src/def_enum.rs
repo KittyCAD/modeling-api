@@ -764,11 +764,10 @@ define_modeling_cmd_enum! {
         pub struct EntityGetAllChildUuids {
             /// ID of the entity being queried.
             pub entity_id: Uuid,
-            /// The amount of items we *expect* back at most. Bounds our
-            /// dynamic UUIDs to some upper limit.
-            pub items_expected_at_most: Option<usize>,
             /// A client provided seed to generate id references.
-            pub refs_seed: Option<RefsSeed>,
+            /// Total references created is bounded by the amount of items we
+            /// *expect* back at most.
+            pub refs_seed: Option<RefsSeed<usize>>,
         }
 
         /// What are all UUIDs of all the paths sketched on top of this entity?
@@ -2338,10 +2337,10 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
             /// Any edge that lies on the extrusion base path.
             pub edge_id: Uuid,
-            /// Edges used with `refs_seed` to map to client-controlled UUIDs.
-            pub edge_ids: Option<Vec<Uuid>>,
             /// A client provided seed to generate id references.
-            pub refs_seed: Option<RefsSeed>,
+            /// Total references created bounded by the edge ids related to the
+            /// extruded face.
+            pub refs_seed: Option<RefsSeed<Vec<Uuid>>>,
         }
 
         /// Get a concise description of all of solids edges.
@@ -2657,12 +2656,6 @@ define_modeling_cmd_enum! {
         pub struct CreateRegionFromQueryPoint {
             /// Which sketch object to create the region from.
             pub object_id: Uuid,
-            /// Which sketch paths to create a region from.
-            /// If specified, overrides `object_id`.
-            /// Primarily used to allow programs to specify what paths to walk
-            /// and in what order, so they can prepare other calls, in order
-            /// to fully batch all modeling commands.
-            pub sketch_path_ids: Option<Vec<Uuid>>,
 
             /// The query point (in the same coordinates as the sketch itself)
             /// if a possible sketch region contains this point, then that region will be created
@@ -2671,8 +2664,11 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "RegionVersion::is_zero")]
             #[builder(default)]
             pub version: RegionVersion,
+
             /// A client provided seed to generate id references.
-            pub refs_seed: Option<RefsSeed>,
+            /// Total references created are bounded by the sketch paths which
+            /// are related to the region being created.
+            pub refs_seed: Option<RefsSeed<Vec<Uuid>>>,
         }
 
         /// Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.
