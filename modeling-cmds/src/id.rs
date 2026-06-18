@@ -169,16 +169,16 @@ mod tests {
     #[test]
     fn client_ref_from_idempotent() {
         let a = uuid::Uuid::new_v4();
-        let res = client_ref_from((a, &"hello"));
-        let res2 = client_ref_from((a, &"hello"));
+        let res = client_ref_from((a, "hello"));
+        let res2 = client_ref_from((a, "hello"));
         assert_eq!(res, res2);
     }
 
     #[test]
     fn client_ref_from_different_labels_different_outputs() {
         let a = uuid::Uuid::new_v4();
-        let res = client_ref_from((a, &"hello"));
-        let res2 = client_ref_from((a, &"goodbye"));
+        let res = client_ref_from((a, "hello"));
+        let res2 = client_ref_from((a, "goodbye"));
         assert_ne!(res, res2);
     }
 
@@ -186,8 +186,8 @@ mod tests {
     fn client_ref_from_different_seeds_different_outputs() {
         let a = uuid::Uuid::new_v4();
         let b = uuid::Uuid::new_v4();
-        let res = client_ref_from((a, &"hello"));
-        let res2 = client_ref_from((b, &"hello"));
+        let res = client_ref_from((a, "hello"));
+        let res2 = client_ref_from((b, "hello"));
         assert_ne!(res, res2);
     }
 }
