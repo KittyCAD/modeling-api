@@ -2,8 +2,10 @@ use bon::Builder;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::coord;
+use crate::format::View;
 
 /// After importing, how should this model's data be represented?
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -145,7 +147,7 @@ pub mod export {
     }
 
     /// Options for exporting STEP format.
-    #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize, Builder)]
+    #[derive(Clone, Debug, Deserialize, JsonSchema, PartialEq, Serialize, Builder)]
     #[serde(default, rename = "StepExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -181,6 +183,10 @@ pub mod export {
         /// STEP application protocol schema. Defaults to AP242.
         #[builder(default)]
         pub schema: Schema,
+
+        /// Named views in the scene.
+        #[builder(default)]
+        pub views: HashMap<String, View>,
     }
 
     #[cfg(feature = "python")]
@@ -202,6 +208,7 @@ pub mod export {
                 units: default_units(),
                 presentation: default_presentation(),
                 schema: Schema::default(),
+                views: Default::default(),
             }
         }
     }
