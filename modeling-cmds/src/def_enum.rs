@@ -2635,6 +2635,17 @@ define_modeling_cmd_enum! {
             pub version: RegionVersion,
         }
 
+        /// Finds a suitable set of arguments that can be passed to CreateRegion to resolve this very region.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RegionGetResolvableIntersectionInfo {
+            /// Which region to resolve
+            pub region_id: Uuid,
+        }
+
         /// Create a region with a query point.
         /// The region should have an ID taken from the ID of the
         /// 'CreateRegionFromQueryPoint' modeling command.
