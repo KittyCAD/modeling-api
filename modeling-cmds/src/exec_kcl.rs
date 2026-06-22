@@ -52,7 +52,20 @@ pub struct ExecKclProjectOk {
 /// Failed KCL project execution response.
 pub struct ExecKclProjectErr {
     /// Error produced while executing the KCL project.
-    pub error: kcl_api::Error,
+    pub error: kcl_api::KclErrorWithOutputs<
+        serde_json::Value,
+        serde_json::Value,
+        serde_json::Value,
+        serde_json::Value,
+        serde_json::Value,
+        serde_json::Value,
+        serde_json::Value,
+        serde_json::Value,
+        kcl_api::SceneGraph<serde_json::Value, serde_json::Value>,
+        serde_json::Value,
+        serde_json::Value,
+        serde_json::Value,
+    >,
 }
 
 #[cfg(feature = "arbitrary")]
@@ -75,9 +88,9 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
 impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectErr {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         Ok(Self {
-            error: kcl_api::Error {
-                msg: <String as arbitrary::Arbitrary>::arbitrary(u)?,
-            },
+            error: kcl_api::KclErrorWithOutputs::no_outputs(kcl_api::KclError::internal(
+                <String as arbitrary::Arbitrary>::arbitrary(u)?,
+            )),
         })
     }
 }
