@@ -1,7 +1,7 @@
 //! Filepaths safe to use in KCL projects because they cannot escape the KCL project root.
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::path::{Component, PathBuf};
+use typed_path::{TypedPath, UnixComponent, WindowsComponent};
 
 /// Filepath which is guaranteed to be relative and not contain parent directory jumps like '..'
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
@@ -10,13 +10,10 @@ use std::path::{Component, PathBuf};
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct SafeFilepath(PathBuf);
-
-impl From<SafeFilepath> for PathBuf {
-    fn from(value: SafeFilepath) -> Self {
-        value.0
-    }
-}
+pub struct SafeFilepath(
+    /// TODO: Make sure serde calls `validate` during deserialization.
+    String,
+);
 
 /// Validation error that can occur when trying to send a file to the Zoo API.
 #[derive(Debug)]
@@ -40,7 +37,7 @@ impl SafeFilepath {
     /// Validate if a path meets the invariants of this type,
     /// i.e. is relative and doesn't contain any parent components (..)
     pub fn validate(unparsed_user_path: &str) -> Result<Self, PathNotSafe> {
-        let user_path = std::path::Path::new(unparsed_user_path);
+        let user_path = TypedPath::derive(unparsed_user_path);
 
         // Cannot be absolute.
         if user_path.is_absolute() {
@@ -48,16 +45,31 @@ impl SafeFilepath {
         }
 
         // Check all components to make sure there's no absolute or escaping from the project root.
-        for component in user_path.components() {
-            match component {
-                Component::RootDir | Component::Prefix(..) => return Err(PathNotSafe::CannotBeAbsolute),
-                Component::ParentDir => return Err(PathNotSafe::CannotUseParent),
-                Component::CurDir | Component::Normal(..) => {}
+        match user_path {
+            TypedPath::Unix(path) => {
+                for component in path.components() {
+                    match component {
+                        UnixComponent::RootDir => return Err(PathNotSafe::CannotBeAbsolute),
+                        UnixComponent::ParentDir => return Err(PathNotSafe::CannotUseParent),
+                        UnixComponent::CurDir | UnixComponent::Normal(..) => {}
+                    }
+                }
+            }
+            TypedPath::Windows(path) => {
+                for component in path.components() {
+                    match component {
+                        WindowsComponent::Prefix(..) | WindowsComponent::RootDir => {
+                            return Err(PathNotSafe::CannotBeAbsolute)
+                        }
+                        WindowsComponent::ParentDir => return Err(PathNotSafe::CannotUseParent),
+                        WindowsComponent::CurDir | WindowsComponent::Normal(..) => {}
+                    }
+                }
             }
         }
 
         // All checks passed, so it's OK.
-        Ok(Self(user_path.to_owned()))
+        Ok(Self(format!("{}", user_path.display())))
     }
 }
 

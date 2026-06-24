@@ -39,17 +39,20 @@ pub struct KclFile {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 /// Successful KCL project execution response.
-pub struct ExecKclProjectOk {}
+pub struct ExecKclProjectOk {
+    // TODO: Add fields to this as we make KCL data serializable.
+}
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 /// Failed KCL project execution response.
-pub struct ExecKclProjectErr {}
+pub struct ExecKclProjectErr {
+    // TODO: Add fields to this as we make KCL data serializable.
+}
 
 #[cfg(feature = "arbitrary")]
-// TODO: Impl this properly for fuzzing.
 impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
     fn arbitrary(_u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         Ok(Self {})
@@ -57,9 +60,8 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
 }
 
 #[cfg(feature = "arbitrary")]
-// TODO: Impl this properly for fuzzing.
 impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectErr {
-    fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
+    fn arbitrary(_u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         Ok(Self {})
     }
 }
