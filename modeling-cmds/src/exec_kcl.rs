@@ -1,4 +1,6 @@
 use bon::Builder;
+use kcl_error::CompilationIssue;
+use kcl_error::KclError;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -50,6 +52,10 @@ pub struct ExecKclProjectOk {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 /// Failed KCL project execution response.
 pub struct ExecKclProjectErr {
+    /// Fatal KCL errors that prevented your geometry from being created.
+    pub error: Option<KclError>,
+    /// Nonfatal KCL errors that need to be fixed.
+    pub non_fatal: Vec<CompilationIssue>,
     // TODO: Add fields to this as we make KCL data serializable.
     // Should be a usable subset of `KclErrorWithOutputs`.
 }
@@ -64,6 +70,9 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
 #[cfg(feature = "arbitrary")]
 impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectErr {
     fn arbitrary(_u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
-        Ok(Self {})
+        Ok(Self {
+            error: Default::default(),
+            non_fatal: Default::default(),
+        })
     }
 }
