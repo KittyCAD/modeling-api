@@ -2438,17 +2438,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "kcl-api"
-version = "0.2.165"
-dependencies = [
- "schemars",
- "serde",
- "ts-rs",
-]
-
-[[package]]
 name = "kcl-error"
 version = "0.2.165"
+source = "git+https://github.com/KittyCAD/modeling-app/?branch=main#a175f0d64af77aa80e4dc6921588033c9c406944"
 dependencies = [
  "miette",
  "schemars",
@@ -2456,7 +2448,6 @@ dependencies = [
  "serde_json",
  "thiserror 2.0.18",
  "ts-rs",
- "winnow 1.0.3",
 ]
 
 [[package]]
@@ -2525,7 +2516,6 @@ dependencies = [
  "euler",
  "expectorate",
  "http",
- "kcl-api",
  "kcl-error",
  "kittycad-measurements",
  "kittycad-modeling-cmds-macros",

@@ -27,3 +27,6 @@ syn = "2.0.114"
 
 [profile.bench]
 debug = true
+
+[patch.crates-io]
+kcl-error = { git = "https://github.com/KittyCAD/modeling-app/", branch = "main" }
