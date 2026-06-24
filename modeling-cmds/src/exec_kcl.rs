@@ -41,6 +41,7 @@ pub struct KclFile {
 /// Successful KCL project execution response.
 pub struct ExecKclProjectOk {
     // TODO: Add fields to this as we make KCL data serializable.
+    // Should be a usable subset of `SceneGraphDelta`.
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
@@ -50,6 +51,7 @@ pub struct ExecKclProjectOk {
 /// Failed KCL project execution response.
 pub struct ExecKclProjectErr {
     // TODO: Add fields to this as we make KCL data serializable.
+    // Should be a usable subset of `KclErrorWithOutputs`.
 }
 
 #[cfg(feature = "arbitrary")]
