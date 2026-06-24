@@ -39,47 +39,20 @@ pub struct KclFile {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 /// Successful KCL project execution response.
-pub struct ExecKclProjectOk {
-    /// Scene graph updates and execution metadata produced by running the KCL project.
-    pub scene_graph_delta:
-        kcl_api::SceneGraphDelta<kcl_api::SceneGraph<serde_json::Value, serde_json::Value>, serde_json::Value>,
-}
+pub struct ExecKclProjectOk {}
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 /// Failed KCL project execution response.
-pub struct ExecKclProjectErr {
-    /// Error produced while executing the KCL project.
-    pub error: kcl_api::KclErrorWithOutputs<
-        serde_json::Value,
-        serde_json::Value,
-        serde_json::Value,
-        serde_json::Value,
-        serde_json::Value,
-        serde_json::Value,
-        serde_json::Value,
-        serde_json::Value,
-        kcl_api::SceneGraph<serde_json::Value, serde_json::Value>,
-        serde_json::Value,
-        serde_json::Value,
-        serde_json::Value,
-    >,
-}
+pub struct ExecKclProjectErr {}
 
 #[cfg(feature = "arbitrary")]
 // TODO: Impl this properly for fuzzing.
 impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
     fn arbitrary(_u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
-        Ok(Self {
-            scene_graph_delta: kcl_api::SceneGraphDelta::new(
-                kcl_api::SceneGraph::empty(kcl_api::ProjectId(0), kcl_api::FileId(0), kcl_api::Version(0)),
-                Vec::new(),
-                false,
-                serde_json::Value::Null,
-            ),
-        })
+        Ok(Self {})
     }
 }
 
@@ -87,10 +60,6 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
 // TODO: Impl this properly for fuzzing.
 impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectErr {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
-        Ok(Self {
-            error: kcl_api::KclErrorWithOutputs::no_outputs(kcl_api::KclError::internal(
-                <String as arbitrary::Arbitrary>::arbitrary(u)?,
-            )),
-        })
+        Ok(Self {})
     }
 }
