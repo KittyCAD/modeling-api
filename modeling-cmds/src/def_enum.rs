@@ -7,7 +7,7 @@ use crate::{self as kittycad_modeling_cmds};
 
 define_modeling_cmd_enum! {
     pub mod each_cmd {
-        use std::collections::HashSet;
+        use std::collections::{HashMap, HashSet};
 
         use bon::Builder;
         use crate::{self as kittycad_modeling_cmds};
@@ -666,6 +666,9 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.
             pub format: OutputFormat3d,
+            /// Named viewpoints.
+            #[builder(default)]
+            pub views: HashMap<String, CameraViewState>,
         }
 
         /// Export the scene to a file.
