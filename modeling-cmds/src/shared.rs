@@ -832,7 +832,7 @@ pub enum CameraDragInteractionType {
 
 /// A segment of a path.
 /// Paths are composed of many segments.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -872,6 +872,20 @@ pub enum PathSegment {
         /// Final control point.
         end: Point3d<LengthUnit>,
         ///Whether or not this bezier is a relative offset
+        relative: bool,
+    },
+    /// A general exact curve segment.
+    /// Start at the current path "pen" and end at the final control point.
+    /// In the first pass this is used for non-rational open-uniform spline curves.
+    Curve {
+        /// Degree of the curve.
+        degree: u32,
+        /// Whether to use the homogeneous `w` component as a rational weight.
+        rational: bool,
+        /// Ordered control points for the curve.
+        /// The final 3D point becomes the new path "pen" position.
+        points: Vec<Point4d<LengthUnit>>,
+        ///Whether or not this curve is a relative offset
         relative: bool,
     },
     /// Adds a tangent arc from current pen position with the given radius and angle.
