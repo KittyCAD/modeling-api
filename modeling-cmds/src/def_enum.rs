@@ -41,9 +41,11 @@ define_modeling_cmd_enum! {
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, SurfaceEdgeReference, Opposite,
+                RefsSeed,
             },
             units,
         };
+
 
         /// Mike says this usually looks nice.
         fn default_animation_seconds() -> f64 {
@@ -762,6 +764,10 @@ define_modeling_cmd_enum! {
         pub struct EntityGetAllChildUuids {
             /// ID of the entity being queried.
             pub entity_id: Uuid,
+            /// A client provided seed to generate id references.
+            /// Total references created is bounded by the amount of items we
+            /// *expect* back at most.
+            pub refs_seed: Option<RefsSeed<usize>>,
         }
 
         /// What are all UUIDs of all the paths sketched on top of this entity?
@@ -2331,6 +2337,10 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
             /// Any edge that lies on the extrusion base path.
             pub edge_id: Uuid,
+            /// A client provided seed to generate id references.
+            /// Total references created bounded by the edge ids related to the
+            /// extruded face.
+            pub refs_seed: Option<RefsSeed<Vec<Uuid>>>,
         }
 
         /// Get a concise description of all of solids edges.
@@ -2665,6 +2675,11 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "RegionVersion::is_zero")]
             #[builder(default)]
             pub version: RegionVersion,
+
+            /// A client provided seed to generate id references.
+            /// Total references created are bounded by the sketch paths which
+            /// are related to the region being created.
+            pub refs_seed: Option<RefsSeed<Vec<Uuid>>>,
         }
 
         /// Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.

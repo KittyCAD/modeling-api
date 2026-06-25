@@ -22,27 +22,6 @@ impl AsRef<Uuid> for ModelingCmdId {
 // implement our own serde deserializer for UUID essentially. We are
 // fortunate to have wrapped the UUID type already so we can do this.
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn modeling_cmd_id_from_bson() {
-        #[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
-        struct Id {
-            id: ModelingCmdId,
-        }
-
-        // Serializing and deserializing an ID (via BSON) should not change it.
-        let id_before = Id {
-            id: ModelingCmdId("f09fc20f-40d4-4a73-92fa-05d53baaabac".parse().unwrap()),
-        };
-        let bytes = bson::to_vec(&id_before).unwrap();
-        let id_after = bson::from_reader(bytes.as_slice()).unwrap();
-        assert_eq!(id_before, id_after);
-    }
-}
-
 struct UuidVisitor;
 
 impl<'de> Visitor<'de> for UuidVisitor {
@@ -137,24 +116,78 @@ impl std::fmt::Display for ModelingCmdId {
     }
 }
 
-#[test]
-fn smoke_test() {
-    use std::str::FromStr;
-    assert_eq!(
-        ModelingCmdId::from_str("00000000-0000-0000-0000-000000000000"),
-        Ok(ModelingCmdId(
-            Uuid::from_str("00000000-0000-0000-0000-000000000000").unwrap()
-        ))
-    );
+/// Namespace all client generated references.
+const NAMESPACE_CLIENT_REFS: uuid::Uuid = uuid::uuid!("b7b9c2f1-1a7b-4e5a-9d7f-3c2d8e6f4a11");
+
+/// Method to generate a dynamic client reference.
+pub fn client_ref_from(obj: (uuid::Uuid, &str)) -> uuid::Uuid {
+    Uuid::new_v5(&NAMESPACE_CLIENT_REFS, format!("{}_{}", obj.0, obj.1).as_bytes())
 }
 
-#[test]
-fn requires_hyphens() {
-    use std::str::FromStr;
-    assert_ne!(
-        ModelingCmdId::from_str("00000000000000000000000000000000"),
-        Ok(ModelingCmdId(
-            Uuid::from_str("00000000-0000-0000-0000-000000000000").unwrap()
-        ))
-    );
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn modeling_cmd_id_from_bson() {
+        #[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
+        struct Id {
+            id: ModelingCmdId,
+        }
+
+        // Serializing and deserializing an ID (via BSON) should not change it.
+        let id_before = Id {
+            id: ModelingCmdId("f09fc20f-40d4-4a73-92fa-05d53baaabac".parse().unwrap()),
+        };
+        let bytes = bson::to_vec(&id_before).unwrap();
+        let id_after = bson::from_reader(bytes.as_slice()).unwrap();
+        assert_eq!(id_before, id_after);
+    }
+
+    #[test]
+    fn smoke_test() {
+        use std::str::FromStr;
+        assert_eq!(
+            ModelingCmdId::from_str("00000000-0000-0000-0000-000000000000"),
+            Ok(ModelingCmdId(
+                Uuid::from_str("00000000-0000-0000-0000-000000000000").unwrap()
+            ))
+        );
+    }
+
+    #[test]
+    fn requires_hyphens() {
+        use std::str::FromStr;
+        assert_ne!(
+            ModelingCmdId::from_str("00000000000000000000000000000000"),
+            Ok(ModelingCmdId(
+                Uuid::from_str("00000000-0000-0000-0000-000000000000").unwrap()
+            ))
+        );
+    }
+
+    #[test]
+    fn client_ref_from_idempotent() {
+        let a = uuid::Uuid::new_v4();
+        let res = client_ref_from((a, "hello"));
+        let res2 = client_ref_from((a, "hello"));
+        assert_eq!(res, res2);
+    }
+
+    #[test]
+    fn client_ref_from_different_labels_different_outputs() {
+        let a = uuid::Uuid::new_v4();
+        let res = client_ref_from((a, "hello"));
+        let res2 = client_ref_from((a, "goodbye"));
+        assert_ne!(res, res2);
+    }
+
+    #[test]
+    fn client_ref_from_different_seeds_different_outputs() {
+        let a = uuid::Uuid::new_v4();
+        let b = uuid::Uuid::new_v4();
+        let res = client_ref_from((a, "hello"));
+        let res2 = client_ref_from((b, "hello"));
+        assert_ne!(res, res2);
+    }
 }
