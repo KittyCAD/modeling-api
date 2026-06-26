@@ -2439,8 +2439,9 @@ dependencies = [
 
 [[package]]
 name = "kcl-error"
-version = "0.2.165"
-source = "git+https://github.com/KittyCAD/modeling-app/?branch=main#a175f0d64af77aa80e4dc6921588033c9c406944"
+version = "0.2.166"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e65575f7effed7ba8dbc128244db29cf6401122722ac332e9bb3305530d868e"
 dependencies = [
  "miette",
  "schemars",
