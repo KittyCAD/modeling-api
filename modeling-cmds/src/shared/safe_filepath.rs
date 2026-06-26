@@ -1,19 +1,14 @@
 //! Filepaths safe to use in KCL projects because they cannot escape the KCL project root.
 use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
+use serde_with::{DeserializeFromStr, SerializeDisplay};
 use typed_path::{TypedPath, UnixComponent, WindowsComponent};
 
 /// Filepath which is guaranteed to be relative and not contain parent directory jumps like '..'
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
-#[serde(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq, SerializeDisplay, DeserializeFromStr, JsonSchema, Default)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct SafeFilepath(
-    /// TODO: Make sure serde calls `validate` during deserialization.
-    String,
-);
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+pub struct SafeFilepath(String);
 
 /// Validation error that can occur when trying to send a file to the Zoo API.
 #[derive(Debug)]
@@ -26,10 +21,11 @@ pub enum PathNotSafe {
 
 impl std::fmt::Display for PathNotSafe {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Paths must be relative and cannot contain parent jumps like '..' inside"
-        )
+        let msg = match self {
+            PathNotSafe::CannotBeAbsolute => "you cannot use an absolute path here",
+            PathNotSafe::CannotUseParent => "you cannot use a parent jump like '..' here",
+        };
+        write!(f, "{}", msg)
     }
 }
 
@@ -73,11 +69,33 @@ impl SafeFilepath {
     }
 }
 
+/// Parsing a SafeFilepath applies the validation checks.
+impl std::str::FromStr for SafeFilepath {
+    type Err = PathNotSafe;
+
+    fn from_str(unparsed_user_path: &str) -> Result<Self, Self::Err> {
+        SafeFilepath::validate(unparsed_user_path)
+    }
+}
+
+impl std::fmt::Display for SafeFilepath {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::assert_matches;
 
+    use serde::{Deserialize, Serialize};
+
     use super::*;
+
+    #[derive(Debug, Deserialize, Serialize, Eq, PartialEq)]
+    struct HasPath {
+        path: SafeFilepath,
+    }
 
     #[test]
     fn test_absolute_not_allowed_unix() {
@@ -114,5 +132,34 @@ mod tests {
         let input = "assets/bolt.step";
         let actual = SafeFilepath::validate(input);
         assert!(actual.is_ok());
+    }
+
+    #[test]
+    fn test_unsafe_path_rejected_during_deserialization() {
+        let input = r#"{
+            "path": "../password.txt"
+        }"#;
+        let deserialized: Result<HasPath, _> = serde_json::from_str(input);
+        assert!(deserialized.is_err());
+    }
+
+    #[test]
+    fn test_unsafe_path_rejected_during_parsing() {
+        let input = "../password.txt";
+        assert!(input.parse::<SafeFilepath>().is_err())
+    }
+
+    #[test]
+    fn test_safe_path_deserializes() {
+        let input = r#"{
+            "path": "file.txt"
+        }"#;
+        let deserialized: HasPath = serde_json::from_str(input).unwrap();
+        assert_eq!(
+            deserialized,
+            HasPath {
+                path: SafeFilepath::validate("file.txt").unwrap()
+            }
+        );
     }
 }
