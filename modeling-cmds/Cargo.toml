@@ -35,6 +35,7 @@ enum-iterator = "2.3.0"
 enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
 http = "1.4.0"
+kcl-error = { version = "0.2.166" }
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
 # Fork of <crates.io/crates/measurements>
@@ -42,18 +43,16 @@ measurements = { package = "kittycad-measurements", version = "0.11.2" }
 parse-display = "0.11.0"
 parse-display-derive = "0.11.0"
 pyo3 = { version = "0.28.3", optional = true }
-pyo3-stub-gen = { version = "0.22.3", optional = true, default-features = false, features = [
-  "either",
-  "numpy",
-  "ordered-float",
-] }
+pyo3-stub-gen = { version = "0.22.3", optional = true, default-features = false, features = ["either", "numpy", "ordered-float"] }
 schemars = { version = "0.8.22", features = ["bigdecimal04", "chrono", "url", "uuid1"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_bytes = "0.11.19"
 serde_json = { version = "1.0.150", optional = true }
+serde_with = "3.21.0"
 slog = { version = "2.8.2", optional = true }
 tabled = { version = "0.20", optional = true }
 ts-rs = { version = "12.0.1", optional = true, features = ["chrono-impl", "uuid-impl", "no-serde-warnings", "serde-json-impl"] }
+typed-path = "0.12.3"
 uuid = { version = "1.23.1", features = ["serde", "v4", "js"] }
 webrtc = { version = "0.12", optional = true }
 
@@ -64,6 +63,7 @@ expectorate = "1.1.0"
 openapi-lint = { git = "https://github.com/KittyCAD/openapi-lint", branch = "kittycad" }
 openapiv3 = "2.2.0"
 reqwest = "0.12.23"
+serde_json = "1.0.150"
 tokio = { version = "1.52.3", features = ["macros"] }
 
 [lints]

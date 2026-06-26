@@ -35,6 +35,9 @@ pub mod session;
 /// Types that are shared between various modeling commands, like Point3d.
 pub mod shared;
 
+/// Types for executing KCL and getting response back.
+pub mod exec_kcl;
+
 #[cfg(all(test, feature = "derive-jsonschema-on-enums"))]
 mod tests;
 

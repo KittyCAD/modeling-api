@@ -2738,8 +2738,6 @@ define_modeling_cmd_enum! {
             pub closest_to: Point3d<f64>,
         }
     }
-
-
 }
 
 pub(crate) fn is_false(b: &bool) -> bool {

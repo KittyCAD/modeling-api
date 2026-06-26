@@ -110,6 +110,12 @@ pub enum WebSocketRequest {
         /// The authentication header.
         headers: HashMap<String, String>,
     },
+
+    /// Execute a KCL project.
+    ExecKclProject {
+        /// The KCL project to execute.
+        project: crate::exec_kcl::KclProject,
+    },
 }
 
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
@@ -223,6 +229,12 @@ pub enum OkWebSocketResponseData {
     Debug {
         /// Instance name. This may or may not mean something.
         name: String,
+    },
+
+    /// Result of executing a KCL project.
+    ExecKclProject {
+        /// Result after executing KCL.
+        result: Result<crate::exec_kcl::ExecKclProjectOk, crate::exec_kcl::ExecKclProjectErr>,
     },
 }
 

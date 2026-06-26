@@ -27,3 +27,4 @@ syn = "2.0.114"
 
 [profile.bench]
 debug = true
+
