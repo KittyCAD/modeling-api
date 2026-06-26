@@ -75,8 +75,9 @@ impl SafeFilepath {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::assert_matches;
+
+    use super::*;
 
     #[test]
     fn test_absolute_not_allowed_unix() {

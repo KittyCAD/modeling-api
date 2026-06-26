@@ -1,6 +1,5 @@
 use bon::Builder;
-use kcl_error::CompilationIssue;
-use kcl_error::KclError;
+use kcl_error::{CompilationIssue, KclError};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
