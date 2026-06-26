@@ -30,8 +30,10 @@ pub struct KclFile {
     /// Where is the file, relative to the project directory?
     pub path: SafeFilepath,
     /// Contents of the file, as UTF-8 encoded bytes.
-    #[serde(deserialize_with = "serde_bytes::deserialize")]
-    #[serde(serialize_with = "serde_bytes::serialize")]
+    #[serde(
+        serialize_with = "serde_bytes::serialize",
+        deserialize_with = "serde_bytes::deserialize"
+    )]
     pub contents: Vec<u8>,
 }
 
