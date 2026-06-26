@@ -2441,7 +2441,11 @@
           },
           "path": {
             "description": "Where is the file, relative to the project directory?",
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SafeFilepath"
+              }
+            ]
           }
         },
         "required": [
@@ -2455,7 +2459,11 @@
         "properties": {
           "entrypoint": {
             "description": "Which file is the entrypoint? This is the first KCL file to be executed, the root of the KCL module tree.",
-            "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SafeFilepath"
+              }
+            ]
           },
           "files": {
             "description": "All files in the project.",
@@ -9100,6 +9108,10 @@
           "sdp",
           "type"
         ]
+      },
+      "SafeFilepath": {
+        "description": "Filepath which is guaranteed to be relative and not contain parent directory jumps like '..'",
+        "type": "string"
       },
       "SceneSelectionType": {
         "description": "The type of scene selection change",

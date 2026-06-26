@@ -46,9 +46,9 @@ pyo3 = { version = "0.28.3", optional = true }
 pyo3-stub-gen = { version = "0.22.3", optional = true, default-features = false, features = ["either", "numpy", "ordered-float"] }
 schemars = { version = "0.8.22", features = ["bigdecimal04", "chrono", "url", "uuid1"] }
 serde = { version = "1.0.219", features = ["derive"] }
-serde_with = "3.21.0"
 serde_bytes = "0.11.19"
 serde_json = { version = "1.0.150", optional = true }
+serde_with = "3.21.0"
 slog = { version = "2.8.2", optional = true }
 tabled = { version = "0.20", optional = true }
 ts-rs = { version = "12.0.1", optional = true, features = ["chrono-impl", "uuid-impl", "no-serde-warnings", "serde-json-impl"] }
