@@ -2426,6 +2426,50 @@
           }
         ]
       },
+      "KclFile": {
+        "description": "Region-creation algorithm version.",
+        "type": "object",
+        "properties": {
+          "contents": {
+            "description": "Contents of the file, as UTF-8 encoded bytes.",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "uint8",
+              "minimum": 0
+            }
+          },
+          "path": {
+            "description": "Where is the file, relative to the project directory?",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contents",
+          "path"
+        ]
+      },
+      "KclProject": {
+        "description": "A KCL project that can be executed.",
+        "type": "object",
+        "properties": {
+          "entrypoint": {
+            "description": "Which file is the entrypoint? This is the first KCL file to be executed, the root of the KCL module tree.",
+            "type": "string"
+          },
+          "files": {
+            "description": "All files in the project.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KclFile"
+            }
+          }
+        },
+        "required": [
+          "entrypoint",
+          "files"
+        ]
+      },
       "LengthUnit": {
         "type": "number",
         "format": "double"
@@ -9873,6 +9917,30 @@
             },
             "required": [
               "headers",
+              "type"
+            ]
+          },
+          {
+            "description": "Execute a KCL project.",
+            "type": "object",
+            "properties": {
+              "project": {
+                "description": "The KCL project to execute.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/KclProject"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "exec_kcl_project"
+                ]
+              }
+            },
+            "required": [
+              "project",
               "type"
             ]
           }
