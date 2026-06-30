@@ -113,6 +113,8 @@ pub enum WebSocketRequest {
 
     /// Execute a KCL project.
     ExecKclProject {
+        /// ID for this request.
+        request_id: Uuid,
         /// The KCL project to execute.
         project: crate::exec_kcl::KclProject,
     },

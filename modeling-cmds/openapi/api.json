@@ -10001,6 +10001,11 @@
                   }
                 ]
               },
+              "request_id": {
+                "description": "ID for this request.",
+                "type": "string",
+                "format": "uuid"
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -10010,6 +10015,7 @@
             },
             "required": [
               "project",
+              "request_id",
               "type"
             ]
           }
