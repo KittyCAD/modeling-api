@@ -281,6 +281,13 @@ define_modeling_cmd_enum! {
             /// Defaults to false.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub orient_profile_perpendicular: Option<bool>,
+            /// If orient_profile_perpendicular is true, the sketch shall be oriented such that the
+            /// local Y axis of the sketch will be oriented to align with this element as much as
+            /// possible.
+            /// Defaults to +Z if not set
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub projected_axis: Option<DirectionType>,
+
         }
 
         /// Command for revolving a solid 2d.
