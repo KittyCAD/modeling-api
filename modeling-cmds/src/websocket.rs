@@ -236,8 +236,40 @@ pub enum OkWebSocketResponseData {
     /// Result of executing a KCL project.
     ExecKclProject {
         /// Result after executing KCL.
-        result: Result<crate::exec_kcl::ExecKclProjectOk, crate::exec_kcl::ExecKclProjectErr>,
+        result: ExecKclResult,
     },
+}
+
+/// Result of executing a KCL project.
+/// Basically Result except we can serialize it according to our snake_case standard.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
+#[serde(rename_all = "snake_case", untagged)]
+pub enum ExecKclResult {
+    /// Success (Ok)
+    Success(crate::exec_kcl::ExecKclProjectOk),
+    /// Failure (Err)
+    Failure(crate::exec_kcl::ExecKclProjectErr),
+}
+
+/// Just like ExecKclResult but using std::result::Result.
+type ExecKclStdResult = Result<crate::exec_kcl::ExecKclProjectOk, crate::exec_kcl::ExecKclProjectErr>;
+
+impl From<ExecKclStdResult> for ExecKclResult {
+    fn from(value: ExecKclStdResult) -> Self {
+        match value {
+            Ok(x) => Self::Success(x),
+            Err(x) => Self::Failure(x),
+        }
+    }
+}
+impl From<ExecKclResult> for ExecKclStdResult {
+    fn from(value: ExecKclResult) -> Self {
+        match value {
+            ExecKclResult::Success(x) => Ok(x),
+            ExecKclResult::Failure(x) => Err(x),
+        }
+    }
 }
 
 /// Successful Websocket response.
