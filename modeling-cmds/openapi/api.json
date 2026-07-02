@@ -3054,6 +3054,15 @@
                 "description": "If true, before the sweep starts, the profile will be re-oriented so that it is perpendicular to the path being swept along. If false, the profile is left in its current orientation. Defaults to false.",
                 "type": "boolean"
               },
+              "projected_axis": {
+                "nullable": true,
+                "description": "If orient_profile_perpendicular is true, the sketch shall be oriented such that the local Y axis of the sketch will be oriented to align with this element as much as possible. Defaults to +Z if not set",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/DirectionType"
+                  }
+                ]
+              },
               "relative_to": {
                 "nullable": true,
                 "description": "What is this sweep relative to? Deprecated; please use `translate_profile_to_path` and `orient_profile_perpendicular` instead.",
