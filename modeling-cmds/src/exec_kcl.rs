@@ -37,6 +37,13 @@ pub struct KclFile {
     pub contents: Vec<u8>,
 }
 
+impl KclFile {
+    /// Create a KCL file.
+    pub fn new(path: SafeFilepath, contents: Vec<u8>) -> Self {
+        Self { path, contents }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
