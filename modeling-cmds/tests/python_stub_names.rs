@@ -18,9 +18,13 @@ fn pyclass_renames_are_used_in_stub_generation() {
     let _ = std::any::TypeId::of::<format::stl::export::Options>();
     // Collect stub info registered by `gen_stub_*` derives in this crate.
     // We don't require a real pyproject.toml for this check.
+    let mixed_layout = true;
+    let config = pyo3_stub_gen::StubGenConfig::default();
     let info = pyo3_stub_gen::StubInfo::from_project_root(
         "kittycad_modeling_cmds".to_string(),
         PathBuf::from(env!("CARGO_MANIFEST_DIR")),
+        mixed_layout,
+        config,
     )
     .expect("stub info should be collectable with python feature enabled");
 

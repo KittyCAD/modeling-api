@@ -17,6 +17,7 @@ define_modeling_cmd_enum! {
         use serde::{Deserialize, Serialize};
         use uuid::Uuid;
         use crate::shared::CameraViewState;
+        use crate::shared::MirrorAcross;
 
         use crate::{
             format::{OutputFormat2d, OutputFormat3d},
@@ -24,13 +25,18 @@ define_modeling_cmd_enum! {
             length_unit::LengthUnit,
             shared::{
                 Angle,
+                RegionVersion,
                 BlendType,
                 BodyType,
+                EdgeCutVersion,
                 ComponentTransform,
                 RelativeTo,
                 CutType, CutTypeV2,
                 CutStrategy,
                 CameraMovement,
+                DirectionType,
+                EdgeSpecifier,
+                EntityReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
@@ -130,6 +136,14 @@ define_modeling_cmd_enum! {
             pub target: ModelingCmdId,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
+            /// What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub direction: Option<DirectionType>,
+            /// What draft angle should be used in this extrusion?
+            /// Negative values indicate an outward draft,
+            /// while positive values indicate an inward draft
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub draft_angle: Option<Angle>,
             /// Which IDs should the new faces have?
             /// If this isn't given, the engine will generate IDs.
             #[serde(default)]
@@ -248,13 +262,25 @@ define_modeling_cmd_enum! {
             #[builder(default)]
             pub body_type: BodyType,
             /// What is this sweep relative to?
+            /// Deprecated; please use `translate_profile_to_path` and `orient_profile_perpendicular` instead.
             #[serde(default)]
-            #[builder(default)]
-            pub relative_to: RelativeTo,
+            pub relative_to: Option<RelativeTo>,
             /// What version of the sweeping algorithm to use. If None, or zero, the engine's
             /// default algorithm will be used
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub version: Option<u8>,
+            /// If true, the profile being swept will be moved to the path being swept along,
+            /// before the sweep starts.
+            /// If false, the profile stays where it is, and the sweep starts from there.
+            /// Defaults to false.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub translate_profile_to_path: Option<bool>,
+            /// If true, before the sweep starts, the profile will be re-oriented
+            /// so that it is perpendicular to the path being swept along.
+            /// If false, the profile is left in its current orientation.
+            /// Defaults to false.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub orient_profile_perpendicular: Option<bool>,
         }
 
         /// Command for revolving a solid 2d.
@@ -421,7 +447,12 @@ define_modeling_cmd_enum! {
             /// Must be a closed 2D solid.
             pub target: ModelingCmdId,
             /// The edge to use as the axis of revolution, must be linear and lie in the plane of the solid
-            pub edge_id: Uuid,
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_id: Option<Uuid>,
+            /// Edge reference to use as the axis of revolution (new API).
+            /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_reference: Option<EdgeSpecifier>,
             /// The signed angle of revolution (in degrees, must be <= 360 in either direction)
             pub angle: Angle,
             /// The maximum acceptable surface gap computed between the revolution surface joints. Must be positive (i.e. greater than zero).
@@ -759,6 +790,17 @@ define_modeling_cmd_enum! {
             pub distance_type: DistanceType,
         }
 
+        /// What is the length of this edge?
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EdgeGetLength {
+            /// ID of the edge being queried.
+            pub edge_id: Uuid,
+        }
+
         /// Create a pattern using this entity by specifying the transform for each desired repetition.
         /// Transformations are performed in the following order (first applied to last applied): scale, rotate, translate.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
@@ -900,11 +942,32 @@ define_modeling_cmd_enum! {
             pub start_angle: Angle,
             /// Is the helix rotation clockwise?
             pub is_clockwise: bool,
-            /// Edge about which to make the helix.
-            pub edge_id: Uuid,
+            /// Edge ID about which to make the helix (legacy API, for backwards compatibility).
+            /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_id: Option<Uuid>,
+            /// Edge reference about which to make the helix (new API).
+            /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_reference: Option<EdgeSpecifier>,
         }
 
-        /// Mirror the input entities over the specified axis. (Currently only supports sketches)
+        /// Mirror the input entities over the specified axis, edge, or plane.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EntityMirrorAcross {
+            /// ID of the mirror entities.
+            pub ids: Vec<Uuid>,
+            /// What to mirror across
+            pub across: MirrorAcross,
+        }
+
+
+        /// Mirror the input entities over the specified axis.
+        /// Deprecated; please use `EntityMirrorAcross`
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -919,7 +982,8 @@ define_modeling_cmd_enum! {
             pub point: Point3d<LengthUnit>,
         }
 
-        /// Mirror the input entities over the specified edge. (Currently only supports sketches)
+        /// Mirror the input entities over the specified edge.
+        /// Deprecated; please use `EntityMirrorAcross`
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
         )]
@@ -930,8 +994,14 @@ define_modeling_cmd_enum! {
         pub struct EntityMirrorAcrossEdge {
             /// ID of the mirror entities.
             pub ids: Vec<Uuid>,
-            /// The edge to use as the mirror axis, must be linear and lie in the plane of the solid
-            pub edge_id: Uuid,
+            /// The edge to use as the mirror axis (legacy API). Must be linear and lie in the plane of the solid.
+            /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_id: Option<Uuid>,
+            /// Edge reference to use as the mirror axis (new API).
+            /// If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_reference: Option<EdgeSpecifier>,
         }
 
         /// Modifies the selection by simulating a "mouse click" at the given x,y window coordinate
@@ -946,6 +1016,34 @@ define_modeling_cmd_enum! {
             pub selected_at_window: Point2d,
             /// What entity was selected?
             pub selection_type: SceneSelectionType,
+        }
+
+        /// Query the type of entity that was selected. E.g. if a face is selected the face id is
+        /// returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are
+        /// returned (typically two).
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct QueryEntityTypeWithPoint {
+            /// Where in the window was selected
+            pub selected_at_window: Point2d,
+            /// What entity was selected?
+            pub selection_type: SceneSelectionType,
+        }
+
+        /// Query the type of entity given its id. E.g. if a face is selected the face id is
+        /// returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are
+        /// returned (typically two).
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct QueryEntityType {
+            /// The entity id to query
+            pub entity_id: Uuid,
         }
 
         /// Adds one or more entities (by UUID) to the selection.
@@ -1102,6 +1200,21 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub backface_color: Option<Color>,
         }
+
+        /// Set the name of an object
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ObjectSetName {
+            /// Which object to change
+            pub object_id: Uuid,
+            /// Name of the object. Using a zero-length name unsets the name.
+            #[serde(default, skip_serializing_if = "String::is_empty")]
+            pub name: String,
+        }
+
         /// What type of entity is this?
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -1253,6 +1366,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub edge_ids: Vec<Uuid>,
+            /// A struct containing the information required to reference an edge.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            #[builder(default)]
+            pub edges_references: Vec<EdgeSpecifier>,
             /// The radius of the fillet. Measured in length (using the same units that the current sketch uses). Must be positive (i.e. greater than zero).
             pub radius: LengthUnit,
             /// The maximum acceptable surface gap computed between the filleted surfaces. Must be positive (i.e. greater than zero).
@@ -1279,6 +1396,52 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
+            /// Which version of the edge cut algorithm to use.
+            #[serde(default, skip_serializing_if = "EdgeCutVersion::is_default")]
+            #[builder(default)]
+            pub version: EdgeCutVersion,
+        }
+
+        /// Cut the list of edge references with the given cut parameters
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct Solid3dCutEdgeReferences {
+            /// Which object is being cut.
+            pub object_id: Uuid,
+            /// A struct containing the information required to reference an edge.
+            #[serde(default)]
+            #[builder(default)]
+            pub edges_references: Vec<EdgeSpecifier>,
+            /// The cut type and information required to perform the cut.
+            pub cut_type: CutTypeV2,
+            /// The maximum acceptable surface gap computed between the cut surfaces. Must be
+            /// positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+            /// Which cutting algorithm to use.
+            #[serde(default)]
+            #[builder(default)]
+            pub strategy: CutStrategy,
+            /// What IDs should the resulting faces have?
+            /// If you've only passed one edge ID, its ID will
+            /// be the command ID used to send this command, and this
+            /// field should be empty.
+            /// If you've passed `n` IDs (to cut `n` edges), then
+            /// this should be length `n-1`, and the first edge will use
+            /// the command ID used to send this command.
+            #[serde(default)]
+            #[builder(default)]
+            pub extra_face_ids: Vec<Uuid>,
+            /// If true, use the legacy CSG algorithm.
+            #[serde(default, skip_serializing_if = "super::is_false")]
+            #[builder(default)]
+            pub use_legacy: bool,
+            /// Which version of the edge cut algorithm to use.
+            #[serde(default, skip_serializing_if = "EdgeCutVersion::is_default")]
+            #[builder(default)]
+            pub version: EdgeCutVersion,
         }
 
         /// Cut the list of given edges with the given cut parameters.
@@ -1317,6 +1480,10 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "super::is_false")]
             #[builder(default)]
             pub use_legacy: bool,
+            /// Which version of the edge cut algorithm to use.
+            #[serde(default, skip_serializing_if = "EdgeCutVersion::is_default")]
+            #[builder(default)]
+            pub version: EdgeCutVersion,
         }
 
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so
@@ -1634,9 +1801,13 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ProjectEntityToPlane {
-            /// Which entity to project (vertex or edge).
-            pub entity_id: Uuid,
-            /// Which plane to project entity_id onto.
+            /// Which entity to project (vertex or edge). Legacy; if both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub entity_id: Option<Uuid>,
+            /// Entity reference (e.g. edge by side_faces, vertex, face) to project. If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub entity_reference: Option<EntityReference>,
+            /// Which plane to project the entity onto.
             pub plane_id: Uuid,
             /// If true: the projected points are returned in the plane_id's coordinate system,
             /// else: the projected points are returned in the world coordinate system.
@@ -1666,7 +1837,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        #[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+        #[cfg_attr(feature = "python", pyo3::pyclass(from_py_object), pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub enum ImageFormat {
             /// .png format
@@ -1870,6 +2041,7 @@ define_modeling_cmd_enum! {
         /// For all following commands, the units will be interpreted as the given units.
         /// Any previously executed commands will not be affected or have their units changed.
         /// They will remain in the units they were originally executed in.
+        /// If not set, engine units default to mm.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -2183,6 +2355,18 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectClear {}
 
+        /// Set the selection to exactly these entities (replaces previous selection).
+        /// Empty array clears the selection.
+        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct SelectEntity {
+            /// Which entities to select (face-based references for edges/vertices, face_id for faces)
+            pub entities: Vec<EntityReference>,
+        }
+
         /// Find all IDs of selected entities
         #[derive(Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -2445,6 +2629,21 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub curve_clockwise: bool,
+            /// Which version of the Region endpoint to call.
+            #[serde(default, skip_serializing_if = "RegionVersion::is_zero")]
+            #[builder(default)]
+            pub version: RegionVersion,
+        }
+
+        /// Finds a suitable set of arguments that can be passed to CreateRegion to resolve this very region.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RegionGetResolvableIntersectionInfo {
+            /// Which region to resolve
+            pub region_id: Uuid,
         }
 
         /// Create a region with a query point.
@@ -2462,6 +2661,10 @@ define_modeling_cmd_enum! {
             /// The query point (in the same coordinates as the sketch itself)
             /// if a possible sketch region contains this point, then that region will be created
             pub query_point: Point2d<LengthUnit>,
+            /// Which version of the Region endpoint to call.
+            #[serde(default, skip_serializing_if = "RegionVersion::is_zero")]
+            #[builder(default)]
+            pub version: RegionVersion,
         }
 
         /// Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.
@@ -2535,8 +2738,6 @@ define_modeling_cmd_enum! {
             pub closest_to: Point3d<f64>,
         }
     }
-
-
 }
 
 pub(crate) fn is_false(b: &bool) -> bool {

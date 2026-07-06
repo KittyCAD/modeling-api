@@ -8,9 +8,13 @@ fn print_duplicate_stub_names() {
     // Force-link some representative types; inventory should still see all registrants.
     use kittycad_modeling_cmds as _;
 
+    let mixed_layout = true;
+    let config = pyo3_stub_gen::StubGenConfig::default();
     let info = pyo3_stub_gen::StubInfo::from_project_root(
         "kittycad_modeling_cmds".to_string(),
         PathBuf::from(env!("CARGO_MANIFEST_DIR")),
+        mixed_layout,
+        config,
     )
     .expect("collect stub info");
 

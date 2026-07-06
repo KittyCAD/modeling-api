@@ -8,9 +8,152 @@ use uuid::Uuid;
 
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
-use crate::{def_enum::negative_one, length_unit::LengthUnit, output::ExtrusionFaceInfo, units::UnitAngle};
+use crate::{
+    def_enum::negative_one,
+    length_unit::LengthUnit,
+    output::ExtrusionFaceInfo,
+    units::{self, UnitAngle},
+};
 
 mod point;
+pub mod safe_filepath;
+
+/// An edge can be referenced by its uuid or by the faces that uniquely define it.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct EdgeSpecifier {
+    /// Side face ids that uniquely identify the edge.
+    pub side_faces: Vec<Uuid>,
+    /// Optional end face ids for ambiguous edge matches.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[builder(default)]
+    pub end_faces: Vec<Uuid>,
+    /// Optional index for disambiguation when multiple edges share the same faces.
+    /// If not provided (None), all matching edges will be used.
+    /// If provided (Some(n)), only the edge at index n will be used.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub index: Option<u32>,
+}
+
+/// Optional fallback when primary UUIDs are missing from the client artifact graph (e.g. stale or
+/// engine-only ids). Identifies the same topology via a **parent** entity UUID and a **primitive
+/// index** on that parent.
+///
+/// Semantics by selection kind (aligned with engine BREP topology):
+///
+/// - **Face / Edge (3D)**: `parent_id` is the owning [`EntityType::Solid3D`] body UUID; `primitive_index`
+///   matches the index returned by **EntityGetPrimitiveIndex** for that face or edge (and matches
+///   **EntityGetParentId** → parent + **EntityGetPrimitiveIndex** → index).
+/// - **Vertex (3D)**: same `parent_id` (solid); `primitive_index` is the BREP vertex index on that solid.
+/// - **Solid2dEdge**: `parent_id` is the **Solid2D** profile UUID; `primitive_index` is the curve index
+///   within that profile.
+/// - **Segment**: `parent_id` is the **Path** UUID; `primitive_index` is the curve index within that path.
+///
+/// Other [`EntityReference`] variants may omit this field or leave it unset when not applicable.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct PrimitiveTopologyFallback {
+    /// UUID of the parent entity that owns the primitive (solid3d, solid2d, or path).
+    pub parent_id: Uuid,
+    /// Index of the face, edge, vertex, profile curve, or path segment on `parent_id`.
+    pub primitive_index: u32,
+}
+
+/// An edge/vertex can be defined by the faces that it is connected to.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "type", rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum EntityReference {
+    /// A uuid referencing a plane.
+    Plane {
+        /// Id of the plane being referenced.
+        plane_id: Uuid,
+        /// Optional primitive topology on a parent (not used for planes today).
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        topology_fallback: Option<PrimitiveTopologyFallback>,
+    },
+    /// A uuid referencing a face.
+    Face {
+        /// Id of the face being referenced.
+        face_id: Uuid,
+        /// Fallback: solid3d UUID + face index on that body when `face_id` cannot be resolved client-side.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        topology_fallback: Option<PrimitiveTopologyFallback>,
+    },
+    /// A collection of ids that uniquely identify an edge.
+    Edge {
+        /// Flattened edge reference (side_faces, end_faces, index).
+        #[serde(flatten)]
+        inner: EdgeSpecifier,
+        /// Fallback: solid3d UUID + edge index on that body for 3D BREP edges (distinct from `inner.index`).
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        topology_fallback: Option<PrimitiveTopologyFallback>,
+    },
+    /// A collection of ids that uniquely identify an vertex.
+    Vertex {
+        /// Side face ids that identify the vertex.
+        side_faces: Vec<Uuid>,
+        /// Optional index among the filtered candidates.
+        #[serde(skip_serializing_if = "Option::is_none")]
+        index: Option<u32>,
+        /// Fallback: solid3d UUID + vertex index on that body.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        topology_fallback: Option<PrimitiveTopologyFallback>,
+    },
+    /// A uuid referencing a solid2d (profile).
+    Solid2d {
+        /// Id of the solid2d being referenced.
+        solid2d_id: Uuid,
+        /// Typically omitted: `solid2d_id` is already the owning profile. Present for schema parity with other variants.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        topology_fallback: Option<PrimitiveTopologyFallback>,
+    },
+    /// A uuid referencing a solid3d (body).
+    Solid3d {
+        /// Id of the solid3d being referenced.
+        solid3d_id: Uuid,
+        /// Typically omitted: `solid3d_id` is already the owning body. Present for schema parity with other variants.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        topology_fallback: Option<PrimitiveTopologyFallback>,
+    },
+    /// A uuid referencing an edge on a solid2d (profile) - used for raw sketch/profile edges.
+    /// This is distinct from the face-based Edge reference which is used for BRep/swept body edges.
+    Solid2dEdge {
+        /// Id of the edge being referenced.
+        edge_id: Uuid,
+        /// Fallback: solid2d UUID + curve index in that profile.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        topology_fallback: Option<PrimitiveTopologyFallback>,
+    },
+    /// A single segment (curve) within a path.
+    Segment {
+        /// Id of the path containing the segment.
+        path_id: Uuid,
+        /// Id of the segment (curve) being referenced.
+        segment_id: Uuid,
+        /// Fallback: path UUID + segment curve index.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        topology_fallback: Option<PrimitiveTopologyFallback>,
+    },
+    /// A closed sketch region/profile area.
+    Region {
+        /// Id of the region being referenced.
+        region_id: Uuid,
+        /// Fallback: path UUID + region index on that path.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        topology_fallback: Option<PrimitiveTopologyFallback>,
+    },
+}
 
 /// What kind of cut to do
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
@@ -24,6 +167,54 @@ pub enum CutType {
     Fillet,
     /// Cut away an edge.
     Chamfer,
+}
+
+/// What to use as a direction when one is needed (e.g. for an extrusion).
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum DirectionType {
+    /// Uses the direction of an edge, if linear
+    Edge {
+        /// Edge ID.
+        id: Uuid,
+    },
+    /// Uses the provided vector as the direction.
+    Axis {
+        /// Direction.
+        direction: Point3d<f64>,
+    },
+}
+
+/// What to reflect mirrored geometry across
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum MirrorAcross {
+    /// Reflect across an edge
+    /// If used with a 3D mirror, the edge will define the normal of the mirror plane.
+    Edge {
+        /// Edge ID.
+        id: Uuid,
+    },
+    /// Reflect across an axis (that goes through a point)
+    /// If used with a 3D mirror, the axis will define the normal of the mirror plane.
+    Axis {
+        /// Axis to use as mirror.
+        axis: Point3d<f64>,
+        /// Point through which the mirror axis passes.
+        point: Point3d<LengthUnit>,
+    },
+    /// Reflect across a plane (which gives two axes)
+    /// Cannot be used with 2D mirrors.
+    Plane {
+        /// Plane ID.
+        id: Uuid,
+    },
 }
 
 /// What kind of cut to perform when cutting an edge.
@@ -147,6 +338,9 @@ pub struct AnnotationOptions {
     pub color: Option<Color>,
     /// Position to put the annotation
     pub position: Option<Point3d<f32>>,
+    /// Length Units to use for this individual annotation.  If not provided, the units set by SetSceneUnits will be used.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub units: Option<units::UnitLength>,
     /// Set as an MBD measured basic dimension annotation
     pub dimension: Option<AnnotationBasicDimension>,
     /// Set as an MBD Feature control annotation
@@ -236,13 +430,25 @@ pub struct AnnotationMbdBasicDimension {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationBasicDimension {
     /// Entity to measure the dimension from
-    pub from_entity_id: Uuid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub from_entity_id: Option<Uuid>,
+
+    /// Edge reference to use to measure the dimension from
+    /// If both `from_entity_id` and `from_edge_reference` are provided, `from_edge_reference` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub from_edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the dimension from
     pub from_entity_pos: Point2d<f64>,
 
     /// Entity to measure the dimension to
-    pub to_entity_id: Uuid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub to_entity_id: Option<Uuid>,
+
+    /// Edge reference to use to measure the dimension from
+    /// If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub to_edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the dimension to
     pub to_entity_pos: Point2d<f64>,
@@ -279,7 +485,13 @@ pub struct AnnotationBasicDimension {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationFeatureControl {
     /// Entity to place the annotation leader from
-    pub entity_id: Uuid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_id: Option<Uuid>,
+
+    /// Edge reference to use to place the annotation leader from
+    /// If both `entity_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the annotation leader from
     pub entity_pos: Point2d<f64>,
@@ -331,7 +543,13 @@ pub struct AnnotationFeatureControl {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct AnnotationFeatureTag {
     /// Entity to place the annotation leader from
-    pub entity_id: Uuid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_id: Option<Uuid>,
+
+    /// Edge reference to use to place the annotation leader from
+    /// If both `entity_id` and `edge_reference` are provided, `edge_reference` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the annotation leader from
     pub entity_pos: Point2d<f64>,
@@ -392,12 +610,12 @@ pub enum DistanceType {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OriginType {
-    /// Local Origin (center of object bounding box).
+    /// Local Origin ([0, 0, 0] in object space).
     #[default]
     Local,
-    /// Global Origin (0, 0, 0).
+    /// Global Origin ([0, 0, 0] in world space).
     Global,
-    /// Custom Origin (user specified point).
+    /// Custom Origin (user specified point in world space).
     Custom {
         /// Custom origin point.
         origin: Point3d<f64>,
@@ -985,6 +1203,7 @@ pub enum EntityType {
     Entity,
     Object,
     Path,
+    Segment,
     Curve,
     Solid2D,
     Solid3D,
@@ -992,6 +1211,7 @@ pub enum EntityType {
     Face,
     Plane,
     Vertex,
+    Region,
 }
 
 /// The type of Curve (embedded within path)
@@ -1011,8 +1231,12 @@ pub enum CurveType {
 }
 
 /// A file to be exported to the client.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, Builder)]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, PartialEq, Builder)]
+#[cfg_attr(
+    feature = "python",
+    pyo3::pyclass(from_py_object),
+    pyo3_stub_gen::derive::gen_stub_pyclass
+)]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct ExportFile {
     /// The name of the file.
@@ -1045,7 +1269,11 @@ impl ExportFile {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+#[cfg_attr(
+    feature = "python",
+    pyo3::pyclass(from_py_object),
+    pyo3_stub_gen::derive::gen_stub_pyclass_enum
+)]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum FileExportFormat {
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
@@ -1106,14 +1334,26 @@ pub enum FileExportFormat2d {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum FileImportFormat {
+    /// ACIS part format.
+    Acis,
+    /// CATIA part format.
+    Catia,
+    /// PTC Creo part format.
+    Creo,
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
     Fbx,
     /// glTF 2.0.
     Gltf,
+    /// Autodesk Inventor part format.
+    Inventor,
+    /// Siemens NX part format.
+    Nx,
     /// The OBJ file format. <https://en.wikipedia.org/wiki/Wavefront_.obj_file>
     /// It may or may not have an an attached material (mtl // mtllib) within the file,
     /// but we interact with it as if it does not.
     Obj,
+    /// Parasolid part format.
+    Parasolid,
     /// The PLY file format. <https://en.wikipedia.org/wiki/PLY_(file_format)>
     Ply,
     /// SolidWorks part (SLDPRT) format.
@@ -1195,7 +1435,7 @@ pub enum ExtrudeMethod {
 }
 
 /// Type of reference geometry to extrude to.
-#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1203,10 +1443,14 @@ pub enum ExtrudeMethod {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum ExtrudeReference {
     /// Extrudes along the normal of the top face until it is as close to the entity as possible.
-    /// An entity can be a solid, a path, a face, etc.
+    /// An entity can be a solid, a path, a face, an edge (via `entity_reference`), etc.
     EntityReference {
-        /// The UUID of the entity to extrude to.
-        entity_id: Uuid,
+        /// Legacy UUID of the entity to extrude to. If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        entity_id: Option<Uuid>,
+        /// Entity reference (e.g. edge by side_faces). If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        entity_reference: Option<EntityReference>,
     },
     /// Extrudes until the top face is as close as possible to this given axis.
     Axis {
@@ -1256,7 +1500,7 @@ pub struct SideFace {
 }
 
 /// Camera settings including position, center, fov etc
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, Builder)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, PartialEq, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1756,8 +2000,12 @@ impl Default for SelectedRegion {
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct FractionOfEdge {
-    /// The id of the edge
-    pub edge_id: Uuid,
+    /// The id of the edge (legacy). If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub edge_id: Option<Uuid>,
+    /// Edge specifier (side_faces, end_faces, index) identifying the edge. If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub edge_specifier: Option<EdgeSpecifier>,
     /// A value between [0.0, 1.0] (default 0.0) that is a percentage along the edge. This bound
     /// will control how much of the edge is used during the blend.
     /// If lower_bound is larger than upper_bound, the edge is effectively "flipped".
@@ -1785,6 +2033,189 @@ pub struct SurfaceEdgeReference {
     pub object_id: Uuid,
     /// A list of the edge ids that belong to the body.
     pub edges: Vec<FractionOfEdge>,
+}
+
+/// List of bodies that were created by an operation.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodiesCreated {
+    /// All bodies created by this operation.
+    pub bodies: Vec<BodyCreated>,
+}
+
+impl BodiesCreated {
+    /// Are there any bodies in this list?
+    pub fn is_empty(&self) -> bool {
+        self.bodies.is_empty()
+    }
+}
+
+/// List of bodies that were updated by an operation.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodiesUpdated {
+    /// All bodies created by this operation.
+    pub bodies: Vec<BodyUpdated>,
+}
+
+impl BodiesUpdated {
+    /// Are there any bodies in this list?
+    pub fn is_empty(&self) -> bool {
+        self.bodies.is_empty()
+    }
+}
+
+/// Details of a body that was created.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodyCreated {
+    /// The body's ID.
+    pub id: Uuid,
+    /// Surfaces this body contains.
+    pub surfaces: Vec<SurfaceCreated>,
+}
+
+/// Details of a body that was updated.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct BodyUpdated {
+    /// The body's ID.
+    pub id: Uuid,
+    /// Surfaces added to this body.
+    pub surfaces: Vec<SurfaceCreated>,
+}
+
+/// Details of a surface that was created under some body.
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct SurfaceCreated {
+    /// The surface's ID.
+    pub id: Uuid,
+    /// Which number face of the parent body is this?
+    pub primitive_face_index: u32,
+    /// Which segment IDs was this surface swept from?
+    pub from_segments: Vec<Uuid>,
+}
+
+/// Region-creation algorithm version.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum RegionVersion {
+    /// The original region creation method. This should NOT be used anymore,
+    /// but is maintained to avoid breaking old models.
+    #[default]
+    V0,
+    /// Fixes the bug in V0 where creating a region would shuffle the mapping
+    /// from segment names/IDs to actual segment geometry.
+    V1,
+}
+
+/// Edge cut algorithm version.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Copy)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "snake_case")]
+pub enum EdgeCutVersion {
+    /// Let the engine choose whichever version it wants.
+    V0,
+    /// The original fillet algorithm Zoo 1.0 shipped with.
+    /// Limitations: doesn't support rolling ball fillets, has several bugs
+    /// that will not be fixed.
+    V1,
+    /// Adds support for rolling ball fillets.
+    /// Fixes bugs from V1.
+    /// Still experimental.
+    V2,
+}
+
+const DEFAULT_EDGE_CUT_VERSION: EdgeCutVersion = EdgeCutVersion::V1;
+
+impl EdgeCutVersion {
+    /// Is this the default edge cut algorithm version?
+    pub fn is_default(&self) -> bool {
+        self == &DEFAULT_EDGE_CUT_VERSION
+    }
+}
+
+impl Default for EdgeCutVersion {
+    fn default() -> Self {
+        DEFAULT_EDGE_CUT_VERSION
+    }
+}
+
+/// Try to match an integer to a version number.
+impl TryFrom<u32> for EdgeCutVersion {
+    type Error = ();
+
+    fn try_from(version: u32) -> Result<Self, Self::Error> {
+        match version {
+            0 => Ok(Self::V0),
+            1 => Ok(Self::V1),
+            2 => Ok(Self::V2),
+            _ => Err(()),
+        }
+    }
+}
+
+impl RegionVersion {
+    /// Is the version V0?
+    pub fn is_zero(&self) -> bool {
+        matches!(self, Self::V0)
+    }
+}
+
+impl From<BodyCreated> for BodyUpdated {
+    fn from(body: BodyCreated) -> Self {
+        Self {
+            id: body.id,
+            surfaces: body.surfaces,
+        }
+    }
+}
+
+impl From<BodyUpdated> for BodyCreated {
+    fn from(body: BodyUpdated) -> Self {
+        Self {
+            id: body.id,
+            surfaces: body.surfaces,
+        }
+    }
+}
+
+impl From<BodiesCreated> for BodiesUpdated {
+    fn from(bodies: BodiesCreated) -> Self {
+        Self {
+            bodies: bodies.bodies.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<BodiesUpdated> for BodiesCreated {
+    fn from(bodies: BodiesUpdated) -> Self {
+        Self {
+            bodies: bodies.bodies.into_iter().map(Into::into).collect(),
+        }
+    }
 }
 
 fn one() -> f32 {

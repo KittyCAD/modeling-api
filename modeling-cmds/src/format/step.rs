@@ -18,7 +18,7 @@ pub mod import {
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
-        pyo3::pyclass(name = "StepImportOptions")
+        pyo3::pyclass(name = "StepImportOptions", from_py_object)
     )]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
@@ -75,7 +75,7 @@ pub mod export {
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass_enum,
-        pyo3::pyclass(name = "StepPresentation")
+        pyo3::pyclass(name = "StepPresentation", from_py_object)
     )]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub enum Presentation {
@@ -97,7 +97,7 @@ pub mod export {
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
-        pyo3::pyclass(name = "StepExportOptions")
+        pyo3::pyclass(name = "StepExportOptions", from_py_object)
     )]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]

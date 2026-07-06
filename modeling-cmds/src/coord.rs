@@ -13,7 +13,11 @@ use serde::{Deserialize, Serialize};
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+#[cfg_attr(
+    feature = "python",
+    pyo3::pyclass(from_py_object),
+    pyo3_stub_gen::derive::gen_stub_pyclass_enum
+)]
 pub enum Axis {
     /// 'Y' axis.
     Y = 1,
@@ -28,7 +32,11 @@ pub enum Axis {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass_enum)]
+#[cfg_attr(
+    feature = "python",
+    pyo3::pyclass(from_py_object),
+    pyo3_stub_gen::derive::gen_stub_pyclass_enum
+)]
 pub enum Direction {
     /// Increasing numbers.
     Positive = 1,
@@ -53,7 +61,11 @@ impl std::ops::Mul for Direction {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
+#[cfg_attr(
+    feature = "python",
+    pyo3::pyclass(from_py_object),
+    pyo3_stub_gen::derive::gen_stub_pyclass
+)]
 pub struct AxisDirectionPair {
     /// Axis specifier.
     pub axis: Axis,
@@ -74,7 +86,11 @@ pub struct AxisDirectionPair {
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-#[cfg_attr(feature = "python", pyo3::pyclass, pyo3_stub_gen::derive::gen_stub_pyclass)]
+#[cfg_attr(
+    feature = "python",
+    pyo3::pyclass(from_py_object),
+    pyo3_stub_gen::derive::gen_stub_pyclass
+)]
 pub struct System {
     /// Axis the front face of a model looks along.
     pub forward: AxisDirectionPair,

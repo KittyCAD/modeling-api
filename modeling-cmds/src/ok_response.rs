@@ -3,6 +3,14 @@ use serde::{Deserialize, Serialize};
 
 impl crate::ModelingCmdOutput for () {}
 
+pub(crate) fn is_true(b: &bool) -> bool {
+    *b
+}
+
+fn bool_true() -> bool {
+    true
+}
+
 define_ok_modeling_cmd_response_enum! {
     /// Output from Modeling API commands.
     pub mod output {
@@ -15,6 +23,7 @@ define_ok_modeling_cmd_response_enum! {
             CameraSettings,
             CameraViewState,
             BodyType,
+            EntityReference,
         };
         use std::collections::HashMap;
 
@@ -23,12 +32,13 @@ define_ok_modeling_cmd_response_enum! {
             base64::Base64Data,
             id::ModelingCmdId,
             length_unit::LengthUnit,
-            shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d},
+            shared::{CurveType, EntityType, ExportFile, ExtrusionFaceCapType, PathCommand, Point2d, Point3d, BodiesCreated, BodiesUpdated},
             units,
         };
+        use super::bool_true;
 
         /// The response of the `EngineUtilEvaluatePath` endpoint
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EngineUtilEvaluatePath {
             /// The evaluated path curve position
@@ -36,78 +46,108 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `StartPath` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct StartPath {
         }
 
         /// The response from the `MovePathPen` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct MovePathPen {
         }
 
         /// The response from the `ExtendPath` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ExtendPath {
         }
 
         /// The response from the `Extrude` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Extrude {
+            /// Any new bodies created by the request.
+            #[serde(default, skip_serializing_if = "BodiesCreated::is_empty")]
+            pub bodies_created: BodiesCreated,
+            /// Any existing bodies updated by the request.
+            #[serde(default, skip_serializing_if = "BodiesUpdated::is_empty")]
+            pub bodies_updated: BodiesUpdated,
         }
 
         /// The response from the `ExtrudeToReference` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ExtrudeToReference {
+            /// Any new bodies created by the request.
+            #[serde(default, skip_serializing_if = "BodiesCreated::is_empty")]
+            pub bodies_created: BodiesCreated,
+            /// Any existing bodies updated by the request.
+            #[serde(default, skip_serializing_if = "BodiesUpdated::is_empty")]
+            pub bodies_updated: BodiesUpdated,
         }
 
         /// The response from the `TwistExtrude` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct TwistExtrude {
+            /// Any new bodies created by the request.
+            #[serde(default, skip_serializing_if = "BodiesCreated::is_empty")]
+            pub bodies_created: BodiesCreated,
+            /// Any existing bodies updated by the request.
+            #[serde(default, skip_serializing_if = "BodiesUpdated::is_empty")]
+            pub bodies_updated: BodiesUpdated,
         }
 
         /// The response from the `Sweep` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Sweep {
+            /// Any new bodies created by the request.
+            #[serde(default, skip_serializing_if = "BodiesCreated::is_empty")]
+            pub bodies_created: BodiesCreated,
+            /// Any existing bodies updated by the request.
+            #[serde(default, skip_serializing_if = "BodiesUpdated::is_empty")]
+            pub bodies_updated: BodiesUpdated,
         }
 
         /// The response from the `Revolve` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Revolve {
+            /// Any new bodies created by the request.
+            #[serde(default, skip_serializing_if = "BodiesCreated::is_empty")]
+            pub bodies_created: BodiesCreated,
+            /// Any existing bodies updated by the request.
+            #[serde(default, skip_serializing_if = "BodiesUpdated::is_empty")]
+            pub bodies_updated: BodiesUpdated,
         }
 
         /// The response from the `Solid3dShellFace` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dShellFace {
         }
 
         /// The response from the `Solid3dJoin` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dJoin {
         }
 
         /// The response from the `Solid3dMultiJoin` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dMultiJoin {
         }
 
         /// The response from the `SurfaceBlend` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         pub struct SurfaceBlend {
         }
 
         /// The response from the `Solid3dGetEdgeUuid` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetEdgeUuid {
             /// The UUID of the edge.
@@ -115,7 +155,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Solid3dGetFaceUuid` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetFaceUuid {
             /// The UUID of the face.
@@ -123,7 +163,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Solid3dGetBodyType` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetBodyType {
             /// The body type
@@ -131,289 +171,313 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `RevolveAboutEdge` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct RevolveAboutEdge {
+            /// Any new bodies created by the request.
+            #[serde(default, skip_serializing_if = "BodiesCreated::is_empty")]
+            pub bodies_created: BodiesCreated,
+            /// Any existing bodies updated by the request.
+            #[serde(default, skip_serializing_if = "BodiesUpdated::is_empty")]
+            pub bodies_updated: BodiesUpdated,
         }
 
         /// The response from the `CameraDragStart` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CameraDragStart {
         }
 
         /// The response from the `DefaultCameraLookAt` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraLookAt {
         }
 
         /// The response from the `DefaultCameraPerspectiveSettings` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraPerspectiveSettings {
         }
 
         /// The response from the `SelectAdd` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectAdd {
         }
         /// The response from the `SelectRemove` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectRemove {
         }
 
         /// The response from the `SceneClearAll` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SceneClearAll {
         }
 
         /// The response from the `SelectReplace` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectReplace {
         }
 
         /// The response from the `HighlightSetEntities` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct HighlightSetEntities {
         }
 
         /// The response from the `NewAnnotation` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct NewAnnotation {
         }
 
         /// The response from the `UpdateAnnotation` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct UpdateAnnotation {
         }
 
         /// The response from the `EdgeLinesVisible` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EdgeLinesVisible {
         }
 
         /// The response from the `ObjectVisible` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ObjectVisible {
         }
 
         /// The response from the `ObjectBringToFront` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ObjectBringToFront {
         }
 
         /// The response from the `ObjectSetMaterialParamsPbr` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ObjectSetMaterialParamsPbr {
         }
 
+        /// The response from the `ObjectSetName` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ObjectSetName {
+        }
+
         /// The response from the `Solid2dAddHole` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid2dAddHole {
         }
 
         /// The response from the `Solid3dFilletEdge` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dFilletEdge {
         }
 
+        /// The response from the `Solid3dCutEdgeReferences` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        pub struct Solid3dCutEdgeReferences {
+        }
+
+
         /// The response from the `Solid3dCutEdges` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dCutEdges {
         }
 
 
         /// The response from the `SendObject` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SendObject {
         }
 
         /// The response from the `EntitySetOpacity` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntitySetOpacity {
         }
 
         /// The response from the `EntityFade` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityFade {
         }
 
         /// The response from the `MakePlane` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct MakePlane {
         }
 
         /// The response from the `PlaneSetColor` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct PlaneSetColor {
         }
 
         /// The response from the `SetTool` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetTool {
         }
 
         /// The response from the `MouseMove` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct MouseMove {
         }
 
         /// The response from the `SketchModeDisable` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SketchModeDisable {
         }
 
         /// The response from the `EnableDryRun` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EnableDryRun {
         }
 
         /// The response from the `DisableDryRun` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DisableDryRun {
         }
 
         /// The response from the `CurveSetConstraint` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CurveSetConstraint {
         }
 
         /// The response from the `EnableSketchMode` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EnableSketchMode {
         }
 
         /// The response from the `SetBackgroundColor` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetBackgroundColor {
         }
 
         /// The response from the `SetCurrentToolProperties` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetCurrentToolProperties {
         }
 
         /// The response from the `SetDefaultSystemProperties` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetDefaultSystemProperties {
         }
 
         /// The response from the `MakeAxesGizmo` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct MakeAxesGizmo {
         }
 
         /// The response from the `HandleMouseDragStart` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct HandleMouseDragStart {
         }
 
         /// The response from the `HandleMouseDragMove` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct HandleMouseDragMove {
         }
 
         /// The response from the `HandleMouseDragEnd` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct HandleMouseDragEnd {
         }
 
         /// The response from the `RemoveSceneObjects` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct RemoveSceneObjects {
         }
 
         /// The response from the `ReconfigureStream` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ReconfigureStream {
         }
 
         /// The response from the `SetSceneUnits` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetSceneUnits {
         }
 
         /// The response from the `SetSelectionType` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetSelectionType {
         }
 
         /// The response from the `SetSelectionFilter` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetSelectionFilter {
         }
 
         /// The response from the `DefaultCameraSetOrthographic` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraSetOrthographic {
         }
 
         /// The response from the `DefaultCameraSetPerspective` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraSetPerspective {
         }
 
         /// The response from the `DefaultCameraCenterToSelection` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraCenterToSelection {
         }
 
         /// The response from the `DefaultCameraCenterToScene` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraCenterToScene {
         }
 
         /// The response from the `SelectClear` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectClear {
         }
 
+        /// The response from the `SelectEntity` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct SelectEntity {
+        }
+
         /// The response from the `Export2d` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Export2d {
             /// The files that were exported.
@@ -421,7 +485,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Export3d` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Export3d {
             /// The files that were exported.
@@ -429,7 +493,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Export` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Export {
             /// The files that were exported.
@@ -437,15 +501,32 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `SelectWithPoint` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectWithPoint {
             /// The UUID of the entity that was selected.
             pub entity_id: Option<Uuid>,
         }
 
+        /// The response from the `QueryEntityTypeWithPoint` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct QueryEntityTypeWithPoint {
+            /// How to reference the selected entity using face ids.
+            /// None if no entity was found at the given point (e.g. clicked in empty space).
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub reference: Option<EntityReference>,
+        }
+
+        /// The response from the `QueryEntityType` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        pub struct QueryEntityType {
+            /// How to reference the provided entity using face ids.
+            pub reference: EntityReference,
+        }
+
         /// The response from the `HighlightSetEntity` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct HighlightSetEntity {
             /// The UUID of the entity that was highlighted.
@@ -453,22 +534,23 @@ define_ok_modeling_cmd_response_enum! {
             /// If the client sent a sequence ID with its request, the backend sends it back.
             pub sequence: Option<u32>,
         }
+
         /// The response from the `EntityGetChildUuid` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityGetChildUuid {
             /// The UUID of the child entity.
             pub entity_id: Uuid,
         }
         /// The response from the `EntityGetIndex` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityGetIndex {
             /// The child index of the entity.
             pub entity_index: u32,
         }
         /// The response from the `EntityGetPrimitiveIndex` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityGetPrimitiveIndex {
             /// The primitive index of the entity.
@@ -478,26 +560,26 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_type: EntityType,
         }
         /// The response from the `EntityDeleteChildren` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityDeleteChildren {
         }
         /// The response from the `EntityGetNumChildren` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityGetNumChildren {
             /// The number of children the entity has.
             pub num: u32,
         }
         /// The response from the `EntityGetParentId` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityGetParentId {
             /// The UUID of the parent entity.
             pub entity_id: Uuid,
         }
         /// The response from the `EntityGetAllChildUuids` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityGetAllChildUuids {
             /// The UUIDs of the child entities.
@@ -505,7 +587,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityGetSketchPaths` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityGetSketchPaths {
             /// The UUIDs of the sketch paths.
@@ -513,7 +595,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Loft` command.
-        #[derive(Debug, Serialize, Deserialize, JsonSchema, ModelingCmdOutput, Clone)]
+        #[derive(Debug, Serialize, Deserialize, JsonSchema, PartialEq, ModelingCmdOutput, Clone)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Loft {
             ///The UUID of the newly created solid loft.
@@ -521,7 +603,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `ClosePath` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ClosePath {
             /// The UUID of the lone face of the resulting solid2D.
@@ -531,7 +613,7 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `CameraDragMove` command.
         /// Note this is an "unreliable" channel message, so this data may need more data like a "sequence"
         //  to work properly
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CameraDragMove {
             /// Camera settings
@@ -539,7 +621,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `CameraDragEnd` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CameraDragEnd {
             /// Camera settings
@@ -547,7 +629,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `DefaultCameraGetSettings` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraGetSettings {
             /// Camera settings
@@ -555,7 +637,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `DefaultCameraGetView` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraGetView {
             /// Camera view state
@@ -563,12 +645,12 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `DefaultCameraSetView` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraSetView {}
 
         /// The response from the `DefaultCameraZoom` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraZoom {
             /// Camera settings
@@ -576,7 +658,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `ZoomToFit` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ZoomToFit {
             /// Camera settings
@@ -584,7 +666,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `OrientToFace` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct OrientToFace {
             /// Camera settings
@@ -592,7 +674,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `ViewIsometric` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ViewIsometric {
             /// Camera settings
@@ -600,7 +682,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `GetNumObjects` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct GetNumObjects {
             /// The number of objects in the scene.
@@ -608,7 +690,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `MakeOffsetPath` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct MakeOffsetPath {
             /// If the offset path splits into multiple paths, this will contain the UUIDs of the
@@ -619,12 +701,12 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `SetObjectTransform` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetObjectTransform {}
 
         /// The response from the `AddHoleFromOffset` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct AddHoleFromOffset {
             /// If the offset path splits into multiple paths, this will contain the UUIDs of the
@@ -635,12 +717,12 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `DefaultCameraFocusOn` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraFocusOn { }
 
         /// The response from the `SelectGet` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectGet {
             /// The UUIDs of the selected entities.
@@ -649,7 +731,7 @@ define_ok_modeling_cmd_response_enum! {
 
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
         /// This includes the opposite and adjacent faces and edges.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetAdjacencyInfo {
             /// Details of each edge.
@@ -657,7 +739,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Solid3dGetAllEdgeFaces` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetAllEdgeFaces {
             /// The UUIDs of the faces.
@@ -665,19 +747,19 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Solid3dFlip` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dFlip {
         }
 
         /// The response from the `Solid3dFlipFace` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dFlipFace {
         }
 
         /// The response from the `Solid3dGetAllOppositeEdges` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetAllOppositeEdges {
             /// The UUIDs of the edges.
@@ -685,7 +767,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Solid3dGetOppositeEdge` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetOppositeEdge {
             /// The UUID of the edge.
@@ -693,7 +775,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Solid3dGetNextAdjacentEdge` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetNextAdjacentEdge {
             /// The UUID of the edge.
@@ -701,7 +783,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Solid3dGetPrevAdjacentEdge` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetPrevAdjacentEdge {
             /// The UUID of the edge.
@@ -709,7 +791,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `Solid3DGetCommonEdge` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetCommonEdge {
             /// The UUID of the common edge, if any.
@@ -717,7 +799,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `GetEntityType` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct GetEntityType {
             /// The type of the entity.
@@ -725,7 +807,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `SceneGetEntityIds` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SceneGetEntityIds {
             /// The ids of the requested entities.
@@ -733,7 +815,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `CurveGetControlPoints` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CurveGetControlPoints {
             /// Control points in the curve.
@@ -741,7 +823,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `ProjectEntityToPlane` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ProjectEntityToPlane {
             /// Projected points.
@@ -749,7 +831,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `ProjectPointsToPlane` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ProjectPointsToPlane {
             /// Projected points.
@@ -765,7 +847,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `MouseClick` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct MouseClick {
             /// Entities that are modified.
@@ -775,7 +857,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `TakeSnapshot` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct TakeSnapshot {
             /// Contents of the image.
@@ -783,7 +865,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `PathGetInfo` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct PathGetInfo {
             /// All segments in the path, in the order they were added.
@@ -791,7 +873,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Info about a path segment
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct PathSegmentInfo {
             /// Which command created this path?
@@ -805,7 +887,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `PathGetCurveUuidsForVertices` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct PathGetCurveUuidsForVertices {
             /// The UUIDs of the curve entities.
@@ -813,7 +895,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `PathGetCurveUuid` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct PathGetCurveUuid {
             /// The UUID of the curve entity.
@@ -821,7 +903,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `PathGetVertexUuids` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct PathGetVertexUuids {
             /// The UUIDs of the vertex entities.
@@ -829,7 +911,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `PathGetSketchTargetUuid` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct PathGetSketchTargetUuid {
             /// The UUID of the sketch target.
@@ -837,7 +919,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Endpoints of a curve
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CurveGetEndPoints {
             /// Start
@@ -847,7 +929,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Surface-local planar axes (if available)
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct FaceIsPlanar {
             /// plane's origin
@@ -864,7 +946,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The 3D position on the surface that was evaluated
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct FaceGetPosition {
             /// The 3D position on the surface that was evaluated
@@ -872,7 +954,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The 3D center of mass on the surface
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct FaceGetCenter {
             /// The 3D position on the surface center of mass
@@ -880,7 +962,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The gradient (dFdu, dFdv) + normal vector on a brep face
-        #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct FaceGetGradient {
             /// dFdu
@@ -894,7 +976,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Corresponding coordinates of given window coordinates, intersected on given plane.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct PlaneIntersectAndProject {
             /// Corresponding coordinates of given window coordinates, intersected on given plane.
@@ -902,7 +984,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Data from importing the files
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput, Builder)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ImportFiles {
             /// ID of the imported 3D models within the scene.
@@ -920,7 +1002,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The mass response.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Mass {
@@ -931,7 +1013,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The volume response.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Volume {
@@ -942,7 +1024,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The density response.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Density {
@@ -953,7 +1035,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The surface area response.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SurfaceArea {
@@ -964,7 +1046,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The center of mass response.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CenterOfMass {
@@ -975,7 +1057,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The plane for sketch mode.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct GetSketchModePlane {
             /// The origin.
@@ -989,7 +1071,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntitiesGetDistance` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityGetDistance {
             /// The minimum distance between the input entities.
@@ -998,8 +1080,16 @@ define_ok_modeling_cmd_response_enum! {
             pub max_distance: LengthUnit,
         }
 
+        /// The response from the `EdgeGetLength` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EdgeGetLength {
+            /// The length of the edge.
+            pub length: LengthUnit,
+        }
+
         /// Faces and edges id info (most used in identifying geometry in patterned and mirrored objects).
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct FaceEdgeInfo {
             /// The UUID of the object.
@@ -1011,7 +1101,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// A list of faces for a specific edge.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EdgeInfo {
             /// The UUID of the id.
@@ -1021,7 +1111,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityClone` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityClone {
             /// The Face and Edge Ids of the cloned entity.
@@ -1030,7 +1120,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityLinearPatternTransform` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityLinearPatternTransform {
             /// The Face, edge, and entity ids of the patterned entities.
@@ -1039,7 +1129,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityLinearPattern` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityLinearPattern {
             /// The Face, edge, and entity ids of the patterned entities.
@@ -1048,7 +1138,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityCircularPattern` command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput, Default)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Default)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityCircularPattern {
             /// The Face, edge, and entity ids of the patterned entities.
@@ -1057,7 +1147,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityMirror` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityMirror {
             /// The Face, edge, and entity ids of the patterned entities.
@@ -1065,8 +1155,17 @@ define_ok_modeling_cmd_response_enum! {
             pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
         }
 
+        /// The response from the `EntityMirrorAcross` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EntityMirrorAcross {
+            /// The Face, edge, and entity ids of the patterned entities.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub entity_face_edge_ids: Vec<FaceEdgeInfo>,
+        }
+
         /// The response from the `EntityMirrorAcrossEdge` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityMirrorAcrossEdge {
             /// The Face, edge, and entity ids of the patterned entities.
@@ -1075,25 +1174,25 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the `EntityMakeHelix` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityMakeHelix {
         }
 
         /// The response from the `EntityMakeHelixFromParams` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityMakeHelixFromParams {
         }
 
         /// The response from the `EntityMakeHelixFromEdge` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct EntityMakeHelixFromEdge {
         }
 
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Solid3dGetExtrusionFaceInfo {
             /// Details of each face.
@@ -1101,7 +1200,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Extrusion face info struct (useful for maintaining mappings between source path segment ids and extrusion faces)
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ExtrusionFaceInfo {
             /// Path component (curve) UUID.
@@ -1116,7 +1215,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// Struct to contain the edge information of a wall of an extrude/rotate/loft/sweep.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ComplementaryEdges {
             /// The opposite edge has no common vertices with the original edge. A wall may not
@@ -1129,7 +1228,7 @@ define_ok_modeling_cmd_response_enum! {
 
         /// Edge info struct (useful for maintaining mappings between edges and faces and
         /// adjacent/opposite edges).
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct AdjacencyInfo {
             /// Original edge id and face info.
@@ -1144,12 +1243,12 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the 'SetGridReferencePlane'.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetGridReferencePlane {}
 
         /// The response from the 'BooleanUnion'.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct BooleanUnion {
             /// If the operation produced just one solid, then its ID will be the
@@ -1158,10 +1257,13 @@ define_ok_modeling_cmd_response_enum! {
             /// here.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
+            /// If the operation involved any intersecting solids.
+            #[serde(default = "bool_true", skip_serializing_if = "super::is_true")]
+            pub any_intersections: bool,
         }
 
         /// The response from the 'BooleanIntersection'.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct BooleanIntersection {
             /// If the operation produced just one solid, then its ID will be the
@@ -1170,10 +1272,13 @@ define_ok_modeling_cmd_response_enum! {
             /// here.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
+            /// If the operation involved any intersecting solids.
+            #[serde(default = "bool_true", skip_serializing_if = "super::is_true")]
+            pub any_intersections: bool,
         }
 
         /// The response from the 'BooleanSubtract'.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct BooleanSubtract {
             /// If the operation produced just one solid, then its ID will be the
@@ -1182,10 +1287,13 @@ define_ok_modeling_cmd_response_enum! {
             /// here.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
+            /// If the operation involved any intersecting solids.
+            #[serde(default = "bool_true", skip_serializing_if = "super::is_true")]
+            pub any_intersections: bool,
         }
 
         /// The response from the 'BooleanImprint'.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct BooleanImprint {
             /// If the operation produced just one body, then its ID will be the
@@ -1194,20 +1302,23 @@ define_ok_modeling_cmd_response_enum! {
             /// here.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub extra_solid_ids: Vec<Uuid>,
+            /// If the operation involved any intersecting solids.
+            #[serde(default = "bool_true", skip_serializing_if = "super::is_true")]
+            pub any_intersections: bool,
         }
 
         /// The response from the 'SetGridScale'.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetGridScale {}
 
         /// The response from the 'SetGridScale'.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetGridAutoScale {}
 
         /// The response from the 'SetOrderIndependentTransparency'.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetOrderIndependentTransparency {
             /// Is it now enabled, or disabled?
@@ -1217,17 +1328,33 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the 'CreateRegion'.
         /// The region should have an ID taken from the ID of the
         /// 'CreateRegion' modeling command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreateRegion {
             /// a mapping from the curves within this region to the source component segment curves they were split from
             pub region_mapping: HashMap<Uuid, Uuid>,
         }
 
+        /// The response from the 'RegionGetResolvableIntersectionInfo'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RegionGetResolvableIntersectionInfo {
+            /// The UUID of the walking curve that borders the queried region
+            pub segment: Uuid,
+            /// The UUID of the curve that intersects the walking curve that also borders the queried region
+            pub intersection_segment: Uuid,
+            /// Disambiguator providing the index of the intersection.  Can be non-zero if the two curves intersect multiple times
+            pub intersection_index: u32,
+            /// The total number of intersections between the two curves.
+            pub intersection_count: u32,
+            /// True if the region lies within the clockwise interior of the two intersections (inside a "right" turn from the segment to the intersection segment)
+            pub curve_clockwise: bool,
+        }
+
         /// The response from the 'CreateRegionFromQueryPoint'.
         /// The region should have an ID taken from the ID of the
         /// 'CreateRegionFromQueryPoint' modeling command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreateRegionFromQueryPoint {
             /// a mapping from the curves within this region to the source component segment curves they were split from
@@ -1235,7 +1362,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from 'RegionGetQueryPoint' modeling command.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct RegionGetQueryPoint {
             ///A point that is inside of the queried region, in the same coordinate frame as the sketch itself
@@ -1244,7 +1371,7 @@ define_ok_modeling_cmd_response_enum! {
 
         /// The response from the 'SelectRegionFromPoint'.
         /// If there are multiple ways to construct this region, this chooses arbitrarily.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SelectRegionFromPoint {
             /// The region the user clicked on.
@@ -1254,7 +1381,7 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the 'BoundingBox'.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct BoundingBox {
             /// Center of the box.
@@ -1264,12 +1391,12 @@ define_ok_modeling_cmd_response_enum! {
         }
 
         /// The response from the 'OffsetSurface'.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         pub struct OffsetSurface {
         }
 
         /// The response from the 'ClosestEdge'.
-        #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, ModelingCmdOutput)]
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ClosestEdge {
             /// The ID of the edge closest to the point given in the request.

@@ -91,7 +91,17 @@
             "type": "number",
             "format": "float"
           },
+          "from_edge_reference": {
+            "nullable": true,
+            "description": "Edge reference to use to measure the dimension from If both `from_entity_id` and `from_edge_reference` are provided, `from_edge_reference` takes precedence.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EdgeSpecifier"
+              }
+            ]
+          },
           "from_entity_id": {
+            "nullable": true,
             "description": "Entity to measure the dimension from",
             "type": "string",
             "format": "uuid"
@@ -123,7 +133,17 @@
             "format": "uint32",
             "minimum": 0
           },
+          "to_edge_reference": {
+            "nullable": true,
+            "description": "Edge reference to use to measure the dimension from If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EdgeSpecifier"
+              }
+            ]
+          },
           "to_entity_id": {
+            "nullable": true,
             "description": "Entity to measure the dimension to",
             "type": "string",
             "format": "uuid"
@@ -141,12 +161,10 @@
           "dimension",
           "font_point_size",
           "font_scale",
-          "from_entity_id",
           "from_entity_pos",
           "offset",
           "plane_id",
           "precision",
-          "to_entity_id",
           "to_entity_pos"
         ]
       },
@@ -179,7 +197,17 @@
               }
             ]
           },
+          "edge_reference": {
+            "nullable": true,
+            "description": "Edge reference to use to place the annotation leader from If both `entity_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EdgeSpecifier"
+              }
+            ]
+          },
           "entity_id": {
+            "nullable": true,
             "description": "Entity to place the annotation leader from",
             "type": "string",
             "format": "uuid"
@@ -248,7 +276,6 @@
           }
         },
         "required": [
-          "entity_id",
           "entity_pos",
           "font_point_size",
           "font_scale",
@@ -262,7 +289,17 @@
         "description": "Parameters for defining an MBD Feature Tag Annotation state",
         "type": "object",
         "properties": {
+          "edge_reference": {
+            "nullable": true,
+            "description": "Edge reference to use to place the annotation leader from If both `entity_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EdgeSpecifier"
+              }
+            ]
+          },
           "entity_id": {
+            "nullable": true,
             "description": "Entity to place the annotation leader from",
             "type": "string",
             "format": "uuid"
@@ -327,7 +364,6 @@
           }
         },
         "required": [
-          "entity_id",
           "entity_pos",
           "font_point_size",
           "font_scale",
@@ -535,6 +571,15 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/AnnotationTextOptions"
+              }
+            ]
+          },
+          "units": {
+            "nullable": true,
+            "description": "Length Units to use for this individual annotation.  If not provided, the units set by SetSceneUnits will be used.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnitLength"
               }
             ]
           }
@@ -1142,6 +1187,60 @@
           }
         ]
       },
+      "DirectionType": {
+        "description": "What to use as a direction when one is needed (e.g. for an extrusion).",
+        "oneOf": [
+          {
+            "description": "Uses the direction of an edge, if linear",
+            "type": "object",
+            "properties": {
+              "edge": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Edge ID.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "edge"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Uses the provided vector as the direction.",
+            "type": "object",
+            "properties": {
+              "axis": {
+                "type": "object",
+                "properties": {
+                  "direction": {
+                    "description": "Direction.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Point3d"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "direction"
+                ]
+              }
+            },
+            "required": [
+              "axis"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "DistanceType": {
         "description": "The type of distance Distances can vary depending on the objects used as input.",
         "oneOf": [
@@ -1205,6 +1304,373 @@
           }
         ]
       },
+      "EdgeCutVersion": {
+        "description": "Edge cut algorithm version.",
+        "oneOf": [
+          {
+            "description": "Let the engine choose whichever version it wants.",
+            "type": "string",
+            "enum": [
+              "v0"
+            ]
+          },
+          {
+            "description": "The original fillet algorithm Zoo 1.0 shipped with. Limitations: doesn't support rolling ball fillets, has several bugs that will not be fixed.",
+            "type": "string",
+            "enum": [
+              "v1"
+            ]
+          },
+          {
+            "description": "Adds support for rolling ball fillets. Fixes bugs from V1. Still experimental.",
+            "type": "string",
+            "enum": [
+              "v2"
+            ]
+          }
+        ]
+      },
+      "EdgeSpecifier": {
+        "description": "An edge can be referenced by its uuid or by the faces that uniquely define it.",
+        "type": "object",
+        "properties": {
+          "end_faces": {
+            "description": "Optional end face ids for ambiguous edge matches.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "index": {
+            "nullable": true,
+            "description": "Optional index for disambiguation when multiple edges share the same faces. If not provided (None), all matching edges will be used. If provided (Some(n)), only the edge at index n will be used.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          },
+          "side_faces": {
+            "description": "Side face ids that uniquely identify the edge.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "side_faces"
+        ]
+      },
+      "EntityReference": {
+        "description": "An edge/vertex can be defined by the faces that it is connected to.",
+        "oneOf": [
+          {
+            "description": "A uuid referencing a plane.",
+            "type": "object",
+            "properties": {
+              "plane_id": {
+                "description": "Id of the plane being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Optional primitive topology on a parent (not used for planes today).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "plane"
+                ]
+              }
+            },
+            "required": [
+              "plane_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing a face.",
+            "type": "object",
+            "properties": {
+              "face_id": {
+                "description": "Id of the face being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid3d UUID + face index on that body when `face_id` cannot be resolved client-side.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "face"
+                ]
+              }
+            },
+            "required": [
+              "face_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A collection of ids that uniquely identify an edge.",
+            "type": "object",
+            "properties": {
+              "end_faces": {
+                "description": "Optional end face ids for ambiguous edge matches.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "index": {
+                "nullable": true,
+                "description": "Optional index for disambiguation when multiple edges share the same faces. If not provided (None), all matching edges will be used. If provided (Some(n)), only the edge at index n will be used.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "side_faces": {
+                "description": "Side face ids that uniquely identify the edge.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid3d UUID + edge index on that body for 3D BREP edges (distinct from `inner.index`).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "edge"
+                ]
+              }
+            },
+            "required": [
+              "side_faces",
+              "type"
+            ]
+          },
+          {
+            "description": "A collection of ids that uniquely identify an vertex.",
+            "type": "object",
+            "properties": {
+              "index": {
+                "nullable": true,
+                "description": "Optional index among the filtered candidates.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0
+              },
+              "side_faces": {
+                "description": "Side face ids that identify the vertex.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid3d UUID + vertex index on that body.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "vertex"
+                ]
+              }
+            },
+            "required": [
+              "side_faces",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing a solid2d (profile).",
+            "type": "object",
+            "properties": {
+              "solid2d_id": {
+                "description": "Id of the solid2d being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Typically omitted: `solid2d_id` is already the owning profile. Present for schema parity with other variants.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid2d"
+                ]
+              }
+            },
+            "required": [
+              "solid2d_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing a solid3d (body).",
+            "type": "object",
+            "properties": {
+              "solid3d_id": {
+                "description": "Id of the solid3d being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Typically omitted: `solid3d_id` is already the owning body. Present for schema parity with other variants.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d"
+                ]
+              }
+            },
+            "required": [
+              "solid3d_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A uuid referencing an edge on a solid2d (profile) - used for raw sketch/profile edges. This is distinct from the face-based Edge reference which is used for BRep/swept body edges.",
+            "type": "object",
+            "properties": {
+              "edge_id": {
+                "description": "Id of the edge being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: solid2d UUID + curve index in that profile.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid2d_edge"
+                ]
+              }
+            },
+            "required": [
+              "edge_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A single segment (curve) within a path.",
+            "type": "object",
+            "properties": {
+              "path_id": {
+                "description": "Id of the path containing the segment.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "segment_id": {
+                "description": "Id of the segment (curve) being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: path UUID + segment curve index.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "segment"
+                ]
+              }
+            },
+            "required": [
+              "path_id",
+              "segment_id",
+              "type"
+            ]
+          },
+          {
+            "description": "A closed sketch region/profile area.",
+            "type": "object",
+            "properties": {
+              "region_id": {
+                "description": "Id of the region being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "topology_fallback": {
+                "nullable": true,
+                "description": "Fallback: path UUID + region index on that path.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PrimitiveTopologyFallback"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "region"
+                ]
+              }
+            },
+            "required": [
+              "region_id",
+              "type"
+            ]
+          }
+        ]
+      },
       "EntityType": {
         "description": "The type of entity",
         "type": "string",
@@ -1212,13 +1678,15 @@
           "entity",
           "object",
           "path",
+          "segment",
           "curve",
           "solid2d",
           "solid3d",
           "edge",
           "face",
           "plane",
-          "vertex"
+          "vertex",
+          "region"
         ]
       },
       "Error": {
@@ -1263,21 +1731,28 @@
         "description": "Type of reference geometry to extrude to.",
         "oneOf": [
           {
-            "description": "Extrudes along the normal of the top face until it is as close to the entity as possible. An entity can be a solid, a path, a face, etc.",
+            "description": "Extrudes along the normal of the top face until it is as close to the entity as possible. An entity can be a solid, a path, a face, an edge (via `entity_reference`), etc.",
             "type": "object",
             "properties": {
               "entity_reference": {
                 "type": "object",
                 "properties": {
                   "entity_id": {
-                    "description": "The UUID of the entity to extrude to.",
+                    "nullable": true,
+                    "description": "Legacy UUID of the entity to extrude to. If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
                     "type": "string",
                     "format": "uuid"
+                  },
+                  "entity_reference": {
+                    "nullable": true,
+                    "description": "Entity reference (e.g. edge by side_faces). If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EntityReference"
+                      }
+                    ]
                   }
-                },
-                "required": [
-                  "entity_id"
-                ]
+                }
               }
             },
             "required": [
@@ -1404,9 +1879,19 @@
         "type": "object",
         "properties": {
           "edge_id": {
-            "description": "The id of the edge",
+            "nullable": true,
+            "description": "The id of the edge (legacy). If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.",
             "type": "string",
             "format": "uuid"
+          },
+          "edge_specifier": {
+            "nullable": true,
+            "description": "Edge specifier (side_faces, end_faces, index) identifying the edge. If both `edge_id` and `edge_specifier` are provided, `edge_specifier` takes precedence.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EdgeSpecifier"
+              }
+            ]
           },
           "lower_bound": {
             "description": "A value between [0.0, 1.0] (default 0.0) that is a percentage along the edge. This bound will control how much of the edge is used during the blend. If lower_bound is larger than upper_bound, the edge is effectively \"flipped\".",
@@ -1424,10 +1909,7 @@
             "minimum": 0.0,
             "maximum": 1.0
           }
-        },
-        "required": [
-          "edge_id"
-        ]
+        }
       },
       "GlobalAxis": {
         "description": "The global axes.",
@@ -1546,6 +2028,120 @@
         "description": "Input format specifier.",
         "oneOf": [
           {
+            "description": "ACIS part format.",
+            "type": "object",
+            "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "acis"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "CATIA part format.",
+            "type": "object",
+            "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "catia"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "PTC Creo part format.",
+            "type": "object",
+            "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "z",
+                    "direction": "positive"
+                  },
+                  "up": {
+                    "axis": "y",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "creo"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
             "description": "Autodesk Filmbox (FBX) format.",
             "type": "object",
             "properties": {
@@ -1568,6 +2164,82 @@
                 "type": "string",
                 "enum": [
                   "gltf"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "Autodesk Inventor part format.",
+            "type": "object",
+            "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "inventor"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "Siemens NX part format.",
+            "type": "object",
+            "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "nx"
                 ]
               }
             },
@@ -1609,6 +2281,44 @@
             ]
           },
           {
+            "description": "Parasolid part format.",
+            "type": "object",
+            "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "split_closed_faces": {
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "default": false,
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "parasolid"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
             "description": "The PLY Polygon File Format.",
             "type": "object",
             "properties": {
@@ -1645,6 +2355,24 @@
             "description": "SolidWorks part (SLDPRT) format.",
             "type": "object",
             "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.",
+                "default": {
+                  "forward": {
+                    "axis": "z",
+                    "direction": "positive"
+                  },
+                  "up": {
+                    "axis": "y",
+                    "direction": "positive"
+                  }
+                },
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
               "split_closed_faces": {
                 "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
                 "default": false,
@@ -1734,6 +2462,58 @@
           }
         ]
       },
+      "KclFile": {
+        "description": "Region-creation algorithm version.",
+        "type": "object",
+        "properties": {
+          "contents": {
+            "description": "Contents of the file, as UTF-8 encoded bytes.",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "uint8",
+              "minimum": 0
+            }
+          },
+          "path": {
+            "description": "Where is the file, relative to the project directory?",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SafeFilepath"
+              }
+            ]
+          }
+        },
+        "required": [
+          "contents",
+          "path"
+        ]
+      },
+      "KclProject": {
+        "description": "A KCL project that can be executed.",
+        "type": "object",
+        "properties": {
+          "entrypoint": {
+            "description": "Which file is the entrypoint? This is the first KCL file to be executed, the root of the KCL module tree.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SafeFilepath"
+              }
+            ]
+          },
+          "files": {
+            "description": "All files in the project.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KclFile"
+            }
+          }
+        },
+        "required": [
+          "entrypoint",
+          "files"
+        ]
+      },
       "LengthUnit": {
         "type": "number",
         "format": "double"
@@ -1805,6 +2585,92 @@
           "quarterspace",
           "eighthspace",
           "modifierspace"
+        ]
+      },
+      "MirrorAcross": {
+        "description": "What to reflect mirrored geometry across",
+        "oneOf": [
+          {
+            "description": "Reflect across an edge If used with a 3D mirror, the edge will define the normal of the mirror plane.",
+            "type": "object",
+            "properties": {
+              "edge": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Edge ID.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "edge"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Reflect across an axis (that goes through a point) If used with a 3D mirror, the axis will define the normal of the mirror plane.",
+            "type": "object",
+            "properties": {
+              "axis": {
+                "type": "object",
+                "properties": {
+                  "axis": {
+                    "description": "Axis to use as mirror.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Point3d"
+                      }
+                    ]
+                  },
+                  "point": {
+                    "description": "Point through which the mirror axis passes.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Point3d"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "axis",
+                  "point"
+                ]
+              }
+            },
+            "required": [
+              "axis"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Reflect across a plane (which gives two axes) Cannot be used with 2D mirrors.",
+            "type": "object",
+            "properties": {
+              "plane": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Plane ID.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "required": [
+              "plane"
+            ],
+            "additionalProperties": false
+          }
         ]
       },
       "ModelingCmd": {
@@ -1935,11 +2801,29 @@
                   }
                 ]
               },
+              "direction": {
+                "nullable": true,
+                "description": "What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/DirectionType"
+                  }
+                ]
+              },
               "distance": {
                 "description": "How far off the plane to extrude",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
+              "draft_angle": {
+                "nullable": true,
+                "description": "What draft angle should be used in this extrusion? Negative values indicate an outward draft, while positive values indicate an inward draft",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Angle"
                   }
                 ]
               },
@@ -2165,9 +3049,15 @@
                   }
                 ]
               },
+              "orient_profile_perpendicular": {
+                "nullable": true,
+                "description": "If true, before the sweep starts, the profile will be re-oriented so that it is perpendicular to the path being swept along. If false, the profile is left in its current orientation. Defaults to false.",
+                "type": "boolean"
+              },
               "relative_to": {
-                "description": "What is this sweep relative to?",
-                "default": "sketch_plane",
+                "nullable": true,
+                "description": "What is this sweep relative to? Deprecated; please use `translate_profile_to_path` and `orient_profile_perpendicular` instead.",
+                "default": null,
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/RelativeTo"
@@ -2201,6 +3091,11 @@
                     "$ref": "#/components/schemas/ModelingCmdId"
                   }
                 ]
+              },
+              "translate_profile_to_path": {
+                "nullable": true,
+                "description": "If true, the profile being swept will be moved to the path being swept along, before the sweep starts. If false, the profile stays where it is, and the sweep starts from there. Defaults to false.",
+                "type": "boolean"
               },
               "type": {
                 "type": "string",
@@ -2538,9 +3433,19 @@
                 ]
               },
               "edge_id": {
+                "nullable": true,
                 "description": "The edge to use as the axis of revolution, must be linear and lie in the plane of the solid",
                 "type": "string",
                 "format": "uuid"
+              },
+              "edge_reference": {
+                "nullable": true,
+                "description": "Edge reference to use as the axis of revolution (new API). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeSpecifier"
+                  }
+                ]
               },
               "opposite": {
                 "description": "Should the revolution also revolve in the opposite direction along the given axis? If so, this specifies its angle.",
@@ -2576,7 +3481,6 @@
             },
             "required": [
               "angle",
-              "edge_id",
               "target",
               "tolerance",
               "type"
@@ -3282,6 +4186,27 @@
             ]
           },
           {
+            "description": "What is the length of this edge?",
+            "type": "object",
+            "properties": {
+              "edge_id": {
+                "description": "ID of the edge being queried.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "edge_get_length"
+                ]
+              }
+            },
+            "required": [
+              "edge_id",
+              "type"
+            ]
+          },
+          {
             "description": "Create a pattern using this entity by specifying the transform for each desired repetition. Transformations are performed in the following order (first applied to last applied): scale, rotate, translate.",
             "type": "object",
             "properties": {
@@ -3577,9 +4502,19 @@
             "type": "object",
             "properties": {
               "edge_id": {
-                "description": "Edge about which to make the helix.",
+                "nullable": true,
+                "description": "Edge ID about which to make the helix (legacy API, for backwards compatibility). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
                 "type": "string",
                 "format": "uuid"
+              },
+              "edge_reference": {
+                "nullable": true,
+                "description": "Edge reference about which to make the helix (new API). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeSpecifier"
+                  }
+                ]
               },
               "is_clockwise": {
                 "description": "Is the helix rotation clockwise?",
@@ -3627,7 +4562,6 @@
               }
             },
             "required": [
-              "edge_id",
               "is_clockwise",
               "radius",
               "revolutions",
@@ -3635,7 +4569,40 @@
             ]
           },
           {
-            "description": "Mirror the input entities over the specified axis. (Currently only supports sketches)",
+            "description": "Mirror the input entities over the specified axis, edge, or plane.",
+            "type": "object",
+            "properties": {
+              "across": {
+                "description": "What to mirror across",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MirrorAcross"
+                  }
+                ]
+              },
+              "ids": {
+                "description": "ID of the mirror entities.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "entity_mirror_across"
+                ]
+              }
+            },
+            "required": [
+              "across",
+              "ids",
+              "type"
+            ]
+          },
+          {
+            "description": "Mirror the input entities over the specified axis. Deprecated; please use `EntityMirrorAcross`",
             "type": "object",
             "properties": {
               "axis": {
@@ -3677,13 +4644,23 @@
             ]
           },
           {
-            "description": "Mirror the input entities over the specified edge. (Currently only supports sketches)",
+            "description": "Mirror the input entities over the specified edge. Deprecated; please use `EntityMirrorAcross`",
             "type": "object",
             "properties": {
               "edge_id": {
-                "description": "The edge to use as the mirror axis, must be linear and lie in the plane of the solid",
+                "nullable": true,
+                "description": "The edge to use as the mirror axis (legacy API). Must be linear and lie in the plane of the solid. If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
                 "type": "string",
                 "format": "uuid"
+              },
+              "edge_reference": {
+                "nullable": true,
+                "description": "Edge reference to use as the mirror axis (new API). If both `edge_id` and `edge_reference` are provided, `edge_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeSpecifier"
+                  }
+                ]
               },
               "ids": {
                 "description": "ID of the mirror entities.",
@@ -3701,7 +4678,6 @@
               }
             },
             "required": [
-              "edge_id",
               "ids",
               "type"
             ]
@@ -3736,6 +4712,60 @@
             "required": [
               "selected_at_window",
               "selection_type",
+              "type"
+            ]
+          },
+          {
+            "description": "Query the type of entity that was selected. E.g. if a face is selected the face id is returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are returned (typically two).",
+            "type": "object",
+            "properties": {
+              "selected_at_window": {
+                "description": "Where in the window was selected",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Point2d"
+                  }
+                ]
+              },
+              "selection_type": {
+                "description": "What entity was selected?",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/SceneSelectionType"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "query_entity_type_with_point"
+                ]
+              }
+            },
+            "required": [
+              "selected_at_window",
+              "selection_type",
+              "type"
+            ]
+          },
+          {
+            "description": "Query the type of entity given its id. E.g. if a face is selected the face id is returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are returned (typically two).",
+            "type": "object",
+            "properties": {
+              "entity_id": {
+                "description": "The entity id to query",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "query_entity_type"
+                ]
+              }
+            },
+            "required": [
+              "entity_id",
               "type"
             ]
           },
@@ -4074,6 +5104,31 @@
             ]
           },
           {
+            "description": "Set the name of an object",
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Name of the object. Using a zero-length name unsets the name.",
+                "type": "string"
+              },
+              "object_id": {
+                "description": "Which object to change",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "object_set_name"
+                ]
+              }
+            },
+            "required": [
+              "object_id",
+              "type"
+            ]
+          },
+          {
             "description": "What type of entity is this?",
             "type": "object",
             "properties": {
@@ -4392,6 +5447,13 @@
                   "format": "uuid"
                 }
               },
+              "edges_references": {
+                "description": "A struct containing the information required to reference an edge.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EdgeSpecifier"
+                }
+              },
               "extra_face_ids": {
                 "description": "What IDs should the resulting faces have? If you've only passed one edge ID, its ID will be the command ID used to send this command, and this field should be empty. If you've passed `n` IDs (to fillet `n` edges), then this should be length `n-1`, and the first edge will use the command ID used to send this command.",
                 "default": [],
@@ -4440,11 +5502,96 @@
               "use_legacy": {
                 "description": "If true, use the legacy CSG algorithm.",
                 "type": "boolean"
+              },
+              "version": {
+                "description": "Which version of the edge cut algorithm to use.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeCutVersion"
+                  }
+                ]
               }
             },
             "required": [
               "object_id",
               "radius",
+              "tolerance",
+              "type"
+            ]
+          },
+          {
+            "description": "Cut the list of edge references with the given cut parameters",
+            "type": "object",
+            "properties": {
+              "cut_type": {
+                "description": "The cut type and information required to perform the cut.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CutTypeV2"
+                  }
+                ]
+              },
+              "edges_references": {
+                "description": "A struct containing the information required to reference an edge.",
+                "default": [],
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EdgeSpecifier"
+                }
+              },
+              "extra_face_ids": {
+                "description": "What IDs should the resulting faces have? If you've only passed one edge ID, its ID will be the command ID used to send this command, and this field should be empty. If you've passed `n` IDs (to cut `n` edges), then this should be length `n-1`, and the first edge will use the command ID used to send this command.",
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "object_id": {
+                "description": "Which object is being cut.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "strategy": {
+                "description": "Which cutting algorithm to use.",
+                "default": "automatic",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CutStrategy"
+                  }
+                ]
+              },
+              "tolerance": {
+                "description": "The maximum acceptable surface gap computed between the cut surfaces. Must be positive (i.e. greater than zero).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_cut_edge_references"
+                ]
+              },
+              "use_legacy": {
+                "description": "If true, use the legacy CSG algorithm.",
+                "type": "boolean"
+              },
+              "version": {
+                "description": "Which version of the edge cut algorithm to use.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeCutVersion"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "cut_type",
+              "object_id",
               "tolerance",
               "type"
             ]
@@ -4510,6 +5657,14 @@
               "use_legacy": {
                 "description": "If true, use the legacy CSG algorithm.",
                 "type": "boolean"
+              },
+              "version": {
+                "description": "Which version of the edge cut algorithm to use.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeCutVersion"
+                  }
+                ]
               }
             },
             "required": [
@@ -5170,12 +6325,22 @@
             "type": "object",
             "properties": {
               "entity_id": {
-                "description": "Which entity to project (vertex or edge).",
+                "nullable": true,
+                "description": "Which entity to project (vertex or edge). Legacy; if both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
                 "type": "string",
                 "format": "uuid"
               },
+              "entity_reference": {
+                "nullable": true,
+                "description": "Entity reference (e.g. edge by side_faces, vertex, face) to project. If both `entity_id` and `entity_reference` are provided, `entity_reference` takes precedence.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EntityReference"
+                  }
+                ]
+              },
               "plane_id": {
-                "description": "Which plane to project entity_id onto.",
+                "description": "Which plane to project the entity onto.",
                 "type": "string",
                 "format": "uuid"
               },
@@ -5191,7 +6356,6 @@
               }
             },
             "required": [
-              "entity_id",
               "plane_id",
               "type",
               "use_plane_coords"
@@ -5633,7 +6797,7 @@
             ]
           },
           {
-            "description": "Set the units of the scene. For all following commands, the units will be interpreted as the given units. Any previously executed commands will not be affected or have their units changed. They will remain in the units they were originally executed in.",
+            "description": "Set the units of the scene. For all following commands, the units will be interpreted as the given units. Any previously executed commands will not be affected or have their units changed. They will remain in the units they were originally executed in. If not set, engine units default to mm.",
             "type": "object",
             "properties": {
               "type": {
@@ -6202,6 +7366,29 @@
             ]
           },
           {
+            "description": "Set the selection to exactly these entities (replaces previous selection). Empty array clears the selection.",
+            "type": "object",
+            "properties": {
+              "entities": {
+                "description": "Which entities to select (face-based references for edges/vertices, face_id for faces)",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityReference"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "select_entity"
+                ]
+              }
+            },
+            "required": [
+              "entities",
+              "type"
+            ]
+          },
+          {
             "description": "Find all IDs of selected entities",
             "type": "object",
             "properties": {
@@ -6646,12 +7833,41 @@
                 "enum": [
                   "create_region"
                 ]
+              },
+              "version": {
+                "description": "Which version of the Region endpoint to call.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RegionVersion"
+                  }
+                ]
               }
             },
             "required": [
               "intersection_segment",
               "object_id",
               "segment",
+              "type"
+            ]
+          },
+          {
+            "description": "Finds a suitable set of arguments that can be passed to CreateRegion to resolve this very region.",
+            "type": "object",
+            "properties": {
+              "region_id": {
+                "description": "Which region to resolve",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "region_get_resolvable_intersection_info"
+                ]
+              }
+            },
+            "required": [
+              "region_id",
               "type"
             ]
           },
@@ -6676,6 +7892,14 @@
                 "type": "string",
                 "enum": [
                   "create_region_from_query_point"
+                ]
+              },
+              "version": {
+                "description": "Which version of the Region endpoint to call.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RegionVersion"
+                  }
                 ]
               }
             },
@@ -6872,7 +8096,7 @@
         "description": "The type of origin",
         "oneOf": [
           {
-            "description": "Local Origin (center of object bounding box).",
+            "description": "Local Origin ([0, 0, 0] in object space).",
             "type": "object",
             "properties": {
               "type": {
@@ -6887,7 +8111,7 @@
             ]
           },
           {
-            "description": "Global Origin (0, 0, 0).",
+            "description": "Global Origin ([0, 0, 0] in world space).",
             "type": "object",
             "properties": {
               "type": {
@@ -6902,7 +8126,7 @@
             ]
           },
           {
-            "description": "Custom Origin (user specified point).",
+            "description": "Custom Origin (user specified point in world space).",
             "type": "object",
             "properties": {
               "origin": {
@@ -7792,6 +9016,46 @@
           "z"
         ]
       },
+      "PrimitiveTopologyFallback": {
+        "description": "Optional fallback when primary UUIDs are missing from the client artifact graph (e.g. stale or engine-only ids). Identifies the same topology via a **parent** entity UUID and a **primitive index** on that parent.\n\nSemantics by selection kind (aligned with engine BREP topology):\n\n- **Face / Edge (3D)**: `parent_id` is the owning [`EntityType::Solid3D`] body UUID; `primitive_index` matches the index returned by **EntityGetPrimitiveIndex** for that face or edge (and matches **EntityGetParentId** → parent + **EntityGetPrimitiveIndex** → index). - **Vertex (3D)**: same `parent_id` (solid); `primitive_index` is the BREP vertex index on that solid. - **Solid2dEdge**: `parent_id` is the **Solid2D** profile UUID; `primitive_index` is the curve index within that profile. - **Segment**: `parent_id` is the **Path** UUID; `primitive_index` is the curve index within that path.\n\nOther [`EntityReference`] variants may omit this field or leave it unset when not applicable.",
+        "type": "object",
+        "properties": {
+          "parent_id": {
+            "description": "UUID of the parent entity that owns the primitive (solid3d, solid2d, or path).",
+            "type": "string",
+            "format": "uuid"
+          },
+          "primitive_index": {
+            "description": "Index of the face, edge, vertex, profile curve, or path segment on `parent_id`.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "parent_id",
+          "primitive_index"
+        ]
+      },
+      "RegionVersion": {
+        "description": "Region-creation algorithm version.",
+        "oneOf": [
+          {
+            "description": "The original region creation method. This should NOT be used anymore, but is maintained to avoid breaking old models.",
+            "type": "string",
+            "enum": [
+              "V0"
+            ]
+          },
+          {
+            "description": "Fixes the bug in V0 where creating a region would shuffle the mapping from segment names/IDs to actual segment geometry.",
+            "type": "string",
+            "enum": [
+              "V1"
+            ]
+          }
+        ]
+      },
       "RelativeTo": {
         "description": "What is the given geometry relative to?",
         "oneOf": [
@@ -7937,6 +9201,10 @@
           "sdp",
           "type"
         ]
+      },
+      "SafeFilepath": {
+        "description": "Filepath which is guaranteed to be relative and not contain parent directory jumps like '..'",
+        "type": "string"
       },
       "SceneSelectionType": {
         "description": "The type of scene selection change",
@@ -8488,6 +9756,13 @@
         "description": "The valid types of volume units.",
         "oneOf": [
           {
+            "description": "Cubic millimeters (mm³)",
+            "type": "string",
+            "enum": [
+              "mm3"
+            ]
+          },
+          {
             "description": "Cubic centimeters (cc or cm³) <https://en.wikipedia.org/wiki/Cubic_centimeter>",
             "type": "string",
             "enum": [
@@ -8747,6 +10022,36 @@
             },
             "required": [
               "headers",
+              "type"
+            ]
+          },
+          {
+            "description": "Execute a KCL project.",
+            "type": "object",
+            "properties": {
+              "project": {
+                "description": "The KCL project to execute.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/KclProject"
+                  }
+                ]
+              },
+              "request_id": {
+                "description": "ID for this request.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "exec_kcl_project"
+                ]
+              }
+            },
+            "required": [
+              "project",
+              "request_id",
               "type"
             ]
           }

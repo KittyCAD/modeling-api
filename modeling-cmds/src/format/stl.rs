@@ -18,7 +18,7 @@ pub mod import {
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
-        pyo3::pyclass(name = "StlImportOptions")
+        pyo3::pyclass(name = "StlImportOptions", from_py_object)
     )]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
@@ -37,6 +37,17 @@ pub mod import {
         /// Defaults to millimeters.
         #[builder(default = UnitLength::Millimeters)]
         pub units: UnitLength,
+    }
+
+    #[cfg(feature = "python")]
+    #[pyo3_stub_gen::derive::gen_stub_pymethods]
+    #[pyo3::pymethods]
+    impl Options {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
     }
 
     impl Default for Options {
@@ -62,7 +73,7 @@ pub mod export {
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass,
-        pyo3::pyclass(name = "StlExportOptions")
+        pyo3::pyclass(name = "StlExportOptions", from_py_object)
     )]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
@@ -124,7 +135,7 @@ pub mod export {
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass_enum,
-        pyo3::pyclass(name = "StlStorage")
+        pyo3::pyclass(name = "StlStorage", from_py_object)
     )]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub enum Storage {

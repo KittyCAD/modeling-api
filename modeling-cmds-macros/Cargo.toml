@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-modeling-cmds-macros"
-version = "0.1.12"
+version = "0.1.13"
 edition = "2021"
 repository = "https://github.com/KittyCAD/modeling-api"
 rust-version = "1.73"
@@ -21,7 +21,7 @@ syn = { workspace = true, features = ["extra-traits", "full"] }
 
 [dev-dependencies]
 anyhow = "1.0.101"
-insta = "1.46.3"
+insta = "1.47.2"
 regex = "1.12.3"
 rustfmt-wrapper = "0.2.1"
 
