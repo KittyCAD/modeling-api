@@ -2,6 +2,8 @@ use bon::Builder;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+use crate::shared::{Point2d, Point3d};
+
 /// Export models as a KittyCAD render packet for browser-side rendering.
 pub mod export {
     use super::*;
@@ -31,6 +33,9 @@ pub struct RenderPacket {
 
     /// Explicit engine-authored sketch/wire polylines with sketch-local metadata.
     pub sketches: Vec<RenderPacketSketchSegment>,
+
+    /// Explicit engine-authored sketch regions with stable engine metadata.
+    pub regions: Vec<RenderPacketRegion>,
 }
 
 /// A single renderable primitive in a render packet.
@@ -129,4 +134,50 @@ pub struct RenderPacketSketchSegment {
 
     /// Whether the underlying curve is closed.
     pub closed: bool,
+}
+
+/// A single implicit sketch region in a render packet.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "camelCase")]
+pub struct RenderPacketRegion {
+    /// The sketch plane origin in OpenGL/glTF world coordinates and meters.
+    pub plane_origin: Point3d<f32>,
+
+    /// The sketch plane x axis in OpenGL/glTF world coordinates.
+    pub plane_x_axis: Point3d<f32>,
+
+    /// The sketch plane y axis in OpenGL/glTF world coordinates.
+    pub plane_y_axis: Point3d<f32>,
+
+    /// The explicit outer loop for this region in sketch-plane local meters.
+    pub outer_loop: RenderPacketRegionLoop,
+
+    /// Hole loops for this region in sketch-plane local meters.
+    pub hole_loops: Vec<RenderPacketRegionLoop>,
+
+    /// Stable engine scene object UUID for the sketch owner.
+    pub sketch_id: uuid::Uuid,
+
+    /// Stable engine region UUID.
+    pub region_id: uuid::Uuid,
+
+    /// Stable engine parent path UUID. This mirrors `entity_get_parent_id`.
+    pub parent_id: uuid::Uuid,
+
+    /// A point guaranteed to be inside the region, in engine millimeters.
+    pub query_point: Point2d<f64>,
+}
+
+/// A single 2D loop in sketch-plane local meters.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "camelCase")]
+pub struct RenderPacketRegionLoop {
+    /// Packed xy positions in sketch-plane local meters.
+    pub positions: Vec<f32>,
 }
