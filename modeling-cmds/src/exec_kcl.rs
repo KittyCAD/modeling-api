@@ -20,6 +20,13 @@ pub struct KclProject {
     pub entrypoint: SafeFilepath,
 }
 
+impl KclProject {
+    /// Create a new KCL project.
+    pub fn new(files: Vec<KclFile>, entrypoint: SafeFilepath) -> Self {
+        Self { files, entrypoint }
+    }
+}
+
 /// Region-creation algorithm version.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
