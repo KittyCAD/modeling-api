@@ -28,7 +28,7 @@ impl KclProject {
 }
 
 /// Region-creation algorithm version.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Builder)]
+#[derive(Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -42,6 +42,15 @@ pub struct KclFile {
         deserialize_with = "serde_bytes::deserialize"
     )]
     pub contents: Vec<u8>,
+}
+
+impl std::fmt::Debug for KclFile {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("KclFile")
+            .field("path", &self.path)
+            .field("contents.len()", &self.contents.len())
+            .finish()
+    }
 }
 
 impl KclFile {
