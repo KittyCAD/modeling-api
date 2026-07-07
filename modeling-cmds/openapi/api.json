@@ -9064,7 +9064,7 @@
         ]
       },
       "RenderQuality": {
-        "description": "Video quality for the engine.",
+        "description": "Rendering quality for the engine.",
         "oneOf": [
           {
             "description": "Full resolution suitable for when the engine is rendering finished geometry.",

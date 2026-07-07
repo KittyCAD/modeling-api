@@ -2134,7 +2134,7 @@ pub enum EdgeCutVersion {
     V2,
 }
 
-/// Video quality for the engine.
+/// Rendering quality for the engine.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Copy)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
