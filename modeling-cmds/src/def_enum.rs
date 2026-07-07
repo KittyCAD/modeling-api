@@ -1709,26 +1709,6 @@ define_modeling_cmd_enum! {
             pub planar_normal: Option<Point3d<f64>>,
         }
 
-        /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
-        /// In a dry run, successful commands won't actually change the model.
-        /// This is useful for catching errors before actually making the change.
-        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
-        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct EnableDryRun {}
-
-        /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
-        /// In a dry run, successful commands won't actually change the model.
-        /// This is useful for catching errors before actually making the change.
-        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
-        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct DisableDryRun {}
-
         /// Set the background color of the scene.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
