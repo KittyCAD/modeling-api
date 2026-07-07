@@ -2134,6 +2134,22 @@ pub enum EdgeCutVersion {
     V2,
 }
 
+/// Video quality for the engine.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Copy)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "snake_case")]
+pub enum RenderQuality {
+    /// Full resolution suitable for when the engine is rendering finished geometry.
+    Full,
+    /// Low resolution suitable for use when the engine is actively working on executing and building geometry.
+    Proofing,
+    /// Disable rendering
+    NoRender,
+}
+
 const DEFAULT_EDGE_CUT_VERSION: EdgeCutVersion = EdgeCutVersion::V1;
 
 impl EdgeCutVersion {
