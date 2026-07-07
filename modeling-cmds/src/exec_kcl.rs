@@ -84,6 +84,16 @@ pub struct ExecKclProjectErr {
     // Should be a usable subset of `KclErrorWithOutputs`.
 }
 
+impl ExecKclProjectErr {
+    /// Used when the project execution had a fatal error.
+    pub fn fatal_error(error: KclError) -> Self {
+        Self {
+            error: Some(error),
+            non_fatal: Default::default(),
+        }
+    }
+}
+
 #[cfg(feature = "arbitrary")]
 impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
     fn arbitrary(_u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
