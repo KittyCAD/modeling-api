@@ -8023,6 +8023,30 @@
             ]
           },
           {
+            "description": "Change quality of rendering.",
+            "type": "object",
+            "properties": {
+              "quality": {
+                "description": "What quality of render to use.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RenderQuality"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_render_quality"
+                ]
+              }
+            },
+            "required": [
+              "quality",
+              "type"
+            ]
+          },
+          {
             "description": "Returns the closest edge to this point.",
             "type": "object",
             "properties": {
@@ -9035,6 +9059,32 @@
             "type": "string",
             "enum": [
               "trajectory_curve"
+            ]
+          }
+        ]
+      },
+      "RenderQuality": {
+        "description": "Rendering quality for the engine.",
+        "oneOf": [
+          {
+            "description": "Full resolution suitable for when the engine is rendering finished geometry.",
+            "type": "string",
+            "enum": [
+              "full"
+            ]
+          },
+          {
+            "description": "Low resolution suitable for use when the engine is actively working on executing and building geometry.",
+            "type": "string",
+            "enum": [
+              "proofing"
+            ]
+          },
+          {
+            "description": "Disable rendering",
+            "type": "string",
+            "enum": [
+              "no_render"
             ]
           }
         ]

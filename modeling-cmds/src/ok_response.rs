@@ -1395,6 +1395,11 @@ define_ok_modeling_cmd_response_enum! {
         pub struct OffsetSurface {
         }
 
+        /// The response from the 'SetRenderQuality'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        pub struct SetRenderQuality {
+        }
+
         /// The response from the 'ClosestEdge'.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
