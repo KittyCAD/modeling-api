@@ -2702,15 +2702,32 @@ define_modeling_cmd_enum! {
             pub flip: bool,
         }
 
-        /// Change quality of rendering.
+        /// Tell the engine you're beginning execution,
+        /// and will be sending many API calls shortly.
+        /// The engine will render your geometry in
+        /// reduced detail, to make execution faster.
+        /// Call EndExecution to restore high quality
+        /// once you're done sending commands.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct SetRenderQuality{
-            /// What quality of render to use.
-            pub quality: crate::shared::RenderQuality,
+        pub struct BeginExecution {
+            /// Should rendering occur, or not?
+            /// If enabled, rendering will be low resolution until you call
+            /// EndExecution.
+            pub enable_render: bool,
+        }
+
+        /// Tell the engine you're finished execution,
+        /// and it should resume rendering at high resolution.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder, Default)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EndExecution {
         }
 
         /// Returns the closest edge to this point.
