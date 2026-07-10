@@ -6155,36 +6155,6 @@
             ]
           },
           {
-            "description": "Sets whether or not changes to the scene or its objects will be done as a \"dry run\" In a dry run, successful commands won't actually change the model. This is useful for catching errors before actually making the change.",
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "enable_dry_run"
-                ]
-              }
-            },
-            "required": [
-              "type"
-            ]
-          },
-          {
-            "description": "Sets whether or not changes to the scene or its objects will be done as a \"dry run\" In a dry run, successful commands won't actually change the model. This is useful for catching errors before actually making the change.",
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "disable_dry_run"
-                ]
-              }
-            },
-            "required": [
-              "type"
-            ]
-          },
-          {
             "description": "Set the background color of the scene.",
             "type": "object",
             "properties": {
@@ -8028,6 +7998,41 @@
               "distance",
               "flip",
               "surface_id",
+              "type"
+            ]
+          },
+          {
+            "description": "Tell the engine you're beginning execution, and will be sending many API calls shortly. The engine will render your geometry in reduced detail, to make execution faster. Call EndExecution to restore high quality once you're done sending commands.",
+            "type": "object",
+            "properties": {
+              "enable_render": {
+                "description": "Should rendering occur, or not? If enabled, rendering will be low resolution until you call EndExecution.",
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "begin_execution"
+                ]
+              }
+            },
+            "required": [
+              "enable_render",
+              "type"
+            ]
+          },
+          {
+            "description": "Tell the engine you're finished execution, and it should resume rendering at high resolution.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "end_execution"
+                ]
+              }
+            },
+            "required": [
               "type"
             ]
           },

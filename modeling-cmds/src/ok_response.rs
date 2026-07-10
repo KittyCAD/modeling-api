@@ -344,18 +344,6 @@ define_ok_modeling_cmd_response_enum! {
         pub struct SketchModeDisable {
         }
 
-        /// The response from the `EnableDryRun` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
-        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct EnableDryRun {
-        }
-
-        /// The response from the `DisableDryRun` endpoint.
-        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
-        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct DisableDryRun {
-        }
-
         /// The response from the `CurveSetConstraint` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
@@ -1393,6 +1381,18 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the 'OffsetSurface'.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         pub struct OffsetSurface {
+        }
+
+        /// The response from the 'BeginExecution'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder, Default)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct BeginExecution {
+        }
+
+        /// The response from the 'EndExecution'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder, Default)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EndExecution {
         }
 
         /// The response from the 'ClosestEdge'.
