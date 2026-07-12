@@ -1321,6 +1321,9 @@ define_ok_modeling_cmd_response_enum! {
         pub struct CreateRegion {
             /// a mapping from the curves within this region to the source component segment curves they were split from
             pub region_mapping: HashMap<Uuid, Uuid>,
+            /// mappings from auto-created hole curves within this region to the source component segment curves they were split from
+            #[serde(default)]
+            pub hole_region_mappings: Vec<HashMap<Uuid, Uuid>>,
         }
 
         /// The response from the 'RegionGetResolvableIntersectionInfo'.
@@ -1347,6 +1350,9 @@ define_ok_modeling_cmd_response_enum! {
         pub struct CreateRegionFromQueryPoint {
             /// a mapping from the curves within this region to the source component segment curves they were split from
             pub region_mapping: HashMap<Uuid, Uuid>,
+            /// mappings from auto-created hole curves within this region to the source component segment curves they were split from
+            #[serde(default)]
+            pub hole_region_mappings: Vec<HashMap<Uuid, Uuid>>,
         }
 
         /// The response from 'RegionGetQueryPoint' modeling command.
