@@ -1403,5 +1403,28 @@ define_ok_modeling_cmd_response_enum! {
             /// If there are no edges in the scene, returns None.
             pub edge_id: Option<Uuid>,
         }
+
+        /// The response from the 'PathGetInfoV2'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct PathGetInfoV2 {
+            /// All points in the path
+            pub points: Vec<PathSegmentDebug>,
+            /// The OBJ file representation from the engine's toolpaths library.
+            pub toolpaths_obj: String,
+        }
+
+        /// A debug-view of the segment of a path.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        pub struct PathSegmentDebug {
+            /// Start point of segment.
+            pub start: Point2d<f64>,
+            /// End point of segment.
+            pub end: Point2d<f64>,
+            /// What kind of segment is it (line, arc, etc)
+            pub segment_type: PathCommand,
+            /// ID for this segment.
+            pub id: ModelingCmdId,
+        }
     }
 }
