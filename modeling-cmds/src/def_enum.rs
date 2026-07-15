@@ -2316,12 +2316,8 @@ define_modeling_cmd_enum! {
             /// The Solid3d object whose extrusion is being queried.
             pub object_id: Uuid,
             /// Any edge that lies on the extrusion base path.
-            /// Deprecated; please use `maybe_edge_id` instead.
-            pub edge_id: Uuid,
-            /// Any edge that lies on the extrusion base path (new API).
-            /// If both `edge_id` and `maybe_edge_id` are provided, `maybe_edge_id` takes precedence.
             #[serde(default, skip_serializing_if = "Option::is_none")]
-            pub maybe_edge_id: Option<Uuid>,
+            pub edge_id: Option<Uuid>,
         }
 
         /// Get a concise description of all of solids edges.
@@ -2334,12 +2330,8 @@ define_modeling_cmd_enum! {
             /// The Solid3d object whose info is being queried.
             pub object_id: Uuid,
             /// Any edge that lies on the extrusion base path.
-            /// Deprecated; please use `maybe_edge_id` instead.
-            pub edge_id: Uuid,
-            /// Any edge that lies on the extrusion base path (new API).
-            /// If both `edge_id` and `maybe_edge_id` are provided, `maybe_edge_id` takes precedence.
             #[serde(default, skip_serializing_if = "Option::is_none")]
-            pub maybe_edge_id: Option<Uuid>,
+            pub edge_id: Option<Uuid>,
         }
 
 

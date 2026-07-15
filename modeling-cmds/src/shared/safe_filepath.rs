@@ -86,6 +86,8 @@ impl std::fmt::Display for SafeFilepath {
 
 #[cfg(test)]
 mod tests {
+    use std::assert_matches;
+
     use serde::{Deserialize, Serialize};
 
     use super::*;
@@ -100,7 +102,7 @@ mod tests {
         // Absolute paths could allow reading from arbitrary files
         let input = "/foo/bar";
         let actual = SafeFilepath::validate(input);
-        assert!(matches!(actual, Err(PathNotSafe::CannotBeAbsolute)));
+        assert_matches!(actual, Err(PathNotSafe::CannotBeAbsolute));
     }
 
     #[test]
@@ -108,14 +110,14 @@ mod tests {
         // Test windows-style absolute paths.
         let input = r"C:\programs\bar";
         let actual = SafeFilepath::validate(input);
-        assert!(matches!(actual, Err(PathNotSafe::CannotBeAbsolute)));
+        assert_matches!(actual, Err(PathNotSafe::CannotBeAbsolute));
     }
 
     #[test]
     fn test_parent_not_allowed() {
         let input = "../../passwords/secret.txt";
         let actual = SafeFilepath::validate(input);
-        assert!(matches!(actual, Err(PathNotSafe::CannotUseParent)));
+        assert_matches!(actual, Err(PathNotSafe::CannotUseParent));
     }
 
     #[test]
