@@ -2766,7 +2766,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct PathGetInfoV2 {
+        pub struct SketchGetInfo {
             /// Which path to query
             pub path_id: ModelingCmdId,
         }

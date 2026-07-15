@@ -8084,6 +8084,30 @@
               "closest_to",
               "type"
             ]
+          },
+          {
+            "description": "Returns the closest edge to this point.",
+            "type": "object",
+            "properties": {
+              "path_id": {
+                "description": "Which path to query",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ModelingCmdId"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "sketch_get_info"
+                ]
+              }
+            },
+            "required": [
+              "path_id",
+              "type"
+            ]
           }
         ]
       },

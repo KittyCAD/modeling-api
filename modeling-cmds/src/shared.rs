@@ -10,6 +10,7 @@ use uuid::Uuid;
 use crate::impl_extern_type;
 use crate::{
     def_enum::negative_one,
+    id::ModelingCmdId,
     length_unit::LengthUnit,
     output::ExtrusionFaceInfo,
     units::{self, UnitAngle},
@@ -2206,4 +2207,32 @@ impl From<BodiesUpdated> for BodiesCreated {
 
 fn one() -> f32 {
     1.0
+}
+
+/// A debug-view of the segment of a curve.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, Builder)]
+pub struct CurveDebug {
+    /// Start point of segment.
+    pub start: Option<Point2d<f64>>,
+    /// End point of segment.
+    pub end: Option<Point2d<f64>>,
+    /// Center point of segment.
+    pub center: Option<Point2d<f64>>,
+    /// Point on the circle's radius
+    pub point: Option<Point2d<f64>>,
+    /// What kind of segment is it (line, arc, etc)
+    pub segment_type: CurveTypeDebug,
+    /// ID for this segment.
+    pub id: ModelingCmdId,
+}
+
+/// What type of curve is being viewed?
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+pub enum CurveTypeDebug {
+    /// Line with a start and end.
+    Line,
+    /// Arc with a start, end and center.
+    ThreePointArc,
+    /// Circle with a center and radius.
+    Circle,
 }
