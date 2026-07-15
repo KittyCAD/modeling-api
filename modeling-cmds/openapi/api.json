@@ -7280,7 +7280,13 @@
             "type": "object",
             "properties": {
               "edge_id": {
-                "description": "Any edge that lies on the extrusion base path.",
+                "description": "Any edge that lies on the extrusion base path. Deprecated; please use `maybe_edge_id` instead.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "maybe_edge_id": {
+                "nullable": true,
+                "description": "Any edge that lies on the extrusion base path (new API). If both `edge_id` and `maybe_edge_id` are provided, `maybe_edge_id` takes precedence.",
                 "type": "string",
                 "format": "uuid"
               },
@@ -7307,7 +7313,13 @@
             "type": "object",
             "properties": {
               "edge_id": {
-                "description": "Any edge that lies on the extrusion base path.",
+                "description": "Any edge that lies on the extrusion base path. Deprecated; please use `maybe_edge_id` instead.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "maybe_edge_id": {
+                "nullable": true,
+                "description": "Any edge that lies on the extrusion base path (new API). If both `edge_id` and `maybe_edge_id` are provided, `maybe_edge_id` takes precedence.",
                 "type": "string",
                 "format": "uuid"
               },

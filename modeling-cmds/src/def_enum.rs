@@ -50,6 +50,10 @@ define_modeling_cmd_enum! {
             0.4
         }
 
+        fn default_uuid() -> Uuid {
+            Uuid::nil()
+        }
+
         fn mm() -> crate::units::UnitLength {
             crate::units::UnitLength::Millimeters
         }
@@ -2316,8 +2320,13 @@ define_modeling_cmd_enum! {
             /// The Solid3d object whose extrusion is being queried.
             pub object_id: Uuid,
             /// Any edge that lies on the extrusion base path.
+            /// Deprecated; please use `maybe_edge_id` instead.
+            #[serde(default = "default_uuid")]
+            pub edge_id: Uuid,
+            /// Any edge that lies on the extrusion base path (new API).
+            /// If both `edge_id` and `maybe_edge_id` are provided, `maybe_edge_id` takes precedence.
             #[serde(default, skip_serializing_if = "Option::is_none")]
-            pub edge_id: Option<Uuid>,
+            pub maybe_edge_id: Option<Uuid>,
         }
 
         /// Get a concise description of all of solids edges.
@@ -2330,8 +2339,13 @@ define_modeling_cmd_enum! {
             /// The Solid3d object whose info is being queried.
             pub object_id: Uuid,
             /// Any edge that lies on the extrusion base path.
+            /// Deprecated; please use `maybe_edge_id` instead.
+            #[serde(default = "default_uuid")]
+            pub edge_id: Uuid,
+            /// Any edge that lies on the extrusion base path (new API).
+            /// If both `edge_id` and `maybe_edge_id` are provided, `maybe_edge_id` takes precedence.
             #[serde(default, skip_serializing_if = "Option::is_none")]
-            pub edge_id: Option<Uuid>,
+            pub maybe_edge_id: Option<Uuid>,
         }
 
 
