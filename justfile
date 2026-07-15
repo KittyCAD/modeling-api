@@ -71,8 +71,3 @@ finish-release pkg:
     git tag kittycad-{{pkg}}-$version -m "kittycad-{{pkg}}-$version"
     git push --tags
     cargo publish -p kittycad-{{pkg}}
-
-# Other actions: changelog, checks, diff, summary
-breaking-api-changes action='summary':
-    just redo-openapi 
-    openapi-changes {{action}} --no-color -b modeling-cmds/openapi/old_api.json modeling-cmds/openapi/api.json
