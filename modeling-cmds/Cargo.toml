@@ -7,6 +7,7 @@ description = "Commands in the KittyCAD Modeling API"
 repository = "https://github.com/KittyCAD/modeling-api"
 keywords = ["kittycad"]
 license = "MIT"
+rust-version = "1.96"
 
 [package.metadata.docs.rs]
 all-features = true
