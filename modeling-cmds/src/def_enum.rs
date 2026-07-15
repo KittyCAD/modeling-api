@@ -50,10 +50,6 @@ define_modeling_cmd_enum! {
             0.4
         }
 
-        fn default_uuid() -> Uuid {
-            Uuid::nil()
-        }
-
         fn mm() -> crate::units::UnitLength {
             crate::units::UnitLength::Millimeters
         }
@@ -2321,7 +2317,6 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
             /// Any edge that lies on the extrusion base path.
             /// Deprecated; please use `maybe_edge_id` instead.
-            #[serde(default = "default_uuid")]
             pub edge_id: Uuid,
             /// Any edge that lies on the extrusion base path (new API).
             /// If both `edge_id` and `maybe_edge_id` are provided, `maybe_edge_id` takes precedence.
@@ -2340,7 +2335,6 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
             /// Any edge that lies on the extrusion base path.
             /// Deprecated; please use `maybe_edge_id` instead.
-            #[serde(default = "default_uuid")]
             pub edge_id: Uuid,
             /// Any edge that lies on the extrusion base path (new API).
             /// If both `edge_id` and `maybe_edge_id` are provided, `maybe_edge_id` takes precedence.
