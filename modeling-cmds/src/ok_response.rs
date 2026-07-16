@@ -1405,7 +1405,7 @@ define_ok_modeling_cmd_response_enum! {
             pub edge_id: Option<Uuid>,
         }
 
-        /// The response from the 'PathGetInfoV2'.
+        /// The response from the 'SketchGetInfo'.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SketchGetInfo {

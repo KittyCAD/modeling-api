@@ -2760,7 +2760,7 @@ define_modeling_cmd_enum! {
             pub closest_to: Point3d<f64>,
         }
 
-        /// Returns the closest edge to this point.
+        /// Gets debug information about a sketch
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]

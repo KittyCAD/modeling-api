@@ -8086,7 +8086,7 @@
             ]
           },
           {
-            "description": "Returns the closest edge to this point.",
+            "description": "Gets debug information about a sketch",
             "type": "object",
             "properties": {
               "path_id": {
