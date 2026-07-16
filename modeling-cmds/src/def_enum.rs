@@ -131,14 +131,22 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Extrude {
-            /// Which sketch to extrude.
-            /// Must be a closed 2D solid.
-            pub target: ModelingCmdId,
+            /// Which sketch to extrude (legacy API).
+            /// Must be a closed 2D solid. If `target_reference` is provided, the reference takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub target: Option<ModelingCmdId>,
+            /// Edge specifier identifying the edge to extrude. If provided, this takes precedence over `target`.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub target_reference: Option<EdgeSpecifier>,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
             /// What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane.
+            /// Legacy field; if `direction_reference` is provided, the reference takes precedence.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub direction: Option<DirectionType>,
+            /// Edge specifier identifying the edge direction to use. If provided, this takes precedence over `direction`.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub direction_reference: Option<EdgeSpecifier>,
             /// What draft angle should be used in this extrusion?
             /// Negative values indicate an outward draft,
             /// while positive values indicate an inward draft

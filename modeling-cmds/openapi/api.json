@@ -2803,10 +2803,19 @@
               },
               "direction": {
                 "nullable": true,
-                "description": "What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane.",
+                "description": "What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane. Legacy field; if `direction_reference` is provided, the reference takes precedence.",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/DirectionType"
+                  }
+                ]
+              },
+              "direction_reference": {
+                "nullable": true,
+                "description": "Edge specifier identifying the edge direction to use. If provided, this takes precedence over `direction`.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeSpecifier"
                   }
                 ]
               },
@@ -2861,10 +2870,20 @@
                 ]
               },
               "target": {
-                "description": "Which sketch to extrude. Must be a closed 2D solid.",
+                "nullable": true,
+                "description": "Which sketch to extrude (legacy API). Must be a closed 2D solid. If `target_reference` is provided, the reference takes precedence.",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/ModelingCmdId"
+                  }
+                ]
+              },
+              "target_reference": {
+                "nullable": true,
+                "description": "Edge specifier identifying the edge to extrude. If provided, this takes precedence over `target`.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeSpecifier"
                   }
                 ]
               },
@@ -2877,7 +2896,6 @@
             },
             "required": [
               "distance",
-              "target",
               "type"
             ]
           },
