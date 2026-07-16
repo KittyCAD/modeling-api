@@ -1410,7 +1410,11 @@ define_ok_modeling_cmd_response_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SketchGetInfo {
             /// All curves in this sketch.
-            pub curves: Vec<CurveDebug>
+            pub curves: Vec<CurveDebug>,
+            /// OBJ representation of the topology from Toolpaths library.
+            pub region_obj: String,
+            /// How many regions the Toolpaths library thinks exist
+            pub region_count: u16,
         }
     }
 }
