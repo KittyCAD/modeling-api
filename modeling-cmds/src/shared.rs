@@ -2212,14 +2212,14 @@ fn one() -> f32 {
 /// A debug-view of the segment of a curve.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, Builder)]
 pub struct CurveDebug {
-    /// Start point of segment.
+    /// Start point of segment or circle.
     pub start: Option<Point2d<f64>>,
     /// End point of segment.
     pub end: Option<Point2d<f64>>,
     /// Center point of segment.
     pub center: Option<Point2d<f64>>,
-    /// Point on the circle's radius
-    pub point: Option<Point2d<f64>>,
+    /// Midpoint on a three point arc
+    pub mid: Option<Point2d<f64>>,
     /// What kind of segment is it (line, arc, etc)
     pub segment_type: CurveTypeDebug,
     /// ID for this segment.
