@@ -20,6 +20,7 @@ define_ok_modeling_cmd_response_enum! {
         use bon::Builder;
         use uuid::Uuid;
         use crate::shared::{
+            CurveDebug,
             CameraSettings,
             CameraViewState,
             BodyType,
@@ -1402,6 +1403,18 @@ define_ok_modeling_cmd_response_enum! {
             /// The ID of the edge closest to the point given in the request.
             /// If there are no edges in the scene, returns None.
             pub edge_id: Option<Uuid>,
+        }
+
+        /// The response from the 'SketchGetInfo'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct SketchGetInfo {
+            /// All curves in this sketch.
+            pub curves: Vec<CurveDebug>,
+            /// OBJ representation of the topology from Toolpaths library.
+            pub region_obj: String,
+            /// How many regions the Toolpaths library thinks exist
+            pub region_count: u16,
         }
     }
 }
