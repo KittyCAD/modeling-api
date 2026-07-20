@@ -1226,9 +1226,12 @@ define_ok_modeling_cmd_response_enum! {
             /// Opposite edge and face info.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub opposite_info: Option<EdgeInfo>,
-            /// Adjacent edge and face info.
+            /// Next adjacent edge and face info.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub adjacent_info: Option<EdgeInfo>,
+            /// Previous adjacent edge and face info.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub previous_adjacent_info: Option<EdgeInfo>,
         }
 
         /// The response from the 'SetGridReferencePlane'.
