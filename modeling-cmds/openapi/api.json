@@ -2614,6 +2614,32 @@
             "additionalProperties": false
           },
           {
+            "description": "Reflect across an edge identified by its adjacent faces. If used with a 3D mirror, the edge will define the normal of the mirror plane.",
+            "type": "object",
+            "properties": {
+              "edge_reference": {
+                "type": "object",
+                "properties": {
+                  "reference": {
+                    "description": "Stable edge reference.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EdgeSpecifier"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "reference"
+                ]
+              }
+            },
+            "required": [
+              "edge_reference"
+            ],
+            "additionalProperties": false
+          },
+          {
             "description": "Reflect across an axis (that goes through a point) If used with a 3D mirror, the axis will define the normal of the mirror plane.",
             "type": "object",
             "properties": {
