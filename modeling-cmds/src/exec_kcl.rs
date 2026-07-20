@@ -20,8 +20,15 @@ pub struct KclProject {
     pub entrypoint: SafeFilepath,
 }
 
+impl KclProject {
+    /// Create a new KCL project.
+    pub fn new(files: Vec<KclFile>, entrypoint: SafeFilepath) -> Self {
+        Self { files, entrypoint }
+    }
+}
+
 /// Region-creation algorithm version.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Builder)]
+#[derive(Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -35,6 +42,22 @@ pub struct KclFile {
         deserialize_with = "serde_bytes::deserialize"
     )]
     pub contents: Vec<u8>,
+}
+
+impl std::fmt::Debug for KclFile {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("KclFile")
+            .field("path", &self.path)
+            .field("contents.len()", &self.contents.len())
+            .finish()
+    }
+}
+
+impl KclFile {
+    /// Create a KCL file.
+    pub fn new(path: SafeFilepath, contents: Vec<u8>) -> Self {
+        Self { path, contents }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
@@ -59,6 +82,16 @@ pub struct ExecKclProjectErr {
     pub non_fatal: Vec<CompilationIssue>,
     // TODO: Add fields to this as we make KCL data serializable.
     // Should be a usable subset of `KclErrorWithOutputs`.
+}
+
+impl ExecKclProjectErr {
+    /// Used when the project execution had a fatal error.
+    pub fn fatal_error(error: KclError) -> Self {
+        Self {
+            error: Some(error),
+            non_fatal: Default::default(),
+        }
+    }
 }
 
 #[cfg(feature = "arbitrary")]

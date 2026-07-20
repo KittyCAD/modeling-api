@@ -1,12 +1,13 @@
 [package]
 name = "kittycad-modeling-cmds"
-version = "0.2.209"
+version = "0.2.215"
 edition = "2021"
 authors = ["KittyCAD, Inc."]
 description = "Commands in the KittyCAD Modeling API"
 repository = "https://github.com/KittyCAD/modeling-api"
 keywords = ["kittycad"]
 license = "MIT"
+rust-version = "1.96"
 
 [package.metadata.docs.rs]
 all-features = true

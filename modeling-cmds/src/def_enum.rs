@@ -131,14 +131,22 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Extrude {
-            /// Which sketch to extrude.
-            /// Must be a closed 2D solid.
-            pub target: ModelingCmdId,
+            /// Which sketch to extrude (legacy API).
+            /// Must be a closed 2D solid. If `target_reference` is provided, the reference takes precedence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub target: Option<ModelingCmdId>,
+            /// Edge specifier identifying the edge to extrude. If provided, this takes precedence over `target`.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub target_reference: Option<EdgeSpecifier>,
             /// How far off the plane to extrude
             pub distance: LengthUnit,
             /// What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane.
+            /// Legacy field; if `direction_reference` is provided, the reference takes precedence.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub direction: Option<DirectionType>,
+            /// Edge specifier identifying the edge direction to use. If provided, this takes precedence over `direction`.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub direction_reference: Option<EdgeSpecifier>,
             /// What draft angle should be used in this extrusion?
             /// Negative values indicate an outward draft,
             /// while positive values indicate an inward draft
@@ -281,6 +289,12 @@ define_modeling_cmd_enum! {
             /// Defaults to false.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub orient_profile_perpendicular: Option<bool>,
+            /// If orient_profile_perpendicular is true, the sketch shall be oriented such that the
+            /// local Y axis of the sketch will be oriented to align with this element as much as
+            /// possible.
+            /// Defaults to +Z if not set
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub projected_axis: Option<DirectionType>,
         }
 
         /// Command for revolving a solid 2d.
@@ -1709,26 +1723,6 @@ define_modeling_cmd_enum! {
             pub planar_normal: Option<Point3d<f64>>,
         }
 
-        /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
-        /// In a dry run, successful commands won't actually change the model.
-        /// This is useful for catching errors before actually making the change.
-        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
-        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct EnableDryRun {}
-
-        /// Sets whether or not changes to the scene or its objects will be done as a "dry run"
-        /// In a dry run, successful commands won't actually change the model.
-        /// This is useful for catching errors before actually making the change.
-        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
-        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct DisableDryRun {}
-
         /// Set the background color of the scene.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -2722,6 +2716,34 @@ define_modeling_cmd_enum! {
             pub flip: bool,
         }
 
+        /// Tell the engine you're beginning execution,
+        /// and will be sending many API calls shortly.
+        /// The engine will render your geometry in
+        /// reduced detail, to make execution faster.
+        /// Call EndExecution to restore high quality
+        /// once you're done sending commands.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct BeginExecution {
+            /// Should rendering occur, or not?
+            /// If enabled, rendering will be low resolution until you call
+            /// EndExecution.
+            pub enable_render: bool,
+        }
+
+        /// Tell the engine you're finished execution,
+        /// and it should resume rendering at high resolution.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder, Default)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct EndExecution {
+        }
+
         /// Returns the closest edge to this point.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -2736,6 +2758,17 @@ define_modeling_cmd_enum! {
             /// Find the edge closest to this point.
             /// Assumed to be in absolute coordinates, relative to global (scene) origin.
             pub closest_to: Point3d<f64>,
+        }
+
+        /// Gets debug information about a sketch
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct SketchGetInfo {
+            /// Which path to query
+            pub path_id: ModelingCmdId,
         }
     }
 }

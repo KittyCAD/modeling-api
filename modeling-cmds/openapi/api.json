@@ -2803,10 +2803,19 @@
               },
               "direction": {
                 "nullable": true,
-                "description": "What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane.",
+                "description": "What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane. Legacy field; if `direction_reference` is provided, the reference takes precedence.",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/DirectionType"
+                  }
+                ]
+              },
+              "direction_reference": {
+                "nullable": true,
+                "description": "Edge specifier identifying the edge direction to use. If provided, this takes precedence over `direction`.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeSpecifier"
                   }
                 ]
               },
@@ -2861,10 +2870,20 @@
                 ]
               },
               "target": {
-                "description": "Which sketch to extrude. Must be a closed 2D solid.",
+                "nullable": true,
+                "description": "Which sketch to extrude (legacy API). Must be a closed 2D solid. If `target_reference` is provided, the reference takes precedence.",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/ModelingCmdId"
+                  }
+                ]
+              },
+              "target_reference": {
+                "nullable": true,
+                "description": "Edge specifier identifying the edge to extrude. If provided, this takes precedence over `target`.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/EdgeSpecifier"
                   }
                 ]
               },
@@ -2877,7 +2896,6 @@
             },
             "required": [
               "distance",
-              "target",
               "type"
             ]
           },
@@ -3053,6 +3071,15 @@
                 "nullable": true,
                 "description": "If true, before the sweep starts, the profile will be re-oriented so that it is perpendicular to the path being swept along. If false, the profile is left in its current orientation. Defaults to false.",
                 "type": "boolean"
+              },
+              "projected_axis": {
+                "nullable": true,
+                "description": "If orient_profile_perpendicular is true, the sketch shall be oriented such that the local Y axis of the sketch will be oriented to align with this element as much as possible. Defaults to +Z if not set",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/DirectionType"
+                  }
+                ]
               },
               "relative_to": {
                 "nullable": true,
@@ -6146,36 +6173,6 @@
             ]
           },
           {
-            "description": "Sets whether or not changes to the scene or its objects will be done as a \"dry run\" In a dry run, successful commands won't actually change the model. This is useful for catching errors before actually making the change.",
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "enable_dry_run"
-                ]
-              }
-            },
-            "required": [
-              "type"
-            ]
-          },
-          {
-            "description": "Sets whether or not changes to the scene or its objects will be done as a \"dry run\" In a dry run, successful commands won't actually change the model. This is useful for catching errors before actually making the change.",
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "disable_dry_run"
-                ]
-              }
-            },
-            "required": [
-              "type"
-            ]
-          },
-          {
             "description": "Set the background color of the scene.",
             "type": "object",
             "properties": {
@@ -8023,6 +8020,41 @@
             ]
           },
           {
+            "description": "Tell the engine you're beginning execution, and will be sending many API calls shortly. The engine will render your geometry in reduced detail, to make execution faster. Call EndExecution to restore high quality once you're done sending commands.",
+            "type": "object",
+            "properties": {
+              "enable_render": {
+                "description": "Should rendering occur, or not? If enabled, rendering will be low resolution until you call EndExecution.",
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "begin_execution"
+                ]
+              }
+            },
+            "required": [
+              "enable_render",
+              "type"
+            ]
+          },
+          {
+            "description": "Tell the engine you're finished execution, and it should resume rendering at high resolution.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "end_execution"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
             "description": "Returns the closest edge to this point.",
             "type": "object",
             "properties": {
@@ -8050,6 +8082,30 @@
             },
             "required": [
               "closest_to",
+              "type"
+            ]
+          },
+          {
+            "description": "Gets debug information about a sketch",
+            "type": "object",
+            "properties": {
+              "path_id": {
+                "description": "Which path to query",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ModelingCmdId"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "sketch_get_info"
+                ]
+              }
+            },
+            "required": [
+              "path_id",
               "type"
             ]
           }
