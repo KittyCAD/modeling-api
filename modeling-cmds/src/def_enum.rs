@@ -2761,6 +2761,17 @@ define_modeling_cmd_enum! {
             /// Assumed to be in absolute coordinates, relative to global (scene) origin.
             pub closest_to: Point3d<f64>,
         }
+
+        /// Gets debug information about a sketch
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct SketchGetInfo {
+            /// Which path to query
+            pub path_id: ModelingCmdId,
+        }
     }
 }
 
