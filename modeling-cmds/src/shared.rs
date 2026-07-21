@@ -190,7 +190,7 @@ pub enum DirectionType {
 }
 
 /// What to reflect mirrored geometry across
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -201,6 +201,12 @@ pub enum MirrorAcross {
     Edge {
         /// Edge ID.
         id: Uuid,
+    },
+    /// Reflect across an edge identified by its adjacent faces.
+    /// If used with a 3D mirror, the edge will define the normal of the mirror plane.
+    EdgeReference {
+        /// Stable edge reference.
+        reference: EdgeSpecifier,
     },
     /// Reflect across an axis (that goes through a point)
     /// If used with a 3D mirror, the axis will define the normal of the mirror plane.
