@@ -7874,6 +7874,30 @@
             ]
           },
           {
+            "description": "Create a planar surface bounded by the connection of various paths and curves. 'CreatePlanarSurface' modeling command.",
+            "type": "object",
+            "properties": {
+              "curve_ids": {
+                "description": "Which curves to create the planar surface from.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "create_planar_surface"
+                ]
+              }
+            },
+            "required": [
+              "curve_ids",
+              "type"
+            ]
+          },
+          {
             "description": "Finds a suitable set of arguments that can be passed to CreateRegion to resolve this very region.",
             "type": "object",
             "properties": {
