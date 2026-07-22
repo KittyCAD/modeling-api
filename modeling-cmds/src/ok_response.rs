@@ -1327,6 +1327,16 @@ define_ok_modeling_cmd_response_enum! {
             pub region_mapping: HashMap<Uuid, Uuid>,
         }
 
+        /// The response from the 'CreatePlanarSurface'.
+        /// The surface should have an ID taken from the ID of the
+        /// 'CreatePlanarSurface' modeling command.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct CreatePlanarSurface {
+            /// a mapping from the curves within this surface to the source component segment curves they were split from
+            pub surface_mapping: HashMap<Uuid, Uuid>,
+        }
+
         /// The response from the 'RegionGetResolvableIntersectionInfo'.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
