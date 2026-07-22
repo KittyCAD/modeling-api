@@ -7324,6 +7324,7 @@
             "type": "object",
             "properties": {
               "edge_id": {
+                "nullable": true,
                 "description": "Any edge that lies on the extrusion base path.",
                 "type": "string",
                 "format": "uuid"
@@ -7341,7 +7342,6 @@
               }
             },
             "required": [
-              "edge_id",
               "object_id",
               "type"
             ]
@@ -7351,6 +7351,7 @@
             "type": "object",
             "properties": {
               "edge_id": {
+                "nullable": true,
                 "description": "Any edge that lies on the extrusion base path.",
                 "type": "string",
                 "format": "uuid"
@@ -7368,7 +7369,6 @@
               }
             },
             "required": [
-              "edge_id",
               "object_id",
               "type"
             ]

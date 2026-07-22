@@ -2324,7 +2324,8 @@ define_modeling_cmd_enum! {
             /// The Solid3d object whose extrusion is being queried.
             pub object_id: Uuid,
             /// Any edge that lies on the extrusion base path.
-            pub edge_id: Uuid,
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_id: Option<Uuid>,
         }
 
         /// Get a concise description of all of solids edges.
@@ -2337,7 +2338,8 @@ define_modeling_cmd_enum! {
             /// The Solid3d object whose info is being queried.
             pub object_id: Uuid,
             /// Any edge that lies on the extrusion base path.
-            pub edge_id: Uuid,
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edge_id: Option<Uuid>,
         }
 
 

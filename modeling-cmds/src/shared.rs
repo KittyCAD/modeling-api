@@ -2234,6 +2234,7 @@ pub struct CurveDebug {
 
 /// What type of curve is being viewed?
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
 pub enum CurveTypeDebug {
     /// Line with a start and end.
     Line,
