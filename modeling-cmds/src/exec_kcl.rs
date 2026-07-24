@@ -66,8 +66,9 @@ impl KclFile {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 /// Successful KCL project execution response.
 pub struct ExecKclProjectOk {
-    // TODO: Add fields to this as we make KCL data serializable.
-    // Should be a usable subset of `SceneGraphDelta`.
+    /// The artifact graph produced by the KCL execution.
+    #[cfg(feature = "websocket")]
+    pub artifact_graph: serde_json::Value,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
@@ -97,7 +98,10 @@ impl ExecKclProjectErr {
 #[cfg(feature = "arbitrary")]
 impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
     fn arbitrary(_u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
-        Ok(Self {})
+        Ok(Self {
+            #[cfg(feature = "websocket")]
+            artifact_graph: serde_json::Value::Object(Default::default()),
+        })
     }
 }
 
