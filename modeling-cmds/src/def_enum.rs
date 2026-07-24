@@ -2641,6 +2641,8 @@ define_modeling_cmd_enum! {
         pub struct CreatePlanarSurface {
             /// Which curves to create the planar surface from.
             pub curve_ids: Vec<Uuid>,
+            /// Tolerance for the planar surface creation. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
            }
 
         /// Finds a suitable set of arguments that can be passed to CreateRegion to resolve this very region.
