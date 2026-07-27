@@ -7878,7 +7878,7 @@
             "type": "object",
             "properties": {
               "curve_ids": {
-                "description": "Which curves to create the planar surface(s) from.",
+                "description": "Which curves to create the planar surface(s) from. Curves must be provided in the order they are connected to each other They must form a closed loop, either by themselves or in a group",
                 "type": "array",
                 "items": {
                   "type": "string",
