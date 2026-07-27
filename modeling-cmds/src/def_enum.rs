@@ -2639,7 +2639,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreatePlanarSurface {
-            /// Which curves to create the planar surface from.
+            /// Which curves to create the planar surface(s) from.
             pub curve_ids: Vec<Uuid>,
             /// Tolerance for the planar surface creation. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,

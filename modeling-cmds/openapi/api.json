@@ -7878,12 +7878,20 @@
             "type": "object",
             "properties": {
               "curve_ids": {
-                "description": "Which curves to create the planar surface from.",
+                "description": "Which curves to create the planar surface(s) from.",
                 "type": "array",
                 "items": {
                   "type": "string",
                   "format": "uuid"
                 }
+              },
+              "tolerance": {
+                "description": "Tolerance for the planar surface creation. Must be positive (i.e. greater than zero).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
               },
               "type": {
                 "type": "string",
@@ -7894,6 +7902,7 @@
             },
             "required": [
               "curve_ids",
+              "tolerance",
               "type"
             ]
           },
