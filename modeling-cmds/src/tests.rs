@@ -7,12 +7,13 @@ async fn test_openapi() {
     let api = example_server().unwrap();
     // Create the API schema.
     let mut definition = api.openapi("Example Modeling API server", "1.2.3".parse().unwrap());
-    let schema = definition
+    let mut schema = definition
         .description("Example modeling API server")
         .contact_url("https://zoo.dev")
         .contact_email("api@zoo.dev")
         .json()
         .unwrap();
+    sort_json_keys(&mut schema);
     let schema_str = serde_json::to_string_pretty(&schema).unwrap();
     expectorate::assert_contents("openapi/api.json", &schema_str);
 
@@ -27,6 +28,27 @@ async fn test_openapi() {
     // Download the old schema, write it to disk.
     let schema = download_openapi_schema("main").await;
     std::fs::write("openapi/old_api.json", schema).unwrap();
+}
+
+fn sort_json_keys(value: &mut serde_json::Value) {
+    match value {
+        serde_json::Value::Object(map) => {
+            for (key, value) in map.iter_mut() {
+                sort_json_keys(value);
+                if matches!(key.as_str(), "properties" | "schemas") {
+                    if let serde_json::Value::Object(map) = value {
+                        map.sort_keys();
+                    }
+                }
+            }
+        }
+        serde_json::Value::Array(values) => {
+            for value in values {
+                sort_json_keys(value);
+            }
+        }
+        _ => {}
+    }
 }
 
 fn example_server() -> Result<ApiDescription<()>, String> {
