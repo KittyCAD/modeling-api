@@ -1,4 +1,6 @@
 use bon::Builder;
+#[cfg(feature = "websocket")]
+use kcl_api::ArtifactGraph;
 use kcl_error::{CompilationIssue, KclError};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -68,7 +70,7 @@ impl KclFile {
 pub struct ExecKclProjectOk {
     /// The artifact graph produced by the KCL execution.
     #[cfg(feature = "websocket")]
-    pub artifact_graph: serde_json::Value,
+    pub artifact_graph: ArtifactGraph,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
@@ -100,7 +102,7 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
     fn arbitrary(_u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         Ok(Self {
             #[cfg(feature = "websocket")]
-            artifact_graph: serde_json::Value::Object(Default::default()),
+            artifact_graph: ArtifactGraph::default(),
         })
     }
 }

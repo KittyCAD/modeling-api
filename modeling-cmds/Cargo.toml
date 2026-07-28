@@ -19,7 +19,7 @@ tabled = ["dep:tabled"]
 ts-rs = ["dep:ts-rs"]
 slog = ["dep:slog"]
 cxx = ["dep:cxx"]
-websocket = ["dep:serde_json"]
+websocket = ["dep:kcl-api", "dep:serde_json"]
 webrtc = ["dep:webrtc"]
 unstable_exhaustive = []
 python = ["dep:pyo3", "dep:pyo3-stub-gen"]
@@ -36,6 +36,7 @@ enum-iterator = "2.3.0"
 enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
 http = "1.4.0"
+kcl-api = { version = "0.2.171", optional = true }
 kcl-error = { version = "0.2.166" }
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
