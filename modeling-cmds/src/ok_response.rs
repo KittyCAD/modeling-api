@@ -1327,6 +1327,14 @@ define_ok_modeling_cmd_response_enum! {
             pub region_mapping: HashMap<Uuid, Uuid>,
         }
 
+        /// The response from the 'CreatePlanarSurface'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct CreatePlanarSurface {
+            /// the list of the ids of the surfaces that were created from the planar surface command
+            pub surfaces: Vec<Uuid>,
+        }
+
         /// The response from the 'RegionGetResolvableIntersectionInfo'.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]

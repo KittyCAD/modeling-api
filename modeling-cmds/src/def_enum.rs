@@ -186,9 +186,16 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ExtrudeToReference {
-            /// Which sketch to extrude.
-            /// Must be a closed 2D solid.
-            pub target: ModelingCmdId,
+            /// Which sketch or edge to extrude (legacy API).
+            ///
+            /// Must be a closed 2D solid, or an edge for surface extrusions. Either
+            /// `target` or `target_reference` must be provided.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub target: Option<ModelingCmdId>,
+            /// Edge specifier identifying the source edge to extrude. If provided, this
+            /// takes precedence over `target`.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub target_reference: Option<EdgeSpecifier>,
             /// Reference to extrude to.
             /// Extrusion occurs along the target's normal until it is as close to the reference as possible.
             pub reference: ExtrudeReference,
@@ -2630,6 +2637,22 @@ define_modeling_cmd_enum! {
             #[builder(default)]
             pub version: RegionVersion,
         }
+
+        /// Create a planar surface bounded by the connection of various paths and curves.
+        /// 'CreatePlanarSurface' modeling command.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct CreatePlanarSurface {
+            /// Which curves to create the planar surface(s) from.
+            /// Curves must be provided in the order they are connected to each other
+            /// They must form a closed loop, either by themselves or in a group
+            pub curve_ids: Vec<Uuid>,
+            /// Tolerance for the planar surface creation. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+           }
 
         /// Finds a suitable set of arguments that can be passed to CreateRegion to resolve this very region.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
