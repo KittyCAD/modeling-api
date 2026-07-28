@@ -186,9 +186,16 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ExtrudeToReference {
-            /// Which sketch to extrude.
-            /// Must be a closed 2D solid.
-            pub target: ModelingCmdId,
+            /// Which sketch or edge to extrude (legacy API).
+            ///
+            /// Must be a closed 2D solid, or an edge for surface extrusions. Either
+            /// `target` or `target_reference` must be provided.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub target: Option<ModelingCmdId>,
+            /// Edge specifier identifying the source edge to extrude. If provided, this
+            /// takes precedence over `target`.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub target_reference: Option<EdgeSpecifier>,
             /// Reference to extrude to.
             /// Extrusion occurs along the target's normal until it is as close to the reference as possible.
             pub reference: ExtrudeReference,
