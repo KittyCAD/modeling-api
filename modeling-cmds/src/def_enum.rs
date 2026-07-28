@@ -2638,6 +2638,22 @@ define_modeling_cmd_enum! {
             pub version: RegionVersion,
         }
 
+        /// Create a planar surface bounded by the connection of various paths and curves.
+        /// 'CreatePlanarSurface' modeling command.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct CreatePlanarSurface {
+            /// Which curves to create the planar surface(s) from.
+            /// Curves must be provided in the order they are connected to each other
+            /// They must form a closed loop, either by themselves or in a group
+            pub curve_ids: Vec<Uuid>,
+            /// Tolerance for the planar surface creation. Must be positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+           }
+
         /// Finds a suitable set of arguments that can be passed to CreateRegion to resolve this very region.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
