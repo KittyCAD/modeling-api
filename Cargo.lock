@@ -2265,6 +2265,7 @@ checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
 dependencies = [
  "equivalent",
  "hashbrown 0.17.1",
+ "rayon",
  "serde",
  "serde_core",
 ]
@@ -2448,10 +2449,28 @@ dependencies = [
 ]
 
 [[package]]
-name = "kcl-error"
-version = "0.2.170"
+name = "kcl-api"
+version = "0.2.171"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39149a2390900e7ee349fe2ad371f4fe15f8cd6521be7c3554bbffd6d0fa792d"
+checksum = "97a1f74efaa8d3dbffbd48145791b63bd8acbac381704526bd1ca0394f96e5f0"
+dependencies = [
+ "indexmap 2.14.0",
+ "kcl-error",
+ "kittycad-measurements",
+ "kittycad-unit-conversion-derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "parse-display 0.11.0",
+ "parse-display-derive 0.11.0",
+ "schemars 0.8.22",
+ "serde",
+ "ts-rs",
+ "uuid",
+]
+
+[[package]]
+name = "kcl-error"
+version = "0.2.171"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c0473b9dc6790af3bf15cfb40e9957ed96865a6cdd8b2c42ec6eb73336aa019b"
 dependencies = [
  "miette",
  "schemars 0.8.22",
@@ -2527,6 +2546,7 @@ dependencies = [
  "euler",
  "expectorate",
  "http",
+ "kcl-api",
  "kcl-error",
  "kittycad-measurements",
  "kittycad-modeling-cmds-macros",
@@ -4573,6 +4593,8 @@ dependencies = [
  "bytes",
  "chrono",
  "dyn-clone",
+ "indexmap 1.9.3",
+ "indexmap 2.14.0",
  "schemars_derive",
  "serde",
  "serde_json",
@@ -4868,6 +4890,12 @@ dependencies = [
  "cpufeatures",
  "digest",
 ]
+
+[[package]]
+name = "sha1_smol"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbfa15b3dddfee50a0fff136974b3e1bde555604ba463834a7eb7deb6417705d"
 
 [[package]]
 name = "sha2"
@@ -5979,6 +6007,7 @@ dependencies = [
  "getrandom 0.4.2",
  "js-sys",
  "serde_core",
+ "sha1_smol",
  "wasm-bindgen",
 ]
 
