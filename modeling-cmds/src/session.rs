@@ -49,6 +49,7 @@ impl Default for EngineParams {
             unlocked_framerate: false,
             post_effect: None,
             webrtc: true,
+            geometry_only: false,
             pool: None,
             show_grid: false,
             replay: None,
