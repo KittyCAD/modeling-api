@@ -1574,23 +1574,23 @@
             ]
           },
           {
-            "description": "A uuid referencing a standalone curve in 3D space.",
+            "description": "A uuid referencing a helix.",
             "type": "object",
             "properties": {
-              "curve_id": {
-                "description": "Id of the curve entity.",
+              "helix_id": {
+                "description": "Id of the helix object.",
                 "type": "string",
                 "format": "uuid"
               },
               "type": {
                 "type": "string",
                 "enum": [
-                  "curve3d"
+                  "helix"
                 ]
               }
             },
             "required": [
-              "curve_id",
+              "helix_id",
               "type"
             ]
           },
@@ -1707,8 +1707,7 @@
           "face",
           "plane",
           "vertex",
-          "region",
-          "curve3d"
+          "region"
         ]
       },
       "Error": {

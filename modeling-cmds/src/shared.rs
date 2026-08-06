@@ -127,10 +127,10 @@ pub enum EntityReference {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         topology_fallback: Option<PrimitiveTopologyFallback>,
     },
-    /// A uuid referencing a standalone curve in 3D space.
-    Curve3d {
-        /// Id of the curve entity.
-        curve_id: Uuid,
+    /// A uuid referencing a helix.
+    Helix {
+        /// Id of the helix object.
+        helix_id: Uuid,
     },
     /// A uuid referencing an edge on a solid2d (profile) - used for raw sketch/profile edges.
     /// This is distinct from the face-based Edge reference which is used for BRep/swept body edges.
@@ -1210,7 +1210,6 @@ pub enum EntityType {
     Plane,
     Vertex,
     Region,
-    Curve3D,
 }
 
 /// The type of Curve (embedded within path)
