@@ -1574,6 +1574,27 @@
             ]
           },
           {
+            "description": "A uuid referencing a standalone curve in 3D space.",
+            "type": "object",
+            "properties": {
+              "curve_id": {
+                "description": "Id of the curve entity.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "curve3d"
+                ]
+              }
+            },
+            "required": [
+              "curve_id",
+              "type"
+            ]
+          },
+          {
             "description": "A uuid referencing an edge on a solid2d (profile) - used for raw sketch/profile edges. This is distinct from the face-based Edge reference which is used for BRep/swept body edges.",
             "type": "object",
             "properties": {
@@ -1686,7 +1707,8 @@
           "face",
           "plane",
           "vertex",
-          "region"
+          "region",
+          "curve3d"
         ]
       },
       "Error": {
