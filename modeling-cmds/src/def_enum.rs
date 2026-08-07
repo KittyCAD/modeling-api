@@ -39,6 +39,7 @@ define_modeling_cmd_enum! {
                 EntityReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
+                DrawingProjectionFrame, DrawingProjectionHiddenLineMode,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, SurfaceEdgeReference, Opposite,
             },
@@ -1831,6 +1832,28 @@ define_modeling_cmd_enum! {
             pub use_plane_coords: bool,
         }
 
+        /// Compute bounded 2D drawing curves for a solid projected into a drawing frame.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ComputeDrawingProjection {
+            /// Solid/object to project.
+            pub object_id: Uuid,
+            /// Projection frame that defines drawing plane origin and canvas axes.
+            pub frame: DrawingProjectionFrame,
+            /// Hidden-line inclusion mode. If omitted, hidden curves are included.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub hidden_lines: Option<DrawingProjectionHiddenLineMode>,
+            /// Silhouette/projection sampling resolution override.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub resolution: Option<u32>,
+            /// Projection tolerance override.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub tolerance: Option<f64>,
+        }
+
         /// Enum containing the variety of image formats snapshots may be exported to.
         #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, FromStr, Display)]
         #[serde(rename_all = "snake_case")]
@@ -2855,5 +2878,95 @@ impl std::fmt::Debug for ImportFile {
             .field("path", &self.path)
             .field("data", &"<redacted>")
             .finish()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use uuid::Uuid;
+
+    use crate::{
+        length_unit::LengthUnit,
+        output,
+        shared::{
+            DrawingProjectionCurve, DrawingProjectionCurveGeometry, DrawingProjectionCurveSource,
+            DrawingProjectionCurveSourceKind, DrawingProjectionCurveVisibility,
+            DrawingProjectionFrame, DrawingProjectionHiddenLineMode, DrawingProjectionLine2d,
+            Point2d, Point3d,
+        },
+        ModelingCmd,
+    };
+
+    use super::ComputeDrawingProjection;
+
+    #[test]
+    fn compute_drawing_projection_command_serializes() {
+        let object_id = Uuid::nil();
+        let cmd = ModelingCmd::ComputeDrawingProjection(ComputeDrawingProjection {
+            object_id,
+            frame: DrawingProjectionFrame {
+                origin: Point3d {
+                    x: LengthUnit(0.0),
+                    y: LengthUnit(0.0),
+                    z: LengthUnit(0.0),
+                },
+                x_axis: Point3d {
+                    x: 1.0,
+                    y: 0.0,
+                    z: 0.0,
+                },
+                y_axis: Point3d {
+                    x: 0.0,
+                    y: 1.0,
+                    z: 0.0,
+                },
+            },
+            hidden_lines: Some(DrawingProjectionHiddenLineMode::VisibleOnly),
+            resolution: Some(19),
+            tolerance: Some(1e-5),
+        });
+
+        let json = serde_json::to_value(&cmd).unwrap();
+
+        assert_eq!(json["type"], "compute_drawing_projection");
+        assert_eq!(json["object_id"], object_id.to_string());
+        assert_eq!(json["hidden_lines"], "visible_only");
+        assert_eq!(json["resolution"], 19);
+        assert_eq!(json["tolerance"], 1e-5);
+
+        let round_trip: ModelingCmd = serde_json::from_value(json).unwrap();
+        assert_eq!(round_trip, cmd);
+    }
+
+    #[test]
+    fn compute_drawing_projection_response_serializes() {
+        let response = output::ComputeDrawingProjection {
+            curves: vec![DrawingProjectionCurve {
+                curve_id: Uuid::nil(),
+                geometry: DrawingProjectionCurveGeometry::Line {
+                    data: DrawingProjectionLine2d {
+                        start: Point2d { x: 0.0, y: 0.0 },
+                        end: Point2d { x: 1.0, y: 0.0 },
+                    },
+                },
+                visibility: DrawingProjectionCurveVisibility::Visible,
+                source: DrawingProjectionCurveSource {
+                    kind: DrawingProjectionCurveSourceKind::Edge,
+                    entity_id: Some(Uuid::nil()),
+                    entity_reference: None,
+                    topology_fallback: None,
+                },
+            }],
+        };
+
+        let json = serde_json::to_value(&response).unwrap();
+
+        assert_eq!(json["curves"][0]["geometry"]["type"], "line");
+        assert_eq!(json["curves"][0]["geometry"]["start"]["x"], 0.0);
+        assert_eq!(json["curves"][0]["visibility"], "visible");
+        assert_eq!(json["curves"][0]["source"]["kind"], "edge");
+
+        let round_trip: output::ComputeDrawingProjection = serde_json::from_value(json).unwrap();
+        assert_eq!(round_trip, response);
     }
 }

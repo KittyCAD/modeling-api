@@ -156,6 +156,185 @@ pub enum EntityReference {
     },
 }
 
+/// A projection plane frame for placing 3D geometry onto a 2D drawing canvas.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct DrawingProjectionFrame {
+    /// Origin of the drawing projection plane.
+    pub origin: Point3d<LengthUnit>,
+    /// X axis of the drawing projection plane.
+    pub x_axis: Point3d<f64>,
+    /// Y axis of the drawing projection plane.
+    pub y_axis: Point3d<f64>,
+}
+
+/// Controls whether hidden projected curves are included in a drawing projection response.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum DrawingProjectionHiddenLineMode {
+    /// Return only visible projected curves.
+    VisibleOnly,
+    /// Return visible and hidden projected curves.
+    #[default]
+    IncludeHidden,
+}
+
+/// The kind of model topology that produced a projected drawing curve.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum DrawingProjectionCurveSourceKind {
+    /// A projected BREP edge.
+    Edge,
+    /// A view-dependent silhouette curve.
+    Silhouette,
+}
+
+/// Visibility classification for a projected drawing curve.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum DrawingProjectionCurveVisibility {
+    /// Visible in the requested projection.
+    Visible,
+    /// Hidden behind other projected model geometry.
+    Hidden,
+}
+
+/// Provenance for a projected drawing curve.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct DrawingProjectionCurveSource {
+    /// Whether this curve came from fixed topology or a view-dependent silhouette.
+    pub kind: DrawingProjectionCurveSourceKind,
+    /// Stable source UUID when the engine can identify one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_id: Option<Uuid>,
+    /// A stable entity reference that downstream selectors can use when available.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_reference: Option<EntityReference>,
+    /// Topology fallback for provenance when only parent + primitive index is stable.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub topology_fallback: Option<PrimitiveTopologyFallback>,
+}
+
+/// A bounded 2D line segment on the drawing projection plane.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct DrawingProjectionLine2d {
+    /// Start point in drawing projection plane coordinates.
+    pub start: Point2d<f64>,
+    /// End point in drawing projection plane coordinates.
+    pub end: Point2d<f64>,
+}
+
+/// A bounded circular arc on the drawing projection plane.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct DrawingProjectionCircularArc2d {
+    /// Arc center in drawing projection plane coordinates.
+    pub origin: Point2d<f64>,
+    /// Arc radius in drawing projection plane units.
+    pub radius: f64,
+    /// Start angle in radians.
+    pub start_angle: f64,
+    /// End angle in radians.
+    pub end_angle: f64,
+    /// Whether the arc advances counter-clockwise from start_angle to end_angle.
+    pub counter_clockwise: bool,
+}
+
+/// A bounded 2D NURBS curve on the drawing projection plane.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct DrawingProjectionNurbs2d {
+    /// NURBS control points in drawing projection plane coordinates.
+    pub control_points: Vec<Point2d<f64>>,
+    /// NURBS weights. Empty for non-rational curves.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub weights: Vec<f64>,
+    /// Full knot vector, including repeated domain endpoints.
+    pub knot_vector: Vec<f64>,
+    /// NURBS order.
+    pub order: u32,
+}
+
+/// Curve geometry for a projected drawing curve.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "type", rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum DrawingProjectionCurveGeometry {
+    /// Bounded line segment.
+    Line {
+        /// Line segment data.
+        #[serde(flatten)]
+        data: DrawingProjectionLine2d,
+    },
+    /// Bounded circular arc.
+    CircularArc {
+        /// Circular arc data.
+        #[serde(flatten)]
+        data: DrawingProjectionCircularArc2d,
+    },
+    /// Bounded NURBS curve.
+    Nurbs {
+        /// NURBS curve data.
+        #[serde(flatten)]
+        data: DrawingProjectionNurbs2d,
+    },
+}
+
+/// A projected curve with drawing geometry, visibility, and source provenance.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct DrawingProjectionCurve {
+    /// Stable identifier for this projected curve within the response.
+    pub curve_id: Uuid,
+    /// Bounded 2D geometry.
+    pub geometry: DrawingProjectionCurveGeometry,
+    /// Visible or hidden line classification.
+    pub visibility: DrawingProjectionCurveVisibility,
+    /// Source topology/provenance.
+    pub source: DrawingProjectionCurveSource,
+}
+
 /// What kind of cut to do
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
