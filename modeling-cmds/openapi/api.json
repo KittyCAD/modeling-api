@@ -2418,7 +2418,7 @@
               },
               "target_representation": {
                 "description": "What representation should be used for this file after it's imported?",
-                "default": "mesh",
+                "default": "brep",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/StepImportTargetRepresentation"

@@ -24,7 +24,7 @@ pub enum TargetRepresentation {
     Brep,
 }
 
-const DEFAULT_REPR: TargetRepresentation = TargetRepresentation::Mesh;
+const DEFAULT_REPR: TargetRepresentation = TargetRepresentation::Brep;
 
 /// Import models in STEP format.
 pub mod import {
