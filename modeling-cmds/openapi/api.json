@@ -2416,6 +2416,15 @@
                 "default": false,
                 "type": "boolean"
               },
+              "target_representation": {
+                "description": "What representation should be used for this file after it's imported?",
+                "default": "mesh",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepImportTargetRepresentation"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -9455,6 +9464,25 @@
         "required": [
           "face_id",
           "path_id"
+        ]
+      },
+      "StepImportTargetRepresentation": {
+        "description": "After importing, how should this model's data be represented?",
+        "oneOf": [
+          {
+            "description": "Mesh of 2D geometry",
+            "type": "string",
+            "enum": [
+              "mesh"
+            ]
+          },
+          {
+            "description": "Boundary representation",
+            "type": "string",
+            "enum": [
+              "brep"
+            ]
+          }
         ]
       },
       "StepPresentation": {
