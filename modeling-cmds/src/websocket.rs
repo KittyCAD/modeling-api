@@ -112,6 +112,7 @@ pub enum WebSocketRequest {
     },
 
     /// Execute a KCL project.
+    #[cfg(feature = "exec-kcl")]
     ExecKclProject {
         /// ID for this request.
         request_id: Uuid,
@@ -234,6 +235,7 @@ pub enum OkWebSocketResponseData {
     },
 
     /// Result of executing a KCL project.
+    #[cfg(feature = "exec-kcl")]
     ExecKclProject {
         /// Result after executing KCL.
         result: Result<crate::exec_kcl::ExecKclProjectOk, crate::exec_kcl::ExecKclProjectErr>,
