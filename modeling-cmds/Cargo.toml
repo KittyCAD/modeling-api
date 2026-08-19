@@ -37,8 +37,8 @@ enum-iterator = "2.3.0"
 enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
 http = "1.4.0"
-kcl-api = { version = "0.2.171", optional = true }
-kcl-error = { version = "0.2.166", optional = true }
+kcl-api = { version = "0.2.178", optional = true }
+kcl-error = { version = "0.2.178", optional = true }
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
 # Fork of <crates.io/crates/measurements>
