@@ -1,9 +1,8 @@
 //! Derive helpers for implementing unit conversions for enum types.
 
-#[macro_use]
-extern crate quote;
-#[macro_use]
-extern crate syn;
+use proc_macro2::{Ident, TokenStream};
+use quote::{format_ident, quote};
+use syn::{parse_macro_input, Data, DeriveInput};
 
 /// Implement unit conversions based on an enum.
 #[proc_macro_derive(UnitConversion)]
@@ -11,21 +10,21 @@ pub fn derive_unit_conversions(input: proc_macro::TokenStream) -> proc_macro::To
     derive(parse_macro_input!(input)).into()
 }
 
-fn derive(item: syn::DeriveInput) -> proc_macro2::TokenStream {
+fn derive(item: DeriveInput) -> TokenStream {
     let struct_name = &item.ident;
 
     let measurement_struct_name = format_ident!("{}", struct_name.to_string().replace("Unit", ""));
 
     // Make sure this is an enum.
     match &item.data {
-        syn::Data::Enum(_) => {}
+        Data::Enum(_) => {}
         // Return early if this is not an enum.
         _ => return quote!(),
     }
 
     // Get all the variants of the enum.
-    let variants: Vec<&proc_macro2::Ident> = match &item.data {
-        syn::Data::Enum(data) => data.variants.iter().map(|v| &v.ident).collect(),
+    let variants: Vec<&Ident> = match &item.data {
+        Data::Enum(data) => data.variants.iter().map(|v| &v.ident).collect(),
         _ => unreachable!(),
     };
 

@@ -657,7 +657,7 @@ define_modeling_cmd_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct DefaultCameraZoom {
             /// Move the camera forward along the vector it's looking at,
-            /// by this magnitudedefaultCameraZoom.
+            /// by this magnitude.
             /// Basically, how much should the camera move forward by.
             pub magnitude: f32,
         }
@@ -1337,7 +1337,7 @@ define_modeling_cmd_enum! {
         pub struct Solid3dGetNextAdjacentEdge {
             /// Which object is being queried.
             pub object_id: Uuid,
-            /// Which edge you want the opposite of.
+            /// Which edge you want the next edge of.
             pub edge_id: Uuid,
             /// Which face is used to figure out the opposite edge?
             pub face_id: Uuid,
@@ -1352,7 +1352,7 @@ define_modeling_cmd_enum! {
         pub struct Solid3dGetPrevAdjacentEdge {
             /// Which object is being queried.
             pub object_id: Uuid,
-            /// Which edge you want the opposite of.
+            /// Which edge you want the previous edge of.
             pub edge_id: Uuid,
             /// Which face is used to figure out the opposite edge?
             pub face_id: Uuid,

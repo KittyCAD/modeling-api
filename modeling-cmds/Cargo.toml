@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-modeling-cmds"
-version = "0.2.220"
+version = "0.2.224"
 edition = "2021"
 authors = ["KittyCAD, Inc."]
 description = "Commands in the KittyCAD Modeling API"
@@ -19,11 +19,12 @@ tabled = ["dep:tabled"]
 ts-rs = ["dep:ts-rs"]
 slog = ["dep:slog"]
 cxx = ["dep:cxx"]
-websocket = ["dep:kcl-api", "dep:serde_json"]
+websocket = ["dep:serde_json"]
 webrtc = ["dep:webrtc"]
 unstable_exhaustive = []
 python = ["dep:pyo3", "dep:pyo3-stub-gen"]
 arbitrary = ["dep:arbitrary", "uuid/arbitrary", "chrono/arbitrary"]
+exec-kcl = ["dep:kcl-api", "dep:kcl-error"]
 
 [dependencies]
 anyhow = "1.0.101"
@@ -36,16 +37,16 @@ enum-iterator = "2.3.0"
 enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
 http = "1.4.0"
-kcl-api = { version = "0.2.171", optional = true }
-kcl-error = { version = "0.2.166" }
+kcl-api = { version = "0.2.178", optional = true }
+kcl-error = { version = "0.2.178", optional = true }
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
 # Fork of <crates.io/crates/measurements>
 measurements = { package = "kittycad-measurements", version = "0.11.2" }
 parse-display = "0.11.0"
 parse-display-derive = "0.11.0"
-pyo3 = { version = "0.28.3", optional = true }
-pyo3-stub-gen = { version = "0.22.3", optional = true, default-features = false, features = ["either", "numpy", "ordered-float"] }
+pyo3 = { version = "0.29.2", optional = true }
+pyo3-stub-gen = { version = "0.23.0", optional = true, default-features = false, features = ["either", "numpy", "ordered-float"] }
 schemars = { version = "0.8.22", features = ["bigdecimal04", "chrono", "url", "uuid1"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_bytes = "0.11.19"

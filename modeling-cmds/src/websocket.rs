@@ -43,8 +43,8 @@ pub enum ErrorCode {
     ConnectionProblem,
     /// Client sent a Websocket message type which the KittyCAD API does not handle.
     MessageTypeNotAccepted,
-    /// Client sent a Websocket message intended for WebRTC but it was configured as a WebRTC
-    /// connection.
+    /// Client sent a Websocket message intended for WebRTC,
+    /// but did not configure the server to establish WebRTC.
     MessageTypeNotAcceptedForWebRTC,
 }
 
@@ -112,6 +112,7 @@ pub enum WebSocketRequest {
     },
 
     /// Execute a KCL project.
+    #[cfg(feature = "exec-kcl")]
     ExecKclProject {
         /// ID for this request.
         request_id: Uuid,
@@ -234,6 +235,7 @@ pub enum OkWebSocketResponseData {
     },
 
     /// Result of executing a KCL project.
+    #[cfg(feature = "exec-kcl")]
     ExecKclProject {
         /// Result after executing KCL.
         result: Result<crate::exec_kcl::ExecKclProjectOk, crate::exec_kcl::ExecKclProjectErr>,
@@ -554,7 +556,7 @@ pub struct ClientMetrics {
     /// https://www.w3.org/TR/webrtc-stats/#dom-rtcreceivedrtpstreamstats-packetslost
     pub rtc_packets_lost: Option<u32>,
 
-    ///  Count the total number of Picture Loss Indication (PLI) packets.
+    /// Count the total number of Picture Loss Indication (PLI) packets.
     ///
     /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-plicount
     pub rtc_pli_count: Option<u32>,
@@ -569,7 +571,7 @@ pub struct ClientMetrics {
     /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-totalpausesduration
     pub rtc_total_pauses_duration_sec: Option<f32>,
 
-    /// Total duration of pauses in seconds.
+    /// Estimated round trip time, measured in seconds.
     ///
     /// This is the "ping" between the client and the STUN server. Not to be confused with the
     /// E2E RTT documented

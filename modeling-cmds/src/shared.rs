@@ -1855,8 +1855,7 @@ pub struct TransformBy<T> {
 
 impl<T> TransformBy<T> {
     /// Get the origin of this transformation.
-    /// Reads from the `origin` field if it's set, otherwise
-    /// falls back to the `is_local` field.
+    /// Reads from the `origin` field.
     pub fn get_origin(&self) -> OriginType {
         self.origin
     }

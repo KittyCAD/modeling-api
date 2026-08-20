@@ -36,6 +36,7 @@ pub mod session;
 pub mod shared;
 
 /// Types for executing KCL and getting response back.
+#[cfg(feature = "exec-kcl")]
 pub mod exec_kcl;
 
 #[cfg(all(test, feature = "derive-jsonschema-on-enums"))]
