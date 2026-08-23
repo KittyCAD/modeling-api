@@ -20,7 +20,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
         - uses: taiki-e/install-action@cargo-llvm-cov
         - uses: taiki-e/install-action@nextest
-        - uses: Swatinem/rust-cache@v2.9.1
+        - uses: Swatinem/rust-cache@v2.9.2
         - uses: taiki-e/install-action@just
 
         - name: cargo test
@@ -50,7 +50,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
           with:
             components: clippy
-        - uses: Swatinem/rust-cache@v2.9.1
+        - uses: Swatinem/rust-cache@v2.9.2
 
         - name: Check lints
           run: just lint
@@ -65,7 +65,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
           with:
             targets: wasm32-unknown-unknown
-        - uses: Swatinem/rust-cache@v2.9.1
+        - uses: Swatinem/rust-cache@v2.9.2
 
         - name: Check lints
           run: just check-wasm
@@ -99,7 +99,7 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v7
         - name: Run codespell
-          uses: crate-ci/typos@v1.48.0
+          uses: crate-ci/typos@v1.49.0
 
     cargo-toml-sorted:
       name: Check Cargo.toml is sorted
