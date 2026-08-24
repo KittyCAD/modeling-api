@@ -2406,8 +2406,22 @@ define_modeling_cmd_enum! {
             pub transforms: Vec<ComponentTransform>,
         }
 
-        /// Create a new solid from combining other smaller solids.
-        /// In other words, every part of the input solids will be included in the output solid.
+        /// Given a set of overlapping solids, create a new single solid.
+        ///
+        /// Most successful unions come from solids who's faces do not overlap
+        /// aka non-coplanar.
+        /// 
+        /// Failure cases:
+        /// * A comman failure is unsupported coincident faces try to be unioned.
+        ///
+        /// Warning cases:
+        /// * When an element of the set doesn't overlap.
+        ///
+        /// Noteable behaviors:
+        /// * What appear to be coincident points will succeed and not give a "no overlap" warning, even if they're not.
+        /// * Elements' top or bottom faces may not combine into one new face, which can seem like the union failed. You can tell they succeeded from side faces not extending into the original solids.
+        /// * When exporting to STEP, if the above behavior is observed, will merged the faces.
+        ///
         #[derive(
             Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
             Builder
@@ -2459,9 +2473,24 @@ define_modeling_cmd_enum! {
             pub tolerance: LengthUnit,
         }
 
-        /// Create a new solid from subtracting several other solids.
-        /// The 'target' is what will be cut from.
-        /// The 'tool' is what will be cut out from 'target'.
+        /// Given a target solid, subtract a set of "tool solids" to create a new solid.
+        ///
+        /// Most successful subtracts come from solids who's faces do not overlap
+        /// aka non-coplanar.
+        /// 
+        /// Failure cases:
+        /// * A comman failure is unsupported coplanar faces try to be unioned.
+        ///
+        /// Warning cases:
+        ///
+        /// Noteable behaviors:
+        /// If two tools occupy the same vertical range and overlap, like two cubes of the same height,
+        /// the subtract of the first will cause the second tool to fail because the first leaves behind
+        /// coplanar faces, causing an aforementioned failure case.
+        ///
+        /// Unlike `boolean_union`, if one tool in the set overlaps, any OTHER tool in the set
+        /// that doesn't WILL NOT signal a non-overlap warning.
+        ///
         #[derive(
             Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
             Builder
