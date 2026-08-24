@@ -2412,12 +2412,12 @@ define_modeling_cmd_enum! {
         /// aka non-coplanar.
         /// 
         /// Failure cases:
-        /// * A comman failure is unsupported coincident faces try to be unioned.
+        /// * A common failure is unsupported coincident faces try to be unioned.
         ///
         /// Warning cases:
         /// * When an element of the set doesn't overlap.
         ///
-        /// Noteable behaviors:
+        /// Notable behaviors:
         /// * What appear to be coincident points will succeed and not give a "no overlap" warning, even if they're not.
         /// * Elements' top or bottom faces may not combine into one new face, which can seem like the union failed. You can tell they succeeded from side faces not extending into the original solids.
         /// * When exporting to STEP, if the above behavior is observed, will merged the faces.
