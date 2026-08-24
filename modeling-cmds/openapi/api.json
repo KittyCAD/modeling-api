@@ -7573,7 +7573,7 @@
             ]
           },
           {
-            "description": "Create a new solid from subtracting several other solids. The 'target' is what will be cut from. The 'tool' is what will be cut out from 'target'.",
+            "description": "Given a target solid, subtract a set of \"tool solids\" to create a new solid.\n\nMost successful subtracts come from solids who's faces do not overlap aka non-coplanar.\n\nFailure cases: * A common failure is unsupported coplanar faces try to be unioned.\n\nWarning cases:\n\nNotable behaviors: If two tools occupy the same vertical range and overlap, like two cubes of the same height, the subtract of the first will cause the second tool to fail because the first leaves behind coplanar faces, causing an aforementioned failure case.\n\nUnlike `boolean_union`, if one tool in the set overlaps, any OTHER tool in the set that doesn't WILL NOT signal a non-overlap warning.",
             "type": "object",
             "properties": {
               "separate_bodies": {

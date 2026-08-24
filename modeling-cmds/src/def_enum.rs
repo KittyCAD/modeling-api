@@ -2473,9 +2473,24 @@ define_modeling_cmd_enum! {
             pub tolerance: LengthUnit,
         }
 
-        /// Create a new solid from subtracting several other solids.
-        /// The 'target' is what will be cut from.
-        /// The 'tool' is what will be cut out from 'target'.
+        /// Given a target solid, subtract a set of "tool solids" to create a new solid.
+        ///
+        /// Most successful subtracts come from solids who's faces do not overlap
+        /// aka non-coplanar.
+        /// 
+        /// Failure cases:
+        /// * A common failure is unsupported coplanar faces try to be unioned.
+        ///
+        /// Warning cases:
+        ///
+        /// Notable behaviors:
+        /// If two tools occupy the same vertical range and overlap, like two cubes of the same height,
+        /// the subtract of the first will cause the second tool to fail because the first leaves behind
+        /// coplanar faces, causing an aforementioned failure case.
+        ///
+        /// Unlike `boolean_union`, if one tool in the set overlaps, any OTHER tool in the set
+        /// that doesn't WILL NOT signal a non-overlap warning.
+        ///
         #[derive(
             Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
             Builder
