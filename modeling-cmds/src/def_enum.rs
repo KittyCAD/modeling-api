@@ -2469,7 +2469,7 @@ define_modeling_cmd_enum! {
         ///
         /// Warning cases:
         ///
-        /// Noteable behaviors:
+        /// Notable behaviors:
         /// If two tools occupy the same vertical range and overlap, like two cubes of the same height,
         /// the subtract of the first will cause the second tool to fail because the first leaves behind
         /// coplanar faces, causing an aforementioned failure case.
