@@ -2465,7 +2465,7 @@ define_modeling_cmd_enum! {
         /// aka non-coplanar.
         /// 
         /// Failure cases:
-        /// * A comman failure is unsupported coplanar faces try to be unioned.
+        /// * A common failure is unsupported coplanar faces try to be unioned.
         ///
         /// Warning cases:
         ///
