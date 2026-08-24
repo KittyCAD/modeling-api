@@ -39,6 +39,38 @@ jobs:
             flags: unittests
             verbose: true
             files: lcov.info
+            
+    maybe-redo-openapi:
+      name: redo openapi.json on changes
+      runs-on: ubuntu-latest-8-cores
+      steps:
+        - uses: actions/checkout@v7
+        - name: Install Python 3.12 development libraries
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y python3.12-dev
+        - name: Install Rust
+          uses: dtolnay/rust-toolchain@stable
+        - uses: taiki-e/install-action@cargo-llvm-cov
+        - uses: taiki-e/install-action@nextest
+        - uses: Swatinem/rust-cache@v2.9.2
+        - uses: taiki-e/install-action@just
+        - name: just redo-openapi
+          shell: bash
+          run: |
+            export ZOO_API_TOKEN=${{secrets.KITTYCAD_API_TOKEN}}
+            just redo-openapi
+            git status --porcelain | grep modeling-cmds/openapi/api.json && \
+            git add modeling-cmds/openapi/api.json
+        - name: Commit changes
+          run: |
+            git \
+              -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "Update OpenAPI specification"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          env:
+            RUST_BACKTRACE: 1
   
     check-lint:
       name: Check lints
