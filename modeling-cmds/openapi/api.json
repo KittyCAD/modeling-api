@@ -2855,7 +2855,7 @@
                 ]
               },
               "distance": {
-                "description": "How far off the plane to extrude",
+                "description": "How far off the plane to extrude This distance is relative to the target's plane, not an absolute coordinate.",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/LengthUnit"

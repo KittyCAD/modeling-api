@@ -139,6 +139,7 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub target_reference: Option<EdgeSpecifier>,
             /// How far off the plane to extrude
+            /// This distance is relative to the target's plane, not an absolute coordinate.
             pub distance: LengthUnit,
             /// What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane.
             /// Legacy field; if `direction_reference` is provided, the reference takes precedence.
