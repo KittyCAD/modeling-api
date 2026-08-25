@@ -43,6 +43,8 @@ jobs:
     maybe-redo-openapi:
       name: redo openapi.json on changes
       runs-on: ubuntu-latest-8-cores
+      permissions:
+        contents: write
       steps:
         - uses: actions/checkout@v7
         - name: Install Python 3.12 development libraries
