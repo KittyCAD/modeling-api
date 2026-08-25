@@ -7430,7 +7430,7 @@
             ]
           },
           {
-            "description": "Find all IDs of selected entities",
+            "description": "Find all IDs of selected entities.",
             "type": "object",
             "properties": {
               "type": {
