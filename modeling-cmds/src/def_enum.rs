@@ -2860,8 +2860,8 @@ impl ModelingCmd {
 }
 
 /// File to import into the current model.
-/// If you are sending binary data for a file, be sure to send the WebSocketRequest as
-/// binary/bson, not text/json.
+///
+/// Send a request containing binary file data as a MsgPack-encoded message in a WebSocket binary frame.
 #[derive(Clone, Serialize, Deserialize, JsonSchema, Eq, PartialEq, bon::Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
