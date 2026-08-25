@@ -64,13 +64,12 @@ jobs:
         - name: just redo-openapi
           shell: bash
           run: |
-            export ZOO_API_TOKEN=${{secrets.KITTYCAD_API_TOKEN}}
+            export ZOO_API_TOKEN="${{secrets.KITTYCAD_API_TOKEN}}"
             just redo-openapi
-            if ! git diff --quiet -- modeling-cmds/openapi/api.json; then
-              git add modeling-cmds/openapi/api.json
+            if git diff --quiet -- modeling-cmds/openapi/api.json; then
+              exit 0
             fi
-        - name: Commit changes
-          run: |
+            git add modeling-cmds/openapi/api.json
             git \
               -c user.name="github-actions[bot]" \
               -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
