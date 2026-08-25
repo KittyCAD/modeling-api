@@ -47,6 +47,8 @@ jobs:
         contents: write
       steps:
         - uses: actions/checkout@v7
+          with:
+            ref: ${{ github.head_ref }}
         - name: Install Python 3.12 development libraries
           run: |
             sudo apt-get update
