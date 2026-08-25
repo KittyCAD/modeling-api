@@ -676,6 +676,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Export the scene to a file.
+        ///
+        /// The response is a MsgPack-encoded message in a WebSocket binary frame.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -690,6 +692,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Export the scene to a file.
+        ///
+        /// The response is a MsgPack-encoded message in a WebSocket binary frame.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]

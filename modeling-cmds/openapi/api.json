@@ -3970,7 +3970,7 @@
             ]
           },
           {
-            "description": "Export the scene to a file.",
+            "description": "Export the scene to a file.\n\nThe response is a MsgPack-encoded message in a WebSocket binary frame.",
             "type": "object",
             "properties": {
               "entity_ids": {
@@ -4003,7 +4003,7 @@
             ]
           },
           {
-            "description": "Export the scene to a file.",
+            "description": "Export the scene to a file.\n\nThe response is a MsgPack-encoded message in a WebSocket binary frame.",
             "type": "object",
             "properties": {
               "entity_ids": {
