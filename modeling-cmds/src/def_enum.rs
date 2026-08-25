@@ -2370,7 +2370,7 @@ define_modeling_cmd_enum! {
             pub entities: Vec<EntityReference>,
         }
 
-        /// Find all IDs of selected entities.
+        /// Find all IDs of selected entities
         #[derive(Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
