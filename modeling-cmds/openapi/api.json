@@ -2002,7 +2002,7 @@
         ]
       },
       "ImportFile": {
-        "description": "File to import into the current model. If you are sending binary data for a file, be sure to send the WebSocketRequest as binary/bson, not text/json.",
+        "description": "File to import into the current model.\n\nSend a request containing binary file data as a MsgPack-encoded message in a WebSocket binary frame.",
         "type": "object",
         "properties": {
           "data": {
@@ -2855,7 +2855,7 @@
                 ]
               },
               "distance": {
-                "description": "How far off the plane to extrude",
+                "description": "How far off the plane to extrude This distance is relative to the target's plane, not an absolute coordinate. Symmetric extrusions will extrude outwards from both sides of the sketch to the length specified.",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/LengthUnit"
@@ -3970,7 +3970,7 @@
             ]
           },
           {
-            "description": "Export the scene to a file.",
+            "description": "Export the scene to a file.\n\nThe response is a MsgPack-encoded message in a WebSocket binary frame.",
             "type": "object",
             "properties": {
               "entity_ids": {
@@ -4003,7 +4003,7 @@
             ]
           },
           {
-            "description": "Export the scene to a file.",
+            "description": "Export the scene to a file.\n\nThe response is a MsgPack-encoded message in a WebSocket binary frame.",
             "type": "object",
             "properties": {
               "entity_ids": {
