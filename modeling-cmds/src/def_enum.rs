@@ -139,6 +139,8 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub target_reference: Option<EdgeSpecifier>,
             /// How far off the plane to extrude
+            /// This distance is relative to the target's plane, not an absolute coordinate.
+            /// Symmetric extrusions will extrude outwards from both sides of the sketch to the length specified.
             pub distance: LengthUnit,
             /// What direction to extrude in. If None, the engine will extrude in the direction normal of the target's plane.
             /// Legacy field; if `direction_reference` is provided, the reference takes precedence.
@@ -676,6 +678,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Export the scene to a file.
+        ///
+        /// The response is a MsgPack-encoded message in a WebSocket binary frame.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -690,6 +694,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Export the scene to a file.
+        ///
+        /// The response is a MsgPack-encoded message in a WebSocket binary frame.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -2831,8 +2837,8 @@ impl ModelingCmd {
 }
 
 /// File to import into the current model.
-/// If you are sending binary data for a file, be sure to send the WebSocketRequest as
-/// binary/bson, not text/json.
+///
+/// Send a request containing binary file data as a MsgPack-encoded message in a WebSocket binary frame.
 #[derive(Clone, Serialize, Deserialize, JsonSchema, Eq, PartialEq, bon::Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
