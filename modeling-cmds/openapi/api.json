@@ -2935,7 +2935,7 @@
             ]
           },
           {
-            "description": "Command for extruding a solid 2d to a reference geometry",
+            "description": "Command for extruding a solid 2d to a reference geometry.",
             "type": "object",
             "properties": {
               "body_type": {
