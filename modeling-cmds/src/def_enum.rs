@@ -2031,7 +2031,13 @@ define_modeling_cmd_enum! {
             pub bitrate: Option<u32>,
         }
 
-        /// Import files to the current model.
+        /// Import CAD files to the current scene.
+        ///
+        /// Send a request containing binary file data as a MsgPack-encoded message in a WebSocket binary frame.
+        ///
+        /// Note: These imports are non-editable. In the future we may expose a proprietary-to-KCL function
+        /// to resolve this. The main intention today is to use imports as design references.
+        ///
         #[derive(Debug, Eq, PartialEq, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -2483,6 +2489,8 @@ define_modeling_cmd_enum! {
         ///
         /// Most successful subtracts come from solids who's faces do not overlap
         /// aka non-coplanar.
+        ///
+        /// Prefer one `tool` over multiple when calling this feature.
         /// 
         /// Failure cases:
         /// * A common failure is unsupported coplanar faces try to be unioned.
@@ -2865,9 +2873,7 @@ impl ModelingCmd {
     }
 }
 
-/// File to import into the current model.
-///
-/// Send a request containing binary file data as a MsgPack-encoded message in a WebSocket binary frame.
+/// File to import into the current scene.
 #[derive(Clone, Serialize, Deserialize, JsonSchema, Eq, PartialEq, bon::Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
