@@ -177,7 +177,7 @@ define_modeling_cmd_enum! {
             pub body_type: BodyType,
         }
 
-        /// Command for extruding a solid 2d to a reference geometry.
+        /// Command for extruding a solid 2d to a reference geometry
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
         )]
