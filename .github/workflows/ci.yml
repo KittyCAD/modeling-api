@@ -48,6 +48,8 @@ jobs:
       steps:
         - uses: actions/checkout@v7
           with:
+            # Needed because GitHub actions checks out "synthetic merge commit" by default.
+            # This gets us the actual HEAD ref we deal with normally.
             ref: ${{ github.head_ref }}
         - name: Install Python 3.12 development libraries
           run: |
