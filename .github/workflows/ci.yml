@@ -72,7 +72,7 @@ jobs:
             git add modeling-cmds/openapi/api.json
             git \
               -c user.name="github-actions[bot]" \
-              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              -c user.email="github-actions[bot]@users.noreply.github.com" \
               commit -m "Update OpenAPI specification"
             git push origin HEAD:${{ github.head_ref }}
           env:
