@@ -2002,7 +2002,7 @@
         ]
       },
       "ImportFile": {
-        "description": "File to import into the current model.\n\nSend a request containing binary file data as a MsgPack-encoded message in a WebSocket binary frame.",
+        "description": "File to import into the current scene.",
         "type": "object",
         "properties": {
           "data": {
@@ -6806,7 +6806,7 @@
             ]
           },
           {
-            "description": "Import files to the current model.",
+            "description": "Import CAD files to the current scene.\n\nSend a request containing binary file data as a MsgPack-encoded message in a WebSocket binary frame.\n\nNote: These imports are non-editable. In the future we may expose a proprietary-to-KCL function to resolve this. The main intention today is to use imports as design references.",
             "type": "object",
             "properties": {
               "files": {
@@ -7573,7 +7573,7 @@
             ]
           },
           {
-            "description": "Given a target solid, subtract a set of \"tool solids\" to create a new solid.\n\nMost successful subtracts come from solids who's faces do not overlap aka non-coplanar.\n\nFailure cases: * A common failure is unsupported coplanar faces try to be unioned.\n\nWarning cases:\n\nNotable behaviors: If two tools occupy the same vertical range and overlap, like two cubes of the same height, the subtract of the first will cause the second tool to fail because the first leaves behind coplanar faces, causing an aforementioned failure case.\n\nUnlike `boolean_union`, if one tool in the set overlaps, any OTHER tool in the set that doesn't WILL NOT signal a non-overlap warning.",
+            "description": "Given a target solid, subtract a set of \"tool solids\" to create a new solid.\n\nMost successful subtracts come from solids who's faces do not overlap aka non-coplanar.\n\nPrefer one `tool` over multiple when calling this feature.\n\nFailure cases: * A common failure is unsupported coplanar faces try to be unioned.\n\nWarning cases:\n\nNotable behaviors: If two tools occupy the same vertical range and overlap, like two cubes of the same height, the subtract of the first will cause the second tool to fail because the first leaves behind coplanar faces, causing an aforementioned failure case.\n\nUnlike `boolean_union`, if one tool in the set overlaps, any OTHER tool in the set that doesn't WILL NOT signal a non-overlap warning.",
             "type": "object",
             "properties": {
               "separate_bodies": {
