@@ -2,7 +2,7 @@ use bon::Builder;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::shared::{Point2d, Point3d};
+use crate::shared::{Color, Point2d, Point3d};
 
 /// Export models as a KittyCAD render packet for browser-side rendering.
 pub mod export {
@@ -25,6 +25,10 @@ pub mod export {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 #[serde(rename_all = "camelCase")]
 pub struct RenderPacket {
+    /// PBR materials keyed by the body IDs referenced by renderable primitives.
+    #[serde(default)]
+    pub body_materials: Vec<RenderPacketBodyMaterial>,
+
     /// Individual renderable face primitives with stable engine metadata.
     pub primitives: Vec<RenderPacketPrimitive>,
 
@@ -36,6 +40,26 @@ pub struct RenderPacket {
 
     /// Explicit engine-authored sketch regions with stable engine metadata.
     pub regions: Vec<RenderPacketRegion>,
+}
+
+/// The PBR material assigned to a body in a render packet.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "camelCase")]
+pub struct RenderPacketBodyMaterial {
+    /// Stable engine body UUID used by renderable primitives.
+    pub body_id: uuid::Uuid,
+
+    /// Front-face PBR base color, including opacity in the alpha channel.
+    pub base_color: Color,
+
+    /// PBR metallic factor in the range 0 to 1.
+    pub metalness: f32,
+
+    /// PBR roughness factor in the range 0 to 1.
+    pub roughness: f32,
 }
 
 /// A single renderable primitive in a render packet.
