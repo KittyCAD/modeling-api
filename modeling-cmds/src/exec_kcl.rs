@@ -71,6 +71,8 @@ pub struct ExecKclProjectOk {
     /// The artifact graph produced by the KCL execution.
     #[cfg(feature = "websocket")]
     pub artifact_graph: ArtifactGraph,
+    #[cfg(feature = "websocket")]
+    operations: indexmap::IndexMap<kcl_error::ModuleId, Vec<kcl_api::Operation>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
@@ -103,6 +105,8 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
         Ok(Self {
             #[cfg(feature = "websocket")]
             artifact_graph: ArtifactGraph::default(),
+            #[cfg(feature = "websocket")]
+            operations: Default::default(),
         })
     }
 }
