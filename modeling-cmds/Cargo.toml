@@ -16,15 +16,15 @@ all-features = true
 default = []
 derive-jsonschema-on-enums = []
 tabled = ["dep:tabled"]
-ts-rs = ["dep:ts-rs"]
+ts-rs = ["dep:ts-rs", "kcl-api/ts-rs"]
 slog = ["dep:slog"]
 cxx = ["dep:cxx"]
 websocket = ["dep:serde_json"]
 webrtc = ["dep:webrtc"]
 unstable_exhaustive = []
 python = ["dep:pyo3", "dep:pyo3-stub-gen"]
-arbitrary = ["dep:arbitrary", "uuid/arbitrary", "chrono/arbitrary"]
-exec-kcl = ["dep:kcl-api", "dep:kcl-error"]
+arbitrary = ["dep:arbitrary", "uuid/arbitrary", "chrono/arbitrary", "kcl-api/arbitrary"]
+exec-kcl = ["dep:kcl-error"]
 
 [dependencies]
 anyhow = "1.0.101"
@@ -38,7 +38,7 @@ enum-iterator-derive = "1.2.1"
 euler = "0.4.1"
 http = "1.4.0"
 indexmap = "2.14.0"
-kcl-api = { version = "0.2.179", optional = true }
+kcl-api = { version = "0.2.179" }
 kcl-error = { version = "0.2.179", optional = true }
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-unit-conversion-derive = "0.1.0"
@@ -72,4 +72,3 @@ tokio = { version = "1.52.3", features = ["macros"] }
 
 [lints]
 workspace = true
-

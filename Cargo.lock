@@ -2518,8 +2518,10 @@ dependencies = [
 [[package]]
 name = "kcl-api"
 version = "0.2.180"
-source = "git+https://github.com/KittyCAD/modeling-app?branch=main#69a317e5a28c4bf5c503097b541446fabcf4dee1"
+source = "git+https://github.com/KittyCAD/modeling-app?branch=achalmers/traits-for-operations#f0e2191b5915c075c51c0d2cc55d1cc6b5b8d0ed"
 dependencies = [
+ "arbitrary",
+ "euler",
  "indexmap 2.14.0",
  "kcl-error",
  "kittycad-measurements",
@@ -2528,6 +2530,7 @@ dependencies = [
  "parse-display-derive",
  "schemars 0.8.22",
  "serde",
+ "serde_json",
  "ts-rs",
  "uuid",
 ]
@@ -2535,7 +2538,7 @@ dependencies = [
 [[package]]
 name = "kcl-error"
 version = "0.2.180"
-source = "git+https://github.com/KittyCAD/modeling-app?branch=main#69a317e5a28c4bf5c503097b541446fabcf4dee1"
+source = "git+https://github.com/KittyCAD/modeling-app?branch=achalmers/traits-for-operations#f0e2191b5915c075c51c0d2cc55d1cc6b5b8d0ed"
 dependencies = [
  "miette",
  "schemars 0.8.22",
