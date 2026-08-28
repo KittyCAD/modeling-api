@@ -32,4 +32,3 @@ kcl-error = { git = "https://github.com/KittyCAD/modeling-app", branch = "main" 
 
 [profile.bench]
 debug = true
-
