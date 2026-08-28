@@ -25,9 +25,29 @@ impl LengthUnit {
     }
 }
 
-impl Point3d<LengthUnit> {
+/// Convert a point whose components are [`LengthUnit`] values to millimeters.
+pub trait LengthUnitPointExt {
+    /// The corresponding point with plain millimeter components.
+    type MillimeterPoint;
+
     /// Convert the point to millimeters.
-    pub fn to_millimeters(&self, from: crate::units::UnitLength) -> Point3d<f64> {
+    fn to_millimeters(&self, from: crate::units::UnitLength) -> Self::MillimeterPoint;
+}
+
+/// Convert a point whose components are millimeters to [`LengthUnit`] values.
+pub trait PointExt {
+    /// The corresponding point with unit-aware components.
+    type UnitPoint;
+
+    /// Convert the point from millimeters.
+    fn as_millimeters(&self, to: crate::units::UnitLength) -> Self::UnitPoint;
+}
+
+impl LengthUnitPointExt for Point3d<LengthUnit> {
+    type MillimeterPoint = Point3d<f64>;
+
+    /// Convert the point to millimeters.
+    fn to_millimeters(&self, from: crate::units::UnitLength) -> Self::MillimeterPoint {
         Point3d {
             x: self.x.to_millimeters(from),
             y: self.y.to_millimeters(from),
@@ -36,9 +56,11 @@ impl Point3d<LengthUnit> {
     }
 }
 
-impl Point3d<f64> {
+impl PointExt for Point3d<f64> {
+    type UnitPoint = Point3d<LengthUnit>;
+
     /// Convert the point from millimeters.
-    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point3d<LengthUnit> {
+    fn as_millimeters(&self, to: crate::units::UnitLength) -> Self::UnitPoint {
         Point3d {
             x: crate::units::UnitLength::Millimeters.convert_to(to, self.x).into(),
             y: crate::units::UnitLength::Millimeters.convert_to(to, self.y).into(),
@@ -47,9 +69,11 @@ impl Point3d<f64> {
     }
 }
 
-impl Point2d<LengthUnit> {
+impl LengthUnitPointExt for Point2d<LengthUnit> {
+    type MillimeterPoint = Point2d<f64>;
+
     /// Convert the point to millimeters.
-    pub fn to_millimeters(&self, from: crate::units::UnitLength) -> Point2d<f64> {
+    fn to_millimeters(&self, from: crate::units::UnitLength) -> Self::MillimeterPoint {
         Point2d {
             x: self.x.to_millimeters(from),
             y: self.y.to_millimeters(from),
@@ -57,9 +81,11 @@ impl Point2d<LengthUnit> {
     }
 }
 
-impl Point2d<f64> {
+impl PointExt for Point2d<f64> {
+    type UnitPoint = Point2d<LengthUnit>;
+
     /// Convert the point from millimeters.
-    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point2d<LengthUnit> {
+    fn as_millimeters(&self, to: crate::units::UnitLength) -> Self::UnitPoint {
         Point2d {
             x: crate::units::UnitLength::Millimeters.convert_to(to, self.x).into(),
             y: crate::units::UnitLength::Millimeters.convert_to(to, self.y).into(),
@@ -67,9 +93,11 @@ impl Point2d<f64> {
     }
 }
 
-impl Point4d<LengthUnit> {
+impl LengthUnitPointExt for Point4d<LengthUnit> {
+    type MillimeterPoint = Point4d<f64>;
+
     /// Convert the point to millimeters.
-    pub fn to_millimeters(&self, from: crate::units::UnitLength) -> Point4d<f64> {
+    fn to_millimeters(&self, from: crate::units::UnitLength) -> Self::MillimeterPoint {
         Point4d {
             x: self.x.to_millimeters(from),
             y: self.y.to_millimeters(from),
@@ -79,9 +107,11 @@ impl Point4d<LengthUnit> {
     }
 }
 
-impl Point4d<f64> {
+impl PointExt for Point4d<f64> {
+    type UnitPoint = Point4d<LengthUnit>;
+
     /// Convert the point from millimeters.
-    pub fn from_millimeters(&self, to: crate::units::UnitLength) -> Point4d<LengthUnit> {
+    fn as_millimeters(&self, to: crate::units::UnitLength) -> Self::UnitPoint {
         Point4d {
             x: crate::units::UnitLength::Millimeters.convert_to(to, self.x).into(),
             y: crate::units::UnitLength::Millimeters.convert_to(to, self.y).into(),
