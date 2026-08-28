@@ -4,6 +4,18 @@ use serde::{Deserialize, Serialize};
 
 use crate::shared::{Color, Point2d, Point3d};
 
+/// Magic bytes at the start of every binary render packet.
+pub const RENDER_PACKET_MAGIC: [u8; 8] = *b"ZOORPKT\0";
+
+/// Current binary render packet version.
+pub const RENDER_PACKET_VERSION: u32 = 1;
+
+/// Size of the fixed binary render packet header in bytes.
+pub const RENDER_PACKET_HEADER_SIZE: usize = 16;
+
+/// Number of bytes in one interleaved surface vertex.
+pub const RENDER_PACKET_VERTEX_STRIDE: u32 = 32;
+
 /// Export models as a KittyCAD render packet for browser-side rendering.
 pub mod export {
     use super::*;
@@ -18,13 +30,22 @@ pub mod export {
     pub struct Options {}
 }
 
-/// A render packet that can be consumed directly by the browser renderer.
+/// Metadata for a binary render packet consumed by the browser renderer.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 #[serde(rename_all = "camelCase")]
 pub struct RenderPacket {
+    /// Binary render packet format version.
+    pub version: u32,
+
+    /// Layout of the interleaved surface vertex buffer.
+    pub vertex_layout: RenderPacketVertexLayout,
+
+    /// Byte ranges relative to the beginning of the packet's binary payload.
+    pub sections: RenderPacketBinarySections,
+
     /// PBR materials keyed by the body IDs referenced by renderable primitives.
     #[serde(default)]
     pub body_materials: Vec<RenderPacketBodyMaterial>,
@@ -40,6 +61,59 @@ pub struct RenderPacket {
 
     /// Explicit engine-authored sketch regions with stable engine metadata.
     pub regions: Vec<RenderPacketRegion>,
+}
+
+/// Layout of a surface vertex in the interleaved vertex section.
+#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "camelCase")]
+pub struct RenderPacketVertexLayout {
+    /// Distance in bytes between consecutive vertices.
+    pub stride: u32,
+    /// Byte offset of the float32x3 position.
+    pub position_offset: u32,
+    /// Byte offset of the float32x3 normal.
+    pub normal_offset: u32,
+    /// Byte offset of the float32x2 UV coordinate.
+    pub uv_offset: u32,
+}
+
+/// A byte range within the binary payload following the JSON metadata.
+#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "camelCase")]
+pub struct RenderPacketBinarySection {
+    /// Byte offset relative to the beginning of the binary payload.
+    pub byte_offset: u32,
+    /// Length of the section in bytes.
+    pub byte_length: u32,
+}
+
+/// Packed numerical sections stored after the JSON metadata.
+#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "camelCase")]
+pub struct RenderPacketBinarySections {
+    /// Interleaved surface vertices.
+    pub vertices: RenderPacketBinarySection,
+    /// Packet-wide uint32 primitive index for each surface vertex.
+    pub primitive_indices: RenderPacketBinarySection,
+    /// Global uint32 triangle indices.
+    pub indices: RenderPacketBinarySection,
+    /// Packed float32x2 trim-loop points.
+    pub trim_points: RenderPacketBinarySection,
+    /// Packed float32x3 edge-polyline points.
+    pub edge_points: RenderPacketBinarySection,
+    /// Packed float32x3 sketch-segment points.
+    pub sketch_points: RenderPacketBinarySection,
+    /// Packed float32x2 sketch-region points.
+    pub region_points: RenderPacketBinarySection,
 }
 
 /// The PBR material assigned to a body in a render packet.
@@ -62,24 +136,24 @@ pub struct RenderPacketBodyMaterial {
     pub roughness: f32,
 }
 
-/// A single renderable primitive in a render packet.
+/// A single renderable face range in a render packet.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 #[serde(rename_all = "camelCase")]
 pub struct RenderPacketPrimitive {
-    /// Packed xyz positions in OpenGL/glTF coordinates and meters.
-    pub positions: Vec<f32>,
+    /// First vertex in the packet-wide interleaved vertex section.
+    pub first_vertex: u32,
 
-    /// Packed xyz normals in OpenGL/glTF coordinates.
-    pub normals: Vec<f32>,
+    /// Number of vertices belonging to this face.
+    pub vertex_count: u32,
 
-    /// Packed uv coordinates in normalized face-local trim space.
-    pub uvs: Vec<f32>,
+    /// First index in the packet-wide index section.
+    pub first_index: u32,
 
-    /// Triangle indices into the primitive-local position buffer.
-    pub indices: Vec<u32>,
+    /// Number of indices belonging to this face.
+    pub index_count: u32,
 
     /// Trim loops in the same normalized face-local uv space as `uvs`.
     pub trim_loops: Vec<RenderPacketTrimLoop>,
@@ -107,8 +181,11 @@ pub struct RenderPacketPrimitive {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 #[serde(rename_all = "camelCase")]
 pub struct RenderPacketTrimLoop {
-    /// Packed uv positions for a closed trim loop in normalized face-local space.
-    pub positions: Vec<f32>,
+    /// First float32x2 point in the packet-wide trim-point section.
+    pub first_point: u32,
+
+    /// Number of points in this closed trim loop.
+    pub point_count: u32,
 }
 
 /// A single renderable edge polyline in a render packet.
@@ -118,8 +195,11 @@ pub struct RenderPacketTrimLoop {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 #[serde(rename_all = "camelCase")]
 pub struct RenderPacketEdge {
-    /// Packed xyz positions in OpenGL/glTF coordinates and meters.
-    pub positions: Vec<f32>,
+    /// First float32x3 point in the packet-wide edge-point section.
+    pub first_point: u32,
+
+    /// Number of points in this edge polyline.
+    pub point_count: u32,
 
     /// Stable engine object UUID for the parent solid.
     pub object_id: uuid::Uuid,
@@ -141,8 +221,11 @@ pub struct RenderPacketEdge {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 #[serde(rename_all = "camelCase")]
 pub struct RenderPacketSketchSegment {
-    /// Packed xyz positions in OpenGL/glTF coordinates and meters.
-    pub positions: Vec<f32>,
+    /// First float32x3 point in the packet-wide sketch-point section.
+    pub first_point: u32,
+
+    /// Number of points in this sketch segment.
+    pub point_count: u32,
 
     /// Stable engine scene object UUID for the sketch owner.
     pub sketch_id: uuid::Uuid,
@@ -202,6 +285,9 @@ pub struct RenderPacketRegion {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 #[serde(rename_all = "camelCase")]
 pub struct RenderPacketRegionLoop {
-    /// Packed xy positions in sketch-plane local meters.
-    pub positions: Vec<f32>,
+    /// First float32x2 point in the packet-wide region-point section.
+    pub first_point: u32,
+
+    /// Number of points in this loop.
+    pub point_count: u32,
 }
