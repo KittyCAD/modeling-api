@@ -8,7 +8,7 @@ use crate::shared::{Color, Point2d, Point3d};
 pub const RENDER_PACKET_MAGIC: [u8; 8] = *b"ZOORPKT\0";
 
 /// Current binary render packet version.
-pub const RENDER_PACKET_VERSION: u32 = 1;
+pub const RENDER_PACKET_VERSION: u32 = 2;
 
 /// Size of the fixed binary render packet header in bytes.
 pub const RENDER_PACKET_HEADER_SIZE: usize = 16;
@@ -136,6 +136,21 @@ pub struct RenderPacketBodyMaterial {
     pub roughness: f32,
 }
 
+/// How the browser renderer should evaluate a face's trim loops.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "camelCase")]
+pub enum RenderPacketTrimMode {
+    /// The face has no trim loops and needs no fragment clipping.
+    None,
+    /// Use a small classifier mask and evaluate uncertain pixels analytically.
+    Hybrid,
+    /// Use a high-resolution binary mask without analytical fallback.
+    ComplexTexture,
+}
+
 /// A single renderable face range in a render packet.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -154,6 +169,12 @@ pub struct RenderPacketPrimitive {
 
     /// Number of indices belonging to this face.
     pub index_count: u32,
+
+    /// Index of this face's material in `RenderPacket::body_materials`.
+    pub material_index: u32,
+
+    /// Trim implementation selected by the geometry engine.
+    pub trim_mode: RenderPacketTrimMode,
 
     /// Trim loops in the same normalized face-local uv space as `uvs`.
     pub trim_loops: Vec<RenderPacketTrimLoop>,
