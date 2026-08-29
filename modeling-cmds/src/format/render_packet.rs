@@ -8,7 +8,7 @@ use crate::shared::{Color, Point2d, Point3d};
 pub const RENDER_PACKET_MAGIC: [u8; 8] = *b"ZOORPKT\0";
 
 /// Current binary render packet version.
-pub const RENDER_PACKET_VERSION: u32 = 2;
+pub const RENDER_PACKET_VERSION: u32 = 1;
 
 /// Size of the fixed binary render packet header in bytes.
 pub const RENDER_PACKET_HEADER_SIZE: usize = 16;
