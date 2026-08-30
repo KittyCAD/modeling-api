@@ -1574,6 +1574,27 @@
             ]
           },
           {
+            "description": "A uuid referencing a helix.",
+            "type": "object",
+            "properties": {
+              "helix_id": {
+                "description": "Id of the helix object.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "helix"
+                ]
+              }
+            },
+            "required": [
+              "helix_id",
+              "type"
+            ]
+          },
+          {
             "description": "A uuid referencing an edge on a solid2d (profile) - used for raw sketch/profile edges. This is distinct from the face-based Edge reference which is used for BRep/swept body edges.",
             "type": "object",
             "properties": {
