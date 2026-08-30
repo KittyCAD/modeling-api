@@ -10,7 +10,7 @@ pub mod import {
 
     /// Options for importing OBJ.
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
-    #[serde(rename = "ObjImportOptions")]
+    #[serde(default, rename = "ObjImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -66,7 +66,7 @@ pub mod export {
 
     /// Options for exporting OBJ.
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
-    #[serde(rename = "ObjExportOptions")]
+    #[serde(default, rename = "ObjExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(

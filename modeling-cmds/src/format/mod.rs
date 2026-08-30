@@ -443,3 +443,18 @@ proprietary_brep_formats! {
     (parasolid, "ParasolidImportOptions", "Parasolid part format", coord::KITTYCAD)
     (sldprt, "SldprtImportOptions", "SolidWorks part format", coord::OPENGL)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{InputFormat3d, OutputFormat3d};
+
+    #[test]
+    fn documented_format_defaults_are_applied_when_omitted() {
+        for format in ["obj", "ply", "stl"] {
+            let json = format!(r#"{{"type":"{format}"}}"#);
+            serde_json::from_str::<InputFormat3d>(&json).unwrap();
+            serde_json::from_str::<OutputFormat3d>(&json).unwrap();
+        }
+        serde_json::from_str::<OutputFormat3d>(r#"{"type":"gltf"}"#).unwrap();
+    }
+}
