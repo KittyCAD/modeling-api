@@ -34,12 +34,13 @@ impl KclVersion {
     }
 }
 
+/// Error returned when user tries to use an invalid KCL version.
 #[derive(Debug)]
-pub struct KclVersionError;
+pub struct InvalidKclVersion;
 
-impl core::error::Error for KclVersionError {}
+impl core::error::Error for InvalidKclVersion {}
 
-impl std::fmt::Display for KclVersionError {
+impl std::fmt::Display for InvalidKclVersion {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -49,14 +50,14 @@ impl std::fmt::Display for KclVersionError {
 }
 
 impl FromStr for KclVersion {
-    type Err = KclVersionError;
+    type Err = InvalidKclVersion;
 
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
         match s {
             "1" | "1.0" | "1.0.0" => Ok(Self::V1),
             "2" | "2.0" | "2.0.0" => Ok(Self::V2),
             "3-preview" | "3.0-preview" | "3.0.0-preview" => Ok(Self::V3Preview),
-            _other => Err(KclVersionError),
+            _other => Err(InvalidKclVersion),
         }
     }
 }

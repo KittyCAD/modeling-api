@@ -57,6 +57,6 @@ mod kcl_version;
 
 // Export some key items for anyone consuming the library.
 pub use def_enum::*;
-pub use kcl_version::KclVersion;
+pub use kcl_version::{InvalidKclVersion, KclVersion};
 pub use ok_response::output;
 pub use traits::*;
