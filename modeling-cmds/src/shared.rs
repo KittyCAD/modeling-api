@@ -354,6 +354,12 @@ pub struct AnnotationOptions {
     pub feature_control: Option<AnnotationFeatureControl>,
     /// Set as a feature tag annotation
     pub feature_tag: Option<AnnotationFeatureTag>,
+    /// Human-friendly identifier for this annotation.
+    /// Included in some exports and metadata of the model.
+    /// This is _not_ displayed visually in, the annotation,
+    /// it's only metadata.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
 }
 
 /// Options for annotation text
