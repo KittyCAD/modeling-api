@@ -19,6 +19,9 @@ pub struct EngineParams {
     pub post_effect: Option<PostEffectType>,
     /// If true, will start a webrtc connection.
     pub webrtc: bool,
+    /// If true, the engine will be ran without any graphical rendering capability.
+    /// This may reduce the ability of some endpoints such as snapshot.
+    pub geometry_only: bool,
     /// An optional identifier for a pool of engine instances.
     /// The 'default' pool is used when none is specified.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -46,6 +49,7 @@ impl Default for EngineParams {
             unlocked_framerate: false,
             post_effect: None,
             webrtc: true,
+            geometry_only: false,
             pool: None,
             show_grid: false,
             replay: None,
