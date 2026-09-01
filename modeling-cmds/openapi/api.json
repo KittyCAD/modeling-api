@@ -3483,6 +3483,42 @@
             ]
           },
           {
+            "description": "Create paths where a plane intersects a solid.",
+            "type": "object",
+            "properties": {
+              "object_id": {
+                "description": "Which solid to intersect with the plane.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "plane_id": {
+                "description": "Which plane to intersect with the solid.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "tolerance": {
+                "description": "The maximum acceptable gap when joining the section curves into paths. Must be positive (i.e. greater than zero).",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "solid3d_section_paths"
+                ]
+              }
+            },
+            "required": [
+              "object_id",
+              "plane_id",
+              "tolerance",
+              "type"
+            ]
+          },
+          {
             "description": "Command for revolving a solid 2d about a brep edge",
             "type": "object",
             "properties": {

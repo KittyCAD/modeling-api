@@ -171,6 +171,14 @@ define_ok_modeling_cmd_response_enum! {
             pub body_type: BodyType,
         }
 
+        /// The response from the `Solid3dSectionPaths` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct Solid3dSectionPaths {
+            /// The IDs of the paths created from the intersection.
+            pub path_ids: Vec<Uuid>,
+        }
+
         /// The response from the `RevolveAboutEdge` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]

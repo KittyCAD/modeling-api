@@ -457,6 +457,24 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
         }
 
+        /// Create paths where a plane intersects a solid.
+        #[derive(
+            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+        )]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct Solid3dSectionPaths {
+            /// Which solid to intersect with the plane.
+            pub object_id: Uuid,
+            /// Which plane to intersect with the solid.
+            pub plane_id: Uuid,
+            /// The maximum acceptable gap when joining the section curves into paths. Must be
+            /// positive (i.e. greater than zero).
+            pub tolerance: LengthUnit,
+        }
+
         /// Command for revolving a solid 2d about a brep edge
         #[derive(
             Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
