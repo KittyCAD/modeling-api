@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::shared::PostEffectType;
+use crate::{shared::PostEffectType, KclVersion};
 
 /// Params for starting the engine.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
@@ -38,6 +38,10 @@ pub struct EngineParams {
     /// This slows down rendering, so it's off by default.
     #[serde(default)]
     pub order_independent_transparency: bool,
+    /// Which KCL+Engine version should the engine use?
+    /// Clients use this to opt into updated algorithms and behaviours.
+    #[serde(default)]
+    pub kcl_version: KclVersion,
 }
 
 impl Default for EngineParams {
@@ -55,6 +59,7 @@ impl Default for EngineParams {
             replay: None,
             api_call_id: None,
             order_independent_transparency: false,
+            kcl_version: Default::default(),
         }
     }
 }

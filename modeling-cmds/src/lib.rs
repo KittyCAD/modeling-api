@@ -52,7 +52,11 @@ pub mod units;
 #[cfg(feature = "websocket")]
 pub mod websocket;
 
+/// Defines which KCL versions exist, and how to represent them.
+mod kcl_version;
+
 // Export some key items for anyone consuming the library.
 pub use def_enum::*;
+pub use kcl_version::KclVersion;
 pub use ok_response::output;
 pub use traits::*;
