@@ -2518,11 +2518,10 @@ dependencies = [
 [[package]]
 name = "kcl-api"
 version = "0.2.181"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f797644772cf1385c99451de0664ac08e087dbcefe8796629ac5b67381c59eac"
+source = "git+https://github.com/KittyCAD/modeling-app?branch=main#30c939d9df0f39cffb4c019e387b9a11981c24e5"
 dependencies = [
  "indexmap 2.14.0",
- "kcl-error",
+ "kcl-error 0.2.181 (git+https://github.com/KittyCAD/modeling-app?branch=main)",
  "kittycad-measurements",
  "kittycad-unit-conversion-derive",
  "parse-display",
@@ -2538,6 +2537,19 @@ name = "kcl-error"
 version = "0.2.181"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "190e5f72cbebb447611d79cd01b57c0467b6d9c21975f5644245cdddc859632f"
+dependencies = [
+ "miette",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.20",
+ "ts-rs",
+]
+
+[[package]]
+name = "kcl-error"
+version = "0.2.181"
+source = "git+https://github.com/KittyCAD/modeling-app?branch=main#30c939d9df0f39cffb4c019e387b9a11981c24e5"
 dependencies = [
  "miette",
  "schemars 0.8.22",
@@ -2614,7 +2626,7 @@ dependencies = [
  "expectorate",
  "http",
  "kcl-api",
- "kcl-error",
+ "kcl-error 0.2.181 (registry+https://github.com/rust-lang/crates.io-index)",
  "kittycad-measurements",
  "kittycad-modeling-cmds-macros",
  "kittycad-unit-conversion-derive",

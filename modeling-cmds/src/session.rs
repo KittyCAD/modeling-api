@@ -38,6 +38,11 @@ pub struct EngineParams {
     /// This slows down rendering, so it's off by default.
     #[serde(default)]
     pub order_independent_transparency: bool,
+    /// Which version of KCL should the engine use?
+    /// This lets you opt into newer engine behaviours.
+    #[cfg(feature = "exec-kcl")]
+    #[serde(default)]
+    pub kcl_version: kcl_api::KclVersion,
 }
 
 impl Default for EngineParams {
@@ -55,6 +60,8 @@ impl Default for EngineParams {
             replay: None,
             api_call_id: None,
             order_independent_transparency: false,
+            #[cfg(feature = "exec-kcl")]
+            kcl_version: Default::default(),
         }
     }
 }
