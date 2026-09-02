@@ -556,6 +556,11 @@
             "type": "number",
             "format": "float"
           },
+          "name": {
+            "nullable": true,
+            "description": "Human-friendly identifier for this annotation. Included in some exports and metadata of the model. This is _not_ displayed visually in, the annotation, it's only metadata.",
+            "type": "string"
+          },
           "position": {
             "nullable": true,
             "description": "Position to put the annotation",
