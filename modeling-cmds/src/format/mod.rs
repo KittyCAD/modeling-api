@@ -183,6 +183,11 @@ pub struct VirtualFile {
 }
 
 impl VirtualFile {
+    /// Create a new virtual file.
+    pub fn new(path: std::path::PathBuf, data: Vec<u8>) -> Self {
+        Self { path, data }
+    }
+
     /// Returns true if the file name has the given extension.
     pub fn has_extension(&self, required_extension: &str) -> bool {
         self.path
