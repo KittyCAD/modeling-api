@@ -416,7 +416,7 @@
         "properties": {
           "dimension": {
             "nullable": true,
-            "description": "The explicitly defined dimension.  Only required if the measurement is not automatically calculated.",
+            "description": "The explicitly defined dimension. Only required if the measurement is not automatically calculated.",
             "type": "number",
             "format": "double"
           },
@@ -430,14 +430,12 @@
             ]
           },
           "tolerance": {
+            "nullable": true,
             "description": "The tolerance of the dimension",
             "type": "number",
             "format": "double"
           }
-        },
-        "required": [
-          "tolerance"
-        ]
+        }
       },
       "AnnotationMbdControlFrame": {
         "description": "Parameters for defining an MBD Geometric control frame",
@@ -491,7 +489,7 @@
             "maxLength": 1
           },
           "tolerance": {
-            "description": "Tolerance value - the total tolerance of the geometric control.  The unit is based on the drawing standard.",
+            "description": "Tolerance value - the total tolerance of the geometric control. The unit is based on the drawing standard.",
             "type": "number",
             "format": "double"
           }

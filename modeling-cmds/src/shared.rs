@@ -406,7 +406,8 @@ pub struct AnnotationMbdControlFrame {
     pub symbol: MbdSymbol,
     /// Diameter symbol (if required) whether the geometric control requires a cylindrical or diameter tolerance
     pub diameter_symbol: Option<MbdSymbol>,
-    /// Tolerance value - the total tolerance of the geometric control.  The unit is based on the drawing standard.
+    /// Tolerance value - the total tolerance of the geometric control.
+    /// The unit is based on the drawing standard.
     pub tolerance: f64,
     /// Feature of size or tolerance modifiers
     pub modifier: Option<MbdSymbol>,
@@ -428,10 +429,12 @@ pub struct AnnotationMbdControlFrame {
 pub struct AnnotationMbdBasicDimension {
     /// Type of symbol to use for this dimension (if required)
     pub symbol: Option<MbdSymbol>,
-    /// The explicitly defined dimension.  Only required if the measurement is not automatically calculated.
+    /// The explicitly defined dimension.
+    /// Only required if the measurement is not automatically calculated.
     pub dimension: Option<f64>,
     /// The tolerance of the dimension
-    pub tolerance: f64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tolerance: Option<f64>,
 }
 
 /// Parameters for defining an MBD Basic Dimension Annotation state which is measured between two positions in 3D
