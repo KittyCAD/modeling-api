@@ -8469,6 +8469,21 @@
             ]
           },
           {
+            "description": "KittyCAD render packet format for browser-side rendering.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "render_packet"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
             "description": "ISO 10303-21 (STEP) format.",
             "type": "object",
             "properties": {
