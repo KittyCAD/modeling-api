@@ -2248,3 +2248,46 @@ pub enum CurveTypeDebug {
     /// Circle with a center and radius.
     Circle,
 }
+
+/// What to create a mate frame on
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum MateFrameOn {
+    /// Mate frame at the centroid of this face.
+    FaceCentroid {
+        /// The face's ID
+        face_id: Uuid,
+    },
+    /// Mate frame along this edge.
+    Edge {
+        /// Which edge?
+        specifier: EdgeSpecifier,
+    },
+}
+
+/// How to constrain bodies in an assembly.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum AssemblyConstraint {
+    /// Makes two entities occupy the same line/plane or places a point on a surface.
+    Coincident {
+        /// IDs of two mate frames in the assembly.
+        targets: [Uuid; 2],
+    },
+    /// Aligns cylindrical, conical, or spherical surfaces to a common center.
+    Concentric {
+        /// Which edge?
+        /// IDs of two mate frames in the assembly.
+        /// Must be >= 2 items.
+        #[schemars(range(min = 2))]
+        targets: Vec<Uuid>,
+    },
+}

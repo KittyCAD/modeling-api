@@ -1427,5 +1427,35 @@ define_ok_modeling_cmd_response_enum! {
             /// How many regions the Toolpaths library thinks exist
             pub region_count: u16,
         }
+
+        /// The response from the 'AssemblyCreate'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyCreate {
+        }
+
+        /// The response from the 'AssemblyAddChildren'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyAddChildren {
+        }
+
+        /// The response from the 'MateFrameCreate'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct MateFrameCreate {
+        }
+
+        /// The response from the 'AssemblyAddConstraints'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyAddConstraints {
+            // TODO: Engine should also return a solution, so that the KCL
+            // source can be updated with a starting translate/rotate that
+            // each constrained entity has applied. This way, if the block
+            // is solved again in the future, the system will already find
+            // itself in a nearly-solved state, leading to faster and more
+            // stable assembly blocks.
+        }
     }
 }
