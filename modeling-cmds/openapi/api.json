@@ -6291,6 +6291,16 @@
                   }
                 ]
               },
+              "edge_3d_color": {
+                "nullable": true,
+                "description": "The default color to use for the edges of 3D bodies.",
+                "default": null,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Color"
+                  }
+                ]
+              },
               "highlight_color": {
                 "nullable": true,
                 "description": "The default color to use for highlight",

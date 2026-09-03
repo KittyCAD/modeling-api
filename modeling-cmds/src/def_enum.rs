@@ -1777,6 +1777,9 @@ define_modeling_cmd_enum! {
             /// The default color to use for selection
             #[serde(default)]
             pub selection_color: Option<Color>,
+            /// The default color to use for the edges of 3D bodies.
+            #[serde(default)]
+            pub edge_3d_color: Option<Color>,
         }
 
         /// Get type of the given curve.
@@ -2422,7 +2425,7 @@ define_modeling_cmd_enum! {
         ///
         /// Most successful unions come from solids who's faces do not overlap
         /// aka non-coplanar.
-        /// 
+        ///
         /// Failure cases:
         /// * A common failure is unsupported coincident faces try to be unioned.
         ///
@@ -2491,7 +2494,7 @@ define_modeling_cmd_enum! {
         /// aka non-coplanar.
         ///
         /// Prefer one `tool` over multiple when calling this feature.
-        /// 
+        ///
         /// Failure cases:
         /// * A common failure is unsupported coplanar faces try to be unioned.
         ///
