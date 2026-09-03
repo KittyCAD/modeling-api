@@ -26,6 +26,7 @@ define_ok_modeling_cmd_response_enum! {
             BodyType,
             HiddenState,
             EntityReference,
+            SolvedAssemblyItem,
         };
         use std::collections::HashMap;
 
@@ -1466,6 +1467,32 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetKclVersion {
+        }
+
+        /// The response from the 'AssemblyCreate'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyCreate {
+        }
+
+        /// The response from the 'AssemblyAddChildren'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyAddChildren {
+        }
+
+        /// The response from the 'MateFrameCreate'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct MateFrameCreate {
+        }
+
+        /// The response from the 'AssemblyAddConstraints'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyAddConstraints {
+            /// For each item in the assembly, map its ID to its solution
+            pub solution: HashMap<Uuid, SolvedAssemblyItem>,
         }
     }
 }
