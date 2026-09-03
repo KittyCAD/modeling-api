@@ -2256,6 +2256,16 @@
             "properties": {
               "coords": {
                 "description": "Co-ordinate system of input data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/System"
@@ -2270,6 +2280,7 @@
               },
               "units": {
                 "description": "The units of the input data.\n\nThis is very important for correct scaling and when calculating physics properties like mass, etc.\n\nDefaults to millimeters.",
+                "default": "mm",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/UnitLength"
@@ -2278,9 +2289,7 @@
               }
             },
             "required": [
-              "coords",
-              "type",
-              "units"
+              "type"
             ]
           },
           {
@@ -2327,6 +2336,16 @@
             "properties": {
               "coords": {
                 "description": "Co-ordinate system of input data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/System"
@@ -2341,6 +2360,7 @@
               },
               "units": {
                 "description": "The units of the input data.\n\nThis is very important for correct scaling and when calculating physics properties like mass, etc.\n\nDefaults to millimeters.",
+                "default": "mm",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/UnitLength"
@@ -2349,9 +2369,7 @@
               }
             },
             "required": [
-              "coords",
-              "type",
-              "units"
+              "type"
             ]
           },
           {
@@ -2445,6 +2463,16 @@
             "properties": {
               "coords": {
                 "description": "Co-ordinate system of input data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/System"
@@ -2459,6 +2487,7 @@
               },
               "units": {
                 "description": "The units of the input data.\n\nThis is very important for correct scaling and when calculating physics properties like mass, etc.\n\nDefaults to millimeters.",
+                "default": "mm",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/UnitLength"
@@ -2467,9 +2496,7 @@
               }
             },
             "required": [
-              "coords",
-              "type",
-              "units"
+              "type"
             ]
           }
         ]
@@ -8365,6 +8392,7 @@
             "properties": {
               "presentation": {
                 "description": "Specifies how the JSON will be presented.",
+                "default": "pretty",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/GltfPresentation"
@@ -8373,6 +8401,7 @@
               },
               "storage": {
                 "description": "Specifies which kind of glTF 2.0 will be exported.",
+                "default": "embedded",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/GltfStorage"
@@ -8387,8 +8416,6 @@
               }
             },
             "required": [
-              "presentation",
-              "storage",
               "type"
             ]
           },
@@ -8398,6 +8425,16 @@
             "properties": {
               "coords": {
                 "description": "Co-ordinate system of output data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/System"
@@ -8412,6 +8449,7 @@
               },
               "units": {
                 "description": "Export length unit.\n\nDefaults to millimeters.",
+                "default": "mm",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/UnitLength"
@@ -8420,9 +8458,7 @@
               }
             },
             "required": [
-              "coords",
-              "type",
-              "units"
+              "type"
             ]
           },
           {
@@ -8431,6 +8467,16 @@
             "properties": {
               "coords": {
                 "description": "Co-ordinate system of output data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/System"
@@ -8439,6 +8485,9 @@
               },
               "selection": {
                 "description": "Export selection.",
+                "default": {
+                  "type": "default_scene"
+                },
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/Selection"
@@ -8447,6 +8496,7 @@
               },
               "storage": {
                 "description": "The storage for the output PLY file.",
+                "default": "ascii",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/PlyStorage"
@@ -8461,6 +8511,7 @@
               },
               "units": {
                 "description": "Export length unit.\n\nDefaults to millimeters.",
+                "default": "mm",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/UnitLength"
@@ -8469,11 +8520,7 @@
               }
             },
             "required": [
-              "coords",
-              "selection",
-              "storage",
-              "type",
-              "units"
+              "type"
             ]
           },
           {
@@ -8540,6 +8587,16 @@
             "properties": {
               "coords": {
                 "description": "Co-ordinate system of output data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "default": {
+                  "forward": {
+                    "axis": "y",
+                    "direction": "negative"
+                  },
+                  "up": {
+                    "axis": "z",
+                    "direction": "positive"
+                  }
+                },
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/System"
@@ -8548,6 +8605,9 @@
               },
               "selection": {
                 "description": "Export selection.",
+                "default": {
+                  "type": "default_scene"
+                },
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/Selection"
@@ -8556,6 +8616,7 @@
               },
               "storage": {
                 "description": "Export storage.",
+                "default": "binary",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/StlStorage"
@@ -8570,6 +8631,7 @@
               },
               "units": {
                 "description": "Export length unit.\n\nDefaults to millimeters.",
+                "default": "mm",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/UnitLength"
@@ -8578,11 +8640,7 @@
               }
             },
             "required": [
-              "coords",
-              "selection",
-              "storage",
-              "type",
-              "units"
+              "type"
             ]
           }
         ]

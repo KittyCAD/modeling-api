@@ -11,7 +11,7 @@ pub mod import {
 
     /// Options for importing PLY.
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
-    #[serde(rename = "PlyImportOptions")]
+    #[serde(default, rename = "PlyImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -68,7 +68,7 @@ pub mod export {
 
     /// Options for exporting PLY.
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
-    #[serde(rename = "PlyExportOptions")]
+    #[serde(default, rename = "PlyExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(
