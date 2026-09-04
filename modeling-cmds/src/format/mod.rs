@@ -17,6 +17,8 @@ pub mod gltf;
 pub mod obj;
 /// The PLY Polygon File Format.
 pub mod ply;
+/// KittyCAD render packet format for browser-side rendering.
+pub mod render_packet;
 /// ISO 10303-21 (STEP) format.
 pub mod step;
 /// **ST**ereo**L**ithography format.
@@ -57,6 +59,8 @@ pub enum OutputFormat3d {
     Obj(obj::export::Options),
     /// The PLY Polygon File Format.
     Ply(ply::export::Options),
+    /// KittyCAD render packet format for browser-side rendering.
+    RenderPacket(render_packet::export::Options),
     /// ISO 10303-21 (STEP) format.
     Step(step::export::Options),
     /// **ST**ereo**L**ithography format.
@@ -214,6 +218,7 @@ impl From<OutputFormat3d> for FileExportFormat {
             OutputFormat3d::Gltf(_) => Self::Gltf,
             OutputFormat3d::Obj(_) => Self::Obj,
             OutputFormat3d::Ply(_) => Self::Ply,
+            OutputFormat3d::RenderPacket(_) => Self::Glb,
             OutputFormat3d::Step(_) => Self::Step,
             OutputFormat3d::Stl(_) => Self::Stl,
         }
