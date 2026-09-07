@@ -1,3 +1,5 @@
+#[cfg(feature = "clap")]
+use clap::ValueEnum;
 use kittycad_unit_conversion_derive::UnitConversion;
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
@@ -24,6 +26,7 @@ use crate::impl_extern_type;
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -100,6 +103,7 @@ impl_extern_type! {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
@@ -139,6 +143,7 @@ pub enum UnitAngle {
     Default,
     Hash,
 )]
+#[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
@@ -219,6 +224,7 @@ impl UnitArea {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -282,6 +288,7 @@ impl UnitDensity {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
