@@ -48,6 +48,36 @@ pub enum ErrorCode {
     MessageTypeNotAcceptedForWebRTC,
 }
 
+/// Stable machine-readable reasons that a modeling websocket connection cannot
+/// continue. Clients should use `retryable`, rather than parsing the human-readable
+/// detail, to decide whether to reconnect automatically.
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
+#[display(style = "snake_case")]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum ModelingConnectionErrorCode {
+    /// The authentication token is invalid or malformed.
+    AuthTokenInvalid,
+    /// The token does not grant access to the modeling API.
+    InsufficientScope,
+    /// The account has no payment method on file.
+    MissingPaymentMethod,
+    /// The account's payment method failed.
+    PaymentMethodFailed,
+    /// The account reached its configured billing threshold.
+    BillingThresholdReached,
+    /// The account exhausted its credits without enabling pay-as-you-go.
+    PayAsYouGoDisabled,
+    /// The account was blocked after repeated plan changes recycled credits.
+    UpgradeDowngradeAbuse,
+    /// Zoo support explicitly blocked the account.
+    Admin,
+    /// The account has reached its concurrent modeling-session limit.
+    TooManyConnections,
+    /// The selected modeling backend disconnected from the API.
+    BackendDisconnected,
+}
+
 /// Because [`EngineErrorCode`] is a subset of [`ErrorCode`], you can trivially map
 /// each variant of the former to a variant of the latter.
 impl From<EngineErrorCode> for ErrorCode {
@@ -272,6 +302,31 @@ pub struct FailureWebSocketResponse {
     pub errors: Vec<ApiError>,
 }
 
+/// A connection-level error that tells clients whether reconnecting can succeed
+/// without the user or service state changing first.
+#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub struct ModelingConnectionError {
+    /// Stable machine-readable reason for the connection failure.
+    pub code: ModelingConnectionErrorCode,
+    /// Human-readable detail suitable for display to the user.
+    pub detail: String,
+    /// Whether a client should automatically try to reconnect.
+    pub retryable: bool,
+}
+
+/// Websocket response for a connection-level error.
+#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub struct ConnectionErrorWebSocketResponse {
+    /// Always false.
+    pub success: bool,
+    /// Which request this is a response to, if any.
+    pub request_id: Option<Uuid>,
+    /// The connection-level error.
+    pub connection_error: ModelingConnectionError,
+}
+
 /// Websocket responses can either be successful or unsuccessful.
 /// Slightly different schemas in either case.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -282,6 +337,21 @@ pub enum WebSocketResponse {
     Success(SuccessWebSocketResponse),
     /// Response sent when a request did not succeed.
     Failure(FailureWebSocketResponse),
+}
+
+/// Modeling API websocket responses, including connection-level errors emitted
+/// by the API itself. The legacy [`WebSocketResponse`] remains unchanged for
+/// engine and downstream compatibility.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
+#[serde(rename_all = "snake_case", untagged)]
+pub enum ModelingWebSocketResponse {
+    /// Response sent when a request succeeded.
+    Success(SuccessWebSocketResponse),
+    /// Response sent when a request did not succeed.
+    Failure(FailureWebSocketResponse),
+    /// Response sent when the connection cannot continue.
+    ConnectionError(ConnectionErrorWebSocketResponse),
 }
 
 /// Websocket responses can either be successful or unsuccessful.
@@ -336,6 +406,72 @@ impl WebSocketResponse {
         match self {
             WebSocketResponse::Success(x) => x.request_id,
             WebSocketResponse::Failure(x) => x.request_id,
+        }
+    }
+}
+
+impl ModelingWebSocketResponse {
+    /// Make a new success response.
+    pub fn success(request_id: Option<Uuid>, resp: OkWebSocketResponseData) -> Self {
+        Self::Success(SuccessWebSocketResponse {
+            success: true,
+            request_id,
+            resp,
+        })
+    }
+
+    /// Make a new failure response.
+    pub fn failure(request_id: Option<Uuid>, errors: Vec<ApiError>) -> Self {
+        Self::Failure(FailureWebSocketResponse {
+            success: false,
+            request_id,
+            errors,
+        })
+    }
+
+    /// Make a new connection-level error response.
+    pub fn connection_error(
+        request_id: Option<Uuid>,
+        code: ModelingConnectionErrorCode,
+        detail: impl Into<String>,
+        retryable: bool,
+    ) -> Self {
+        Self::ConnectionError(ConnectionErrorWebSocketResponse {
+            success: false,
+            request_id,
+            connection_error: ModelingConnectionError {
+                code,
+                detail: detail.into(),
+                retryable,
+            },
+        })
+    }
+
+    /// Did the request succeed?
+    pub fn is_success(&self) -> bool {
+        matches!(self, Self::Success(_))
+    }
+
+    /// Did the request fail?
+    pub fn is_failure(&self) -> bool {
+        matches!(self, Self::Failure(_) | Self::ConnectionError(_))
+    }
+
+    /// Get the ID of whichever request this response is for.
+    pub fn request_id(&self) -> Option<Uuid> {
+        match self {
+            Self::Success(x) => x.request_id,
+            Self::Failure(x) => x.request_id,
+            Self::ConnectionError(x) => x.request_id,
+        }
+    }
+}
+
+impl From<WebSocketResponse> for ModelingWebSocketResponse {
+    fn from(response: WebSocketResponse) -> Self {
+        match response {
+            WebSocketResponse::Success(success) => Self::Success(success),
+            WebSocketResponse::Failure(failure) => Self::Failure(failure),
         }
     }
 }
@@ -998,6 +1134,32 @@ mod tests {
             ],
         });
         assert_json_eq(actual, expected);
+    }
+
+    #[test]
+    fn serialize_websocket_connection_error() {
+        let actual = ModelingWebSocketResponse::connection_error(
+            Some(REQ_ID),
+            ModelingConnectionErrorCode::TooManyConnections,
+            "This account has reached its concurrent modeling-session limit.",
+            false,
+        );
+        let expected = serde_json::json!({
+            "success": false,
+            "request_id": "cc30d5e2-482b-4498-b5d2-6131c30a50a4",
+            "connection_error": {
+                "code": "too_many_connections",
+                "detail": "This account has reached its concurrent modeling-session limit.",
+                "retryable": false
+            }
+        });
+        assert_json_eq(&actual, expected);
+
+        let serialized = serde_json::to_value(&actual).unwrap();
+        let round_tripped: ModelingWebSocketResponse = serde_json::from_value(serialized).unwrap();
+        assert_eq!(round_tripped, actual);
+        assert!(actual.is_failure());
+        assert_eq!(actual.request_id(), Some(REQ_ID));
     }
 
     #[test]
