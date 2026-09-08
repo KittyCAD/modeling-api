@@ -9,8 +9,8 @@ pub mod dxf;
 /// Autodesk Filmbox (FBX) format.
 pub mod fbx;
 /// glTF 2.0.
-/// We refer to this as glTF since that is how our customers refer to it, although by default
-/// it will be in binary format and thus technically (glb).
+/// We refer to this as glTF since that is how our customers refer to it, although
+/// it may be in binary format and thus technically (glb).
 /// If you prefer ASCII output, you can set that option for the export.
 pub mod gltf;
 /// Wavefront OBJ format.
@@ -179,6 +179,11 @@ pub struct VirtualFile {
 }
 
 impl VirtualFile {
+    /// Create a new virtual file.
+    pub fn new(path: std::path::PathBuf, data: Vec<u8>) -> Self {
+        Self { path, data }
+    }
+
     /// Returns true if the file name has the given extension.
     pub fn has_extension(&self, required_extension: &str) -> bool {
         self.path

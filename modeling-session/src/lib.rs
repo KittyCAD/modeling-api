@@ -55,7 +55,7 @@ impl Session {
             await_response_timeout,
             show_grid,
         }: SessionBuilder,
-    ) -> Result<Self, ApiError> {
+    ) -> Result<Self, Box<ApiError>> {
         // TODO: establish WebRTC connections for the user.
         let webrtc = Some(false);
         let (ws, _headers) = client
@@ -94,7 +94,7 @@ impl Session {
         &mut self,
         cmd_id: ModelingCmdId,
         cmd: ModelingCmd,
-    ) -> Result<OkModelingCmdResponse, RunCommandError> {
+    ) -> Result<OkModelingCmdResponse, Box<RunCommandError>> {
         // All messages to the KittyCAD Modeling API will be sent over the WebSocket as Text.
         // The text will contain JSON representing a `ModelingCmdReq`.
         // This takes in a command and its ID, and makes a WebSocket message containing that command.
@@ -102,14 +102,14 @@ impl Session {
         self.actor_tx
             .send(actor::Request::SendModelingCmd(ModelingCmdReq { cmd, cmd_id }, tx))
             .await
-            .map_err(|_| RunCommandError::ActorFailed)?;
-        rx.await.map_err(|_| RunCommandError::ActorFailed)??;
+            .map_err(|_| Box::new(RunCommandError::ActorFailed))?;
+        rx.await.map_err(|_| Box::new(RunCommandError::ActorFailed))??;
         let (tx, rx) = oneshot::channel();
         self.actor_tx
             .send(actor::Request::GetResponse(cmd_id, tx))
             .await
-            .map_err(|_| RunCommandError::ActorFailed)?;
-        let resp = rx.await.map_err(|_| RunCommandError::ActorFailed)??;
+            .map_err(|_| Box::new(RunCommandError::ActorFailed))?;
+        let resp = rx.await.map_err(|_| Box::new(RunCommandError::ActorFailed))??;
         Ok(resp)
     }
 
@@ -118,7 +118,7 @@ impl Session {
         &mut self,
         requests: Vec<ModelingCmdReq>,
         batch_id: ModelingCmdId,
-    ) -> Result<(), RunCommandError> {
+    ) -> Result<(), Box<RunCommandError>> {
         let (tx, rx) = oneshot::channel();
         self.actor_tx
             .send(actor::Request::SendModelingBatch(
@@ -130,8 +130,8 @@ impl Session {
                 tx,
             ))
             .await
-            .map_err(|_| RunCommandError::ActorFailed)?;
-        rx.await.map_err(|_| RunCommandError::ActorFailed)??;
+            .map_err(|_| Box::new(RunCommandError::ActorFailed))?;
+        rx.await.map_err(|_| Box::new(RunCommandError::ActorFailed))??;
         Ok(())
     }
 }

@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::shared::PostEffectType;
+use crate::{shared::PostEffectType, KclVersion};
 
 /// Params for starting the engine.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
@@ -19,6 +19,9 @@ pub struct EngineParams {
     pub post_effect: Option<PostEffectType>,
     /// If true, will start a webrtc connection.
     pub webrtc: bool,
+    /// If true, the engine will be ran without any graphical rendering capability.
+    /// This may reduce the ability of some endpoints such as snapshot.
+    pub geometry_only: bool,
     /// An optional identifier for a pool of engine instances.
     /// The 'default' pool is used when none is specified.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -35,6 +38,10 @@ pub struct EngineParams {
     /// This slows down rendering, so it's off by default.
     #[serde(default)]
     pub order_independent_transparency: bool,
+    /// Which KCL+Engine version should the engine use?
+    /// Clients use this to opt into updated algorithms and behaviours.
+    #[serde(default)]
+    pub kcl_version: KclVersion,
 }
 
 impl Default for EngineParams {
@@ -46,11 +53,13 @@ impl Default for EngineParams {
             unlocked_framerate: false,
             post_effect: None,
             webrtc: true,
+            geometry_only: false,
             pool: None,
             show_grid: false,
             replay: None,
             api_call_id: None,
             order_independent_transparency: false,
+            kcl_version: Default::default(),
         }
     }
 }

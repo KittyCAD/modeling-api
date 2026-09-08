@@ -1,3 +1,5 @@
+#[cfg(feature = "clap")]
+use clap::ValueEnum;
 use kittycad_unit_conversion_derive::UnitConversion;
 use parse_display_derive::{Display, FromStr};
 use schemars::JsonSchema;
@@ -24,6 +26,7 @@ use crate::impl_extern_type;
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -38,27 +41,33 @@ pub enum UnitLength {
     /// Centimeters <https://en.wikipedia.org/wiki/Centimeter>
     #[serde(rename = "cm")]
     #[display("cm")]
+    #[cfg_attr(feature = "clap", value(name = "cm"))]
     Centimeters,
     /// Feet <https://en.wikipedia.org/wiki/Foot_(unit)>
     #[serde(rename = "ft")]
     #[display("ft")]
+    #[cfg_attr(feature = "clap", value(name = "ft"))]
     Feet,
     /// Inches <https://en.wikipedia.org/wiki/Inch>
     #[serde(rename = "in")]
     #[display("in")]
+    #[cfg_attr(feature = "clap", value(name = "in"))]
     Inches,
     /// Meters <https://en.wikipedia.org/wiki/Meter>
     #[default]
     #[serde(rename = "m")]
     #[display("m")]
+    #[cfg_attr(feature = "clap", value(name = "m"))]
     Meters,
     /// Millimeters <https://en.wikipedia.org/wiki/Millimeter>
     #[serde(rename = "mm")]
     #[display("mm")]
+    #[cfg_attr(feature = "clap", value(name = "mm"))]
     Millimeters,
     /// Yards <https://en.wikipedia.org/wiki/Yard>
     #[serde(rename = "yd")]
     #[display("yd")]
+    #[cfg_attr(feature = "clap", value(name = "yd"))]
     Yards,
 }
 
@@ -100,6 +109,7 @@ impl_extern_type! {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
@@ -115,9 +125,11 @@ pub enum UnitAngle {
     /// Degrees <https://en.wikipedia.org/wiki/Degree_(angle)>
     #[default]
     #[display("deg")]
+    #[cfg_attr(feature = "clap", value(name = "deg"))]
     Degrees,
     /// Radians <https://en.wikipedia.org/wiki/Radian>
     #[display("rad")]
+    #[cfg_attr(feature = "clap", value(name = "rad"))]
     Radians,
 }
 
@@ -139,6 +151,7 @@ pub enum UnitAngle {
     Default,
     Hash,
 )]
+#[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
@@ -154,35 +167,43 @@ pub enum UnitArea {
     /// Square centimeters <https://en.wikipedia.org/wiki/Square_centimeter>
     #[serde(rename = "cm2")]
     #[display("cm2")]
+    #[cfg_attr(feature = "clap", value(name = "cm2"))]
     SquareCentimeters,
     /// Square decimeters <https://en.wikipedia.org/wiki/Square_decimeter>
     #[serde(rename = "dm2")]
     #[display("dm2")]
+    #[cfg_attr(feature = "clap", value(name = "dm2"))]
     SquareDecimeters,
     /// Square feet <https://en.wikipedia.org/wiki/Square_foot>
     #[serde(rename = "ft2")]
     #[display("ft2")]
+    #[cfg_attr(feature = "clap", value(name = "ft2"))]
     SquareFeet,
     /// Square inches <https://en.wikipedia.org/wiki/Square_inch>
     #[serde(rename = "in2")]
     #[display("in2")]
+    #[cfg_attr(feature = "clap", value(name = "in2"))]
     SquareInches,
     /// Square kilometers <https://en.wikipedia.org/wiki/Square_kilometer>
     #[serde(rename = "km2")]
     #[display("km2")]
+    #[cfg_attr(feature = "clap", value(name = "km2"))]
     SquareKilometers,
     /// Square meters <https://en.wikipedia.org/wiki/Square_meter>
     #[default]
     #[serde(rename = "m2")]
     #[display("m2")]
+    #[cfg_attr(feature = "clap", value(name = "m2"))]
     SquareMeters,
     /// Square millimeters <https://en.wikipedia.org/wiki/Square_millimeter>
     #[serde(rename = "mm2")]
     #[display("mm2")]
+    #[cfg_attr(feature = "clap", value(name = "mm2"))]
     SquareMillimeters,
-    /// Square yards <https://en.wikipedia.org/wiki/Square_mile>
+    /// Square yards <https://en.wikipedia.org/wiki/Square_yard>
     #[serde(rename = "yd2")]
     #[display("yd2")]
+    #[cfg_attr(feature = "clap", value(name = "yd2"))]
     SquareYards,
 }
 
@@ -219,6 +240,7 @@ impl UnitArea {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -233,12 +255,14 @@ pub enum UnitDensity {
     /// Pounds per cubic feet.
     #[serde(rename = "lb:ft3")]
     #[display("lb:ft3")]
+    #[cfg_attr(feature = "clap", value(name = "lb:ft3", aliases = ["lbft3", "lb-ft3"]))]
     PoundsPerCubicFeet,
 
     /// Kilograms per cubic meter.
     #[default]
     #[serde(rename = "kg:m3")]
     #[display("kg:m3")]
+    #[cfg_attr(feature = "clap", value(name = "kg:m3", aliases = ["kgm3", "kg-m3"]))]
     KilogramsPerCubicMeter,
 }
 
@@ -282,6 +306,7 @@ impl UnitDensity {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
 #[display(style = "snake_case")]
@@ -298,14 +323,17 @@ pub enum UnitMass {
     #[default]
     #[serde(rename = "g")]
     #[display("g")]
+    #[cfg_attr(feature = "clap", value(name = "g"))]
     Grams,
     /// Kilograms <https://en.wikipedia.org/wiki/Kilogram>
     #[serde(rename = "kg")]
     #[display("kg")]
+    #[cfg_attr(feature = "clap", value(name = "kg"))]
     Kilograms,
     /// Pounds <https://en.wikipedia.org/wiki/Pound_(mass)>
     #[serde(rename = "lb")]
     #[display("lb")]
+    #[cfg_attr(feature = "clap", value(name = "lb"))]
     Pounds,
 }
 
@@ -338,6 +366,7 @@ impl UnitMass {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -352,43 +381,53 @@ pub enum UnitVolume {
     /// Cubic millimeters (mm³)
     #[serde(rename = "mm3")]
     #[display("mm3")]
+    #[cfg_attr(feature = "clap", value(name = "mm3"))]
     CubicMillimeters,
     /// Cubic centimeters (cc or cm³) <https://en.wikipedia.org/wiki/Cubic_centimeter>
     #[serde(rename = "cm3")]
     #[display("cm3")]
+    #[cfg_attr(feature = "clap", value(name = "cm3"))]
     CubicCentimeters,
     /// Cubic feet (ft³) <https://en.wikipedia.org/wiki/Cubic_foot>
     #[serde(rename = "ft3")]
     #[display("ft3")]
+    #[cfg_attr(feature = "clap", value(name = "ft3"))]
     CubicFeet,
     /// Cubic inches (cu in or in³) <https://en.wikipedia.org/wiki/Cubic_inch>
     #[serde(rename = "in3")]
     #[display("in3")]
+    #[cfg_attr(feature = "clap", value(name = "in3"))]
     CubicInches,
     /// Cubic meters (m³) <https://en.wikipedia.org/wiki/Cubic_meter>
     #[default]
     #[serde(rename = "m3")]
     #[display("m3")]
+    #[cfg_attr(feature = "clap", value(name = "m3"))]
     CubicMeters,
     /// Cubic yards (yd³) <https://en.wikipedia.org/wiki/Cubic_yard>
     #[serde(rename = "yd3")]
     #[display("yd3")]
+    #[cfg_attr(feature = "clap", value(name = "yd3"))]
     CubicYards,
     /// US Fluid Ounces (fl oz) <https://en.wikipedia.org/wiki/Fluid_ounce>
     #[serde(rename = "usfloz")]
     #[display("usfloz")]
+    #[cfg_attr(feature = "clap", value(name = "usfloz"))]
     FluidOunces,
     /// US Gallons (gal US) <https://en.wikipedia.org/wiki/Gallon>
     #[serde(rename = "usgal")]
     #[display("usgal")]
+    #[cfg_attr(feature = "clap", value(name = "usgal"))]
     Gallons,
     /// Liters (l) <https://en.wikipedia.org/wiki/Litre>
     #[serde(rename = "l")]
     #[display("l")]
+    #[cfg_attr(feature = "clap", value(name = "l"))]
     Liters,
     /// Milliliters (ml) <https://en.wikipedia.org/wiki/Litre>
     #[serde(rename = "ml")]
     #[display("ml")]
+    #[cfg_attr(feature = "clap", value(name = "ml"))]
     Milliliters,
 }
 
@@ -406,6 +445,39 @@ impl UnitVolume {
             Self::Gallons => measurements::Volume::from_gallons(value),
             Self::Liters => measurements::Volume::from_liters(value),
             Self::Milliliters => measurements::Volume::from_milliliters(value),
+        }
+    }
+}
+
+#[cfg(all(test, feature = "clap"))]
+mod clap_tests {
+    use super::*;
+
+    fn assert_clap_spellings<T: ValueEnum + std::fmt::Display + std::fmt::Debug + PartialEq + 'static>() {
+        for unit in T::value_variants() {
+            let spelling = unit.to_string();
+            assert_eq!(unit.to_possible_value().unwrap().get_name(), spelling);
+            assert_eq!(&T::from_str(&spelling, false).unwrap(), unit);
+        }
+    }
+
+    #[test]
+    fn clap_unit_spellings_match_display() {
+        assert_clap_spellings::<UnitLength>();
+        assert_clap_spellings::<UnitAngle>();
+        assert_clap_spellings::<UnitArea>();
+        assert_clap_spellings::<UnitDensity>();
+        assert_clap_spellings::<UnitMass>();
+        assert_clap_spellings::<UnitVolume>();
+    }
+
+    #[test]
+    fn clap_preserves_density_aliases() {
+        for spelling in ["lbft3", "lb:ft3", "lb-ft3", "kgm3", "kg:m3", "kg-m3"] {
+            assert_eq!(
+                <UnitDensity as ValueEnum>::from_str(spelling, false).unwrap(),
+                <UnitDensity as std::str::FromStr>::from_str(spelling).unwrap()
+            );
         }
     }
 }

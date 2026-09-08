@@ -1,4 +1,4 @@
-//! Base64 data that encodes to url safe base64, but can decode from multiple
+//! Base64 data that encodes to standard padded base64, but can decode from multiple
 //! base64 implementations to account for various clients and libraries. Compatible
 //! with serde and JsonSchema.
 
@@ -36,7 +36,7 @@ impl Base64Data {
 
 impl fmt::Display for Base64Data {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", data_encoding::BASE64URL_NOPAD.encode(&self.0))
+        write!(f, "{}", data_encoding::BASE64.encode(&self.0))
     }
 }
 
@@ -122,7 +122,7 @@ impl Serialize for Base64Data {
     where
         S: Serializer,
     {
-        let encoded = data_encoding::BASE64URL_NOPAD.encode(&self.0);
+        let encoded = data_encoding::BASE64.encode(&self.0);
         serializer.serialize_str(&encoded)
     }
 }
@@ -154,5 +154,12 @@ mod tests {
     fn test_base64_try_from() {
         assert!(Base64Data::try_from("aGVsbG8=").is_ok());
         assert!(Base64Data::try_from("abcdefghij").is_err());
+    }
+
+    #[test]
+    fn test_base64_serializes_as_openapi_byte_format() {
+        let data = Base64Data(vec![0xfb, 0xff]);
+        assert_eq!(data.to_string(), "+/8=");
+        assert_eq!(serde_json::to_string(&data).unwrap(), r#""+/8=""#);
     }
 }
