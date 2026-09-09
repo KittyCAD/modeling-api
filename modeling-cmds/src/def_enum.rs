@@ -1469,6 +1469,10 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "EdgeCutVersion::is_default")]
             #[builder(default)]
             pub version: EdgeCutVersion,
+            /// If true, also cut edges that are tangent to the selected edges.
+            #[serde(default, skip_serializing_if = "super::is_false")]
+            #[builder(default)]
+            pub tangent_chain: bool,
         }
 
         /// Cut the list of given edges with the given cut parameters.
@@ -1511,6 +1515,10 @@ define_modeling_cmd_enum! {
             #[serde(default, skip_serializing_if = "EdgeCutVersion::is_default")]
             #[builder(default)]
             pub version: EdgeCutVersion,
+            /// If true, also cut edges that are tangent to the selected edges.
+            #[serde(default, skip_serializing_if = "super::is_false")]
+            #[builder(default)]
+            pub tangent_chain: bool,
         }
 
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so
