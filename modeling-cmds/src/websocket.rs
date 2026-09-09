@@ -240,6 +240,11 @@ pub enum OkWebSocketResponseData {
         /// Result after executing KCL.
         result: Result<crate::exec_kcl::ExecKclProjectOk, crate::exec_kcl::ExecKclProjectErr>,
     },
+
+    /// Request that the client end this connection and establish a new session
+    /// using normal authentication and authorization.
+    /// This does not guarantee that a new session will be accepted.
+    Reconnect {},
 }
 
 /// Successful Websocket response.
@@ -911,6 +916,22 @@ mod tests {
     use crate::output;
 
     const REQ_ID: Uuid = uuid::uuid!("cc30d5e2-482b-4498-b5d2-6131c30a50a4");
+
+    #[test]
+    fn reconnect_response_round_trip() {
+        let response = WebSocketResponse::success(None, OkWebSocketResponseData::Reconnect {});
+        let expected = serde_json::json!({
+            "success": true,
+            "request_id": null,
+            "resp": {
+                "type": "reconnect",
+                "data": {}
+            }
+        });
+        assert_eq!(serde_json::to_value(&response).unwrap(), expected);
+        let decoded: WebSocketResponse = serde_json::from_value(expected).unwrap();
+        assert_eq!(decoded, response);
+    }
 
     #[test]
     fn serialize_websocket_modeling_ok() {
