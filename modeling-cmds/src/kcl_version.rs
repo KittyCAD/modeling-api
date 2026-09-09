@@ -1,7 +1,6 @@
 use std::str::FromStr;
 
-use serde::Deserialize;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 /// Which KCL versions does Zoo support?
 #[derive(Debug, Clone, Copy, Default, Deserialize, Serialize, PartialEq, Eq, Ord, PartialOrd, schemars::JsonSchema)]
