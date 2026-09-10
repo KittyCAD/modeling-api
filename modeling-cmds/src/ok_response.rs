@@ -25,6 +25,7 @@ define_ok_modeling_cmd_response_enum! {
             CameraViewState,
             BodyType,
             EntityReference,
+            SolvedAssemblyItem,
         };
         use std::collections::HashMap;
 
@@ -1450,12 +1451,8 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct AssemblyAddConstraints {
-            // TODO: Engine should also return a solution, so that the KCL
-            // source can be updated with a starting translate/rotate that
-            // each constrained entity has applied. This way, if the block
-            // is solved again in the future, the system will already find
-            // itself in a nearly-solved state, leading to faster and more
-            // stable assembly blocks.
+            /// For each item in the assembly, map its ID to its solution
+            pub solution: HashMap<Uuid, SolvedAssemblyItem>,
         }
     }
 }

@@ -2335,3 +2335,22 @@ pub enum AssemblyConstraint {
         targets: Vec<Uuid>,
     },
 }
+
+/// Result of constraining an item in an assembly.
+/// This is in the coordinate system of the assembly's parent.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct SolvedAssemblyItem {
+    /// How to translate the item.
+    pub translate_by: Point3d<LengthUnit>,
+    /// How to rotate the item.
+    pub roll: Angle,
+    /// How to rotate the item.
+    pub pitch: Angle,
+    /// How to rotate the item.
+    pub yaw: Angle,
+}
