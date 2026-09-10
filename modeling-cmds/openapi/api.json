@@ -5636,6 +5636,10 @@
                   }
                 ]
               },
+              "tangent_chain": {
+                "description": "If true, also cut edges that are tangent to the selected edges.",
+                "type": "boolean"
+              },
               "tolerance": {
                 "description": "The maximum acceptable surface gap computed between the cut surfaces. Must be positive (i.e. greater than zero).",
                 "allOf": [
@@ -5713,6 +5717,10 @@
                     "$ref": "#/components/schemas/CutStrategy"
                   }
                 ]
+              },
+              "tangent_chain": {
+                "description": "If true, also cut edges that are tangent to the selected edges.",
+                "type": "boolean"
               },
               "tolerance": {
                 "description": "The maximum acceptable surface gap computed between the cut surfaces. Must be positive (i.e. greater than zero).",
