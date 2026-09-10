@@ -2601,14 +2601,23 @@
               "face_centroid": {
                 "type": "object",
                 "properties": {
-                  "face_id": {
-                    "description": "The face's ID",
+                  "where_on_face": {
+                    "description": "Where on the given face?",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/PointOnFace"
+                      }
+                    ]
+                  },
+                  "which_face": {
+                    "description": "Which face?",
                     "type": "string",
                     "format": "uuid"
                   }
                 },
                 "required": [
-                  "face_id"
+                  "where_on_face",
+                  "which_face"
                 ]
               }
             },
@@ -2624,7 +2633,15 @@
               "edge": {
                 "type": "object",
                 "properties": {
-                  "specifier": {
+                  "where_on_edge": {
+                    "description": "Where on the given edge?",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/WhereOnEdge"
+                      }
+                    ]
+                  },
+                  "which_edge": {
                     "description": "Which edge?",
                     "allOf": [
                       {
@@ -2634,7 +2651,8 @@
                   }
                 },
                 "required": [
-                  "specifier"
+                  "where_on_edge",
+                  "which_edge"
                 ]
               }
             },
@@ -9324,6 +9342,57 @@
           "z"
         ]
       },
+      "PointOnFace": {
+        "description": "Identifies a point on a specific face.",
+        "oneOf": [
+          {
+            "description": "Centermost point of the face.",
+            "type": "object",
+            "properties": {
+              "centroid": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "centroid"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Somewhere along the face.",
+            "type": "object",
+            "properties": {
+              "at_parameter": {
+                "type": "object",
+                "properties": {
+                  "u": {
+                    "description": "Value for the face's 2D parametric equation.",
+                    "type": "number",
+                    "format": "double",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  },
+                  "v": {
+                    "description": "Value for the face's 2D parametric equation.",
+                    "type": "number",
+                    "format": "double",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  }
+                },
+                "required": [
+                  "u",
+                  "v"
+                ]
+              }
+            },
+            "required": [
+              "at_parameter"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "PrimitiveTopologyFallback": {
         "description": "Optional fallback when primary UUIDs are missing from the client artifact graph (e.g. stale or engine-only ids). Identifies the same topology via a **parent** entity UUID and a **primitive index** on that parent.\n\nSemantics by selection kind (aligned with engine BREP topology):\n\n- **Face / Edge (3D)**: `parent_id` is the owning [`EntityType::Solid3D`] body UUID; `primitive_index` matches the index returned by **EntityGetPrimitiveIndex** for that face or edge (and matches **EntityGetParentId** → parent + **EntityGetPrimitiveIndex** → index). - **Vertex (3D)**: same `parent_id` (solid); `primitive_index` is the BREP vertex index on that solid. - **Solid2dEdge**: `parent_id` is the **Solid2D** profile UUID; `primitive_index` is the curve index within that profile. - **Segment**: `parent_id` is the **Path** UUID; `primitive_index` is the curve index within that path.\n\nOther [`EntityReference`] variants may omit this field or leave it unset when not applicable.",
         "type": "object",
@@ -10381,6 +10450,49 @@
               "request_id",
               "type"
             ]
+          }
+        ]
+      },
+      "WhereOnEdge": {
+        "description": "Identifies a point on a specific edge.",
+        "oneOf": [
+          {
+            "description": "Midpoint along the edge.",
+            "type": "object",
+            "properties": {
+              "midpoint": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "midpoint"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Somewhere along the edge's length.",
+            "type": "object",
+            "properties": {
+              "at_parameter": {
+                "type": "object",
+                "properties": {
+                  "t": {
+                    "description": "Value which, substituted into the edge's parametric equation, gives a point. Must be between 0 and 1 (inclusive).",
+                    "type": "number",
+                    "format": "double",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  }
+                },
+                "required": [
+                  "t"
+                ]
+              }
+            },
+            "required": [
+              "at_parameter"
+            ],
+            "additionalProperties": false
           }
         ]
       },

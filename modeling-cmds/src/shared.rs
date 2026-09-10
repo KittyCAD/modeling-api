@@ -2259,13 +2259,57 @@ pub enum CurveTypeDebug {
 pub enum MateFrameOn {
     /// Mate frame at the centroid of this face.
     FaceCentroid {
-        /// The face's ID
-        face_id: Uuid,
+        /// Which face?
+        which_face: Uuid,
+        /// Where on the given face?
+        where_on_face: PointOnFace,
     },
     /// Mate frame along this edge.
     Edge {
         /// Which edge?
-        specifier: EdgeSpecifier,
+        which_edge: EdgeSpecifier,
+        /// Where on the given edge?
+        where_on_edge: WhereOnEdge,
+    },
+}
+
+/// Identifies a point on a specific face.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum PointOnFace {
+    /// Centermost point of the face.
+    Centroid {},
+    /// Somewhere along the face.
+    AtParameter {
+        /// Value for the face's 2D parametric equation.
+        #[schemars(range(min = 0.0, max = 1.0))]
+        u: f64,
+        /// Value for the face's 2D parametric equation.
+        #[schemars(range(min = 0.0, max = 1.0))]
+        v: f64,
+    },
+}
+
+/// Identifies a point on a specific edge.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum WhereOnEdge {
+    /// Midpoint along the edge.
+    Midpoint {},
+    /// Somewhere along the edge's length.
+    AtParameter {
+        /// Value which, substituted into the edge's parametric equation,
+        /// gives a point. Must be between 0 and 1 (inclusive).
+        #[schemars(range(min = 0.0, max = 1.0))]
+        t: f64,
     },
 }
 
