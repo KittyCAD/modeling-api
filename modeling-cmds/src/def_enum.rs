@@ -25,6 +25,8 @@ define_modeling_cmd_enum! {
             length_unit::LengthUnit,
             shared::{
                 Angle,
+                AssemblyConstraint,
+                MateFrameOn,
                 RegionVersion,
                 BlendType,
                 BodyType,
@@ -2841,6 +2843,53 @@ define_modeling_cmd_enum! {
             /// Which path to query
             pub path_id: ModelingCmdId,
         }
+
+        /// Create a new assembly
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyCreate {
+            /// Which entities, if any, to move into this assembly.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub children: Vec<Uuid>,
+        }
+
+        /// Add children to the assembly
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyAddChildren {
+            /// Which entities, to move into this assembly.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub children: Vec<Uuid>,
+        }
+
+        /// Create a mate frame
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct MateFrameCreate {
+            /// What to create the mate frame on.
+            pub on: MateFrameOn,
+        }
+
+        /// Add constraints to an assembly.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyAddConstraints {
+            /// Which constraints to apply.
+            pub constraints: Vec<AssemblyConstraint>,
+        }
+
     }
 }
 

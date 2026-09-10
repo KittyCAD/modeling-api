@@ -663,6 +663,65 @@
           }
         ]
       },
+      "AssemblyConstraint": {
+        "description": "How to constrain bodies in an assembly.",
+        "oneOf": [
+          {
+            "description": "Makes two entities occupy the same line/plane or places a point on a surface.",
+            "type": "object",
+            "properties": {
+              "coincident": {
+                "type": "object",
+                "properties": {
+                  "targets": {
+                    "description": "IDs of two mate frames in the assembly.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                  }
+                },
+                "required": [
+                  "targets"
+                ]
+              }
+            },
+            "required": [
+              "coincident"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Aligns cylindrical, conical, or spherical surfaces to a common center.",
+            "type": "object",
+            "properties": {
+              "concentric": {
+                "type": "object",
+                "properties": {
+                  "targets": {
+                    "description": "Which edge? IDs of two mate frames in the assembly. Must be >= 2 items.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                },
+                "required": [
+                  "targets"
+                ]
+              }
+            },
+            "required": [
+              "concentric"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "Axis": {
         "description": "Co-ordinate axis specifier.\n\nSee [cglearn.eu] for background reading.\n\n[cglearn.eu]: https://cglearn.eu/pub/computer-graphics/introduction-to-geometry#material-coordinate-systems-1",
         "oneOf": [
@@ -2529,6 +2588,78 @@
       "LengthUnit": {
         "type": "number",
         "format": "double"
+      },
+      "MateFrameOn": {
+        "description": "What to create a mate frame on",
+        "oneOf": [
+          {
+            "description": "Mate frame at the centroid of this face.",
+            "type": "object",
+            "properties": {
+              "face_centroid": {
+                "type": "object",
+                "properties": {
+                  "where_on_face": {
+                    "description": "Where on the given face?",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/PointOnFace"
+                      }
+                    ]
+                  },
+                  "which_face": {
+                    "description": "Which face?",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "where_on_face",
+                  "which_face"
+                ]
+              }
+            },
+            "required": [
+              "face_centroid"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Mate frame along this edge.",
+            "type": "object",
+            "properties": {
+              "edge": {
+                "type": "object",
+                "properties": {
+                  "where_on_edge": {
+                    "description": "Where on the given edge?",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/WhereOnEdge"
+                      }
+                    ]
+                  },
+                  "which_edge": {
+                    "description": "Which edge?",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EdgeSpecifier"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "where_on_edge",
+                  "which_edge"
+                ]
+              }
+            },
+            "required": [
+              "edge"
+            ],
+            "additionalProperties": false
+          }
+        ]
       },
       "MbdSymbol": {
         "description": "MBD symbol type",
@@ -8198,6 +8329,99 @@
               "path_id",
               "type"
             ]
+          },
+          {
+            "description": "Create a new assembly",
+            "type": "object",
+            "properties": {
+              "children": {
+                "description": "Which entities, if any, to move into this assembly.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "assembly_create"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "Add children to the assembly",
+            "type": "object",
+            "properties": {
+              "children": {
+                "description": "Which entities, to move into this assembly.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "assembly_add_children"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "Create a mate frame",
+            "type": "object",
+            "properties": {
+              "on": {
+                "description": "What to create the mate frame on.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MateFrameOn"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "mate_frame_create"
+                ]
+              }
+            },
+            "required": [
+              "on",
+              "type"
+            ]
+          },
+          {
+            "description": "Add constraints to an assembly.",
+            "type": "object",
+            "properties": {
+              "constraints": {
+                "description": "Which constraints to apply.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AssemblyConstraint"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "assembly_add_constraints"
+                ]
+              }
+            },
+            "required": [
+              "constraints",
+              "type"
+            ]
           }
         ]
       },
@@ -9124,6 +9348,57 @@
           "x",
           "y",
           "z"
+        ]
+      },
+      "PointOnFace": {
+        "description": "Identifies a point on a specific face.",
+        "oneOf": [
+          {
+            "description": "Centermost point of the face.",
+            "type": "object",
+            "properties": {
+              "centroid": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "centroid"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Somewhere along the face.",
+            "type": "object",
+            "properties": {
+              "at_parameter": {
+                "type": "object",
+                "properties": {
+                  "u": {
+                    "description": "Value for the face's 2D parametric equation.",
+                    "type": "number",
+                    "format": "double",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  },
+                  "v": {
+                    "description": "Value for the face's 2D parametric equation.",
+                    "type": "number",
+                    "format": "double",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  }
+                },
+                "required": [
+                  "u",
+                  "v"
+                ]
+              }
+            },
+            "required": [
+              "at_parameter"
+            ],
+            "additionalProperties": false
+          }
         ]
       },
       "PrimitiveTopologyFallback": {
@@ -10183,6 +10458,49 @@
               "request_id",
               "type"
             ]
+          }
+        ]
+      },
+      "WhereOnEdge": {
+        "description": "Identifies a point on a specific edge.",
+        "oneOf": [
+          {
+            "description": "Midpoint along the edge.",
+            "type": "object",
+            "properties": {
+              "midpoint": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "midpoint"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Somewhere along the edge's length.",
+            "type": "object",
+            "properties": {
+              "at_parameter": {
+                "type": "object",
+                "properties": {
+                  "t": {
+                    "description": "Value which, substituted into the edge's parametric equation, gives a point. Must be between 0 and 1 (inclusive).",
+                    "type": "number",
+                    "format": "double",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  }
+                },
+                "required": [
+                  "t"
+                ]
+              }
+            },
+            "required": [
+              "at_parameter"
+            ],
+            "additionalProperties": false
           }
         ]
       },
