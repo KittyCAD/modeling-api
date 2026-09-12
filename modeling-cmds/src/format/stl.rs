@@ -11,7 +11,7 @@ pub mod import {
 
     /// Options for importing STL.
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
-    #[serde(rename = "StlImportOptions")]
+    #[serde(default, rename = "StlImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -67,7 +67,7 @@ pub mod export {
 
     /// Options for exporting STL.
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
-    #[serde(rename = "StlExportOptions")]
+    #[serde(default, rename = "StlExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(
