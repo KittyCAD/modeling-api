@@ -127,6 +127,11 @@ pub enum EntityReference {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         topology_fallback: Option<PrimitiveTopologyFallback>,
     },
+    /// A uuid referencing a helix.
+    Helix {
+        /// Id of the helix object.
+        helix_id: Uuid,
+    },
     /// A uuid referencing an edge on a solid2d (profile) - used for raw sketch/profile edges.
     /// This is distinct from the face-based Edge reference which is used for BRep/swept body edges.
     Solid2dEdge {
