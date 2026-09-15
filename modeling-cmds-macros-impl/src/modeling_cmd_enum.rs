@@ -75,8 +75,8 @@ pub fn generate(input: ItemMod) -> TokenStream {
         )*}
         /// You can easily convert each modeling command with its fields,
         /// into a modeling command without fields.
-        impl From<ModelingCmd> for ModelingCmdEndpoint {
-            fn from(v: ModelingCmd) -> Self {
+        impl From<&ModelingCmd> for ModelingCmdEndpoint {
+            fn from(v: &ModelingCmd) -> Self {
                 match v {#(
                     ModelingCmd::#variants(_) => Self::#variants,
                 )*}
