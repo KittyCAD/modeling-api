@@ -1570,7 +1570,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -2555,7 +2555,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
 dependencies = [
  "hermit-abi",
  "libc",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -2620,8 +2620,7 @@ dependencies = [
 [[package]]
 name = "kcl-api"
 version = "0.2.184"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a89b3051b24a656706928a0c3663ed920dc22e6385ff69477988987abfda1b7f"
+source = "git+https://github.com/KittyCAD/modeling-app?branch=main#02a07ff3eb2327ccc7166183945a88a7ba58befa"
 dependencies = [
  "arbitrary",
  "euler",
@@ -2641,8 +2640,7 @@ dependencies = [
 [[package]]
 name = "kcl-error"
 version = "0.2.184"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b371204e53f818ad5eafdb47a29854373b9c795e98d3897fce0f5594b2a95fe"
+source = "git+https://github.com/KittyCAD/modeling-app?branch=main#02a07ff3eb2327ccc7166183945a88a7ba58befa"
 dependencies = [
  "miette",
  "schemars 0.8.22",
@@ -4588,7 +4586,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys 0.11.0",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -5468,7 +5466,7 @@ dependencies = [
  "getrandom 0.3.4",
  "once_cell",
  "rustix 1.1.2",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -6615,7 +6613,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
