@@ -2616,7 +2616,8 @@ dependencies = [
 [[package]]
 name = "kcl-api"
 version = "0.2.184"
-source = "git+https://github.com/KittyCAD/modeling-app?branch=main#ebc59fab3ae4917aa000871de5ff8f8cad43c324"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a89b3051b24a656706928a0c3663ed920dc22e6385ff69477988987abfda1b7f"
 dependencies = [
  "arbitrary",
  "euler",
@@ -2636,7 +2637,8 @@ dependencies = [
 [[package]]
 name = "kcl-error"
 version = "0.2.184"
-source = "git+https://github.com/KittyCAD/modeling-app?branch=main#ebc59fab3ae4917aa000871de5ff8f8cad43c324"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b371204e53f818ad5eafdb47a29854373b9c795e98d3897fce0f5594b2a95fe"
 dependencies = [
  "miette",
  "schemars 0.8.22",
