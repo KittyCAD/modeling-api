@@ -2526,6 +2526,32 @@
           "files"
         ]
       },
+      "KclVersion": {
+        "description": "Which KCL versions does Zoo support?",
+        "oneOf": [
+          {
+            "description": "Original KCL released in 2025",
+            "type": "string",
+            "enum": [
+              "1.0"
+            ]
+          },
+          {
+            "description": "KCL v2 is the same as KCL v1, except that it supports the `region` function.",
+            "type": "string",
+            "enum": [
+              "2.0"
+            ]
+          },
+          {
+            "description": "KCL v3 is currently in development.",
+            "type": "string",
+            "enum": [
+              "3.0-preview"
+            ]
+          }
+        ]
+      },
       "LengthUnit": {
         "type": "number",
         "format": "double"
@@ -8204,6 +8230,30 @@
             },
             "required": [
               "path_id",
+              "type"
+            ]
+          },
+          {
+            "description": "Sets the KCL Version used by the engine.",
+            "type": "object",
+            "properties": {
+              "kcl_version": {
+                "description": "Which KCL version the following commands should be executed with.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/KclVersion"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "set_kcl_version"
+                ]
+              }
+            },
+            "required": [
+              "kcl_version",
               "type"
             ]
           }
