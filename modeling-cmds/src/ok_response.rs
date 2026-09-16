@@ -1427,5 +1427,11 @@ define_ok_modeling_cmd_response_enum! {
             /// How many regions the Toolpaths library thinks exist
             pub region_count: u16,
         }
+
+        /// The response from the 'SetKclVersion'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct SetKclVersion {
+        }
     }
 }

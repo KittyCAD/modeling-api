@@ -1,11 +1,13 @@
 use std::str::FromStr;
 
+use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 
 /// Which KCL versions does Zoo support?
-#[derive(Debug, Clone, Copy, Default, Deserialize, Serialize, PartialEq, Eq, Ord, PartialOrd, schemars::JsonSchema)]
+#[derive(Debug, Clone, Copy, Default, Deserialize, Serialize, PartialEq, Eq, Ord, PartialOrd, JsonSchema)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export))]
 pub enum KclVersion {
     /// Original KCL released in 2025
