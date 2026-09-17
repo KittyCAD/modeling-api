@@ -37,7 +37,7 @@ cxx = { version = "1.0", optional = true }
 data-encoding = "2.11.0"
 enum-iterator = "2.3.0"
 enum-iterator-derive = "1.2.1"
-euler = "0.4.1"
+euler = "0.5.0"
 http = "1.4.0"
 kcl-api = { version = "0.2.178", optional = true }
 kcl-error = { version = "0.2.178", optional = true }
