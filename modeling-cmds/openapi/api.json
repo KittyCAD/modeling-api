@@ -8290,6 +8290,50 @@
           "cmd_id"
         ]
       },
+      "NamedView": {
+        "description": "Options for exporting glTF 2.0.",
+        "type": "object",
+        "properties": {
+          "projection": {
+            "description": "Projection kind.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Projection"
+              }
+            ]
+          },
+          "target": {
+            "description": "Target point.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "up": {
+            "description": "Up direction.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "vantage": {
+            "description": "Vantage point.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "projection",
+          "target",
+          "up",
+          "vantage"
+        ]
+      },
       "OppositeForAngle": {
         "type": "string"
       },
@@ -8442,12 +8486,20 @@
                 "enum": [
                   "gltf"
                 ]
+              },
+              "views": {
+                "description": "Named views in the scene.",
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/NamedView"
+                }
               }
             },
             "required": [
               "presentation",
               "storage",
-              "type"
+              "type",
+              "views"
             ]
           },
           {
@@ -8586,6 +8638,14 @@
                     "$ref": "#/components/schemas/UnitLength"
                   }
                 ]
+              },
+              "views": {
+                "description": "Named views in the scene.",
+                "default": {},
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/NamedView"
+                }
               }
             },
             "required": [
@@ -9203,6 +9263,41 @@
         "required": [
           "parent_id",
           "primitive_index"
+        ]
+      },
+      "Projection": {
+        "description": "Data item selection.",
+        "oneOf": [
+          {
+            "description": "Orthographic (parallel) projection.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "orthographic"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "Perspective projection.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "perspective"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
         ]
       },
       "RegionVersion": {
