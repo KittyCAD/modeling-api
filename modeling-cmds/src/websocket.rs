@@ -78,6 +78,23 @@ pub enum ModelingConnectionErrorCode {
     BackendDisconnected,
 }
 
+impl ModelingConnectionErrorCode {
+    fn legacy_error_code(self) -> ErrorCode {
+        match self {
+            Self::AuthTokenInvalid
+            | Self::InsufficientScope
+            | Self::MissingPaymentMethod
+            | Self::PaymentMethodFailed
+            | Self::BillingThresholdReached
+            | Self::PayAsYouGoDisabled
+            | Self::UpgradeDowngradeAbuse
+            | Self::Admin => ErrorCode::AuthTokenInvalid,
+            Self::TooManyConnections => ErrorCode::BadRequest,
+            Self::BackendDisconnected => ErrorCode::InternalApi,
+        }
+    }
+}
+
 /// Because [`EngineErrorCode`] is a subset of [`ErrorCode`], you can trivially map
 /// each variant of the former to a variant of the latter.
 impl From<EngineErrorCode> for ErrorCode {
@@ -328,6 +345,8 @@ pub struct ConnectionErrorWebSocketResponse {
     pub success: bool,
     /// Which request this is a response to, if any.
     pub request_id: Option<Uuid>,
+    /// Legacy representation retained while clients migrate to `connection_error`.
+    pub errors: Vec<ApiError>,
     /// The connection-level error.
     pub connection_error: ModelingConnectionError,
 }
@@ -353,10 +372,10 @@ pub enum WebSocketResponse {
 pub enum ModelingWebSocketResponse {
     /// Response sent when a request succeeded.
     Success(SuccessWebSocketResponse),
-    /// Response sent when a request did not succeed.
-    Failure(FailureWebSocketResponse),
     /// Response sent when the connection cannot continue.
     ConnectionError(ConnectionErrorWebSocketResponse),
+    /// Response sent when a request did not succeed.
+    Failure(FailureWebSocketResponse),
 }
 
 /// Websocket responses can either be successful or unsuccessful.
@@ -441,12 +460,17 @@ impl ModelingWebSocketResponse {
         detail: impl Into<String>,
         retryable: bool,
     ) -> Self {
+        let detail = detail.into();
         Self::ConnectionError(ConnectionErrorWebSocketResponse {
             success: false,
             request_id,
+            errors: vec![ApiError {
+                error_code: code.legacy_error_code(),
+                message: detail.clone(),
+            }],
             connection_error: ModelingConnectionError {
                 code,
-                detail: detail.into(),
+                detail,
                 retryable,
             },
         })
@@ -1168,6 +1192,10 @@ mod tests {
         let expected = serde_json::json!({
             "success": false,
             "request_id": "cc30d5e2-482b-4498-b5d2-6131c30a50a4",
+            "errors": [{
+                "error_code": "bad_request",
+                "message": "This account has reached its concurrent modeling-session limit."
+            }],
             "connection_error": {
                 "code": "too_many_connections",
                 "detail": "This account has reached its concurrent modeling-session limit.",
@@ -1181,6 +1209,14 @@ mod tests {
         assert_eq!(round_tripped, actual);
         assert!(actual.is_failure());
         assert_eq!(actual.request_id(), Some(REQ_ID));
+
+        let serialized = serde_json::to_value(&actual).unwrap();
+        let legacy: WebSocketResponse = serde_json::from_value(serialized).unwrap();
+        let WebSocketResponse::Failure(legacy) = legacy else {
+            panic!("expected legacy failure response");
+        };
+        assert_eq!(legacy.errors.len(), 1);
+        assert_eq!(legacy.errors[0].error_code, ErrorCode::BadRequest);
     }
 
     #[test]
