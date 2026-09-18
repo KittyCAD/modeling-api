@@ -455,6 +455,7 @@ pub struct AnnotationBasicDimension {
     pub from_edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the dimension from
+    /// If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.
     pub from_entity_pos: Point2d<f64>,
 
     /// Entity to measure the dimension to
@@ -467,6 +468,7 @@ pub struct AnnotationBasicDimension {
     pub to_edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the dimension to
+    /// If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.
     pub to_entity_pos: Point2d<f64>,
 
     /// Basic dimension parameters (symbol and tolerance)
@@ -510,6 +512,7 @@ pub struct AnnotationFeatureControl {
     pub edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the annotation leader from
+    /// If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.
     pub entity_pos: Point2d<f64>,
 
     /// Type of leader to use
@@ -568,6 +571,7 @@ pub struct AnnotationFeatureTag {
     pub edge_reference: Option<EdgeSpecifier>,
 
     /// Normalized position within the entity to position the annotation leader from
+    /// If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.
     pub entity_pos: Point2d<f64>,
 
     /// Type of leader to use
