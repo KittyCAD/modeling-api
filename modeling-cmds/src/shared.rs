@@ -394,6 +394,24 @@ pub struct AnnotationTextOptions {
     pub point_size: u32,
 }
 
+/// Parameters for defining a specific MBD Leader Position within an Entity
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum AnnotationMbdLeaderPosition {
+    /// Normalized position within the entity to position the annotation leader from
+    NormalizedPos {
+        /// The position
+        pos: Point2d<f64>,
+    },
+
+    /// Geometric Center of the entity (such as on the center axis for a cylinder)
+    Centroid,
+}
+
 /// Parameters for defining an MBD Geometric control frame
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
@@ -454,8 +472,12 @@ pub struct AnnotationBasicDimension {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub from_edge_reference: Option<EdgeSpecifier>,
 
+    /// Position within the entity to position the dimension leader from
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub from_entity_leader_pos: Option<AnnotationMbdLeaderPosition>,
+
     /// Normalized position within the entity to position the dimension from
-    /// If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.
+    /// Deprecated; please use `from_entity_leader_pos`
     pub from_entity_pos: Point2d<f64>,
 
     /// Entity to measure the dimension to
@@ -467,8 +489,12 @@ pub struct AnnotationBasicDimension {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub to_edge_reference: Option<EdgeSpecifier>,
 
+    /// Position within the entity to position the dimension leader from
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub to_entity_leader_pos: Option<AnnotationMbdLeaderPosition>,
+
     /// Normalized position within the entity to position the dimension to
-    /// If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.
+    /// Deprecated; please use `to_entity_leader_pos`
     pub to_entity_pos: Point2d<f64>,
 
     /// Basic dimension parameters (symbol and tolerance)
@@ -511,8 +537,12 @@ pub struct AnnotationFeatureControl {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub edge_reference: Option<EdgeSpecifier>,
 
+    /// Position within the entity to position the annotation leader from
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_leader_pos: Option<AnnotationMbdLeaderPosition>,
+
     /// Normalized position within the entity to position the annotation leader from
-    /// If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.
+    /// Deprecated; please use `entity_leader_pos`
     pub entity_pos: Point2d<f64>,
 
     /// Type of leader to use
@@ -570,8 +600,12 @@ pub struct AnnotationFeatureTag {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub edge_reference: Option<EdgeSpecifier>,
 
+    /// Position within the entity to position the annotation leader from
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_leader_pos: Option<AnnotationMbdLeaderPosition>,
+
     /// Normalized position within the entity to position the annotation leader from
-    /// If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.
+    /// Deprecated; please use `entity_leader_pos`
     pub entity_pos: Point2d<f64>,
 
     /// Type of leader to use
