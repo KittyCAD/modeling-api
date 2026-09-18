@@ -107,7 +107,7 @@
             "format": "uuid"
           },
           "from_entity_pos": {
-            "description": "Normalized position within the entity to position the dimension from",
+            "description": "Normalized position within the entity to position the dimension from If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
@@ -149,7 +149,7 @@
             "format": "uuid"
           },
           "to_entity_pos": {
-            "description": "Normalized position within the entity to position the dimension to",
+            "description": "Normalized position within the entity to position the dimension to If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
@@ -213,7 +213,7 @@
             "format": "uuid"
           },
           "entity_pos": {
-            "description": "Normalized position within the entity to position the annotation leader from",
+            "description": "Normalized position within the entity to position the annotation leader from If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
@@ -305,7 +305,7 @@
             "format": "uuid"
           },
           "entity_pos": {
-            "description": "Normalized position within the entity to position the annotation leader from",
+            "description": "Normalized position within the entity to position the annotation leader from If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
