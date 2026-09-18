@@ -43,8 +43,8 @@ pub enum ErrorCode {
     ConnectionProblem,
     /// Client sent a Websocket message type which the KittyCAD API does not handle.
     MessageTypeNotAccepted,
-    /// Client sent a Websocket message intended for WebRTC but it was configured as a WebRTC
-    /// connection.
+    /// Client sent a Websocket message intended for WebRTC,
+    /// but did not configure the server to establish WebRTC.
     MessageTypeNotAcceptedForWebRTC,
 }
 
@@ -112,6 +112,7 @@ pub enum WebSocketRequest {
     },
 
     /// Execute a KCL project.
+    #[cfg(feature = "exec-kcl")]
     ExecKclProject {
         /// ID for this request.
         request_id: Uuid,
@@ -234,10 +235,16 @@ pub enum OkWebSocketResponseData {
     },
 
     /// Result of executing a KCL project.
+    #[cfg(feature = "exec-kcl")]
     ExecKclProject {
         /// Result after executing KCL.
         result: Result<crate::exec_kcl::ExecKclProjectOk, crate::exec_kcl::ExecKclProjectErr>,
     },
+
+    /// Request that the client end this connection and establish a new session
+    /// using normal authentication and authorization.
+    /// This does not guarantee that a new session will be accepted.
+    Reconnect {},
 }
 
 /// Successful Websocket response.
@@ -338,8 +345,9 @@ impl WebSocketResponse {
     }
 }
 
-/// A raw file with unencoded contents to be passed over binary websockets.
-/// When raw files come back for exports it is sent as binary/bson, not text/json.
+/// A raw file with unencoded contents.
+///
+/// See the command that emits this type for its response encoding.
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, PartialEq)]
 #[cfg_attr(
     feature = "python",
@@ -554,7 +562,7 @@ pub struct ClientMetrics {
     /// https://www.w3.org/TR/webrtc-stats/#dom-rtcreceivedrtpstreamstats-packetslost
     pub rtc_packets_lost: Option<u32>,
 
-    ///  Count the total number of Picture Loss Indication (PLI) packets.
+    /// Count the total number of Picture Loss Indication (PLI) packets.
     ///
     /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-plicount
     pub rtc_pli_count: Option<u32>,
@@ -569,7 +577,7 @@ pub struct ClientMetrics {
     /// https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-totalpausesduration
     pub rtc_total_pauses_duration_sec: Option<f32>,
 
-    /// Total duration of pauses in seconds.
+    /// Estimated round trip time, measured in seconds.
     ///
     /// This is the "ping" between the client and the STUN server. Not to be confused with the
     /// E2E RTT documented
@@ -908,6 +916,22 @@ mod tests {
     use crate::output;
 
     const REQ_ID: Uuid = uuid::uuid!("cc30d5e2-482b-4498-b5d2-6131c30a50a4");
+
+    #[test]
+    fn reconnect_response_round_trip() {
+        let response = WebSocketResponse::success(None, OkWebSocketResponseData::Reconnect {});
+        let expected = serde_json::json!({
+            "success": true,
+            "request_id": null,
+            "resp": {
+                "type": "reconnect",
+                "data": {}
+            }
+        });
+        assert_eq!(serde_json::to_value(&response).unwrap(), expected);
+        let decoded: WebSocketResponse = serde_json::from_value(expected).unwrap();
+        assert_eq!(decoded, response);
+    }
 
     #[test]
     fn serialize_websocket_modeling_ok() {

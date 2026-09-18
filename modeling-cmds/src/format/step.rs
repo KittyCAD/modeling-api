@@ -5,6 +5,27 @@ use serde::{Deserialize, Serialize};
 
 use crate::coord;
 
+/// After importing, how should this model's data be represented?
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename = "StepImportTargetRepresentation", rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(
+    feature = "python",
+    pyo3_stub_gen::derive::gen_stub_pyclass_enum,
+    pyo3::pyclass(name = "StepImportTargetRepresentation", from_py_object)
+)]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum TargetRepresentation {
+    /// Mesh of 2D geometry
+    Mesh,
+    /// Boundary representation
+    Brep,
+}
+
+const DEFAULT_REPR: TargetRepresentation = TargetRepresentation::Brep;
+
 /// Import models in STEP format.
 pub mod import {
     use super::*;
@@ -35,6 +56,10 @@ pub mod import {
         /// Defaults to `false` but is implicitly `true` when importing into the engine.
         #[builder(default)]
         pub split_closed_faces: bool,
+
+        /// What representation should be used for this file after it's imported?
+        #[builder(default = DEFAULT_REPR)]
+        pub target_representation: TargetRepresentation,
     }
 
     #[cfg(feature = "python")]
@@ -51,6 +76,7 @@ pub mod import {
     impl Default for Options {
         fn default() -> Self {
             Self {
+                target_representation: DEFAULT_REPR,
                 coords: *coord::KITTYCAD,
                 split_closed_faces: false,
             }

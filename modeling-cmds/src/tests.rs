@@ -22,12 +22,54 @@ async fn test_openapi() {
     assert_eq!(spec.openapi, "3.0.3");
 
     // Check for lint errors.
-    let errors = openapi_lint::validate(&spec);
+    let mut schema_to_lint = spec;
+    exclude_kcl_version_from_lint(&mut schema_to_lint);
+    let errors = openapi_lint::validate(&schema_to_lint);
     assert!(errors.is_empty(), "{}", errors.join("\n\n"));
 
     // Download the old schema, write it to disk.
     let schema = download_openapi_schema("main").await;
     std::fs::write("openapi/old_api.json", schema).unwrap();
+}
+
+/// KCL versions serialize like "2.0" or "3.0-preview", because that's how users
+/// write them in KCL files. And I want the two representations (de/serialized form, and parsed/unparsed form)
+/// to match. But this violates the `openapi_lint` conventions. So let's just exclude that from
+/// the schema's linter.
+fn exclude_kcl_version_from_lint(spec: &mut openapiv3::OpenAPI) {
+    let Some(schema) = spec
+        .components
+        .as_mut()
+        .expect("OpenAPI components are missing")
+        .schemas
+        .get_mut("KclVersion")
+    else {
+        return;
+    };
+    *schema = openapiv3::ReferenceOr::Item(openapiv3::Schema {
+        schema_data: Default::default(),
+        schema_kind: openapiv3::SchemaKind::Type(openapiv3::Type::String(Default::default())),
+    });
+}
+
+#[test]
+fn test_exclude_kcl_version_from_lint() {
+    let schema = example_server()
+        .unwrap()
+        .openapi("Example Modeling API server", "1.2.3".parse().unwrap())
+        .json()
+        .unwrap();
+    let mut spec: openapiv3::OpenAPI = serde_json::from_value(schema).unwrap();
+    assert!(!openapi_lint::validate(&spec).is_empty());
+    let mut expected = serde_json::to_value(&spec).unwrap();
+    expected["components"]["schemas"]["KclVersion"] = serde_json::json!({ "type": "string" });
+
+    exclude_kcl_version_from_lint(&mut spec);
+
+    // All other schemas and references must remain unchanged.
+    assert_eq!(serde_json::to_value(&spec).unwrap(), expected);
+    let errors = openapi_lint::validate(&spec);
+    assert!(errors.is_empty(), "{}", errors.join("\n\n"));
 }
 
 fn sort_json_keys(value: &mut serde_json::Value) {
