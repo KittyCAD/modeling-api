@@ -106,8 +106,17 @@
             "type": "string",
             "format": "uuid"
           },
+          "from_entity_leader_pos": {
+            "nullable": true,
+            "description": "Position within the entity to position the dimension leader from",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AnnotationMbdLeaderPosition"
+              }
+            ]
+          },
           "from_entity_pos": {
-            "description": "Normalized position within the entity to position the dimension from If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.",
+            "description": "Normalized position within the entity to position the dimension from Deprecated; please use `from_entity_leader_pos`",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
@@ -148,8 +157,17 @@
             "type": "string",
             "format": "uuid"
           },
+          "to_entity_leader_pos": {
+            "nullable": true,
+            "description": "Position within the entity to position the dimension leader from",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AnnotationMbdLeaderPosition"
+              }
+            ]
+          },
           "to_entity_pos": {
-            "description": "Normalized position within the entity to position the dimension to If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.",
+            "description": "Normalized position within the entity to position the dimension to Deprecated; please use `to_entity_leader_pos`",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
@@ -212,8 +230,17 @@
             "type": "string",
             "format": "uuid"
           },
+          "entity_leader_pos": {
+            "nullable": true,
+            "description": "Position within the entity to position the annotation leader from",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AnnotationMbdLeaderPosition"
+              }
+            ]
+          },
           "entity_pos": {
-            "description": "Normalized position within the entity to position the annotation leader from If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.",
+            "description": "Normalized position within the entity to position the annotation leader from Deprecated; please use `entity_leader_pos`",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
@@ -304,8 +331,17 @@
             "type": "string",
             "format": "uuid"
           },
+          "entity_leader_pos": {
+            "nullable": true,
+            "description": "Position within the entity to position the annotation leader from",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AnnotationMbdLeaderPosition"
+              }
+            ]
+          },
           "entity_pos": {
-            "description": "Normalized position within the entity to position the annotation leader from If the entity is a circular edge or cylindrical face, the center of the primitive is used instead.",
+            "description": "Normalized position within the entity to position the annotation leader from Deprecated; please use `entity_leader_pos`",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
@@ -497,6 +533,50 @@
         "required": [
           "symbol",
           "tolerance"
+        ]
+      },
+      "AnnotationMbdLeaderPosition": {
+        "description": "Parameters for defining a specific MBD Leader Position within an Entity",
+        "oneOf": [
+          {
+            "description": "Normalized position within the entity to position the annotation leader from",
+            "type": "object",
+            "properties": {
+              "normalized_pos": {
+                "type": "object",
+                "properties": {
+                  "pos": {
+                    "description": "The position",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Point2d"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "pos"
+                ]
+              }
+            },
+            "required": [
+              "normalized_pos"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Geometric Center of the entity (such as on the center axis for a cylinder)",
+            "type": "object",
+            "properties": {
+              "centroid": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "centroid"
+            ],
+            "additionalProperties": false
+          }
         ]
       },
       "AnnotationOptions": {

@@ -409,7 +409,7 @@ pub enum AnnotationMbdLeaderPosition {
     },
 
     /// Geometric Center of the entity (such as on the center axis for a cylinder)
-    Centroid,
+    Centroid {},
 }
 
 /// Parameters for defining an MBD Geometric control frame
