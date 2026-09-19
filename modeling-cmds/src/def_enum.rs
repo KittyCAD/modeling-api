@@ -2159,6 +2159,41 @@ define_modeling_cmd_enum! {
             pub output_unit: units::UnitArea,
         }
 
+        /// Get mass, density, volume, center of mass, surface area, and bounding box together.
+        /// Equivalent to querying each property separately for the same entities, while allowing
+        /// the engine to share the intermediate geometry used by the calculations.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct PhysicalProperties {
+            /// IDs of the entities to query. If empty, query the default scene, as with the
+            /// individual property commands.
+            #[builder(default)]
+            pub entity_ids: Vec<Uuid>,
+            /// The material density used to calculate mass.
+            pub material_density: f64,
+            /// The material density unit.
+            pub material_density_unit: units::UnitDensity,
+            /// The material mass used to calculate density, independently of the calculated mass.
+            pub material_mass: f64,
+            /// The material mass unit.
+            pub material_mass_unit: units::UnitMass,
+            /// The output unit for mass.
+            pub mass_output_unit: units::UnitMass,
+            /// The output unit for density.
+            pub density_output_unit: units::UnitDensity,
+            /// The output unit for volume.
+            pub volume_output_unit: units::UnitVolume,
+            /// The output unit for center of mass.
+            pub center_of_mass_output_unit: units::UnitLength,
+            /// The output unit for surface area.
+            pub surface_area_output_unit: units::UnitArea,
+            /// The output unit for the bounding box's dimensions.
+            pub bounding_box_output_unit: units::UnitLength,
+        }
+
         /// Focus the default camera upon an object in the scene.
         #[derive(
             Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,

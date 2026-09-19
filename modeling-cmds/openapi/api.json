@@ -7104,6 +7104,114 @@
             ]
           },
           {
+            "description": "Get mass, density, volume, center of mass, surface area, and bounding box together. Equivalent to querying each property separately for the same entities, while allowing the engine to share the intermediate geometry used by the calculations.",
+            "type": "object",
+            "properties": {
+              "bounding_box_output_unit": {
+                "description": "The output unit for the bounding box's dimensions.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitLength"
+                  }
+                ]
+              },
+              "center_of_mass_output_unit": {
+                "description": "The output unit for center of mass.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitLength"
+                  }
+                ]
+              },
+              "density_output_unit": {
+                "description": "The output unit for density.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitDensity"
+                  }
+                ]
+              },
+              "entity_ids": {
+                "description": "IDs of the entities to query. If empty, query the default scene, as with the individual property commands.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "mass_output_unit": {
+                "description": "The output unit for mass.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitMass"
+                  }
+                ]
+              },
+              "material_density": {
+                "description": "The material density used to calculate mass.",
+                "type": "number",
+                "format": "double"
+              },
+              "material_density_unit": {
+                "description": "The material density unit.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitDensity"
+                  }
+                ]
+              },
+              "material_mass": {
+                "description": "The material mass used to calculate density, independently of the calculated mass.",
+                "type": "number",
+                "format": "double"
+              },
+              "material_mass_unit": {
+                "description": "The material mass unit.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitMass"
+                  }
+                ]
+              },
+              "surface_area_output_unit": {
+                "description": "The output unit for surface area.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitArea"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "physical_properties"
+                ]
+              },
+              "volume_output_unit": {
+                "description": "The output unit for volume.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitVolume"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "bounding_box_output_unit",
+              "center_of_mass_output_unit",
+              "density_output_unit",
+              "entity_ids",
+              "mass_output_unit",
+              "material_density",
+              "material_density_unit",
+              "material_mass",
+              "material_mass_unit",
+              "surface_area_output_unit",
+              "type",
+              "volume_output_unit"
+            ]
+          },
+          {
             "description": "Focus the default camera upon an object in the scene.",
             "type": "object",
             "properties": {
