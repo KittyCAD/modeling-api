@@ -399,6 +399,24 @@ pub struct AnnotationTextOptions {
     pub point_size: u32,
 }
 
+/// Parameters for defining a specific MBD Leader Position within an Entity
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum AnnotationMbdLeaderPosition {
+    /// Normalized position within the entity to position the annotation leader from
+    NormalizedPos {
+        /// The position
+        pos: Point2d<f64>,
+    },
+
+    /// Geometric Center of the entity (such as on the center axis for a cylinder)
+    Centroid {},
+}
+
 /// Parameters for defining an MBD Geometric control frame
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
@@ -459,8 +477,14 @@ pub struct AnnotationBasicDimension {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub from_edge_reference: Option<EdgeSpecifier>,
 
+    /// Position within the entity to position the dimension leader from
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub from_entity_leader_pos: Option<AnnotationMbdLeaderPosition>,
+
     /// Normalized position within the entity to position the dimension from
-    pub from_entity_pos: Point2d<f64>,
+    /// Deprecated; please use `from_entity_leader_pos`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub from_entity_pos: Option<Point2d<f64>>,
 
     /// Entity to measure the dimension to
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -471,8 +495,14 @@ pub struct AnnotationBasicDimension {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub to_edge_reference: Option<EdgeSpecifier>,
 
+    /// Position within the entity to position the dimension leader from
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub to_entity_leader_pos: Option<AnnotationMbdLeaderPosition>,
+
     /// Normalized position within the entity to position the dimension to
-    pub to_entity_pos: Point2d<f64>,
+    /// Deprecated; please use `to_entity_leader_pos`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub to_entity_pos: Option<Point2d<f64>>,
 
     /// Basic dimension parameters (symbol and tolerance)
     pub dimension: AnnotationMbdBasicDimension,
@@ -514,8 +544,14 @@ pub struct AnnotationFeatureControl {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub edge_reference: Option<EdgeSpecifier>,
 
+    /// Position within the entity to position the annotation leader from
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_leader_pos: Option<AnnotationMbdLeaderPosition>,
+
     /// Normalized position within the entity to position the annotation leader from
-    pub entity_pos: Point2d<f64>,
+    /// Deprecated; please use `entity_leader_pos`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_pos: Option<Point2d<f64>>,
 
     /// Type of leader to use
     pub leader_type: AnnotationLineEnd,
@@ -572,8 +608,14 @@ pub struct AnnotationFeatureTag {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub edge_reference: Option<EdgeSpecifier>,
 
+    /// Position within the entity to position the annotation leader from
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_leader_pos: Option<AnnotationMbdLeaderPosition>,
+
     /// Normalized position within the entity to position the annotation leader from
-    pub entity_pos: Point2d<f64>,
+    /// Deprecated; please use `entity_leader_pos`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_pos: Option<Point2d<f64>>,
 
     /// Type of leader to use
     pub leader_type: AnnotationLineEnd,
