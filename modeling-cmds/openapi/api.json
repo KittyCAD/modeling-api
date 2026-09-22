@@ -116,6 +116,7 @@
             ]
           },
           "from_entity_pos": {
+            "nullable": true,
             "description": "Normalized position within the entity to position the dimension from Deprecated; please use `from_entity_leader_pos`",
             "allOf": [
               {
@@ -167,6 +168,7 @@
             ]
           },
           "to_entity_pos": {
+            "nullable": true,
             "description": "Normalized position within the entity to position the dimension to Deprecated; please use `to_entity_leader_pos`",
             "allOf": [
               {
@@ -179,11 +181,9 @@
           "dimension",
           "font_point_size",
           "font_scale",
-          "from_entity_pos",
           "offset",
           "plane_id",
-          "precision",
-          "to_entity_pos"
+          "precision"
         ]
       },
       "AnnotationFeatureControl": {
@@ -240,6 +240,7 @@
             ]
           },
           "entity_pos": {
+            "nullable": true,
             "description": "Normalized position within the entity to position the annotation leader from Deprecated; please use `entity_leader_pos`",
             "allOf": [
               {
@@ -303,7 +304,6 @@
           }
         },
         "required": [
-          "entity_pos",
           "font_point_size",
           "font_scale",
           "leader_type",
@@ -341,6 +341,7 @@
             ]
           },
           "entity_pos": {
+            "nullable": true,
             "description": "Normalized position within the entity to position the annotation leader from Deprecated; please use `entity_leader_pos`",
             "allOf": [
               {
@@ -400,7 +401,6 @@
           }
         },
         "required": [
-          "entity_pos",
           "font_point_size",
           "font_scale",
           "key",
