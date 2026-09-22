@@ -1045,6 +1045,24 @@ define_ok_modeling_cmd_response_enum! {
             pub output_unit: units::UnitLength,
         }
 
+        /// The physical properties response, containing the same data as the individual property responses.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct PhysicalProperties {
+            /// The mass and its output unit.
+            pub mass: Mass,
+            /// The density and its output unit.
+            pub density: Density,
+            /// The volume and its output unit.
+            pub volume: Volume,
+            /// The center of mass and its output unit.
+            pub center_of_mass: CenterOfMass,
+            /// The surface area and its output unit.
+            pub surface_area: SurfaceArea,
+            /// The bounding box's center and dimensions, in the requested bounding box output unit.
+            pub bounding_box: BoundingBox,
+        }
+
         /// The plane for sketch mode.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
