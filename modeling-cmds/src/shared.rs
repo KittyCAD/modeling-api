@@ -478,7 +478,8 @@ pub struct AnnotationBasicDimension {
 
     /// Normalized position within the entity to position the dimension from
     /// Deprecated; please use `from_entity_leader_pos`
-    pub from_entity_pos: Point2d<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub from_entity_pos: Option<Point2d<f64>>,
 
     /// Entity to measure the dimension to
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -495,7 +496,8 @@ pub struct AnnotationBasicDimension {
 
     /// Normalized position within the entity to position the dimension to
     /// Deprecated; please use `to_entity_leader_pos`
-    pub to_entity_pos: Point2d<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub to_entity_pos: Option<Point2d<f64>>,
 
     /// Basic dimension parameters (symbol and tolerance)
     pub dimension: AnnotationMbdBasicDimension,
@@ -543,7 +545,8 @@ pub struct AnnotationFeatureControl {
 
     /// Normalized position within the entity to position the annotation leader from
     /// Deprecated; please use `entity_leader_pos`
-    pub entity_pos: Point2d<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_pos: Option<Point2d<f64>>,
 
     /// Type of leader to use
     pub leader_type: AnnotationLineEnd,
@@ -606,7 +609,8 @@ pub struct AnnotationFeatureTag {
 
     /// Normalized position within the entity to position the annotation leader from
     /// Deprecated; please use `entity_leader_pos`
-    pub entity_pos: Point2d<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub entity_pos: Option<Point2d<f64>>,
 
     /// Type of leader to use
     pub leader_type: AnnotationLineEnd,
