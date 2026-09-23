@@ -7,7 +7,7 @@ use crate::{self as kittycad_modeling_cmds};
 
 define_modeling_cmd_enum! {
     pub mod each_cmd {
-        use std::collections::HashSet;
+        use std::collections::{HashMap, HashSet};
 
         use bon::Builder;
         use crate::{self as kittycad_modeling_cmds};
