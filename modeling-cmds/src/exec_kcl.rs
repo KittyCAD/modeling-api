@@ -1,4 +1,6 @@
 use bon::Builder;
+use indexmap::IndexMap;
+use kcl_api::kcl_value_view::KclValueView;
 #[cfg(feature = "websocket")]
 use kcl_api::ArtifactGraph;
 use kcl_error::{CompilationIssue, KclError};
@@ -71,6 +73,14 @@ pub struct ExecKclProjectOk {
     /// The artifact graph produced by the KCL execution.
     #[cfg(feature = "websocket")]
     pub artifact_graph: ArtifactGraph,
+    /// Operations that have been performed in execution order, grouped by
+    /// owning module id, for display in the Feature Tree.
+    #[cfg(feature = "websocket")]
+    pub operations: IndexMap<kcl_error::ModuleId, Vec<kcl_api::Operation>>,
+    /// Variables in the top-level of the root module.
+    pub variables: IndexMap<String, KclValueView>,
+    /// Non-fatal errors and warnings.
+    pub issues: Vec<CompilationIssue>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
@@ -81,7 +91,13 @@ pub struct ExecKclProjectOk {
 pub struct ExecKclProjectErr {
     /// Fatal KCL errors that prevented your geometry from being created.
     pub error: Option<KclError>,
-    /// Nonfatal KCL errors that need to be fixed.
+    /// Operations that have been performed in execution order, grouped by
+    /// owning module id, for display in the Feature Tree.
+    #[cfg(feature = "websocket")]
+    pub operations: IndexMap<kcl_error::ModuleId, Vec<kcl_api::Operation>>,
+    /// Variables in the top-level of the root module.
+    pub variables: IndexMap<String, KclValueView>,
+    /// Non-fatal errors and warnings.
     pub non_fatal: Vec<CompilationIssue>,
     // TODO: Add fields to this as we make KCL data serializable.
     // Should be a usable subset of `KclErrorWithOutputs`.
@@ -93,6 +109,8 @@ impl ExecKclProjectErr {
         Self {
             error: Some(error),
             non_fatal: Default::default(),
+            operations: Default::default(),
+            variables: Default::default(),
         }
     }
 }
@@ -103,6 +121,12 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
         Ok(Self {
             #[cfg(feature = "websocket")]
             artifact_graph: ArtifactGraph::default(),
+            #[cfg(feature = "websocket")]
+            operations: Default::default(),
+            #[cfg(feature = "websocket")]
+            issues: Default::default(),
+            #[cfg(feature = "websocket")]
+            variables: Default::default(),
         })
     }
 }
@@ -113,6 +137,8 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectErr {
         Ok(Self {
             error: Default::default(),
             non_fatal: Default::default(),
+            operations: Default::default(),
+            variables: Default::default(),
         })
     }
 }
