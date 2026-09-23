@@ -99,6 +99,9 @@ pub struct ExecKclProjectErr {
     pub variables: IndexMap<String, KclValueView>,
     /// Non-fatal errors and warnings.
     pub non_fatal: Vec<CompilationIssue>,
+    /// The artifact graph produced by the KCL execution.
+    #[cfg(feature = "websocket")]
+    pub artifact_graph: ArtifactGraph,
     // TODO: Add fields to this as we make KCL data serializable.
     // Should be a usable subset of `KclErrorWithOutputs`.
 }
@@ -111,6 +114,7 @@ impl ExecKclProjectErr {
             non_fatal: Default::default(),
             operations: Default::default(),
             variables: Default::default(),
+            artifact_graph: Default::default(),
         }
     }
 }
@@ -139,6 +143,7 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectErr {
             non_fatal: Default::default(),
             operations: Default::default(),
             variables: Default::default(),
+            artifact_graph: Default::default(),
         })
     }
 }
