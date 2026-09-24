@@ -17,14 +17,14 @@ clap = ["dep:clap"]
 default = []
 derive-jsonschema-on-enums = []
 tabled = ["dep:tabled"]
-ts-rs = ["dep:ts-rs", "kcl-api/ts-rs"]
+ts-rs = ["dep:ts-rs", "kcl-api/ts-rs", "kittycad-point/ts-rs"]
 slog = ["dep:slog"]
 cxx = ["dep:cxx"]
 websocket = ["dep:serde_json"]
 webrtc = ["dep:webrtc"]
 unstable_exhaustive = []
 python = ["dep:pyo3", "dep:pyo3-stub-gen"]
-arbitrary = ["dep:arbitrary", "uuid/arbitrary", "chrono/arbitrary", "kcl-api/arbitrary"]
+arbitrary = ["dep:arbitrary", "uuid/arbitrary", "chrono/arbitrary", "kcl-api/arbitrary", "kittycad-point/arbitrary"]
 exec-kcl = ["dep:kcl-error"]
 
 [dependencies]
@@ -40,9 +40,10 @@ enum-iterator-derive = "1.2.1"
 euler = "0.5.0"
 http = "1.4.0"
 indexmap = "2.14.0"
-kcl-api = { version = "0.2.184" }
+kcl-api = { version = "0.2.184", optional = true }
 kcl-error = { version = "0.2.184", optional = true }
 kittycad-modeling-cmds-macros = { workspace = true }
+kittycad-point = { version = "0.1.0" }
 kittycad-unit-conversion-derive = "0.1.0"
 # Fork of <crates.io/crates/measurements>
 measurements = { package = "kittycad-measurements", version = "0.11.2" }
