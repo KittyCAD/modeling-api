@@ -1,7 +1,7 @@
 use bon::Builder;
 use enum_iterator::Sequence;
+pub use kittycad_point::{Point2d, Point3d, Point4d, Quaternion};
 use parse_display_derive::{Display, FromStr};
-pub use point::{Point2d, Point3d, Point4d, Quaternion};
 use schemars::{schema::SchemaObject, JsonSchema};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -16,7 +16,6 @@ use crate::{
     units::{self, UnitAngle},
 };
 
-mod point;
 pub mod safe_filepath;
 
 /// An edge can be referenced by its uuid or by the faces that uniquely define it.
