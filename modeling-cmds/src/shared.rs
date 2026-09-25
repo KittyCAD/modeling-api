@@ -18,6 +18,18 @@ use crate::{
 
 pub mod safe_filepath;
 
+/// Default tolerance values for modeling operations.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct Tolerance {
+    /// The distance tolerance for 2D point-point coincidence.
+    pub point_point_2d_coincident: LengthUnit,
+}
+
 /// An edge can be referenced by its uuid or by the faces that uniquely define it.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
