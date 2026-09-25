@@ -1773,6 +1773,9 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetDefaultSystemProperties {
+            /// The distance tolerance for 2D point-point coincidence.
+            #[serde(default)]
+            pub tolerance: Option<LengthUnit>,
             /// The default system color.
             #[serde(default)]
             pub color: Option<Color>,

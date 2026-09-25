@@ -6456,6 +6456,16 @@
                   }
                 ]
               },
+              "tolerance": {
+                "nullable": true,
+                "description": "The distance tolerance for 2D point-point coincidence.",
+                "default": null,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LengthUnit"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
