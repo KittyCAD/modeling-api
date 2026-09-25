@@ -37,6 +37,7 @@ define_modeling_cmd_enum! {
                 DirectionType,
                 EdgeSpecifier,
                 EntityReference,
+                KclSource,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
@@ -691,6 +692,9 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.
             pub format: OutputFormat3d,
+            /// KCL source to embed in formats that support source metadata.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub kcl_source: Option<KclSource>,
         }
 
         /// Export the scene to a file.
@@ -707,6 +711,9 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.
             pub format: OutputFormat3d,
+            /// KCL source to embed in formats that support source metadata.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub kcl_source: Option<KclSource>,
         }
 
         /// What is this entity's parent?

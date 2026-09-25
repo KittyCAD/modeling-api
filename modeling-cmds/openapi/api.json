@@ -2627,6 +2627,27 @@
           "files"
         ]
       },
+      "KclSource": {
+        "description": "KCL source to embed in exported files that support source metadata.",
+        "type": "object",
+        "properties": {
+          "entrypoint": {
+            "description": "Project-relative path of the entrypoint KCL file.",
+            "type": "string"
+          },
+          "files": {
+            "description": "Project-relative file paths mapped to their exact KCL source text.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "entrypoint",
+          "files"
+        ]
+      },
       "KclVersion": {
         "description": "Which KCL versions does Zoo support?",
         "oneOf": [
@@ -4119,6 +4140,15 @@
                   }
                 ]
               },
+              "kcl_source": {
+                "nullable": true,
+                "description": "KCL source to embed in formats that support source metadata.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/KclSource"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -4149,6 +4179,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/OutputFormat3d"
+                  }
+                ]
+              },
+              "kcl_source": {
+                "nullable": true,
+                "description": "KCL source to embed in formats that support source metadata.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/KclSource"
                   }
                 ]
               },

@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use bon::Builder;
 use enum_iterator::Sequence;
 pub use kittycad_point::{Point2d, Point3d, Point4d, Quaternion};
@@ -1276,6 +1278,19 @@ pub enum CurveType {
     Line,
     Arc,
     Nurbs,
+}
+
+/// KCL source to embed in exported files that support source metadata.
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, PartialEq, Builder)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct KclSource {
+    /// Project-relative path of the entrypoint KCL file.
+    pub entrypoint: String,
+    /// Project-relative file paths mapped to their exact KCL source text.
+    pub files: BTreeMap<String, String>,
 }
 
 /// A file to be exported to the client.
