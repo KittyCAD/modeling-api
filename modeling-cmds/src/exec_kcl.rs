@@ -1,8 +1,8 @@
 use bon::Builder;
 use indexmap::IndexMap;
-use kcl_api::kcl_value_view::KclValueView;
 #[cfg(feature = "websocket")]
 use kcl_api::ArtifactGraph;
+use kcl_api::{kcl_value_view::KclValueView, DefaultPlanes};
 use kcl_error::{CompilationIssue, KclError};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -81,6 +81,8 @@ pub struct ExecKclProjectOk {
     pub variables: IndexMap<String, KclValueView>,
     /// Non-fatal errors and warnings.
     pub issues: Vec<CompilationIssue>,
+    /// IDs of the standard planes created for this execution.
+    pub default_planes: Option<Box<DefaultPlanes>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
@@ -102,6 +104,8 @@ pub struct ExecKclProjectErr {
     /// The artifact graph produced by the KCL execution.
     #[cfg(feature = "websocket")]
     pub artifact_graph: ArtifactGraph,
+    /// IDs of the standard planes created before execution failed.
+    pub default_planes: Option<Box<DefaultPlanes>>,
     // TODO: Add fields to this as we make KCL data serializable.
     // Should be a usable subset of `KclErrorWithOutputs`.
 }
@@ -115,6 +119,7 @@ impl ExecKclProjectErr {
             operations: Default::default(),
             variables: Default::default(),
             artifact_graph: Default::default(),
+            default_planes: Default::default(),
         }
     }
 }
@@ -131,6 +136,7 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
             issues: Default::default(),
             #[cfg(feature = "websocket")]
             variables: Default::default(),
+            default_planes: Default::default(),
         })
     }
 }
@@ -144,6 +150,7 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectErr {
             operations: Default::default(),
             variables: Default::default(),
             artifact_graph: Default::default(),
+            default_planes: Default::default(),
         })
     }
 }
