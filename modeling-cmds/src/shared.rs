@@ -1219,6 +1219,7 @@ pub enum EntityType {
     Plane,
     Vertex,
     Region,
+    PatternGroup,
 }
 
 /// The type of Curve (embedded within path)
