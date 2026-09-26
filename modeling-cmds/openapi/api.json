@@ -106,8 +106,18 @@
             "type": "string",
             "format": "uuid"
           },
+          "from_entity_leader_pos": {
+            "nullable": true,
+            "description": "Position within the entity to position the dimension leader from",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AnnotationMbdLeaderPosition"
+              }
+            ]
+          },
           "from_entity_pos": {
-            "description": "Normalized position within the entity to position the dimension from",
+            "nullable": true,
+            "description": "Normalized position within the entity to position the dimension from Deprecated; please use `from_entity_leader_pos`",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
@@ -148,8 +158,18 @@
             "type": "string",
             "format": "uuid"
           },
+          "to_entity_leader_pos": {
+            "nullable": true,
+            "description": "Position within the entity to position the dimension leader from",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AnnotationMbdLeaderPosition"
+              }
+            ]
+          },
           "to_entity_pos": {
-            "description": "Normalized position within the entity to position the dimension to",
+            "nullable": true,
+            "description": "Normalized position within the entity to position the dimension to Deprecated; please use `to_entity_leader_pos`",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
@@ -161,11 +181,9 @@
           "dimension",
           "font_point_size",
           "font_scale",
-          "from_entity_pos",
           "offset",
           "plane_id",
-          "precision",
-          "to_entity_pos"
+          "precision"
         ]
       },
       "AnnotationFeatureControl": {
@@ -212,8 +230,18 @@
             "type": "string",
             "format": "uuid"
           },
+          "entity_leader_pos": {
+            "nullable": true,
+            "description": "Position within the entity to position the annotation leader from",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AnnotationMbdLeaderPosition"
+              }
+            ]
+          },
           "entity_pos": {
-            "description": "Normalized position within the entity to position the annotation leader from",
+            "nullable": true,
+            "description": "Normalized position within the entity to position the annotation leader from Deprecated; please use `entity_leader_pos`",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
@@ -276,7 +304,6 @@
           }
         },
         "required": [
-          "entity_pos",
           "font_point_size",
           "font_scale",
           "leader_type",
@@ -304,8 +331,18 @@
             "type": "string",
             "format": "uuid"
           },
+          "entity_leader_pos": {
+            "nullable": true,
+            "description": "Position within the entity to position the annotation leader from",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AnnotationMbdLeaderPosition"
+              }
+            ]
+          },
           "entity_pos": {
-            "description": "Normalized position within the entity to position the annotation leader from",
+            "nullable": true,
+            "description": "Normalized position within the entity to position the annotation leader from Deprecated; please use `entity_leader_pos`",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Point2d"
@@ -364,7 +401,6 @@
           }
         },
         "required": [
-          "entity_pos",
           "font_point_size",
           "font_scale",
           "key",
@@ -497,6 +533,50 @@
         "required": [
           "symbol",
           "tolerance"
+        ]
+      },
+      "AnnotationMbdLeaderPosition": {
+        "description": "Parameters for defining a specific MBD Leader Position within an Entity",
+        "oneOf": [
+          {
+            "description": "Normalized position within the entity to position the annotation leader from",
+            "type": "object",
+            "properties": {
+              "normalized_pos": {
+                "type": "object",
+                "properties": {
+                  "pos": {
+                    "description": "The position",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Point2d"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "pos"
+                ]
+              }
+            },
+            "required": [
+              "normalized_pos"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Geometric Center of the entity (such as on the center axis for a cylinder)",
+            "type": "object",
+            "properties": {
+              "centroid": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "centroid"
+            ],
+            "additionalProperties": false
+          }
         ]
       },
       "AnnotationOptions": {
@@ -6376,6 +6456,16 @@
                   }
                 ]
               },
+              "tolerance": {
+                "nullable": true,
+                "description": "The default tolerance values.",
+                "default": null,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Tolerance"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -9769,6 +9859,23 @@
         "required": [
           "forward",
           "up"
+        ]
+      },
+      "Tolerance": {
+        "description": "Default tolerance values for modeling operations.",
+        "type": "object",
+        "properties": {
+          "point_point_2d_coincident": {
+            "description": "The distance tolerance for 2D point-point coincidence.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LengthUnit"
+              }
+            ]
+          }
+        },
+        "required": [
+          "point_point_2d_coincident"
         ]
       },
       "Transform": {
