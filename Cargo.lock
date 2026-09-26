@@ -2616,7 +2616,7 @@ dependencies = [
 [[package]]
 name = "kcl-api"
 version = "0.2.186"
-source = "git+https://github.com/KittyCAD/modeling-app?branch=achalmers/default-planes-kcl-in-api#87eac39b978ef9ad966fee4e51117749a3ecbac7"
+source = "git+https://github.com/KittyCAD/modeling-app?branch=main#d3841ffbebcb6ca76646dff7b041add5def474ff"
 dependencies = [
  "arbitrary",
  "euler",
@@ -2637,7 +2637,7 @@ dependencies = [
 [[package]]
 name = "kcl-error"
 version = "0.2.186"
-source = "git+https://github.com/KittyCAD/modeling-app?branch=achalmers/default-planes-kcl-in-api#87eac39b978ef9ad966fee4e51117749a3ecbac7"
+source = "git+https://github.com/KittyCAD/modeling-app?branch=main#d3841ffbebcb6ca76646dff7b041add5def474ff"
 dependencies = [
  "miette",
  "schemars 0.8.22",
