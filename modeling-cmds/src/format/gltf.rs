@@ -2,6 +2,8 @@ use bon::Builder;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use crate::format::View;
 
 /// Import models in KittyCAD's GLTF format.
 pub mod import {
@@ -36,8 +38,9 @@ pub mod import {
 /// Export models in KittyCAD's GLTF format.
 pub mod export {
     use super::*;
+
     /// Options for exporting glTF 2.0.
-    #[derive(Default, Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+    #[derive(Default, Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(rename = "GltfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -52,9 +55,14 @@ pub mod export {
         /// Specifies which kind of glTF 2.0 will be exported.
         #[builder(default)]
         pub storage: Storage,
+
         /// Specifies how the JSON will be presented.
         #[builder(default)]
         pub presentation: Presentation,
+
+        /// Named views in the scene.
+        #[builder(default)]
+        pub views: HashMap<String, View>,
     }
 
     #[cfg(feature = "python")]
