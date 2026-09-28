@@ -2576,7 +2576,7 @@
         ]
       },
       "KclFile": {
-        "description": "Region-creation algorithm version.",
+        "description": "A file in a KCL project.",
         "type": "object",
         "properties": {
           "contents": {
@@ -2603,7 +2603,7 @@
         ]
       },
       "KclProject": {
-        "description": "A KCL project that can be executed.",
+        "description": "A KCL project.",
         "type": "object",
         "properties": {
           "entrypoint": {
@@ -2619,27 +2619,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/KclFile"
-            }
-          }
-        },
-        "required": [
-          "entrypoint",
-          "files"
-        ]
-      },
-      "KclSource": {
-        "description": "KCL source to embed in exported files that support source metadata.",
-        "type": "object",
-        "properties": {
-          "entrypoint": {
-            "description": "Project-relative path of the entrypoint KCL file.",
-            "type": "string"
-          },
-          "files": {
-            "description": "Project-relative file paths mapped to their exact KCL source text.",
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
             }
           }
         },
@@ -4145,7 +4124,7 @@
                 "description": "KCL source to embed in formats that support source metadata.",
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/KclSource"
+                    "$ref": "#/components/schemas/KclProject"
                   }
                 ]
               },
@@ -4187,7 +4166,7 @@
                 "description": "KCL source to embed in formats that support source metadata.",
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/KclSource"
+                    "$ref": "#/components/schemas/KclProject"
                   }
                 ]
               },
