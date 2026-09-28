@@ -24,8 +24,8 @@ websocket = ["dep:serde_json"]
 webrtc = ["dep:webrtc"]
 unstable_exhaustive = []
 python = ["dep:pyo3", "dep:pyo3-stub-gen"]
-arbitrary = ["dep:arbitrary", "uuid/arbitrary", "chrono/arbitrary", "kcl-api/arbitrary", "kittycad-point/arbitrary"]
-exec-kcl = ["dep:kcl-error"]
+arbitrary = ["dep:arbitrary", "uuid/arbitrary", "chrono/arbitrary", "kcl-api?/arbitrary", "kittycad-point/arbitrary"]
+exec-kcl = ["dep:kcl-error", "dep:kcl-api"]
 
 [dependencies]
 anyhow = "1.0.101"
@@ -40,8 +40,8 @@ enum-iterator-derive = "1.2.1"
 euler = "0.5.0"
 http = "1.4.0"
 indexmap = "2.14.0"
-kcl-api = { version = "0.2.184", optional = true }
-kcl-error = { version = "0.2.184", optional = true }
+kcl-api = { version = "0.2.187", optional = true }
+kcl-error = { version = "0.2.187", optional = true }
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-point = { version = "0.1.0" }
 kittycad-unit-conversion-derive = "0.1.0"
