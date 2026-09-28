@@ -42,6 +42,7 @@ define_modeling_cmd_enum! {
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, SurfaceEdgeReference, Opposite,
+                Tolerance,
             },
             units,
         };
@@ -1780,6 +1781,9 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetDefaultSystemProperties {
+            /// The default tolerance values.
+            #[serde(default)]
+            pub tolerance: Option<Tolerance>,
             /// The default system color.
             #[serde(default)]
             pub color: Option<Color>,

@@ -6474,6 +6474,16 @@
                   }
                 ]
               },
+              "tolerance": {
+                "nullable": true,
+                "description": "The default tolerance values.",
+                "default": null,
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Tolerance"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -9867,6 +9877,23 @@
         "required": [
           "forward",
           "up"
+        ]
+      },
+      "Tolerance": {
+        "description": "Default tolerance values for modeling operations.",
+        "type": "object",
+        "properties": {
+          "point_point_2d_coincident": {
+            "description": "The distance tolerance for 2D point-point coincidence.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LengthUnit"
+              }
+            ]
+          }
+        },
+        "required": [
+          "point_point_2d_coincident"
         ]
       },
       "Transform": {
