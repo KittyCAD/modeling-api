@@ -8641,8 +8641,8 @@
             "type": "object",
             "properties": {
               "include_uuids": {
-                "description": "Include engine UUIDs in glTF extras. Defaults to true.",
-                "default": true,
+                "description": "Include engine UUIDs in glTF extras. Defaults to false.",
+                "default": false,
                 "type": "boolean"
               },
               "presentation": {
