@@ -37,7 +37,7 @@ pub mod import {
 pub mod export {
     use super::*;
     /// Options for exporting glTF 2.0.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+    #[derive(Default, Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(rename = "GltfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -56,23 +56,9 @@ pub mod export {
         #[builder(default)]
         pub presentation: Presentation,
         /// Include engine UUIDs in glTF extras. Defaults to false.
-        #[serde(default = "default_include_uuids")]
-        #[builder(default = default_include_uuids())]
+        #[serde(default)]
+        #[builder(default)]
         pub include_uuids: bool,
-    }
-
-    impl Default for Options {
-        fn default() -> Self {
-            Self {
-                storage: Storage::default(),
-                presentation: Presentation::default(),
-                include_uuids: default_include_uuids(),
-            }
-        }
-    }
-
-    const fn default_include_uuids() -> bool {
-        false
     }
 
     #[cfg(feature = "python")]
