@@ -1790,7 +1790,8 @@
           "face",
           "plane",
           "vertex",
-          "region"
+          "region",
+          "patterngroup"
         ]
       },
       "Error": {
