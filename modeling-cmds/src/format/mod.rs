@@ -247,6 +247,7 @@ impl From<FileExportFormat> for OutputFormat3d {
             FileExportFormat::Gltf => OutputFormat3d::Gltf(gltf::export::Options {
                 storage: gltf::export::Storage::Embedded,
                 presentation: gltf::export::Presentation::Pretty,
+                ..Default::default()
             }),
             FileExportFormat::Obj => OutputFormat3d::Obj(Default::default()),
             FileExportFormat::Ply => OutputFormat3d::Ply(Default::default()),
@@ -339,10 +340,12 @@ impl OutputFormat3d {
             FileExportFormat::Glb => Self::Gltf(gltf::export::Options {
                 storage: gltf::export::Storage::Binary,
                 presentation: gltf::export::Presentation::Compact,
+                ..Default::default()
             }),
             FileExportFormat::Gltf => Self::Gltf(gltf::export::Options {
                 storage: gltf::export::Storage::Embedded,
                 presentation: gltf::export::Presentation::Pretty,
+                ..Default::default()
             }),
             FileExportFormat::Obj => Self::Obj(obj::export::Options {
                 coords,

@@ -55,6 +55,10 @@ pub mod export {
         /// Specifies how the JSON will be presented.
         #[builder(default)]
         pub presentation: Presentation,
+        /// Include engine UUIDs in glTF extras. Defaults to false.
+        #[serde(default)]
+        #[builder(default)]
+        pub include_uuids: bool,
     }
 
     #[cfg(feature = "python")]
@@ -124,5 +128,39 @@ pub mod export {
         /// This is the default setting.
         #[default]
         Pretty,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::export::{Options, Presentation, Storage};
+
+    #[test]
+    fn uuid_metadata_is_opt_in() {
+        let options: Options = serde_json::from_str(r#"{"storage":"binary","presentation":"compact"}"#).unwrap();
+        assert_eq!(
+            options,
+            Options::builder()
+                .storage(Storage::Binary)
+                .presentation(Presentation::Compact)
+                .build()
+        );
+        assert!(!options.include_uuids);
+        assert!(!Options::default().include_uuids);
+        assert_eq!(Options::builder().build(), Options::default());
+    }
+
+    #[test]
+    fn uuid_option_round_trips() {
+        for include_uuids in [false, true] {
+            let json = serde_json::json!({
+                "storage": "binary",
+                "presentation": "compact",
+                "include_uuids": include_uuids
+            });
+            let options: Options = serde_json::from_value(json.clone()).unwrap();
+            assert_eq!(options.include_uuids, include_uuids);
+            assert_eq!(serde_json::to_value(options).unwrap(), json);
+        }
     }
 }
