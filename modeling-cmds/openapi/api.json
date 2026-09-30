@@ -2646,10 +2646,17 @@
             ]
           },
           {
-            "description": "KCL v3 is currently in development.",
+            "description": "KCL v3 preview -- used while developing version 3.",
             "type": "string",
             "enum": [
               "3.0-preview"
+            ]
+          },
+          {
+            "description": "KCL v3 releases 2026",
+            "type": "string",
+            "enum": [
+              "3.0"
             ]
           }
         ]
