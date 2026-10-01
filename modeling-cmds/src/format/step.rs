@@ -89,6 +89,35 @@ pub mod export {
     use super::*;
     use crate::units::UnitLength;
 
+    /// Specifies the STEP application protocol schema for export.
+    #[derive(
+        Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
+    )]
+    #[display(style = "snake_case")]
+    #[serde(rename = "StepSchema", rename_all = "snake_case")]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(
+        feature = "python",
+        pyo3_stub_gen::derive::gen_stub_pyclass_enum,
+        pyo3::pyclass(name = "StepSchema", from_py_object)
+    )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+    pub enum Schema {
+        /// AP203 edition 2.
+        Ap203,
+
+        /// AP214.
+        Ap214,
+
+        /// AP242.
+        ///
+        /// This is the default setting.
+        #[default]
+        Ap242,
+    }
+
     /// Describes the presentation style of the EXPRESS exchange format.
     #[derive(
         Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
@@ -148,6 +177,10 @@ pub mod export {
         /// Presentation style.
         #[builder(default = default_presentation())]
         pub presentation: Presentation,
+
+        /// STEP application protocol schema. Defaults to AP242.
+        #[builder(default)]
+        pub schema: Schema,
     }
 
     #[cfg(feature = "python")]
@@ -168,6 +201,7 @@ pub mod export {
                 created: None,
                 units: default_units(),
                 presentation: default_presentation(),
+                schema: Schema::default(),
             }
         }
     }
@@ -182,5 +216,81 @@ pub mod export {
 
     const fn default_units() -> UnitLength {
         UnitLength::Meters
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::export::{Options, Presentation, Schema};
+    use crate::{coord, format::OutputFormat3d, shared::FileExportFormat, units::UnitLength};
+
+    #[test]
+    fn schema_defaults_to_ap242() {
+        assert_eq!(Schema::default(), Schema::Ap242);
+        assert_eq!(Options::default().schema, Schema::Ap242);
+        assert_eq!(Options::builder().build(), Options::default());
+        let expected = OutputFormat3d::Step(Options::default());
+        assert_eq!(OutputFormat3d::from(FileExportFormat::Step), expected);
+        assert_eq!(
+            serde_json::from_str::<OutputFormat3d>(r#"{"type":"step"}"#).unwrap(),
+            expected
+        );
+    }
+
+    #[test]
+    fn existing_step_options_default_to_ap242() {
+        let json = serde_json::json!({
+            "type": "step",
+            "coords": *coord::OPENGL,
+            "created": "2026-10-01T12:00:00Z",
+            "units": "mm",
+            "presentation": "compact"
+        });
+        let options = Options::builder()
+            .coords(*coord::OPENGL)
+            .created("2026-10-01T12:00:00Z".parse().unwrap())
+            .units(UnitLength::Millimeters)
+            .presentation(Presentation::Compact)
+            .build();
+        assert_eq!(
+            serde_json::from_value::<OutputFormat3d>(json).unwrap(),
+            OutputFormat3d::Step(options)
+        );
+    }
+
+    #[test]
+    fn schema_option_round_trips() {
+        for (name, schema) in [
+            ("ap203", Schema::Ap203),
+            ("ap214", Schema::Ap214),
+            ("ap242", Schema::Ap242),
+        ] {
+            let json = serde_json::json!({
+                "type": "step",
+                "coords": *coord::OPENGL,
+                "created": "2026-10-01T12:00:00Z",
+                "units": "mm",
+                "presentation": "compact",
+                "schema": name
+            });
+            let expected = OutputFormat3d::Step(
+                Options::builder()
+                    .coords(*coord::OPENGL)
+                    .created("2026-10-01T12:00:00Z".parse().unwrap())
+                    .units(UnitLength::Millimeters)
+                    .presentation(Presentation::Compact)
+                    .schema(schema)
+                    .build(),
+            );
+            let actual: OutputFormat3d = serde_json::from_value(json.clone()).unwrap();
+            assert_eq!(actual, expected);
+            assert_eq!(serde_json::to_value(actual).unwrap(), json);
+        }
+    }
+
+    #[test]
+    fn rejects_unknown_schema() {
+        let error = serde_json::from_str::<OutputFormat3d>(r#"{"type":"step","schema":"ap999"}"#).unwrap_err();
+        assert!(error.to_string().contains("unknown variant `ap999`"));
     }
 }
