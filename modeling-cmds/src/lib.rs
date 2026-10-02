@@ -55,8 +55,13 @@ pub mod websocket;
 /// Defines which KCL versions exist, and how to represent them.
 mod kcl_version;
 
-// Export some key items for anyone consuming the library.
+// Export some key items for anyone consuming the library, including
+// re-exporting certain deps.
 pub use def_enum::*;
+#[cfg(feature = "exec-kcl")]
+pub use kcl_api;
+#[cfg(feature = "exec-kcl")]
+pub use kcl_error;
 pub use kcl_version::{InvalidKclVersion, KclVersion};
 pub use ok_response::output;
 pub use traits::*;
