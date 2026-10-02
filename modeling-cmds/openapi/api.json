@@ -2658,6 +2658,13 @@
             "enum": [
               "3.0"
             ]
+          },
+          {
+            "description": "KCL v4 preview -- used while developing and testing version 4.",
+            "type": "string",
+            "enum": [
+              "4.0-preview"
+            ]
           }
         ]
       },
