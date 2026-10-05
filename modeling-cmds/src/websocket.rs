@@ -367,6 +367,7 @@ pub enum WebSocketResponse {
 /// Modeling API websocket responses, including connection-level errors emitted
 /// by the API itself. The legacy [`WebSocketResponse`] remains unchanged for
 /// engine and downstream compatibility.
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", untagged)]
