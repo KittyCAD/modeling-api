@@ -2400,6 +2400,7 @@ pub enum AssemblyConstraint {
 
 /// Result of constraining an item in an assembly.
 /// This is in the coordinate system of the assembly's parent.
+/// Translation should be applied before rotation.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -2408,11 +2409,9 @@ pub enum AssemblyConstraint {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct SolvedAssemblyItem {
     /// How to translate the item.
+    /// Applied before rotation.
     pub translate_by: Point3d<LengthUnit>,
     /// How to rotate the item.
-    pub roll: Angle,
-    /// How to rotate the item.
-    pub pitch: Angle,
-    /// How to rotate the item.
-    pub yaw: Angle,
+    /// Applied after rotation.
+    pub rotate_by: Rotation,
 }
