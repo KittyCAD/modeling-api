@@ -2320,11 +2320,11 @@ pub enum CurveTypeDebug {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum MateFrameOn {
     /// Mate frame at the centroid of this face.
-    FaceCentroid {
+    Face {
         /// Which face?
         which_face: Uuid,
         /// Where on the given face?
-        where_on_face: PointOnFace,
+        where_on_face: WhereOnFace,
     },
     /// Mate frame along this edge.
     Edge {
@@ -2342,7 +2342,7 @@ pub enum MateFrameOn {
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub enum PointOnFace {
+pub enum WhereOnFace {
     /// Centermost point of the face.
     Centroid {},
     /// Somewhere along the face.
