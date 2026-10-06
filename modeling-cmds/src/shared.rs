@@ -4,6 +4,7 @@ pub use kittycad_point::{Point2d, Point3d, Point4d, Quaternion};
 use parse_display_derive::{Display, FromStr};
 use schemars::{schema::SchemaObject, JsonSchema};
 use serde::{Deserialize, Serialize};
+pub use unit_quaternion::{UnitQuaternion, UnitQuaternionError};
 use uuid::Uuid;
 
 #[cfg(feature = "cxx")]
@@ -17,6 +18,7 @@ use crate::{
 };
 
 pub mod safe_filepath;
+mod unit_quaternion;
 
 /// Default tolerance values for modeling operations.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
