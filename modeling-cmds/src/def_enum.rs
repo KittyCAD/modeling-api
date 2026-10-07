@@ -2738,6 +2738,18 @@ define_modeling_cmd_enum! {
             pub version: RegionVersion,
         }
 
+        /// Enable or disable graphics.
+        /// Warning: enabling graphics slows down the engine.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ToggleGraphics {
+            /// Should graphics be enabled?
+            pub graphics_enabled: bool,
+        }
+
         /// Create a planar surface bounded by the connection of various paths and curves.
         /// 'CreatePlanarSurface' modeling command.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
@@ -2964,5 +2976,12 @@ impl std::fmt::Debug for ImportFile {
             .field("path", &self.path)
             .field("data", &"<redacted>")
             .finish()
+    }
+}
+
+impl ToggleGraphics {
+    /// Enable graphics if true. Disable if false.
+    pub fn enabled(graphics_enabled: bool) -> Self {
+        Self::builder().graphics_enabled(graphics_enabled).build()
     }
 }

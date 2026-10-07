@@ -1790,7 +1790,8 @@
           "face",
           "plane",
           "vertex",
-          "region"
+          "region",
+          "patterngroup"
         ]
       },
       "Error": {
@@ -2645,10 +2646,24 @@
             ]
           },
           {
-            "description": "KCL v3 is currently in development.",
+            "description": "KCL v3 preview -- used while developing version 3.",
             "type": "string",
             "enum": [
               "3.0-preview"
+            ]
+          },
+          {
+            "description": "KCL v3 releases 2026",
+            "type": "string",
+            "enum": [
+              "3.0"
+            ]
+          },
+          {
+            "description": "KCL v4 preview -- used while developing and testing version 4.",
+            "type": "string",
+            "enum": [
+              "4.0-preview"
             ]
           }
         ]
@@ -8176,6 +8191,26 @@
             ]
           },
           {
+            "description": "Enable or disable graphics. Warning: enabling graphics slows down the engine.",
+            "type": "object",
+            "properties": {
+              "graphics_enabled": {
+                "description": "Should graphics be enabled?",
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "toggle_graphics"
+                ]
+              }
+            },
+            "required": [
+              "graphics_enabled",
+              "type"
+            ]
+          },
+          {
             "description": "Create a planar surface bounded by the connection of various paths and curves. 'CreatePlanarSurface' modeling command.",
             "type": "object",
             "properties": {
@@ -8658,6 +8693,11 @@
             "description": "glTF 2.0. We refer to this as glTF since that is how our customers refer to it, although by default it will be in binary format and thus technically (glb). If you prefer ASCII output, you can set that option for the export.",
             "type": "object",
             "properties": {
+              "include_uuids": {
+                "description": "Include engine UUIDs in glTF extras. Defaults to false.",
+                "default": false,
+                "type": "boolean"
+              },
               "presentation": {
                 "description": "Specifies how the JSON will be presented.",
                 "allOf": [

@@ -18,11 +18,17 @@ pub enum KclVersion {
     /// that it supports the `region` function.
     #[serde(rename = "2.0")]
     V2,
-    /// KCL v3 is currently in development.
+    /// KCL v3 preview -- used while developing version 3.
     #[serde(rename = "3.0-preview")]
     V3Preview,
+    /// KCL v3 releases 2026
+    #[serde(rename = "3.0")]
+    V3,
+    /// KCL v4 preview -- used while developing and testing version 4.
+    #[serde(rename = "4.0-preview")]
+    V4Preview,
     // When you add a new version, please add it to the error string in KclVersionError's
-    // Display and FromStr impls.
+    // as_str() and FromStr impls.
 }
 
 impl KclVersion {
@@ -32,6 +38,8 @@ impl KclVersion {
             Self::V1 => "1.0",
             Self::V2 => "2.0",
             Self::V3Preview => "3.0-preview",
+            Self::V3 => "3.0",
+            Self::V4Preview => "4.0-preview",
         }
     }
 }
@@ -46,7 +54,7 @@ impl std::fmt::Display for InvalidKclVersion {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "Unrecognized version. Valid versions are 1.0, 2.0 and (experimentally) 3.0-preview"
+            "Unrecognized version. Valid versions are 1.0, 2.0, 3.0 and (experimentally) 3.0-preview"
         )
     }
 }
@@ -59,6 +67,8 @@ impl FromStr for KclVersion {
             "1" | "1.0" | "1.0.0" => Ok(Self::V1),
             "2" | "2.0" | "2.0.0" => Ok(Self::V2),
             "3-preview" | "3.0-preview" | "3.0.0-preview" => Ok(Self::V3Preview),
+            "3" | "3.0" | "3.0.0" => Ok(Self::V3),
+            "4-preview" | "4.0-preview" | "4.0.0-preview" => Ok(Self::V4Preview),
             _other => Err(InvalidKclVersion),
         }
     }
@@ -70,7 +80,13 @@ mod tests {
 
     #[test]
     fn roundtrip_str() {
-        for input in [KclVersion::V1, KclVersion::V2, KclVersion::V3Preview] {
+        for input in [
+            KclVersion::V1,
+            KclVersion::V2,
+            KclVersion::V3Preview,
+            KclVersion::V3,
+            KclVersion::V4Preview,
+        ] {
             let serialized = input.as_str();
             let deserialized: KclVersion = serialized.parse().unwrap();
             assert_eq!(input, deserialized);

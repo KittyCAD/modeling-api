@@ -169,7 +169,9 @@ async fn main() -> Result<()> {
             let img = img.decode().context("could not decode PNG bytes")?;
             img.save(img_output_path).context("could not save PNG to disk")?;
         }
-        other => bail!("Unexpected response: {other:?}"),
+        other => {
+            bail!("Unexpected response: {other:?}");
+        }
     };
     Ok(())
 }
