@@ -8173,6 +8173,26 @@
             ]
           },
           {
+            "description": "Enable or disable graphics. Warning: enabling graphics slows down the engine.",
+            "type": "object",
+            "properties": {
+              "graphics_enabled": {
+                "description": "Should graphics be enabled?",
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "toggle_graphics"
+                ]
+              }
+            },
+            "required": [
+              "graphics_enabled",
+              "type"
+            ]
+          },
+          {
             "description": "Create a planar surface bounded by the connection of various paths and curves. 'CreatePlanarSurface' modeling command.",
             "type": "object",
             "properties": {
