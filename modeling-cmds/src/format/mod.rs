@@ -362,6 +362,7 @@ impl OutputFormat3d {
                 created: None,
                 units: src_unit,
                 presentation: step::export::Presentation::Pretty,
+                ..Default::default()
             }),
             FileExportFormat::Stl => Self::Stl(stl::export::Options {
                 storage: stl::export::Storage::Ascii,
