@@ -41,6 +41,7 @@ pub struct EngineParams {
     /// Which KCL+Engine version should the engine use?
     /// Clients use this to opt into updated algorithms and behaviours.
     #[serde(default)]
+    #[schemars(with = "String")]
     pub kcl_version: KclVersion,
 }
 
