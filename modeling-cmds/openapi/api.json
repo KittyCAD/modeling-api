@@ -8743,6 +8743,7 @@
               },
               "presentation": {
                 "description": "Specifies how the JSON will be presented.",
+                "default": "pretty",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/GltfPresentation"
@@ -8751,6 +8752,7 @@
               },
               "storage": {
                 "description": "Specifies which kind of glTF 2.0 will be exported.",
+                "default": "embedded",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/GltfStorage"
@@ -8765,6 +8767,7 @@
               },
               "views": {
                 "description": "Named views in the scene.",
+                "default": {},
                 "type": "object",
                 "additionalProperties": {
                   "$ref": "#/components/schemas/NamedView"
@@ -8772,10 +8775,7 @@
               }
             },
             "required": [
-              "presentation",
-              "storage",
-              "type",
-              "views"
+              "type"
             ]
           },
           {
