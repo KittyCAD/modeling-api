@@ -696,6 +696,11 @@ define_modeling_cmd_enum! {
             /// KCL source to embed in formats that support source metadata.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub kcl_source: Option<KclProject>,
+            /// Original imported files to embed in glTF source metadata.
+            /// Paths are relative to the source project. Other export formats ignore these files.
+            #[builder(default)]
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub imported_files: Vec<super::ImportFile>,
         }
 
         /// Export the scene to a file.
@@ -715,6 +720,11 @@ define_modeling_cmd_enum! {
             /// KCL source to embed in formats that support source metadata.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub kcl_source: Option<KclProject>,
+            /// Original imported files to embed in glTF source metadata.
+            /// Paths are relative to the source project. Other export formats ignore these files.
+            #[builder(default)]
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub imported_files: Vec<super::ImportFile>,
         }
 
         /// What is this entity's parent?
