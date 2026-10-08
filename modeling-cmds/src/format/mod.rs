@@ -216,7 +216,7 @@ pub struct View {
     /// Determines whether entities are visible or by default.
     pub baseline: Visibility,
 
-    /// Exceptions to the baseline visiblity.
+    /// Exceptions to the baseline visibility.
     pub except_ids: Vec<ModelingCmdId>,
 }
 
