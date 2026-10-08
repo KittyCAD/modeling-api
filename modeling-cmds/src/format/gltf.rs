@@ -41,7 +41,7 @@ pub mod export {
 
     /// Options for exporting glTF 2.0.
     #[derive(Default, Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
-    #[serde(rename = "GltfExportOptions")]
+    #[serde(default, rename = "GltfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(
@@ -61,7 +61,6 @@ pub mod export {
         pub presentation: Presentation,
 
         /// Include engine UUIDs in glTF extras. Defaults to false.
-        #[serde(default)]
         #[builder(default)]
         pub include_uuids: bool,
 
