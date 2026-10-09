@@ -23,6 +23,7 @@ define_modeling_cmd_enum! {
             format::{OutputFormat2d, OutputFormat3d},
             id::ModelingCmdId,
             length_unit::LengthUnit,
+            kcl_project::KclProject,
             shared::{
                 Angle,
                 RegionVersion,
@@ -37,7 +38,6 @@ define_modeling_cmd_enum! {
                 DirectionType,
                 EdgeSpecifier,
                 EntityReference,
-                KclProject,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,

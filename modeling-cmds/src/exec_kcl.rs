@@ -7,7 +7,7 @@ use kcl_error::{CompilationIssue, KclError};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-pub use crate::shared::{KclFile, KclProject};
+pub use crate::kcl_project::{KclFile, KclProject};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
