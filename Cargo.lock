@@ -2230,7 +2230,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2 0.6.4",
+ "socket2 0.5.10",
  "system-configuration",
  "tokio",
  "tower-layer",
@@ -2753,9 +2753,9 @@ dependencies = [
 
 [[package]]
 name = "kittycad"
-version = "0.5.6"
+version = "0.5.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14566500feea711ad374f3525bd3372afa7c5d915e34a3457274ca228ba0df86"
+checksum = "b3dbe3157584108d4769845ae50980d692726de21ac3a8379f94b522b99e0679"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -3985,7 +3985,7 @@ dependencies = [
  "quinn-udp",
  "rustc-hash 2.1.1",
  "rustls",
- "socket2 0.6.4",
+ "socket2 0.5.10",
  "thiserror 2.0.21",
  "tokio",
  "tracing",
@@ -4024,7 +4024,7 @@ dependencies = [
  "cfg_aliases",
  "libc",
  "once_cell",
- "socket2 0.6.4",
+ "socket2 0.5.10",
  "tracing",
  "windows-sys 0.60.2",
 ]
