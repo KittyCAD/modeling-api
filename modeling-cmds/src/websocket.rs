@@ -3,7 +3,6 @@
 use std::{borrow::Cow, collections::HashMap};
 
 use parse_display_derive::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "slog")]
 use slog::{Record, Serializer, KV};
@@ -17,7 +16,8 @@ use crate::{
 };
 
 /// The type of error sent by the KittyCAD API.
-#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum ErrorCode {
@@ -165,7 +165,8 @@ impl ModelingBatch {
 /// Representation of an ICE server used for STUN/TURN
 /// Used to initiate WebRTC connections
 /// based on <https://developer.mozilla.org/en-US/docs/Web/API/RTCIceServer>
-#[derive(serde::Serialize, serde::Deserialize, Debug, JsonSchema, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 pub struct IceServer {
     /// URLs for a given STUN/TURN server.
     /// IceServer urls can either be a string or an array of strings
@@ -264,7 +265,8 @@ pub struct SuccessWebSocketResponse {
 }
 
 /// Unsuccessful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub struct FailureWebSocketResponse {
     /// Always false
@@ -349,7 +351,8 @@ impl WebSocketResponse {
 /// A raw file with unencoded contents.
 ///
 /// See the command that emits this type for its response encoding.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(
     feature = "python",
     pyo3::pyclass(from_py_object),
@@ -391,7 +394,8 @@ impl From<ExportFile> for RawFile {
 }
 
 /// An error with an internal message for logging.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 pub struct LoggableApiError {
     /// The error shown to users
     pub error: ApiError,
@@ -412,7 +416,8 @@ impl KV for LoggableApiError {
 }
 
 /// An error.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Eq, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 pub struct ApiError {
     /// The error code.
     pub error_code: ErrorCode,
@@ -459,7 +464,8 @@ impl ApiError {
 
 /// Serde serializes Result into JSON as "Ok" and "Err", but we want "ok" and "err".
 /// So, create a new enum that serializes as lowercase.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", rename = "SnakeCaseResult")]
 pub enum SnakeCaseResult<T, E> {
     /// The result is Ok.
@@ -487,7 +493,8 @@ impl<T, E> From<Result<T, E>> for SnakeCaseResult<T, E> {
 }
 
 /// ClientMetrics contains information regarding the state of the peer.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct ClientMetrics {
     /// Counter of the number of WebRTC frames the client has dropped from the
@@ -589,7 +596,8 @@ pub struct ClientMetrics {
 }
 
 /// ICECandidate represents a ice candidate
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 pub struct RtcIceCandidate {
     /// The stats ID.
     pub stats_id: String,
@@ -654,7 +662,8 @@ impl From<RtcIceCandidate> for webrtc::ice_transport::ice_candidate::RTCIceCandi
 }
 
 /// ICECandidateType represents the type of the ICE candidate used.
-#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub enum RtcIceCandidateType {
     /// Unspecified indicates that the candidate type is unspecified.
@@ -720,7 +729,8 @@ impl From<RtcIceCandidateType> for webrtc::ice_transport::ice_candidate_type::RT
 
 /// ICEProtocol indicates the transport protocol type that is used in the
 /// ice.URL structure.
-#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub enum RtcIceProtocol {
     /// Unspecified indicates that the protocol is unspecified.
@@ -757,7 +767,8 @@ impl From<RtcIceProtocol> for webrtc::ice_transport::ice_protocol::RTCIceProtoco
 }
 
 /// ICECandidateInit is used to serialize ice candidates
-#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[serde(rename_all = "camelCase")]
 // These HAVE to be camel case as per the RFC.
@@ -801,7 +812,8 @@ impl From<RtcIceCandidateInit> for webrtc::ice_transport::ice_candidate::RTCIceC
 }
 
 /// SessionDescription is used to expose local and remote session descriptions.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct RtcSessionDescription {
     /// SDP type.
@@ -846,7 +858,8 @@ impl TryFrom<RtcSessionDescription> for webrtc::peer_connection::sdp::session_de
 }
 
 /// SDPType describes the type of an SessionDescription.
-#[derive(Default, Debug, PartialEq, Eq, Copy, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Debug, PartialEq, Eq, Copy, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub enum RtcSdpType {
@@ -903,7 +916,8 @@ impl From<RtcSdpType> for webrtc::peer_connection::sdp::sdp_type::RTCSdpType {
     }
 }
 /// Successful Websocket response.
-#[derive(JsonSchema, Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub struct ModelingSessionData {
     /// ID of the API call this modeling session is using.

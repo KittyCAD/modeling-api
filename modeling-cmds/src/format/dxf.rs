@@ -1,11 +1,11 @@
 /// Export sketches in DXF format.
 pub mod export {
     use bon::Builder;
-    use schemars::JsonSchema;
     use serde::{Deserialize, Serialize};
 
     /// Export storage.
-    #[derive(Clone, Copy, Debug, Default, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize)]
+    #[derive(Clone, Copy, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[serde(rename = "DxfStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -28,7 +28,8 @@ pub mod export {
     }
 
     /// Options for exporting DXF format.
-    #[derive(Clone, Debug, Default, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize, Builder)]
+    #[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize, Builder)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[serde(rename = "DxfExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]

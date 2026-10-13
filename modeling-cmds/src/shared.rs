@@ -2,6 +2,7 @@ use bon::Builder;
 use enum_iterator::Sequence;
 pub use kittycad_point::{Point2d, Point3d, Point4d, Quaternion};
 use parse_display_derive::{Display, FromStr};
+#[cfg(feature = "json-schema")]
 use schemars::{schema::SchemaObject, JsonSchema};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -19,8 +20,9 @@ use crate::{
 pub mod safe_filepath;
 
 /// Default tolerance values for modeling operations.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -31,7 +33,8 @@ pub struct Tolerance {
 }
 
 /// An edge can be referenced by its uuid or by the faces that uniquely define it.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -66,7 +69,8 @@ pub struct EdgeSpecifier {
 /// - **Segment**: `parent_id` is the **Path** UUID; `primitive_index` is the curve index within that path.
 ///
 /// Other [`EntityReference`] variants may omit this field or leave it unset when not applicable.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -80,7 +84,8 @@ pub struct PrimitiveTopologyFallback {
 }
 
 /// An edge/vertex can be defined by the faces that it is connected to.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -173,7 +178,8 @@ pub enum EntityReference {
 }
 
 /// What kind of cut to do
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -187,7 +193,8 @@ pub enum CutType {
 }
 
 /// What to use as a direction when one is needed (e.g. for an extrusion).
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -206,7 +213,8 @@ pub enum DirectionType {
 }
 
 /// What to reflect mirrored geometry across
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -241,7 +249,8 @@ pub enum MirrorAcross {
 }
 
 /// What kind of cut to perform when cutting an edge.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -275,7 +284,8 @@ pub enum CutTypeV2 {
 }
 
 /// A rotation defined by an axis, origin of rotation, and an angle.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -304,7 +314,8 @@ impl Default for Rotation {
 }
 
 /// Ways to transform each solid being replicated in a repeating pattern.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -344,7 +355,8 @@ impl Default for Transform {
 }
 
 /// Options for annotations
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -379,7 +391,8 @@ pub struct AnnotationOptions {
 }
 
 /// Options for annotation text
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -393,7 +406,8 @@ pub struct AnnotationLineEndOptions {
 }
 
 /// Options for annotation text
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -411,7 +425,8 @@ pub struct AnnotationTextOptions {
 }
 
 /// Parameters for defining a specific MBD Leader Position within an Entity
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -429,7 +444,8 @@ pub enum AnnotationMbdLeaderPosition {
 }
 
 /// Parameters for defining an MBD Geometric control frame
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -454,7 +470,8 @@ pub struct AnnotationMbdControlFrame {
 }
 
 /// Parameters for defining an MBD basic dimension
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -472,7 +489,8 @@ pub struct AnnotationMbdBasicDimension {
 }
 
 /// Parameters for defining an MBD Basic Dimension Annotation state which is measured between two positions in 3D
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -539,7 +557,8 @@ pub struct AnnotationBasicDimension {
 }
 
 /// Parameters for defining an MBD Feature Control Annotation state
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -603,7 +622,8 @@ pub struct AnnotationFeatureControl {
 }
 
 /// Parameters for defining an MBD Feature Tag Annotation state
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -660,7 +680,8 @@ pub struct AnnotationFeatureTag {
 /// The type of distance
 /// Distances can vary depending on
 /// the objects used as input.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -677,7 +698,8 @@ pub enum DistanceType {
 }
 
 /// The type of origin
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -697,7 +719,8 @@ pub enum OriginType {
 }
 
 /// An RGBA color
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -722,9 +745,8 @@ impl Color {
 
 /// Horizontal Text alignment
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -738,9 +760,8 @@ pub enum AnnotationTextAlignmentX {
 
 /// Vertical Text alignment
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -754,9 +775,8 @@ pub enum AnnotationTextAlignmentY {
 
 /// Annotation line end type
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -769,9 +789,8 @@ pub enum AnnotationLineEnd {
 }
 
 /// The type of annotation
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -785,9 +804,8 @@ pub enum AnnotationType {
 }
 
 /// MBD standard
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -802,21 +820,9 @@ pub enum MbdStandard {
 /// MBD symbol type
 #[allow(missing_docs)]
 #[derive(
-    Default,
-    Display,
-    FromStr,
-    Copy,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Default, Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -891,9 +897,8 @@ pub enum MbdSymbol {
 }
 
 /// The type of camera drag interaction.
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -912,7 +917,8 @@ pub enum CameraDragInteractionType {
 
 /// A segment of a path.
 /// Paths are composed of many segments.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1027,7 +1033,8 @@ pub enum PathSegment {
 }
 
 /// An angle, with a specific unit.
-#[derive(Clone, Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize)]
+#[derive(Clone, Copy, PartialEq, Debug, Deserialize, Serialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1130,9 +1137,8 @@ impl std::ops::AddAssign for Angle {
 }
 
 /// The type of scene selection change
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1149,9 +1155,8 @@ pub enum SceneSelectionType {
 
 /// The type of scene's active tool
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1170,21 +1175,9 @@ pub enum SceneToolType {
 /// The path component constraint bounds type
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
-    Default,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd, Default,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1200,21 +1193,9 @@ pub enum PathComponentConstraintBound {
 /// The path component constraint type
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
-    Default,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd, Default,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1232,9 +1213,8 @@ pub enum PathComponentConstraintType {
 
 /// The path component command type (within a Path)
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1250,9 +1230,8 @@ pub enum PathCommand {
 
 /// The type of entity
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1277,9 +1256,8 @@ pub enum EntityType {
 
 /// The type of Curve (embedded within path)
 #[allow(missing_docs)]
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1292,7 +1270,8 @@ pub enum CurveType {
 }
 
 /// A file to be exported to the client.
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, PartialEq, Builder)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(
     feature = "python",
     pyo3::pyclass(from_py_object),
@@ -1322,9 +1301,8 @@ impl ExportFile {
 }
 
 /// The valid types of output file formats.
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[display(style = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -1370,9 +1348,8 @@ pub enum FileExportFormat {
 }
 
 /// The valid types of 2D output file formats.
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[display(style = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -1385,9 +1362,8 @@ pub enum FileExportFormat2d {
 }
 
 /// The valid types of source file formats.
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Clone, Ord, PartialOrd, Sequence)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[display(style = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -1426,7 +1402,8 @@ pub enum FileImportFormat {
 }
 
 /// The type of error sent by the KittyCAD graphics engine.
-#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, Ord, PartialOrd)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1451,7 +1428,8 @@ impl From<EngineErrorCode> for http::StatusCode {
 }
 
 /// What kind of blend to do
-#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1463,7 +1441,8 @@ pub enum BlendType {
 }
 
 /// Body type determining if the operation will create a manifold (solid) body or a non-manifold collection of surfaces.
-#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1479,7 +1458,8 @@ pub enum BodyType {
 
 /// Extrusion method determining if the extrusion will be part of the existing object or an
 /// entirely new object.
-#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1496,7 +1476,8 @@ pub enum ExtrudeMethod {
 }
 
 /// Type of reference geometry to extrude to.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1530,7 +1511,8 @@ pub enum ExtrudeReference {
 }
 
 /// IDs for the extruded faces.
-#[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone, Builder)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1548,7 +1530,8 @@ pub struct ExtrudedFaceInfo {
 }
 
 /// IDs for a side face, extruded from the path of some sketch/2D shape.
-#[derive(Debug, PartialEq, Serialize, Deserialize, JsonSchema, Clone, Builder)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1561,7 +1544,8 @@ pub struct SideFace {
 }
 
 /// Camera settings including position, center, fov etc
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, PartialEq, Builder)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1591,7 +1575,8 @@ pub struct CameraSettings {
 
 #[allow(missing_docs)]
 #[repr(u8)]
-#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1605,7 +1590,8 @@ pub enum WorldCoordinateSystem {
 
 #[allow(missing_docs)]
 #[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1679,7 +1665,8 @@ impl From<CameraSettings> for crate::output::ViewIsometric {
 }
 
 /// Defines a perspective view.
-#[derive(Copy, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Clone, PartialOrd, Default, Builder)]
+#[derive(Copy, PartialEq, Debug, Deserialize, Serialize, Clone, PartialOrd, Default, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1696,21 +1683,9 @@ pub struct PerspectiveCameraParameters {
 
 /// A type of camera movement applied after certain camera operations
 #[derive(
-    Default,
-    Display,
-    FromStr,
-    Copy,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
+    Default, Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1725,9 +1700,8 @@ pub enum CameraMovement {
 }
 
 /// The global axes.
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1743,9 +1717,8 @@ pub enum GlobalAxis {
 }
 
 /// Possible types of faces which can be extruded from a 3D solid.
-#[derive(
-    Display, FromStr, Copy, Eq, PartialEq, Debug, JsonSchema, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd,
-)]
+#[derive(Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1766,21 +1739,9 @@ pub enum ExtrusionFaceCapType {
 /// Post effect type
 #[allow(missing_docs)]
 #[derive(
-    Display,
-    FromStr,
-    Copy,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Sequence,
-    Clone,
-    Ord,
-    PartialOrd,
-    Default,
+    Display, FromStr, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Sequence, Clone, Ord, PartialOrd, Default,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "lowercase")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1901,8 +1862,9 @@ mod tests {
 }
 
 /// How a property of an object should be transformed.
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema, Builder)]
-#[schemars(rename = "TransformByFor{T}")]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
+#[cfg_attr(feature = "json-schema", schemars(rename = "TransformByFor{T}"))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1931,7 +1893,8 @@ impl<T> TransformBy<T> {
 
 /// Container that holds a translate, rotate and scale.
 /// Defaults to no change, everything stays the same (i.e. the identity function).
-#[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, Default, Builder)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, Default, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1967,6 +1930,7 @@ pub enum Opposite<T> {
     Other(T),
 }
 
+#[cfg(feature = "json-schema")]
 impl<T: JsonSchema> JsonSchema for Opposite<T> {
     fn schema_name() -> String {
         format!("OppositeFor{}", T::schema_name())
@@ -1987,7 +1951,8 @@ impl<T: JsonSchema> JsonSchema for Opposite<T> {
 
 /// What strategy (algorithm) should be used for cutting?
 /// Defaults to Automatic.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -2006,7 +1971,8 @@ pub enum CutStrategy {
 }
 
 /// What is the given geometry relative to?
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -2021,7 +1987,8 @@ pub enum RelativeTo {
 }
 
 /// The region a user clicked on.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
@@ -2054,7 +2021,8 @@ impl Default for SelectedRegion {
 }
 
 /// An edge id and an upper and lower percentage bound of the edge.
-#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2071,19 +2039,20 @@ pub struct FractionOfEdge {
     /// If lower_bound is larger than upper_bound, the edge is effectively "flipped".
     #[serde(default)]
     #[builder(default)]
-    #[schemars(range(min = 0, max = 1))]
+    #[cfg_attr(feature = "json-schema", schemars(range(min = 0, max = 1)))]
     pub lower_bound: f32,
     /// A value between [0.0, 1.0] (default 1.0) that is a percentage along the edge. This bound
     /// will control how much of the edge is used during the blend.
     /// If lower_bound is larger than upper_bound, the edge is effectively "flipped".
     #[serde(default = "one")]
     #[builder(default = one())]
-    #[schemars(range(min = 0, max = 1))]
+    #[cfg_attr(feature = "json-schema", schemars(range(min = 0, max = 1)))]
     pub upper_bound: f32,
 }
 
 /// An object id, that corresponds to a surface body, and a list of edges of the surface.
-#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2096,7 +2065,8 @@ pub struct SurfaceEdgeReference {
 }
 
 /// List of bodies that were created by an operation.
-#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2114,7 +2084,8 @@ impl BodiesCreated {
 }
 
 /// List of bodies that were updated by an operation.
-#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2132,7 +2103,8 @@ impl BodiesUpdated {
 }
 
 /// Details of a body that was created.
-#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2145,7 +2117,8 @@ pub struct BodyCreated {
 }
 
 /// Details of a body that was updated.
-#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2158,7 +2131,8 @@ pub struct BodyUpdated {
 }
 
 /// Details of a surface that was created under some body.
-#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Builder, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2173,7 +2147,8 @@ pub struct SurfaceCreated {
 }
 
 /// Region-creation algorithm version.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2189,7 +2164,8 @@ pub enum RegionVersion {
 }
 
 /// Edge cut algorithm version.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Copy)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Copy)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2283,7 +2259,8 @@ fn one() -> f32 {
 }
 
 /// A debug-view of the segment of a curve.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, Builder)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 pub struct CurveDebug {
     /// Start point of segment or circle.
     pub start: Option<Point2d<f64>>,
@@ -2300,7 +2277,8 @@ pub struct CurveDebug {
 }
 
 /// What type of curve is being viewed?
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case")]
 pub enum CurveTypeDebug {
     /// Line with a start and end.

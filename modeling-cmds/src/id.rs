@@ -1,11 +1,11 @@
 use std::{fmt, str::FromStr};
 
-use schemars::JsonSchema;
 use serde::{de, de::Visitor, Deserialize, Deserializer, Serialize};
 use uuid::Uuid;
 
 /// All commands have unique IDs. These should be randomly generated.
-#[derive(Debug, Clone, Copy, Hash, Ord, PartialOrd, Eq, PartialEq, JsonSchema, Serialize)]
+#[derive(Debug, Clone, Copy, Hash, Ord, PartialOrd, Eq, PartialEq, Serialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(test, derive(Default))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]

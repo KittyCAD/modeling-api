@@ -1,6 +1,5 @@
 use bon::Builder;
 use parse_display::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::{coord, format::Selection, units::UnitLength};
@@ -10,7 +9,8 @@ pub mod import {
     use super::*;
 
     /// Options for importing STL.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Builder)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[serde(rename = "StlImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -66,7 +66,8 @@ pub mod export {
     use super::*;
 
     /// Options for exporting STL.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Builder)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[serde(rename = "StlExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -124,9 +125,8 @@ pub mod export {
     }
 
     /// Export storage.
-    #[derive(
-        Clone, Copy, Debug, Default, Deserialize, Display, Eq, FromStr, Hash, JsonSchema, PartialEq, Serialize,
-    )]
+    #[derive(Clone, Copy, Debug, Default, Deserialize, Display, Eq, FromStr, Hash, PartialEq, Serialize)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display(style = "snake_case")]
     #[serde(rename = "StlStorage", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]

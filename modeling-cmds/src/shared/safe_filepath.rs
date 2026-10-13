@@ -1,10 +1,10 @@
 //! Filepaths safe to use in KCL projects because they cannot escape the KCL project root.
-use schemars::JsonSchema;
 use serde_with::{DeserializeFromStr, SerializeDisplay};
 use typed_path::{TypedPath, UnixComponent, WindowsComponent};
 
 /// Filepath which is guaranteed to be relative and not contain parent directory jumps like '..'
-#[derive(Debug, Clone, PartialEq, Eq, SerializeDisplay, DeserializeFromStr, JsonSchema, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, SerializeDisplay, DeserializeFromStr, Default)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]

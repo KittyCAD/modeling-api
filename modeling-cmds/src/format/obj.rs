@@ -1,5 +1,4 @@
 use bon::Builder;
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::{coord, units::UnitLength};
@@ -9,7 +8,8 @@ pub mod import {
     use super::*;
 
     /// Options for importing OBJ.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Builder)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[serde(rename = "ObjImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -65,7 +65,8 @@ pub mod export {
     use super::*;
 
     /// Options for exporting OBJ.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Builder)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[serde(rename = "ObjExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
