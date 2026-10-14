@@ -2,7 +2,7 @@ use bon::Builder;
 use indexmap::IndexMap;
 #[cfg(feature = "websocket")]
 use kcl_api::artifact::ArtifactGraph;
-use kcl_api::{kcl_value_view::KclValueView, DefaultPlanes};
+use kcl_api::{kcl_value_view::KclValueView, DefaultPlanes, Object};
 use kcl_error::{CompilationIssue, KclError};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -137,23 +137,10 @@ pub struct ExecKclProjectErr {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[cfg_attr(feature = "ts-rs", ts(optional))]
     pub execution_data: Option<serde_json::Value>,
-    // TODO: Add fields to this as we make KCL data serializable.
-    // Should be a usable subset of `KclErrorWithOutputs`.
-}
-
-impl ExecKclProjectErr {
-    /// Used when the project execution had a fatal error.
-    pub fn fatal_error(error: KclError) -> Self {
-        Self {
-            error: Some(error),
-            non_fatal: Default::default(),
-            operations: Default::default(),
-            variables: Default::default(),
-            artifact_graph: Default::default(),
-            default_planes: Default::default(),
-            execution_data: None,
-        }
-    }
+    /// All objects in all sketches.
+    pub scene_objects: Vec<Object>,
+    /// Which module ID was assigned to each KCL file in the project?
+    pub filenames: IndexMap<kcl_error::ModuleId, kcl_api::modules::ModulePath>,
 }
 
 #[cfg(feature = "arbitrary")]
@@ -184,6 +171,8 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectErr {
             variables: Default::default(),
             artifact_graph: Default::default(),
             default_planes: Default::default(),
+            scene_objects: Default::default(),
+            filenames: Default::default(),
             execution_data: None,
         })
     }
@@ -232,6 +221,8 @@ mod tests {
             .operations(Default::default())
             .variables(Default::default())
             .non_fatal(vec![])
+            .filenames(Default::default())
+            .scene_objects(Default::default())
             .build();
         let failure_json = serde_json::to_value(failure).unwrap();
         assert!(!failure_json.as_object().unwrap().contains_key("execution_data"));
