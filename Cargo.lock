@@ -2718,7 +2718,7 @@ dependencies = [
 [[package]]
 name = "kcl-api"
 version = "0.2.192"
-source = "git+https://github.com/KittyCAD/modeling-app?branch=achalmers/zk-exec-remote-2#f0c49d1f25bdea90ce3ef01a22de65c7f4ef9232"
+source = "git+https://github.com/KittyCAD/modeling-app?branch=main#86663fcb7d7ef987b2bbd5eba529dd5756a752e3"
 dependencies = [
  "arbitrary",
  "euler",
@@ -2740,7 +2740,7 @@ dependencies = [
 [[package]]
 name = "kcl-error"
 version = "0.2.192"
-source = "git+https://github.com/KittyCAD/modeling-app?branch=achalmers/zk-exec-remote-2#f0c49d1f25bdea90ce3ef01a22de65c7f4ef9232"
+source = "git+https://github.com/KittyCAD/modeling-app?branch=main#86663fcb7d7ef987b2bbd5eba529dd5756a752e3"
 dependencies = [
  "miette",
  "schemars 0.8.22",
