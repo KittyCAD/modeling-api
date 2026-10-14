@@ -118,6 +118,24 @@ pub struct ExecKclProjectErr {
     pub filenames: IndexMap<kcl_error::ModuleId, kcl_api::modules::ModulePath>,
 }
 
+impl ExecKclProjectErr {
+    /// Be careful using this. If you have executed a KCL program,
+    /// you should be building the full ExecKclProjectErr via its `build()`
+    /// method. This is only for errors that happen before execution.
+    pub fn error_before_execution(error: KclError) -> Self {
+        Self {
+            error: Some(error),
+            non_fatal: Default::default(),
+            operations: Default::default(),
+            variables: Default::default(),
+            artifact_graph: Default::default(),
+            default_planes: Default::default(),
+            filenames: Default::default(),
+            scene_objects: Default::default(),
+        }
+    }
+}
+
 #[cfg(feature = "arbitrary")]
 impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
     fn arbitrary(_u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
