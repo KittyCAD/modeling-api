@@ -4134,6 +4134,13 @@
                   }
                 ]
               },
+              "imported_files": {
+                "description": "Original imported files to embed in glTF source metadata. Paths are relative to the source project. Other export formats ignore these files.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ImportFile"
+                }
+              },
               "kcl_source": {
                 "nullable": true,
                 "description": "KCL source to embed in formats that support source metadata.",
@@ -4175,6 +4182,13 @@
                     "$ref": "#/components/schemas/OutputFormat3d"
                   }
                 ]
+              },
+              "imported_files": {
+                "description": "Original imported files to embed in glTF source metadata. Paths are relative to the source project. Other export formats ignore these files.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ImportFile"
+                }
               },
               "kcl_source": {
                 "nullable": true,
