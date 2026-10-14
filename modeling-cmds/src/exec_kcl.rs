@@ -2,7 +2,7 @@ use bon::Builder;
 use indexmap::IndexMap;
 #[cfg(feature = "websocket")]
 use kcl_api::artifact::ArtifactGraph;
-use kcl_api::{kcl_value_view::KclValueView, DefaultPlanes};
+use kcl_api::{kcl_value_view::KclValueView, DefaultPlanes, Object};
 use kcl_error::{CompilationIssue, KclError};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -22,21 +22,12 @@ pub struct KclProject {
     /// This is the first KCL file to be executed,
     /// the root of the KCL module tree.
     pub entrypoint: SafeFilepath,
-    /// Include interpreter data needed for saved diagnostics and sketch rendering.
-    /// Clients requesting this must verify the response contains execution_data.
-    #[serde(default)]
-    #[builder(default)]
-    pub include_execution_data: bool,
 }
 
 impl KclProject {
     /// Create a new KCL project.
     pub fn new(files: Vec<KclFile>, entrypoint: SafeFilepath) -> Self {
-        Self {
-            files,
-            entrypoint,
-            include_execution_data: false,
-        }
+        Self { files, entrypoint }
     }
 }
 
@@ -55,12 +46,6 @@ pub struct KclFile {
         deserialize_with = "serde_bytes::deserialize"
     )]
     pub contents: Vec<u8>,
-    /// Original client path, used only as a name in the uploaded in-memory filesystem.
-    /// This can be absolute or contain parent components; it never grants access
-    /// to the engine's filesystem. Preserves import resolution and diagnostic names.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    #[cfg_attr(feature = "ts-rs", ts(optional))]
-    pub original_path: Option<String>,
 }
 
 impl std::fmt::Debug for KclFile {
@@ -75,11 +60,7 @@ impl std::fmt::Debug for KclFile {
 impl KclFile {
     /// Create a KCL file.
     pub fn new(path: SafeFilepath, contents: Vec<u8>) -> Self {
-        Self {
-            path,
-            contents,
-            original_path: None,
-        }
+        Self { path, contents }
     }
 }
 
@@ -131,29 +112,10 @@ pub struct ExecKclProjectErr {
     pub artifact_graph: ArtifactGraph,
     /// IDs of the standard planes created before execution failed.
     pub default_planes: Option<Box<DefaultPlanes>>,
-    /// Interpreter-specific data for saved source diagnostics and sketch rendering.
-    /// Contains solved scene objects and module sources; its schema follows the deployed
-    /// interpreter release, just like KCL execution semantics.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    #[cfg_attr(feature = "ts-rs", ts(optional))]
-    pub execution_data: Option<serde_json::Value>,
-    // TODO: Add fields to this as we make KCL data serializable.
-    // Should be a usable subset of `KclErrorWithOutputs`.
-}
-
-impl ExecKclProjectErr {
-    /// Used when the project execution had a fatal error.
-    pub fn fatal_error(error: KclError) -> Self {
-        Self {
-            error: Some(error),
-            non_fatal: Default::default(),
-            operations: Default::default(),
-            variables: Default::default(),
-            artifact_graph: Default::default(),
-            default_planes: Default::default(),
-            execution_data: None,
-        }
-    }
+    /// All objects in all sketches.
+    pub scene_objects: Vec<Object>,
+    /// Which module ID was assigned to each KCL file in the project?
+    pub filenames: IndexMap<kcl_error::ModuleId, kcl_api::modules::ModulePath>,
 }
 
 #[cfg(feature = "arbitrary")]
@@ -184,58 +146,8 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectErr {
             variables: Default::default(),
             artifact_graph: Default::default(),
             default_planes: Default::default(),
-            execution_data: None,
+            scene_objects: Default::default(),
+            filenames: Default::default(),
         })
-    }
-}
-
-#[cfg(all(test, feature = "websocket"))]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn existing_projects_deserialize_without_native_metadata() {
-        let project: KclProject = serde_json::from_value(serde_json::json!({
-            "files": [{"path": "main.kcl", "contents": [120]}],
-            "entrypoint": "main.kcl"
-        }))
-        .unwrap();
-        assert!(!project.include_execution_data);
-        assert!(project.files[0].original_path.is_none());
-        assert_eq!(project.files[0].contents, b"x");
-    }
-
-    #[test]
-    fn native_project_metadata_and_binary_assets_round_trip() {
-        let mut file = KclFile::new(SafeFilepath::validate("files/0").unwrap(), vec![0, 255, 128]);
-        file.original_path = Some("/client/project/../part.step".to_owned());
-        let mut project = KclProject::new(vec![file], SafeFilepath::validate("files/0").unwrap());
-        project.include_execution_data = true;
-        let saved: KclProject = serde_json::from_slice(&serde_json::to_vec(&project).unwrap()).unwrap();
-        assert_eq!(saved, project);
-    }
-
-    #[test]
-    fn execution_data_is_optional_on_success_and_failure_responses() {
-        let success = ExecKclProjectOk::builder()
-            .artifact_graph(Default::default())
-            .operations(Default::default())
-            .variables(Default::default())
-            .issues(vec![])
-            .build();
-        let success_json = serde_json::to_value(success).unwrap();
-        assert!(!success_json.as_object().unwrap().contains_key("execution_data"));
-        let success: ExecKclProjectOk = serde_json::from_value(success_json).unwrap();
-        assert!(success.execution_data.is_none());
-        let failure = ExecKclProjectErr::builder()
-            .artifact_graph(Default::default())
-            .operations(Default::default())
-            .variables(Default::default())
-            .non_fatal(vec![])
-            .build();
-        let failure_json = serde_json::to_value(failure).unwrap();
-        assert!(!failure_json.as_object().unwrap().contains_key("execution_data"));
-        let failure: ExecKclProjectErr = serde_json::from_value(failure_json).unwrap();
-        assert!(failure.execution_data.is_none());
     }
 }
