@@ -2577,17 +2577,22 @@
         ]
       },
       "KclFile": {
-        "description": "Region-creation algorithm version.",
+        "description": "A file uploaded with a KCL project.",
         "type": "object",
         "properties": {
           "contents": {
-            "description": "Contents of the file, as UTF-8 encoded bytes.",
+            "description": "Raw file contents. KCL source is UTF-8; imported assets may be binary.",
             "type": "array",
             "items": {
               "type": "integer",
               "format": "uint8",
               "minimum": 0
             }
+          },
+          "original_path": {
+            "nullable": true,
+            "description": "Original client path, used only as a name in the uploaded in-memory filesystem. This can be absolute or contain parent components; it never grants access to the engine's filesystem. Preserves import resolution and diagnostic names.",
+            "type": "string"
           },
           "path": {
             "description": "Where is the file, relative to the project directory?",
@@ -2621,6 +2626,11 @@
             "items": {
               "$ref": "#/components/schemas/KclFile"
             }
+          },
+          "include_execution_data": {
+            "description": "Include interpreter data needed for saved diagnostics and sketch rendering. Clients requesting this must verify the response contains execution_data.",
+            "default": false,
+            "type": "boolean"
           }
         },
         "required": [
