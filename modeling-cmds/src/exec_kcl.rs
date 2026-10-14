@@ -1,7 +1,7 @@
 use bon::Builder;
 use indexmap::IndexMap;
 #[cfg(feature = "websocket")]
-use kcl_api::ArtifactGraph;
+use kcl_api::artifact::ArtifactGraph;
 use kcl_api::{kcl_value_view::KclValueView, DefaultPlanes};
 use kcl_error::{CompilationIssue, KclError};
 use schemars::JsonSchema;
