@@ -83,12 +83,10 @@ pub struct ExecKclProjectOk {
     pub issues: Vec<CompilationIssue>,
     /// IDs of the standard planes created for this execution.
     pub default_planes: Option<Box<DefaultPlanes>>,
-    /// Interpreter-specific data for saved source diagnostics and sketch rendering.
-    /// Contains solved scene objects and module sources; its schema follows the deployed
-    /// interpreter release, just like KCL execution semantics.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    #[cfg_attr(feature = "ts-rs", ts(optional))]
-    pub execution_data: Option<serde_json::Value>,
+    /// All objects in all sketches.
+    pub scene_objects: Vec<Object>,
+    /// Which module ID was assigned to each KCL file in the project?
+    pub filenames: IndexMap<kcl_error::ModuleId, kcl_api::modules::ModulePath>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
@@ -149,7 +147,8 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
             #[cfg(feature = "websocket")]
             variables: Default::default(),
             default_planes: Default::default(),
-            execution_data: None,
+            filenames: Default::default(),
+            scene_objects: Default::default(),
         })
     }
 }
