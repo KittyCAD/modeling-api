@@ -1789,6 +1789,7 @@ pub enum ExtrusionFaceCapType {
 pub enum PostEffectType {
     Phosphor,
     Ssao,
+    RetroCad,
     #[default]
     NoEffect,
 }
