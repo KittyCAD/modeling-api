@@ -4,13 +4,13 @@ use indexmap::IndexMap;
 use kcl_api::artifact::ArtifactGraph;
 use kcl_api::{kcl_value_view::KclValueView, DefaultPlanes};
 use kcl_error::{CompilationIssue, KclError};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::shared::safe_filepath::SafeFilepath;
 
 /// A KCL project that can be executed.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -32,7 +32,8 @@ impl KclProject {
 }
 
 /// Region-creation algorithm version.
-#[derive(Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Builder)]
+#[derive(Clone, PartialEq, Serialize, Deserialize, Default, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -64,7 +65,8 @@ impl KclFile {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
@@ -85,7 +87,8 @@ pub struct ExecKclProjectOk {
     pub default_planes: Option<Box<DefaultPlanes>>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]

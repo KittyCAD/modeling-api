@@ -1,5 +1,4 @@
 use bon::Builder;
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::shared::{FileExportFormat, FileExportFormat2d, FileImportFormat};
@@ -23,7 +22,8 @@ pub mod step;
 pub mod stl;
 
 /// Output 2D format specifier.
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -39,7 +39,8 @@ pub enum OutputFormat2d {
 pub type OutputFormat = OutputFormat3d;
 
 /// Output 3D format specifier.
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -68,7 +69,8 @@ pub enum OutputFormat3d {
 pub type InputFormat = InputFormat3d;
 
 /// Input format specifier.
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[cfg_attr(
     feature = "python",
@@ -132,7 +134,8 @@ impl InputFormat3d {
 }
 
 /// Data item selection.
-#[derive(Clone, Debug, Default, Eq, Hash, PartialEq, JsonSchema, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Eq, Hash, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename_all = "snake_case", tag = "type")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -391,12 +394,12 @@ macro_rules! proprietary_brep_formats {
                 /// Import functionality
                 pub mod import {
                     use bon::Builder;
-                    use schemars::JsonSchema;
                     use serde::{Deserialize, Serialize};
                     use crate::coord;
 
                     #[doc = std::concat!("Options for importing ", $format_description, ".")]
-                    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+                    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Builder)]
+                    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
                     #[serde(default, rename = $spec_name)]
                     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
                     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]

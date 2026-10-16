@@ -2,7 +2,6 @@
 use clap::ValueEnum;
 use kittycad_unit_conversion_derive::UnitConversion;
 use parse_display_derive::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "cxx")]
@@ -17,7 +16,6 @@ use crate::impl_extern_type;
     Eq,
     PartialEq,
     Debug,
-    JsonSchema,
     Deserialize,
     Serialize,
     Clone,
@@ -26,6 +24,7 @@ use crate::impl_extern_type;
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
@@ -100,7 +99,6 @@ impl_extern_type! {
     Eq,
     PartialEq,
     Debug,
-    JsonSchema,
     Deserialize,
     Serialize,
     Clone,
@@ -109,6 +107,7 @@ impl_extern_type! {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
@@ -141,7 +140,6 @@ pub enum UnitAngle {
     Eq,
     PartialEq,
     Debug,
-    JsonSchema,
     Deserialize,
     Serialize,
     Clone,
@@ -151,6 +149,7 @@ pub enum UnitAngle {
     Default,
     Hash,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
@@ -225,21 +224,9 @@ impl UnitArea {
 
 /// The valid types for density units.
 #[derive(
-    Display,
-    Copy,
-    Eq,
-    PartialEq,
-    Debug,
-    JsonSchema,
-    Deserialize,
-    Serialize,
-    Clone,
-    Ord,
-    PartialOrd,
-    Default,
-    UnitConversion,
-    Hash,
+    Display, Copy, Eq, PartialEq, Debug, Deserialize, Serialize, Clone, Ord, PartialOrd, Default, UnitConversion, Hash,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]
@@ -297,7 +284,6 @@ impl UnitDensity {
     Eq,
     PartialEq,
     Debug,
-    JsonSchema,
     Deserialize,
     Serialize,
     Clone,
@@ -306,6 +292,7 @@ impl UnitDensity {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[serde(rename_all = "snake_case")]
@@ -357,7 +344,6 @@ impl UnitMass {
     Eq,
     PartialEq,
     Debug,
-    JsonSchema,
     Deserialize,
     Serialize,
     Clone,
@@ -366,6 +352,7 @@ impl UnitMass {
     UnitConversion,
     Hash,
 )]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "clap", derive(ValueEnum))]
 #[cfg_attr(feature = "tabled", derive(tabled::Tabled))]
 #[display(style = "snake_case")]

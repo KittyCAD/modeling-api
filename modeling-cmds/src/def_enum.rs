@@ -1,5 +1,4 @@
 use kittycad_modeling_cmds_macros::define_modeling_cmd_enum;
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 pub use self::each_cmd::*;
@@ -13,7 +12,6 @@ define_modeling_cmd_enum! {
         use crate::{self as kittycad_modeling_cmds};
         use kittycad_modeling_cmds_macros::{ModelingCmdVariant};
         use parse_display_derive::{Display, FromStr};
-        use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
         use uuid::Uuid;
         use crate::shared::CameraViewState;
@@ -57,8 +55,9 @@ define_modeling_cmd_enum! {
 
         /// Evaluates the position of a path in one shot (engine utility for kcl executor)
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -73,9 +72,10 @@ define_modeling_cmd_enum! {
 
         /// Start a new path.
         #[derive(
-            Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant,
+            Debug, Clone, Default, PartialEq, Serialize, Deserialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -90,8 +90,9 @@ define_modeling_cmd_enum! {
         /// to (1, 1, 0) with this command uses local coordinates. So, it would move the pen to
         /// (1, 1, 50) in global coordinates.
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -106,8 +107,9 @@ define_modeling_cmd_enum! {
         /// Extend a path by adding a new segment which starts at the path's "pen".
         /// If no "pen" location has been set before (via `MovePen`), then the pen is at the origin.
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -125,8 +127,9 @@ define_modeling_cmd_enum! {
 
         /// Command for extruding a solid 2d.
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -182,8 +185,9 @@ define_modeling_cmd_enum! {
 
         /// Command for extruding a solid 2d to a reference geometry.
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -222,8 +226,9 @@ define_modeling_cmd_enum! {
 
         /// Command for twist extruding a solid 2d.
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -259,8 +264,9 @@ define_modeling_cmd_enum! {
 
         /// Extrude the object along a path.
         #[derive(
-            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder
+            Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -309,8 +315,9 @@ define_modeling_cmd_enum! {
 
         /// Command for revolving a solid 2d.
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -342,8 +349,9 @@ define_modeling_cmd_enum! {
 
         /// Command for shelling a solid3d face
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -368,8 +376,9 @@ define_modeling_cmd_enum! {
         /// BooleanImprint, EntityDeleteChildren, Solid3dFlipFace
         /// If successful, the new body type will become "Solid".
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -381,8 +390,9 @@ define_modeling_cmd_enum! {
 
         /// Command for joining multiple Surfaces (non-manifold) to a Solid.
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -397,15 +407,16 @@ define_modeling_cmd_enum! {
 
         /// Command for creating a blend between the edge of two given surfaces
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SurfaceBlend {
             /// The two surfaces that the blend will span between
-            #[schemars(length(min = 2, max = 2))]
+            #[cfg_attr(feature = "json-schema", schemars(length(min = 2, max = 2)))]
             pub surfaces: Vec<SurfaceEdgeReference>,
             /// The type of blend to use.
             #[serde(default)]
@@ -415,8 +426,9 @@ define_modeling_cmd_enum! {
 
         /// What is the UUID of this body's n-th edge?
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -431,8 +443,9 @@ define_modeling_cmd_enum! {
 
         /// What is the UUID of this body's n-th face?
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -447,8 +460,9 @@ define_modeling_cmd_enum! {
 
         /// Retrieves the body type.
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -460,8 +474,9 @@ define_modeling_cmd_enum! {
 
         /// Command for revolving a solid 2d about a brep edge
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -494,8 +509,9 @@ define_modeling_cmd_enum! {
 
         /// Command for lofting sections to create a solid
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -524,8 +540,9 @@ define_modeling_cmd_enum! {
 
         /// Closes a path, converting it to a 2D solid.
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -536,7 +553,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Camera drag started.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -549,7 +567,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Camera drag continued.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -567,7 +586,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Camera drag ended
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -580,7 +600,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Gets the default camera's camera settings
-        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -588,7 +609,8 @@ define_modeling_cmd_enum! {
         pub struct DefaultCameraGetSettings {}
 
         /// Gets the default camera's view state
-        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -596,7 +618,8 @@ define_modeling_cmd_enum! {
         pub struct DefaultCameraGetView {}
 
         /// Sets the default camera's view state
-        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -607,7 +630,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Change what the default camera is looking at.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -627,7 +651,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Change what the default camera is looking at.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -653,7 +678,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Adjust zoom of the default camera.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -666,7 +692,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Export a sketch to a file.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -681,7 +708,8 @@ define_modeling_cmd_enum! {
         /// Export the scene to a file.
         ///
         /// The response is a MsgPack-encoded message in a WebSocket binary frame.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -697,7 +725,8 @@ define_modeling_cmd_enum! {
         /// Export the scene to a file.
         ///
         /// The response is a MsgPack-encoded message in a WebSocket binary frame.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -711,7 +740,8 @@ define_modeling_cmd_enum! {
         }
 
         /// What is this entity's parent?
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -722,7 +752,8 @@ define_modeling_cmd_enum! {
         }
 
         /// How many children does the entity have?
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -733,7 +764,8 @@ define_modeling_cmd_enum! {
         }
 
         /// What is the UUID of this entity's n-th child?
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -746,7 +778,8 @@ define_modeling_cmd_enum! {
         }
 
         /// What is this entity's child index within its parent
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -757,7 +790,8 @@ define_modeling_cmd_enum! {
         }
 
         /// What is this edge or face entity's primitive index within its parent body's edges or faces array respectively
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -769,7 +803,8 @@ define_modeling_cmd_enum! {
 
         /// Attempts to delete children entity from an entity.
         /// Note that this API may change the body type of certain entities from Solid to Surface.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -782,7 +817,8 @@ define_modeling_cmd_enum! {
         }
 
         /// What are all UUIDs of this entity's children?
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -793,7 +829,8 @@ define_modeling_cmd_enum! {
         }
 
         /// What are all UUIDs of all the paths sketched on top of this entity?
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -804,7 +841,8 @@ define_modeling_cmd_enum! {
         }
 
         /// What is the distance between these two entities?
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -819,7 +857,8 @@ define_modeling_cmd_enum! {
         }
 
         /// What is the length of this edge?
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -831,7 +870,8 @@ define_modeling_cmd_enum! {
 
         /// Create a pattern using this entity by specifying the transform for each desired repetition.
         /// Transformations are performed in the following order (first applied to last applied): scale, rotate, translate.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -843,7 +883,8 @@ define_modeling_cmd_enum! {
 
         /// Create a pattern using this entity by specifying the transform for each desired repetition.
         /// Transformations are performed in the following order (first applied to last applied): scale, rotate, translate.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -866,7 +907,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Create a linear pattern using this entity.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -883,7 +925,8 @@ define_modeling_cmd_enum! {
             pub spacing: LengthUnit,
         }
         /// Create a circular pattern using this entity.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -906,7 +949,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Create a helix using the input cylinder and other specified parameters.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -927,7 +971,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Create a helix using the specified parameters.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -952,7 +997,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Create a helix using the specified parameters.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -981,7 +1027,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Mirror the input entities over the specified axis, edge, or plane.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -996,7 +1043,8 @@ define_modeling_cmd_enum! {
 
         /// Mirror the input entities over the specified axis.
         /// Deprecated; please use `EntityMirrorAcross`
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1013,8 +1061,9 @@ define_modeling_cmd_enum! {
         /// Mirror the input entities over the specified edge.
         /// Deprecated; please use `EntityMirrorAcross`
         #[derive(
-            Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder
+            Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1034,7 +1083,8 @@ define_modeling_cmd_enum! {
 
         /// Modifies the selection by simulating a "mouse click" at the given x,y window coordinate
         /// Returns ID of whatever was selected.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1049,7 +1099,8 @@ define_modeling_cmd_enum! {
         /// Query the type of entity that was selected. E.g. if a face is selected the face id is
         /// returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are
         /// returned (typically two).
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1064,7 +1115,8 @@ define_modeling_cmd_enum! {
         /// Query the type of entity given its id. E.g. if a face is selected the face id is
         /// returned, if an edge/vertex is selected then the face ids that uniquely define the edge/vertex are
         /// returned (typically two).
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1075,7 +1127,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Adds one or more entities (by UUID) to the selection.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1086,7 +1139,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Removes one or more entities (by UUID) from the selection.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1097,7 +1151,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Removes all of the Objects in the scene
-        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1105,7 +1160,8 @@ define_modeling_cmd_enum! {
         pub struct SceneClearAll {}
 
         /// Replaces current selection with these entities (by UUID).
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1117,7 +1173,8 @@ define_modeling_cmd_enum! {
 
         /// Changes the current highlighted entity to whichever one is at the given window coordinate.
         /// If there's no entity at this location, clears the highlight.
-        #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1133,7 +1190,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Changes the current highlighted entity to these entities.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1144,7 +1202,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Create a new annotation
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1159,7 +1218,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Update an annotation
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1173,7 +1233,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Changes visibility of scene-wide edge lines on brep solids
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1184,7 +1245,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Hide or show an object
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1197,7 +1259,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Bring an object to the front of the scene
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1208,7 +1271,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Set the material properties of an object
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1230,7 +1294,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Set the name of an object
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1244,7 +1309,8 @@ define_modeling_cmd_enum! {
         }
 
         /// What type of entity is this?
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1255,7 +1321,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Gets all faces which use the given edge.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1268,7 +1335,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Flips (reverses) a brep that is "inside-out".
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1280,7 +1348,8 @@ define_modeling_cmd_enum! {
 
         /// Flips (reverses) a face.  If the solid3d body type is "Solid",
         /// then body type will become non-manifold ("Surface").
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1293,7 +1362,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Add a hole to a Solid2d object before extruding it.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1306,7 +1376,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Gets all edges which are opposite the given edge, across all possible faces.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1321,7 +1392,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Gets the edge opposite the given edge, along the given face.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1336,7 +1408,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Gets the next adjacent edge for the given edge, along the given face.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1351,7 +1424,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Gets the previous adjacent edge for the given edge, along the given face.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1366,7 +1440,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Gets the shared edge between these two faces if it exists
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1379,7 +1454,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Fillets the given edge with the specified radius.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1431,7 +1507,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Cut the list of edge references with the given cut parameters
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1477,7 +1554,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Cut the list of given edges with the given cut parameters.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1523,7 +1601,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Determines whether a brep face is planar and returns its surface-local planar axes if so
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1534,7 +1613,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Determines a position on a brep face evaluated by parameters u,v
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1548,7 +1628,8 @@ define_modeling_cmd_enum! {
         }
 
         ///Obtains the surface "center of mass"
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1559,7 +1640,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Determines the gradient (dFdu, dFdv) + normal vector on a brep face evaluated by parameters u,v
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1573,7 +1655,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Send object to front or back.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1585,7 +1668,8 @@ define_modeling_cmd_enum! {
             pub front: bool,
         }
         /// Set opacity of the entity.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1600,7 +1684,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Fade entity in or out.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1617,7 +1702,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Make a new plane
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1640,7 +1726,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Set the color of a plane.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1653,7 +1740,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Set the current tool.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1664,7 +1752,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Send a mouse move event
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1681,7 +1770,8 @@ define_modeling_cmd_enum! {
 
         /// Send a mouse click event
         /// Updates modified/selected entities.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1694,7 +1784,8 @@ define_modeling_cmd_enum! {
         /// Disable sketch mode.
         /// If you are sketching on a face, be sure to not disable sketch mode until you have extruded.
         /// Otherwise, your object will not be fused with the face.
-        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1702,7 +1793,8 @@ define_modeling_cmd_enum! {
         pub struct SketchModeDisable {}
 
         /// Get the plane for sketch mode.
-        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1710,7 +1802,8 @@ define_modeling_cmd_enum! {
         pub struct GetSketchModePlane {}
 
         /// Get the plane for sketch mode.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1725,7 +1818,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Sketch on some entity (e.g. a plane, a face).
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1746,7 +1840,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Set the background color of the scene.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1757,7 +1852,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Set the properties of the tool lines for the scene.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1768,7 +1864,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Set the default system properties used when a specific property isn't set.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1795,7 +1892,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Get type of the given curve.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1806,7 +1904,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Get control points of the given curve.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1817,7 +1916,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Project an entity on to a plane.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1837,7 +1937,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Project a list of points on to a plane.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1853,7 +1954,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Enum containing the variety of image formats snapshots may be exported to.
-        #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, FromStr, Display)]
+        #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, FromStr, Display)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[serde(rename_all = "snake_case")]
         #[display(style = "snake_case")]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -1869,7 +1971,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Take a snapshot of the current view.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1880,7 +1983,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Add a gizmo showing the axes.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1894,7 +1998,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Query the given path.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1905,7 +2010,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Obtain curve ids for vertex ids
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1919,7 +2025,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Obtain curve id by index
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1933,7 +2040,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Obtain vertex ids for a path
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1944,7 +2052,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Obtain the sketch target id (if the path was drawn in sketchmode) for a path
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1955,7 +2064,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Start dragging the mouse.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1966,7 +2076,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Continue dragging the mouse.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1982,7 +2093,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Stop dragging the mouse.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -1993,7 +2105,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Remove scene objects.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2005,7 +2118,8 @@ define_modeling_cmd_enum! {
 
         /// Utility method. Performs both a ray cast and projection to plane-local coordinates.
         /// Returns the plane coordinates for the given window coordinates.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2018,7 +2132,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Find the start and end of a curve.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2029,7 +2144,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Reconfigure the stream.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2053,7 +2169,8 @@ define_modeling_cmd_enum! {
         /// Note: These imports are non-editable. In the future we may expose a proprietary-to-KCL function
         /// to resolve this. The main intention today is to use imports as design references.
         ///
-        #[derive(Debug, Eq, PartialEq, Clone, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Eq, PartialEq, Clone, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2070,7 +2187,8 @@ define_modeling_cmd_enum! {
         /// Any previously executed commands will not be affected or have their units changed.
         /// They will remain in the units they were originally executed in.
         /// If not set, engine units default to mm.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2081,7 +2199,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Get the mass of entities in the scene or the default scene.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2100,7 +2219,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Get the density of entities in the scene or the default scene.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2119,7 +2239,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Get the volume of entities in the scene or the default scene.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2134,7 +2255,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Get the center of mass of entities in the scene or the default scene.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2149,7 +2271,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Get the surface area of entities in the scene or the default scene.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2166,7 +2289,8 @@ define_modeling_cmd_enum! {
         /// Get mass, density, volume, center of mass, surface area, and bounding box together.
         /// Equivalent to querying each property separately for the same entities, while allowing
         /// the engine to share the intermediate geometry used by the calculations.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2200,9 +2324,10 @@ define_modeling_cmd_enum! {
 
         /// Focus the default camera upon an object in the scene.
         #[derive(
-            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2213,9 +2338,10 @@ define_modeling_cmd_enum! {
         }
         /// When you select some entity with the current tool, what should happen to the entity?
         #[derive(
-            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2227,9 +2353,10 @@ define_modeling_cmd_enum! {
 
         /// What kind of entities can be selected?
         #[derive(
-            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2242,9 +2369,10 @@ define_modeling_cmd_enum! {
 
         /// Get the ids of a given entity type.
         #[derive(
-            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2259,15 +2387,16 @@ define_modeling_cmd_enum! {
             /// exceed 1000. If multiple filters are provided, this take will apply to each filter
             /// individually. If there are fewer than `take` items of the provided filter type then the
             /// returned list's length will be the smaller value.
-            #[schemars(range(min = 1, max = 1000))]
+            #[cfg_attr(feature = "json-schema", schemars(range(min = 1, max = 1000)))]
             pub take: u32,
         }
 
         /// Use orthographic projection.
         #[derive(
-            Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, Default, PartialEq, Deserialize, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2276,9 +2405,10 @@ define_modeling_cmd_enum! {
 
         /// Use perspective projection.
         #[derive(
-            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2291,8 +2421,9 @@ define_modeling_cmd_enum! {
         ///Updates the camera to center to the center of the current selection
         ///(or the origin if nothing is selected)
         #[derive(
-            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder
+            Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2307,8 +2438,9 @@ define_modeling_cmd_enum! {
 
         ///Updates the camera to center to the center of the current scene's bounds
         #[derive(
-            Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder
+            Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant, Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2322,7 +2454,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Fit the view to the specified object(s).
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2346,7 +2479,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Looks along the normal of the specified face (if it is planar!), and fits the view to it.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2368,7 +2502,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Fit the view to the scene with an isometric view.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2384,7 +2519,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Get a concise description of all of an extrusion's faces.
-        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
+        #[derive(Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2398,7 +2534,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Get a concise description of all of solids edges.
-        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
+        #[derive(Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2413,7 +2550,8 @@ define_modeling_cmd_enum! {
 
 
         /// Clear the selection
-        #[derive(Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
+        #[derive(Clone, Debug, Default, PartialEq, Deserialize, Serialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2422,7 +2560,8 @@ define_modeling_cmd_enum! {
 
         /// Set the selection to exactly these entities (replaces previous selection).
         /// Empty array clears the selection.
-        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
+        #[derive(Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2433,7 +2572,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Find all IDs of selected entities
-        #[derive(Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
+        #[derive(Clone, Debug, Default, PartialEq, Deserialize, Serialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2442,9 +2582,10 @@ define_modeling_cmd_enum! {
 
         /// Get the number of objects in the scene
         #[derive(
-            Clone, Debug, Default, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, Default, PartialEq, Deserialize, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2453,9 +2594,10 @@ define_modeling_cmd_enum! {
 
         ///Set the transform of an object.
         #[derive(
-            Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, Deserialize, PartialEq, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2485,9 +2627,10 @@ define_modeling_cmd_enum! {
         /// * When exporting to STEP, if the above behavior is observed, will merged the faces.
         ///
         #[derive(
-            Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, Deserialize, PartialEq, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2512,9 +2655,10 @@ define_modeling_cmd_enum! {
         /// Create a new solid from intersecting several other solids.
         /// In other words, the part of the input solids where they all overlap will be the output solid.
         #[derive(
-            Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, Deserialize, PartialEq, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2556,9 +2700,10 @@ define_modeling_cmd_enum! {
         /// that doesn't WILL NOT signal a non-overlap warning.
         ///
         #[derive(
-            Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, Deserialize, PartialEq, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2583,9 +2728,10 @@ define_modeling_cmd_enum! {
 
         /// Create a new non-manifold body by intersecting all the input bodies, cutting and splitting all the faces at the intersection boundaries.
         #[derive(
-            Clone, Debug, Deserialize, PartialEq, JsonSchema, Serialize, ModelingCmdVariant,
+            Clone, Debug, Deserialize, PartialEq, Serialize, ModelingCmdVariant,
             Builder
         )]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2617,7 +2763,8 @@ define_modeling_cmd_enum! {
 
         /// Make a new path by offsetting an object by a given distance.
         /// The new path's ID will be the ID of this command.
-        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
+        #[derive(Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2636,7 +2783,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Add a hole to a closed path by offsetting it a uniform distance inward.
-        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
+        #[derive(Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2649,7 +2797,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Align the grid with a plane or a planar face.
-        #[derive(Clone, Debug, PartialEq, Deserialize, JsonSchema, Serialize, ModelingCmdVariant, Builder)]
+        #[derive(Clone, Debug, PartialEq, Deserialize, Serialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2663,7 +2812,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Set the scale of the grid lines in the video feed.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2677,7 +2827,8 @@ define_modeling_cmd_enum! {
 
         /// Set the grid lines to auto scale. The grid will get larger the further you zoom out,
         /// and smaller the more you zoom in.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2687,7 +2838,8 @@ define_modeling_cmd_enum! {
 
         /// Render transparent surfaces more accurately, but this might make rendering slower.
         /// Because it can interfere with runtime performance, it defaults to false.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2701,7 +2853,8 @@ define_modeling_cmd_enum! {
         /// Create a region bounded by the intersection of various paths.
         /// The region should have an ID taken from the ID of the
         /// 'CreateRegion' modeling command.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2733,7 +2886,8 @@ define_modeling_cmd_enum! {
 
         /// Enable or disable graphics.
         /// Warning: enabling graphics slows down the engine.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2745,7 +2899,8 @@ define_modeling_cmd_enum! {
 
         /// Create a planar surface bounded by the connection of various paths and curves.
         /// 'CreatePlanarSurface' modeling command.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2760,7 +2915,8 @@ define_modeling_cmd_enum! {
            }
 
         /// Finds a suitable set of arguments that can be passed to CreateRegion to resolve this very region.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2773,7 +2929,8 @@ define_modeling_cmd_enum! {
         /// Create a region with a query point.
         /// The region should have an ID taken from the ID of the
         /// 'CreateRegionFromQueryPoint' modeling command.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2792,7 +2949,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Finds a suitable point inside the region for calling such that CreateRegionFromQueryPoint will generate an identical region.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2804,7 +2962,8 @@ define_modeling_cmd_enum! {
 
         /// The user clicked on a point in the window,
         /// returns the region the user clicked on, if any.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2815,7 +2974,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Get the smallest box that could contain the given parts.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2832,7 +2992,8 @@ define_modeling_cmd_enum! {
         }
 
         ///Offset a surface by a given distance.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2852,7 +3013,8 @@ define_modeling_cmd_enum! {
         /// reduced detail, to make execution faster.
         /// Call EndExecution to restore high quality
         /// once you're done sending commands.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2866,7 +3028,8 @@ define_modeling_cmd_enum! {
 
         /// Tell the engine you're finished execution,
         /// and it should resume rendering at high resolution.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder, Default)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder, Default)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2875,7 +3038,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Returns the closest edge to this point.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2891,7 +3055,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Gets debug information about a sketch
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2902,7 +3067,8 @@ define_modeling_cmd_enum! {
         }
 
         /// Sets the KCL Version used by the engine.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
@@ -2947,7 +3113,8 @@ impl ModelingCmd {
 }
 
 /// File to import into the current scene.
-#[derive(Clone, Serialize, Deserialize, JsonSchema, Eq, PartialEq, bon::Builder)]
+#[derive(Clone, Serialize, Deserialize, Eq, PartialEq, bon::Builder)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]

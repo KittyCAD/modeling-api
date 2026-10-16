@@ -1,12 +1,12 @@
 use bon::Builder;
 use parse_display::{Display, FromStr};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::coord;
 
 /// After importing, how should this model's data be represented?
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
 #[serde(rename = "StepImportTargetRepresentation", rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -31,7 +31,8 @@ pub mod import {
     use super::*;
 
     /// Options for importing STEP format.
-    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Builder)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[serde(default, rename = "StepImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -119,9 +120,8 @@ pub mod export {
     }
 
     /// Describes the presentation style of the EXPRESS exchange format.
-    #[derive(
-        Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
-    )]
+    #[derive(Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, Display, FromStr)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[display(style = "snake_case")]
     #[serde(rename = "StepPresentation", rename_all = "snake_case")]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -145,7 +145,8 @@ pub mod export {
     }
 
     /// Options for exporting STEP format.
-    #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize, Builder)]
+    #[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize, Builder)]
+    #[cfg_attr(feature = "json-schema", derive(schemars::JsonSchema))]
     #[serde(default, rename = "StepExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
