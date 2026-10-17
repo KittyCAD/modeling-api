@@ -2,7 +2,7 @@ use bon::Builder;
 use indexmap::IndexMap;
 #[cfg(feature = "websocket")]
 use kcl_api::artifact::ArtifactGraph;
-use kcl_api::{kcl_value_view::KclValueView, DefaultPlanes};
+use kcl_api::{kcl_value_view::KclValueView, DefaultPlanes, Object};
 use kcl_error::{CompilationIssue, KclError};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -31,7 +31,7 @@ impl KclProject {
     }
 }
 
-/// Region-creation algorithm version.
+/// A file uploaded with a KCL project.
 #[derive(Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Builder)]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -40,7 +40,7 @@ impl KclProject {
 pub struct KclFile {
     /// Where is the file, relative to the project directory?
     pub path: SafeFilepath,
-    /// Contents of the file, as UTF-8 encoded bytes.
+    /// Raw file contents. KCL source is UTF-8; imported assets may be binary.
     #[serde(
         serialize_with = "serde_bytes::serialize",
         deserialize_with = "serde_bytes::deserialize"
@@ -83,6 +83,10 @@ pub struct ExecKclProjectOk {
     pub issues: Vec<CompilationIssue>,
     /// IDs of the standard planes created for this execution.
     pub default_planes: Option<Box<DefaultPlanes>>,
+    /// All objects in all sketches.
+    pub scene_objects: Vec<Object>,
+    /// Which module ID was assigned to each KCL file in the project?
+    pub filenames: IndexMap<kcl_error::ModuleId, kcl_api::modules::ModulePath>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
@@ -106,13 +110,17 @@ pub struct ExecKclProjectErr {
     pub artifact_graph: ArtifactGraph,
     /// IDs of the standard planes created before execution failed.
     pub default_planes: Option<Box<DefaultPlanes>>,
-    // TODO: Add fields to this as we make KCL data serializable.
-    // Should be a usable subset of `KclErrorWithOutputs`.
+    /// All objects in all sketches.
+    pub scene_objects: Vec<Object>,
+    /// Which module ID was assigned to each KCL file in the project?
+    pub filenames: IndexMap<kcl_error::ModuleId, kcl_api::modules::ModulePath>,
 }
 
 impl ExecKclProjectErr {
-    /// Used when the project execution had a fatal error.
-    pub fn fatal_error(error: KclError) -> Self {
+    /// Be careful using this. If you have executed a KCL program,
+    /// you should be building the full ExecKclProjectErr via its `build()`
+    /// method. This is only for errors that happen before execution.
+    pub fn error_before_execution(error: KclError) -> Self {
         Self {
             error: Some(error),
             non_fatal: Default::default(),
@@ -120,6 +128,8 @@ impl ExecKclProjectErr {
             variables: Default::default(),
             artifact_graph: Default::default(),
             default_planes: Default::default(),
+            filenames: Default::default(),
+            scene_objects: Default::default(),
         }
     }
 }
@@ -137,6 +147,8 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectOk {
             #[cfg(feature = "websocket")]
             variables: Default::default(),
             default_planes: Default::default(),
+            filenames: Default::default(),
+            scene_objects: Default::default(),
         })
     }
 }
@@ -151,6 +163,8 @@ impl<'a> arbitrary::Arbitrary<'a> for ExecKclProjectErr {
             variables: Default::default(),
             artifact_graph: Default::default(),
             default_planes: Default::default(),
+            scene_objects: Default::default(),
+            filenames: Default::default(),
         })
     }
 }

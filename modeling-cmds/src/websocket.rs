@@ -238,7 +238,7 @@ pub enum OkWebSocketResponseData {
     #[cfg(feature = "exec-kcl")]
     ExecKclProject {
         /// Result after executing KCL.
-        result: Result<crate::exec_kcl::ExecKclProjectOk, crate::exec_kcl::ExecKclProjectErr>,
+        result: Box<Result<crate::exec_kcl::ExecKclProjectOk, crate::exec_kcl::ExecKclProjectErr>>,
     },
 
     /// Request that the client end this connection and establish a new session
