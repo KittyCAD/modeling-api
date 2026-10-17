@@ -527,6 +527,11 @@ pub struct AnnotationBasicDimension {
     /// Number of decimal places to use when displaying tolerance and dimension values
     pub precision: u32,
 
+    /// Number of decimal places to use for the tolerance, overriding `precision`.
+    /// If omitted, the tolerance uses the same precision as the dimension value.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tolerance_precision: Option<u32>,
+
     /// The scale of the font label in 3D space
     pub font_scale: f32,
 
