@@ -2577,7 +2577,7 @@
         ]
       },
       "KclFile": {
-        "description": "Region-creation algorithm version.",
+        "description": "A file in a KCL project.",
         "type": "object",
         "properties": {
           "contents": {
@@ -2604,7 +2604,7 @@
         ]
       },
       "KclProject": {
-        "description": "A KCL project that can be executed.",
+        "description": "A KCL project.",
         "type": "object",
         "properties": {
           "entrypoint": {
@@ -4134,6 +4134,15 @@
                   }
                 ]
               },
+              "kcl_source": {
+                "nullable": true,
+                "description": "KCL source to embed in formats that support source metadata.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/KclProject"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -4164,6 +4173,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/OutputFormat3d"
+                  }
+                ]
+              },
+              "kcl_source": {
+                "nullable": true,
+                "description": "KCL source to embed in formats that support source metadata.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/KclProject"
                   }
                 ]
               },

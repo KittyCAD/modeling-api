@@ -23,6 +23,7 @@ define_modeling_cmd_enum! {
             format::{OutputFormat2d, OutputFormat3d},
             id::ModelingCmdId,
             length_unit::LengthUnit,
+            kcl_project::KclProject,
             shared::{
                 Angle,
                 RegionVersion,
@@ -692,6 +693,9 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.
             pub format: OutputFormat3d,
+            /// KCL source to embed in formats that support source metadata.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub kcl_source: Option<KclProject>,
         }
 
         /// Export the scene to a file.
@@ -708,6 +712,9 @@ define_modeling_cmd_enum! {
             pub entity_ids: Vec<Uuid>,
             /// The file format to export to.
             pub format: OutputFormat3d,
+            /// KCL source to embed in formats that support source metadata.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub kcl_source: Option<KclProject>,
         }
 
         /// What is this entity's parent?
