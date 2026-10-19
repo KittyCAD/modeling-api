@@ -8767,7 +8767,6 @@
               },
               "views": {
                 "description": "Named views in the scene.",
-                "default": {},
                 "type": "object",
                 "additionalProperties": {
                   "$ref": "#/components/schemas/NamedView"
@@ -8926,7 +8925,6 @@
               },
               "views": {
                 "description": "Named views in the scene.",
-                "default": {},
                 "type": "object",
                 "additionalProperties": {
                   "$ref": "#/components/schemas/NamedView"

@@ -66,6 +66,7 @@ pub mod export {
 
         /// Named views in the scene.
         #[builder(default)]
+        #[serde(skip_serializing_if = "HashMap::is_empty")]
         pub views: HashMap<String, View>,
     }
 
