@@ -2,6 +2,35 @@ use dropshot::ApiDescription;
 
 use crate::websocket::WebSocketRequest;
 
+#[test]
+fn test_dimension_tolerance_precision_is_optional_and_preserves_zero() {
+    use crate::shared::AnnotationBasicDimension;
+
+    let old_command = serde_json::json!({
+        "dimension": {},
+        "plane_id": "00000000-0000-0000-0000-000000000000",
+        "offset": { "x": 0.0, "y": 20.0 },
+        "precision": 3,
+        "font_scale": 1.0,
+        "font_point_size": 32
+    });
+    let mut dimension: AnnotationBasicDimension = serde_json::from_value(old_command).unwrap();
+    assert_eq!(dimension.tolerance_precision, None);
+    assert!(serde_json::to_value(&dimension)
+        .unwrap()
+        .get("tolerance_precision")
+        .is_none());
+
+    for precision in [0, 2, 5] {
+        dimension.tolerance_precision = Some(precision);
+        let json = serde_json::to_value(&dimension).unwrap();
+        assert_eq!(json["tolerance_precision"], precision);
+        let decoded: AnnotationBasicDimension = serde_json::from_value(json).unwrap();
+        assert_eq!(decoded.tolerance_precision, Some(precision));
+        assert_eq!(decoded.precision, 3);
+    }
+}
+
 #[tokio::test]
 async fn test_openapi() {
     let api = example_server().unwrap();
