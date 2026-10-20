@@ -2953,6 +2953,8 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct AssemblyAddChildren {
+            /// Which assembly to modify.
+            pub assembly_id: Uuid,
             /// Which entities, to move into this assembly.
             #[serde(default, skip_serializing_if = "Vec::is_empty")]
             pub children: Vec<Uuid>,
@@ -2976,6 +2978,9 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct AssemblyAddConstraints {
+            /// Which assembly to modify.
+            pub assembly_id: Uuid,
+
             /// Which constraints to apply.
             pub constraints: Vec<AssemblyConstraint>,
         }
