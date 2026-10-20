@@ -2951,13 +2951,13 @@ define_modeling_cmd_enum! {
             pub on: MateFrameOn,
         }
 
-        /// Add constraints to an assembly.
+        /// Add constraints to an assembly and solve it.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct AssemblyAddConstraints {
+        pub struct AssemblySolve {
             /// Which assembly to modify.
             pub assembly_id: Uuid,
 

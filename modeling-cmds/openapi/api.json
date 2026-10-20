@@ -8719,7 +8719,7 @@
             ]
           },
           {
-            "description": "Add constraints to an assembly.",
+            "description": "Add constraints to an assembly and solve it.",
             "type": "object",
             "properties": {
               "assembly_id": {
@@ -8737,7 +8737,7 @@
               "type": {
                 "type": "string",
                 "enum": [
-                  "assembly_add_constraints"
+                  "assembly_solve"
                 ]
               }
             },
