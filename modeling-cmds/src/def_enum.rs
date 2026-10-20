@@ -2761,7 +2761,7 @@ define_modeling_cmd_enum! {
             /// Which curves to create the planar surface(s) from.
             /// Curves must be provided in the order they are connected to each other
             /// They must form a closed loop, either by themselves or in a group
-            pub curve_ids: Vec<Uuid>,
+            pub curve_ids: Vec<EdgeSpecifier>,
             /// Tolerance for the planar surface creation. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
            }
