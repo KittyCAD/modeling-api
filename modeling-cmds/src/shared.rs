@@ -2408,7 +2408,7 @@ pub enum AssemblyConstraint {
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct SolvedAssemblyItem {
+pub struct SolvedAssemblyComponent {
     /// How to translate the item.
     /// Applied before rotation.
     pub translate_by: Point3d<LengthUnit>,

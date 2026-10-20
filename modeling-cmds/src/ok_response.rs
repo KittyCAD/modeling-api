@@ -25,7 +25,7 @@ define_ok_modeling_cmd_response_enum! {
             CameraViewState,
             BodyType,
             EntityReference,
-            SolvedAssemblyItem,
+            SolvedAssemblyComponent,
         };
         use std::collections::HashMap;
 
@@ -1481,8 +1481,9 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct AssemblyAddConstraints {
-            /// For each item in the assembly, map its ID to its solution
-            pub solution: HashMap<Uuid, SolvedAssemblyItem>,
+            /// For each component in the assembly, map its ID to its solution.
+            /// A component is either a body or a subassembly.
+            pub solution: HashMap<Uuid, SolvedAssemblyComponent>,
         }
     }
 }
