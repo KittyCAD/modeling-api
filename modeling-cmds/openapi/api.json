@@ -8669,6 +8669,11 @@
             "description": "Add children to the assembly",
             "type": "object",
             "properties": {
+              "assembly_id": {
+                "description": "Which assembly to modify.",
+                "type": "string",
+                "format": "uuid"
+              },
               "children": {
                 "description": "Which entities, to move into this assembly.",
                 "type": "array",
@@ -8685,6 +8690,7 @@
               }
             },
             "required": [
+              "assembly_id",
               "type"
             ]
           },
@@ -8716,6 +8722,11 @@
             "description": "Add constraints to an assembly.",
             "type": "object",
             "properties": {
+              "assembly_id": {
+                "description": "Which assembly to modify.",
+                "type": "string",
+                "format": "uuid"
+              },
               "constraints": {
                 "description": "Which constraints to apply.",
                 "type": "array",
@@ -8731,6 +8742,7 @@
               }
             },
             "required": [
+              "assembly_id",
               "constraints",
               "type"
             ]
