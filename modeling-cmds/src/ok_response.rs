@@ -1480,7 +1480,7 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the 'AssemblyAddConstraints'.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct AssemblyAddConstraints {
+        pub struct AssemblySolve {
             /// For each component in the assembly, map its ID to its solution.
             /// A component is either a body or a subassembly.
             pub solution: HashMap<Uuid, SolvedAssemblyComponent>,
