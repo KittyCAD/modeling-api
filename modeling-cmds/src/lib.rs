@@ -39,6 +39,9 @@ pub mod shared;
 #[cfg(feature = "exec-kcl")]
 pub mod exec_kcl;
 
+/// Structure of KCL projects (one or more KCL files).
+pub mod kcl_project;
+
 #[cfg(all(test, feature = "derive-jsonschema-on-enums"))]
 mod tests;
 

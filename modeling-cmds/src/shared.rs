@@ -18,6 +18,8 @@ use crate::{
 
 pub mod safe_filepath;
 
+pub use crate::kcl_project::{KclFile, KclFileBuilder, KclProject, KclProjectBuilder};
+
 /// Default tolerance values for modeling operations.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
