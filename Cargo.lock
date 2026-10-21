@@ -1617,7 +1617,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -2541,7 +2541,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
 dependencies = [
  "hermit-abi",
  "libc",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -2717,8 +2717,9 @@ dependencies = [
 
 [[package]]
 name = "kcl-api"
-version = "0.2.192"
-source = "git+https://github.com/KittyCAD/modeling-app?branch=achalmers/kcl-193-beta1#f39347b5f46e02a067f752580662a6b4128700bb"
+version = "0.2.193"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "20d2316a91438a7f21de2e8017ea39cff11db07225e410adf750d5f2ceffa789"
 dependencies = [
  "arbitrary",
  "euler",
@@ -2739,8 +2740,9 @@ dependencies = [
 
 [[package]]
 name = "kcl-error"
-version = "0.2.192"
-source = "git+https://github.com/KittyCAD/modeling-app?branch=achalmers/kcl-193-beta1#f39347b5f46e02a067f752580662a6b4128700bb"
+version = "0.2.193"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da0858af61747ee6883386a1dda714c626786a6588b9eb2f2eb281c4cb486b90"
 dependencies = [
  "miette",
  "schemars 0.8.22",
@@ -4538,7 +4540,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys 0.11.0",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -4606,7 +4608,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -5215,7 +5217,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "52d1cfed4120b4d927bf7c0f86d2087a4a7d6027c906d9f9d525a80573b9be51"
 dependencies = [
  "libc",
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -5448,7 +5450,7 @@ dependencies = [
  "getrandom 0.3.4",
  "once_cell",
  "rustix 1.1.2",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -5457,7 +5459,7 @@ version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2111ef44dae28680ae9752bb89409e7310ca33a8c621ebe7b106cf5c928b3ac0"
 dependencies = [
- "windows-sys 0.59.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -6578,7 +6580,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
