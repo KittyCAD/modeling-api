@@ -2,8 +2,10 @@ use bon::Builder;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::coord;
+use crate::format::View;
 
 /// After importing, how should this model's data be represented?
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -89,6 +91,35 @@ pub mod export {
     use super::*;
     use crate::units::UnitLength;
 
+    /// Specifies the STEP application protocol schema for export.
+    #[derive(
+        Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
+    )]
+    #[display(style = "snake_case")]
+    #[serde(rename = "StepSchema", rename_all = "snake_case")]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(
+        feature = "python",
+        pyo3_stub_gen::derive::gen_stub_pyclass_enum,
+        pyo3::pyclass(name = "StepSchema", from_py_object)
+    )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+    pub enum Schema {
+        /// AP203 edition 2.
+        Ap203,
+
+        /// AP214.
+        Ap214,
+
+        /// AP242.
+        ///
+        /// This is the default setting.
+        #[default]
+        Ap242,
+    }
+
     /// Describes the presentation style of the EXPRESS exchange format.
     #[derive(
         Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
@@ -116,7 +147,7 @@ pub mod export {
     }
 
     /// Options for exporting STEP format.
-    #[derive(Clone, Debug, Deserialize, Eq, Hash, JsonSchema, PartialEq, Serialize, Builder)]
+    #[derive(Clone, Debug, Deserialize, JsonSchema, PartialEq, Serialize, Builder)]
     #[serde(default, rename = "StepExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -148,6 +179,15 @@ pub mod export {
         /// Presentation style.
         #[builder(default = default_presentation())]
         pub presentation: Presentation,
+
+        /// STEP application protocol schema. Defaults to AP242.
+        #[builder(default)]
+        pub schema: Schema,
+
+        /// Named views in the scene.
+        #[builder(default)]
+        #[serde(skip_serializing_if = "HashMap::is_empty")]
+        pub views: HashMap<String, View>,
     }
 
     #[cfg(feature = "python")]
@@ -168,6 +208,8 @@ pub mod export {
                 created: None,
                 units: default_units(),
                 presentation: default_presentation(),
+                schema: Schema::default(),
+                views: Default::default(),
             }
         }
     }

@@ -2581,7 +2581,7 @@
         "type": "object",
         "properties": {
           "contents": {
-            "description": "Contents of the file, as UTF-8 encoded bytes.",
+            "description": "Raw file contents. KCL source is UTF-8; imported assets may be binary.",
             "type": "array",
             "items": {
               "type": "integer",
@@ -8562,6 +8562,67 @@
           "cmd_id"
         ]
       },
+      "NamedView": {
+        "description": "Options for exporting glTF 2.0.",
+        "type": "object",
+        "properties": {
+          "baseline": {
+            "description": "Baseline visibility.\n\nDetermines whether entities are visible or by default.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Visibility"
+              }
+            ]
+          },
+          "except_ids": {
+            "description": "Exceptions to the baseline visibility.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModelingCmdId"
+            }
+          },
+          "projection": {
+            "description": "Projection kind.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Projection"
+              }
+            ]
+          },
+          "target": {
+            "description": "Target point.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "up": {
+            "description": "Up direction.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "vantage": {
+            "description": "Vantage point.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "baseline",
+          "except_ids",
+          "projection",
+          "target",
+          "up",
+          "vantage"
+        ]
+      },
       "OppositeForAngle": {
         "type": "string"
       },
@@ -8700,6 +8761,7 @@
               },
               "presentation": {
                 "description": "Specifies how the JSON will be presented.",
+                "default": "pretty",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/GltfPresentation"
@@ -8708,6 +8770,7 @@
               },
               "storage": {
                 "description": "Specifies which kind of glTF 2.0 will be exported.",
+                "default": "embedded",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/GltfStorage"
@@ -8719,11 +8782,16 @@
                 "enum": [
                   "gltf"
                 ]
+              },
+              "views": {
+                "description": "Named views in the scene.",
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/NamedView"
+                }
               }
             },
             "required": [
-              "presentation",
-              "storage",
               "type"
             ]
           },
@@ -8849,6 +8917,15 @@
                   }
                 ]
               },
+              "schema": {
+                "description": "STEP application protocol schema. Defaults to AP242.",
+                "default": "ap242",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/StepSchema"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -8863,6 +8940,13 @@
                     "$ref": "#/components/schemas/UnitLength"
                   }
                 ]
+              },
+              "views": {
+                "description": "Named views in the scene.",
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/NamedView"
+                }
               }
             },
             "required": [
@@ -9482,6 +9566,41 @@
           "primitive_index"
         ]
       },
+      "Projection": {
+        "description": "Data item selection.",
+        "oneOf": [
+          {
+            "description": "Orthographic (parallel) projection.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "orthographic"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "Perspective projection.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "perspective"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      },
       "RegionVersion": {
         "description": "Region-creation algorithm version.",
         "oneOf": [
@@ -9848,6 +9967,32 @@
             "type": "string",
             "enum": [
               "pretty"
+            ]
+          }
+        ]
+      },
+      "StepSchema": {
+        "description": "Specifies the STEP application protocol schema for export.",
+        "oneOf": [
+          {
+            "description": "AP203 edition 2.",
+            "type": "string",
+            "enum": [
+              "ap203"
+            ]
+          },
+          {
+            "description": "AP214.",
+            "type": "string",
+            "enum": [
+              "ap214"
+            ]
+          },
+          {
+            "description": "AP242.\n\nThis is the default setting.",
+            "type": "string",
+            "enum": [
+              "ap242"
             ]
           }
         ]
@@ -10304,6 +10449,25 @@
             "type": "string",
             "enum": [
               "ml"
+            ]
+          }
+        ]
+      },
+      "Visibility": {
+        "description": "Identifies the visibility of entities.",
+        "oneOf": [
+          {
+            "description": "The entity is visible.",
+            "type": "string",
+            "enum": [
+              "show"
+            ]
+          },
+          {
+            "description": "The entity is hidden.",
+            "type": "string",
+            "enum": [
+              "hide"
             ]
           }
         ]

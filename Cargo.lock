@@ -2230,7 +2230,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2 0.5.10",
+ "socket2 0.6.4",
  "system-configuration",
  "tokio",
  "tower-layer",
@@ -2717,9 +2717,9 @@ dependencies = [
 
 [[package]]
 name = "kcl-api"
-version = "0.2.191"
+version = "0.2.193"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "706a64d2eee8e1352f768d7f0b720adad3dbf30635179801d511b9885178aec5"
+checksum = "20d2316a91438a7f21de2e8017ea39cff11db07225e410adf750d5f2ceffa789"
 dependencies = [
  "arbitrary",
  "euler",
@@ -2734,14 +2734,15 @@ dependencies = [
  "serde",
  "serde_json",
  "ts-rs",
+ "typed-path",
  "uuid",
 ]
 
 [[package]]
 name = "kcl-error"
-version = "0.2.191"
+version = "0.2.193"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f94651a8605dc1bb420779d5a2eaf865cabab7241477c8765160d39f5c81a913"
+checksum = "da0858af61747ee6883386a1dda714c626786a6588b9eb2f2eb281c4cb486b90"
 dependencies = [
  "miette",
  "schemars 0.8.22",
@@ -2802,7 +2803,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds"
-version = "0.2.250"
+version = "0.2.254"
 dependencies = [
  "anyhow",
  "arbitrary",
@@ -3985,7 +3986,7 @@ dependencies = [
  "quinn-udp",
  "rustc-hash 2.1.1",
  "rustls",
- "socket2 0.5.10",
+ "socket2 0.6.4",
  "thiserror 2.0.21",
  "tokio",
  "tracing",
@@ -4024,7 +4025,7 @@ dependencies = [
  "cfg_aliases",
  "libc",
  "once_cell",
- "socket2 0.5.10",
+ "socket2 0.6.4",
  "tracing",
  "windows-sys 0.60.2",
 ]

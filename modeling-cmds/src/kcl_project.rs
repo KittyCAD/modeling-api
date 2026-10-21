@@ -34,7 +34,7 @@ impl KclProject {
 pub struct KclFile {
     /// Where is the file, relative to the project directory?
     pub path: SafeFilepath,
-    /// Contents of the file, as UTF-8 encoded bytes.
+    /// Raw file contents. KCL source is UTF-8; imported assets may be binary.
     #[serde(
         serialize_with = "serde_bytes::serialize",
         deserialize_with = "serde_bytes::deserialize"

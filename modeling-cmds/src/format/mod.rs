@@ -2,7 +2,10 @@ use bon::Builder;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::shared::{FileExportFormat, FileExportFormat2d, FileImportFormat};
+use crate::{
+    id::ModelingCmdId,
+    shared::{FileExportFormat, FileExportFormat2d, FileImportFormat, Point3d},
+};
 
 /// AutoCAD drawing interchange format.
 pub mod dxf;
@@ -39,7 +42,7 @@ pub enum OutputFormat2d {
 pub type OutputFormat = OutputFormat3d;
 
 /// Output 3D format specifier.
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -166,6 +169,70 @@ pub enum Selection {
         /// The name.
         name: String,
     },
+}
+
+/// Identifies the visibility of entities.
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum Visibility {
+    /// The entity is visible.
+    Show,
+
+    /// The entity is hidden.
+    Hide,
+}
+
+/// Options for exporting glTF 2.0.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename = "NamedView")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(
+    feature = "python",
+    pyo3_stub_gen::derive::gen_stub_pyclass,
+    pyo3::pyclass(name = "NamedView", from_py_object)
+)]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct View {
+    /// Vantage point.
+    pub vantage: Point3d<f64>,
+
+    /// Target point.
+    pub target: Point3d<f64>,
+
+    /// Up direction.
+    pub up: Point3d<f64>,
+
+    /// Projection kind.
+    pub projection: Projection,
+
+    /// Baseline visibility.
+    ///
+    /// Determines whether entities are visible or by default.
+    pub baseline: Visibility,
+
+    /// Exceptions to the baseline visibility.
+    pub except_ids: Vec<ModelingCmdId>,
+}
+
+/// Data item selection.
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, JsonSchema, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case", tag = "type")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum Projection {
+    /// Orthographic (parallel) projection.
+    Orthographic,
+
+    /// Perspective projection.
+    Perspective,
 }
 
 /// Represents an in-memory file with an associated potentially foreign file path.
@@ -362,6 +429,7 @@ impl OutputFormat3d {
                 created: None,
                 units: src_unit,
                 presentation: step::export::Presentation::Pretty,
+                ..Default::default()
             }),
             FileExportFormat::Stl => Self::Stl(stl::export::Options {
                 storage: stl::export::Storage::Ascii,
