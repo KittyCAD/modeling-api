@@ -2577,11 +2577,11 @@
         ]
       },
       "KclFile": {
-        "description": "Region-creation algorithm version.",
+        "description": "A file uploaded with a KCL project.",
         "type": "object",
         "properties": {
           "contents": {
-            "description": "Contents of the file, as UTF-8 encoded bytes.",
+            "description": "Raw file contents. KCL source is UTF-8; imported assets may be binary.",
             "type": "array",
             "items": {
               "type": "integer",
