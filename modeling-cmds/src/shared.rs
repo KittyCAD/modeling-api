@@ -260,50 +260,56 @@ pub enum ProjectionCurveSource {
     },
 }
 
-/// A bounded 2D line segment on the projection plane.
+/// A bounded 2D line segment.
+///
+/// The consuming command defines the coordinate frame and length unit.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct ProjectionLine2d {
-    /// Start point in projection-local coordinates, in millimeters.
+pub struct LineSegment2d {
+    /// Start point in local 2D coordinates.
     pub start: Point2d<f64>,
-    /// End point in projection-local coordinates, in millimeters.
+    /// End point in local 2D coordinates.
     pub end: Point2d<f64>,
 }
 
-/// A bounded circular arc on the projection plane.
+/// A bounded 2D circular arc.
+///
+/// The consuming command defines the coordinate frame and length unit.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct ProjectionCircularArc2d {
-    /// Arc center in projection-local coordinates, in millimeters.
+pub struct CircularArc2d {
+    /// Arc center in local 2D coordinates.
     pub origin: Point2d<f64>,
-    /// Positive arc radius in millimeters.
+    /// Positive arc radius in the same length unit as the center.
     pub radius: f64,
-    /// Start angle in radians measured from projection +X towards +Y.
+    /// Start angle in radians measured from local +X towards +Y.
     pub start_angle: f64,
-    /// End angle in radians measured from projection +X towards +Y.
+    /// End angle in radians measured from local +X towards +Y.
     pub end_angle: f64,
     /// Whether the arc advances counter-clockwise from start_angle to end_angle.
     /// A full circle has an angular sweep of 2 pi; equal angles mean zero sweep.
     pub counter_clockwise: bool,
 }
 
-/// A bounded 2D NURBS curve on the projection plane.
+/// A bounded 2D NURBS curve.
+///
+/// The consuming command defines the coordinate frame and length unit.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct ProjectionNurbs2d {
-    /// Non-homogeneous control points in projection-local millimeters.
+pub struct Nurbs2d {
+    /// Non-homogeneous control points in local 2D coordinates.
     pub control_points: Vec<Point2d<f64>>,
     /// Positive weights, one per control point. Empty means all weights are 1.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -315,7 +321,7 @@ pub struct ProjectionNurbs2d {
     pub order: u32,
 }
 
-/// Curve geometry for a projected drawing curve.
+/// Bounded 2D geometry of a projected curve.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -327,19 +333,19 @@ pub enum ProjectionCurveGeometry {
     Line {
         /// Line segment data.
         #[serde(flatten)]
-        data: ProjectionLine2d,
+        data: LineSegment2d,
     },
     /// Bounded circular arc.
     CircularArc {
         /// Circular arc data.
         #[serde(flatten)]
-        data: ProjectionCircularArc2d,
+        data: CircularArc2d,
     },
     /// Bounded NURBS curve.
     Nurbs {
         /// NURBS curve data.
         #[serde(flatten)]
-        data: ProjectionNurbs2d,
+        data: Nurbs2d,
     },
 }
 
