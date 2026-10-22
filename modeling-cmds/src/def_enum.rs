@@ -40,7 +40,7 @@ define_modeling_cmd_enum! {
                 EntityReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
-                ProjectionFrame, ProjectionHiddenLineMode,
+                PlanarFrame, ProjectionHiddenLineMode,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, SurfaceEdgeReference, Opposite,
                 Tolerance,
@@ -1865,6 +1865,8 @@ define_modeling_cmd_enum! {
         /// The engine computes silhouettes and visibility; the client owns drawing layout,
         /// styling, picking, and conversion of source topology into KCL references.
         /// Returned lengths are in millimeters, independent of the session's length unit.
+        /// The viewer is on the positive `frame.x_axis × frame.y_axis` side looking
+        /// along the negative normal.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -1874,7 +1876,7 @@ define_modeling_cmd_enum! {
             /// UUID of the BREP body to project. Other scene bodies do not occlude it.
             pub object_id: Uuid,
             /// Model-space projection frame. Sheet placement and drawing scale are client concerns.
-            pub frame: ProjectionFrame,
+            pub frame: PlanarFrame,
             /// Hidden-line inclusion mode. If omitted, hidden curves are included.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub hidden_lines: Option<ProjectionHiddenLineMode>,

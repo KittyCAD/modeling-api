@@ -6628,14 +6628,14 @@
             ]
           },
           {
-            "description": "Compute an orthographic projection of one body without creating scene entities.\n\nThe engine computes silhouettes and visibility; the client owns drawing layout, styling, picking, and conversion of source topology into KCL references. Returned lengths are in millimeters, independent of the session's length unit.",
+            "description": "Compute an orthographic projection of one body without creating scene entities.\n\nThe engine computes silhouettes and visibility; the client owns drawing layout, styling, picking, and conversion of source topology into KCL references. Returned lengths are in millimeters, independent of the session's length unit. The viewer is on the positive `frame.x_axis × frame.y_axis` side looking along the negative normal.",
             "type": "object",
             "properties": {
               "frame": {
                 "description": "Model-space projection frame. Sheet placement and drawing scale are client concerns.",
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/ProjectionFrame"
+                    "$ref": "#/components/schemas/PlanarFrame"
                   }
                 ]
               },
@@ -9507,6 +9507,41 @@
           }
         }
       },
+      "PlanarFrame": {
+        "description": "An oriented planar coordinate frame in model space.\n\nThe axes must be finite, orthogonal unit vectors. The right-handed normal is `x_axis × y_axis`. A world point `p` has planar coordinates `(dot(p - origin, x_axis), dot(p - origin, y_axis))`.",
+        "type": "object",
+        "properties": {
+          "origin": {
+            "description": "Finite origin in the session's current length unit.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "x_axis": {
+            "description": "Dimensionless unit vector for the frame's positive X direction.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "y_axis": {
+            "description": "Dimensionless unit vector for the frame's positive Y direction.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "origin",
+          "x_axis",
+          "y_axis"
+        ]
+      },
       "PlyStorage": {
         "description": "The storage for the output PLY file.",
         "oneOf": [
@@ -9651,41 +9686,6 @@
               "type"
             ]
           }
-        ]
-      },
-      "ProjectionFrame": {
-        "description": "Model-space frame of an orthographic projection.\n\nThe axes must be finite, orthogonal unit vectors. The viewer is on the positive `x_axis × y_axis` side looking along the negative normal. A world point `p` projects to `(dot(p - origin, x_axis), dot(p - origin, y_axis))`. This frame does not specify paper placement or drawing scale.",
-        "type": "object",
-        "properties": {
-          "origin": {
-            "description": "Finite origin in the session's current length unit.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Point3d"
-              }
-            ]
-          },
-          "x_axis": {
-            "description": "Dimensionless unit vector for the projection's positive X direction.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Point3d"
-              }
-            ]
-          },
-          "y_axis": {
-            "description": "Dimensionless unit vector for the projection's positive Y direction.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Point3d"
-              }
-            ]
-          }
-        },
-        "required": [
-          "origin",
-          "x_axis",
-          "y_axis"
         ]
       },
       "ProjectionHiddenLineMode": {

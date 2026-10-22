@@ -174,24 +174,23 @@ pub enum EntityReference {
     },
 }
 
-/// Model-space frame of an orthographic projection.
+/// An oriented planar coordinate frame in model space.
 ///
-/// The axes must be finite, orthogonal unit vectors. The viewer is on the positive
-/// `x_axis × y_axis` side looking along the negative normal. A world point `p`
-/// projects to `(dot(p - origin, x_axis), dot(p - origin, y_axis))`.
-/// This frame does not specify paper placement or drawing scale.
+/// The axes must be finite, orthogonal unit vectors. The right-handed normal is
+/// `x_axis × y_axis`. A world point `p` has planar coordinates
+/// `(dot(p - origin, x_axis), dot(p - origin, y_axis))`.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct ProjectionFrame {
+pub struct PlanarFrame {
     /// Finite origin in the session's current length unit.
     pub origin: Point3d<LengthUnit>,
-    /// Dimensionless unit vector for the projection's positive X direction.
+    /// Dimensionless unit vector for the frame's positive X direction.
     pub x_axis: Point3d<f64>,
-    /// Dimensionless unit vector for the projection's positive Y direction.
+    /// Dimensionless unit vector for the frame's positive Y direction.
     pub y_axis: Point3d<f64>,
 }
 
