@@ -2065,6 +2065,27 @@ impl ExtrudedFaceInfo {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn orthographic_projection_non_rational_nurbs_omits_weights() {
+        let wire = json!({"type": "nurbs", "control_points": [{"x": 0.0, "y": 0.0}, {"x": 1.0, "y": 0.0}],
+            "knot_vector": [0.0, 0.0, 1.0, 1.0], "order": 2});
+        let parsed: crate::shared::ProjectionCurveGeometry = serde_json::from_value(wire.clone()).unwrap();
+        assert_eq!(serde_json::to_value(parsed).unwrap(), wire);
+    }
+
+    #[test]
+    fn orthographic_projection_source_requires_topology_and_component_identity() {
+        for source in [
+            json!({"type": "edge", "section_index": 0}),
+            json!({"type": "edge", "edge_index": 2}),
+            json!({"type": "silhouette", "face_index": 2}),
+            json!({"type": "silhouette", "edge_index": 2, "silhouette_index": 0}),
+        ] {
+            assert!(serde_json::from_value::<ProjectionCurveSource>(source).is_err());
+        }
+    }
 
     #[test]
     fn test_angle_comparison() {

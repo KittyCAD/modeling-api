@@ -3015,3 +3015,39 @@ impl ToggleGraphics {
         Self::builder().graphics_enabled(graphics_enabled).build()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, Value};
+
+    use crate::ModelingCmd;
+
+    fn command() -> Value {
+        json!({
+            "type": "compute_orthographic_projection",
+            "object_id": "00000000-0000-0000-0000-000000000001",
+            "frame": {
+                "origin": {"x": 25.4, "y": 0.0, "z": 0.0},
+                "x_axis": {"x": 1.0, "y": 0.0, "z": 0.0},
+                "y_axis": {"x": 0.0, "y": 1.0, "z": 0.0}
+            }
+        })
+    }
+
+    #[test]
+    fn orthographic_projection_minimal_command_omits_overrides() {
+        let wire = command();
+        let parsed: ModelingCmd = serde_json::from_value(wire.clone()).unwrap();
+        let ModelingCmd::ComputeOrthographicProjection(ref projection) = parsed else {
+            panic!("wrong command variant");
+        };
+        assert!(projection.hidden_lines.is_none());
+        assert!(projection.resolution.is_none());
+        assert!(projection.tolerance.is_none());
+        assert!(
+            !parsed.is_safe_to_batch(),
+            "a projection query must return its own result"
+        );
+        assert_eq!(serde_json::to_value(parsed).unwrap(), wire);
+    }
+}

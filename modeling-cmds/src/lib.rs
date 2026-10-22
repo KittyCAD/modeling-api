@@ -45,9 +45,6 @@ pub mod kcl_project;
 #[cfg(all(test, feature = "derive-jsonschema-on-enums"))]
 mod tests;
 
-#[cfg(test)]
-mod orthographic_projection_tests;
-
 /// The modeling command trait that each modeling command implements.
 mod traits;
 
