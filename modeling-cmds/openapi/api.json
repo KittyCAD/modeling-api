@@ -1368,6 +1368,60 @@
           }
         ]
       },
+      "DrawingProjectionFrame": {
+        "description": "Model-space frame of an orthographic drawing projection.\n\nThe axes must be finite, orthogonal unit vectors. The viewer is on the positive `x_axis × y_axis` side looking along the negative normal. A world point `p` projects to `(dot(p - origin, x_axis), dot(p - origin, y_axis))`. This frame does not specify paper placement or drawing scale.",
+        "type": "object",
+        "properties": {
+          "origin": {
+            "description": "Finite origin in the session's current length unit.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "x_axis": {
+            "description": "Dimensionless unit vector for the projection's positive X direction.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "y_axis": {
+            "description": "Dimensionless unit vector for the projection's positive Y direction.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "origin",
+          "x_axis",
+          "y_axis"
+        ]
+      },
+      "DrawingProjectionHiddenLineMode": {
+        "description": "Controls whether hidden projected curves are included in a drawing projection response.",
+        "oneOf": [
+          {
+            "description": "Return only visible projected curves.",
+            "type": "string",
+            "enum": [
+              "visible_only"
+            ]
+          },
+          {
+            "description": "Return visible and hidden projected curves.",
+            "type": "string",
+            "enum": [
+              "include_hidden"
+            ]
+          }
+        ]
+      },
       "DxfStorage": {
         "description": "Export storage.",
         "oneOf": [
@@ -6625,6 +6679,58 @@
               "points",
               "type",
               "use_plane_coords"
+            ]
+          },
+          {
+            "description": "Compute an orthographic projection of one body without creating scene entities.\n\nThe engine computes silhouettes and visibility; the client owns drawing layout, styling, picking, and conversion of source topology into KCL references. Returned lengths are in millimeters, independent of the session's length unit.",
+            "type": "object",
+            "properties": {
+              "frame": {
+                "description": "Model-space projection frame. Sheet placement and drawing scale are client concerns.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/DrawingProjectionFrame"
+                  }
+                ]
+              },
+              "hidden_lines": {
+                "nullable": true,
+                "description": "Hidden-line inclusion mode. If omitted, hidden curves are included.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/DrawingProjectionHiddenLineMode"
+                  }
+                ]
+              },
+              "object_id": {
+                "description": "UUID of the BREP body to project. Other scene bodies do not occlude it.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "resolution": {
+                "nullable": true,
+                "description": "Silhouette sampling resolution. Must be at least 2; defaults to 19.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 2
+              },
+              "tolerance": {
+                "nullable": true,
+                "description": "Positive finite geometric tolerance in millimeters. Defaults to 0.00001.",
+                "type": "number",
+                "format": "double"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "compute_drawing_projection"
+                ]
+              }
+            },
+            "required": [
+              "frame",
+              "object_id",
+              "type"
             ]
           },
           {
