@@ -46,7 +46,7 @@ pub mod kcl_project;
 mod tests;
 
 #[cfg(test)]
-mod drawing_projection_tests;
+mod orthographic_projection_tests;
 
 /// The modeling command trait that each modeling command implements.
 mod traits;

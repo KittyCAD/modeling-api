@@ -1,10 +1,10 @@
 use serde_json::{json, Value};
 
-use crate::{ok_response::OkModelingCmdResponse, output, shared::DrawingProjectionCurveSource, ModelingCmd};
+use crate::{ok_response::OkModelingCmdResponse, output, shared::ProjectionCurveSource, ModelingCmd};
 
 fn command() -> Value {
     json!({
-        "type": "compute_drawing_projection",
+        "type": "compute_orthographic_projection",
         "object_id": "00000000-0000-0000-0000-000000000001",
         "frame": {
             "origin": {"x": 25.4, "y": 0.0, "z": 0.0},
@@ -15,10 +15,10 @@ fn command() -> Value {
 }
 
 #[test]
-fn drawing_projection_minimal_command_omits_overrides() {
+fn orthographic_projection_minimal_command_omits_overrides() {
     let wire = command();
     let parsed: ModelingCmd = serde_json::from_value(wire.clone()).unwrap();
-    let ModelingCmd::ComputeDrawingProjection(ref projection) = parsed else {
+    let ModelingCmd::ComputeOrthographicProjection(ref projection) = parsed else {
         panic!("wrong command variant");
     };
     assert!(projection.hidden_lines.is_none());
@@ -32,7 +32,7 @@ fn drawing_projection_minimal_command_omits_overrides() {
 }
 
 #[test]
-fn drawing_projection_explicit_options_round_trip() {
+fn orthographic_projection_explicit_options_round_trip() {
     for hidden_lines in ["visible_only", "include_hidden"] {
         let mut wire = command();
         wire["hidden_lines"] = json!(hidden_lines);
@@ -44,9 +44,9 @@ fn drawing_projection_explicit_options_round_trip() {
 }
 
 #[test]
-fn drawing_projection_geometry_and_source_variants_round_trip() {
+fn orthographic_projection_geometry_and_source_variants_round_trip() {
     let wire = json!({
-        "type": "compute_drawing_projection",
+        "type": "compute_orthographic_projection",
         "data": {"curves": [
             {
                 "geometry": {"type": "line", "start": {"x": 0.0, "y": 0.0}, "end": {"x": 10.0, "y": 0.0}},
@@ -71,47 +71,50 @@ fn drawing_projection_geometry_and_source_variants_round_trip() {
         ]}
     });
     let parsed: OkModelingCmdResponse = serde_json::from_value(wire.clone()).unwrap();
-    assert!(matches!(&parsed, OkModelingCmdResponse::ComputeDrawingProjection(_)));
+    assert!(matches!(
+        &parsed,
+        OkModelingCmdResponse::ComputeOrthographicProjection(_)
+    ));
     assert_eq!(serde_json::to_value(parsed).unwrap(), wire);
 }
 
 #[test]
-fn drawing_projection_non_rational_nurbs_omits_weights() {
+fn orthographic_projection_non_rational_nurbs_omits_weights() {
     let wire = json!({"type": "nurbs", "control_points": [{"x": 0.0, "y": 0.0}, {"x": 1.0, "y": 0.0}],
         "knot_vector": [0.0, 0.0, 1.0, 1.0], "order": 2});
-    let parsed: crate::shared::DrawingProjectionCurveGeometry = serde_json::from_value(wire.clone()).unwrap();
+    let parsed: crate::shared::ProjectionCurveGeometry = serde_json::from_value(wire.clone()).unwrap();
     assert_eq!(serde_json::to_value(parsed).unwrap(), wire);
 }
 
 #[test]
-fn drawing_projection_source_requires_topology_and_component_identity() {
+fn orthographic_projection_source_requires_topology_and_component_identity() {
     for source in [
         json!({"type": "edge", "section_index": 0}),
         json!({"type": "edge", "edge_index": 2}),
         json!({"type": "silhouette", "face_index": 2}),
         json!({"type": "silhouette", "edge_index": 2, "silhouette_index": 0}),
     ] {
-        assert!(serde_json::from_value::<DrawingProjectionCurveSource>(source).is_err());
+        assert!(serde_json::from_value::<ProjectionCurveSource>(source).is_err());
     }
 }
 
 #[test]
-fn drawing_projection_empty_result_is_valid() {
+fn orthographic_projection_empty_result_is_valid() {
     let wire = json!({"curves": []});
-    let parsed: output::ComputeDrawingProjection = serde_json::from_value(wire.clone()).unwrap();
+    let parsed: output::ComputeOrthographicProjection = serde_json::from_value(wire.clone()).unwrap();
     assert_eq!(serde_json::to_value(parsed).unwrap(), wire);
 }
 
 #[cfg(feature = "ts-rs")]
 #[test]
-fn drawing_projection_typescript_preserves_source_discrimination() {
+fn orthographic_projection_typescript_preserves_source_discrimination() {
     use ts_rs::TS;
 
     let config = ts_rs::Config::default();
-    let source = DrawingProjectionCurveSource::decl(&config);
+    let source = ProjectionCurveSource::decl(&config);
     assert!(source.contains("\"type\": \"edge\""));
     assert!(source.contains("\"type\": \"silhouette\""));
     assert!(source.contains("section_index: number"));
     assert!(source.contains("silhouette_index: number"));
-    assert!(ModelingCmd::decl(&config).contains("compute_drawing_projection"));
+    assert!(ModelingCmd::decl(&config).contains("compute_orthographic_projection"));
 }

@@ -21,7 +21,7 @@ define_ok_modeling_cmd_response_enum! {
         use uuid::Uuid;
         use crate::shared::{
             CurveDebug,
-            DrawingProjectionCurve,
+            ProjectionCurve,
             CameraSettings,
             CameraViewState,
             BodyType,
@@ -828,13 +828,13 @@ define_ok_modeling_cmd_response_enum! {
             pub projected_points: Vec<Point3d<f64>>,
         }
 
-        /// The response from the `ComputeDrawingProjection` command.
+        /// The response from the `ComputeOrthographicProjection` command.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct ComputeDrawingProjection {
+        pub struct ComputeOrthographicProjection {
             /// Bounded curves in projection-local coordinates, with lengths in millimeters.
             /// Curve ordering is not a persistent identity. An empty list is valid.
-            pub curves: Vec<DrawingProjectionCurve>,
+            pub curves: Vec<ProjectionCurve>,
         }
 
         /// The response from the `CurveGetType` command.

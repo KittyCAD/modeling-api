@@ -174,7 +174,7 @@ pub enum EntityReference {
     },
 }
 
-/// Model-space frame of an orthographic drawing projection.
+/// Model-space frame of an orthographic projection.
 ///
 /// The axes must be finite, orthogonal unit vectors. The viewer is on the positive
 /// `x_axis × y_axis` side looking along the negative normal. A world point `p`
@@ -186,7 +186,7 @@ pub enum EntityReference {
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct DrawingProjectionFrame {
+pub struct ProjectionFrame {
     /// Finite origin in the session's current length unit.
     pub origin: Point3d<LengthUnit>,
     /// Dimensionless unit vector for the projection's positive X direction.
@@ -195,14 +195,14 @@ pub struct DrawingProjectionFrame {
     pub y_axis: Point3d<f64>,
 }
 
-/// Controls whether hidden projected curves are included in a drawing projection response.
+/// Controls whether hidden projected curves are included in a projection response.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub enum DrawingProjectionHiddenLineMode {
+pub enum ProjectionHiddenLineMode {
     /// Return only visible projected curves.
     VisibleOnly,
     /// Return visible and hidden projected curves.
@@ -217,7 +217,7 @@ pub enum DrawingProjectionHiddenLineMode {
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub enum DrawingProjectionCurveVisibility {
+pub enum ProjectionCurveVisibility {
     /// Visible in the requested projection.
     Visible,
     /// Hidden behind other projected model geometry.
@@ -238,7 +238,7 @@ pub enum DrawingProjectionCurveVisibility {
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub enum DrawingProjectionCurveSource {
+pub enum ProjectionCurveSource {
     /// Projection of a BREP edge.
     Edge {
         /// Source edge UUID when available in the current execution.
@@ -261,28 +261,28 @@ pub enum DrawingProjectionCurveSource {
     },
 }
 
-/// A bounded 2D line segment on the drawing projection plane.
+/// A bounded 2D line segment on the projection plane.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct DrawingProjectionLine2d {
+pub struct ProjectionLine2d {
     /// Start point in projection-local coordinates, in millimeters.
     pub start: Point2d<f64>,
     /// End point in projection-local coordinates, in millimeters.
     pub end: Point2d<f64>,
 }
 
-/// A bounded circular arc on the drawing projection plane.
+/// A bounded circular arc on the projection plane.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct DrawingProjectionCircularArc2d {
+pub struct ProjectionCircularArc2d {
     /// Arc center in projection-local coordinates, in millimeters.
     pub origin: Point2d<f64>,
     /// Positive arc radius in millimeters.
@@ -296,14 +296,14 @@ pub struct DrawingProjectionCircularArc2d {
     pub counter_clockwise: bool,
 }
 
-/// A bounded 2D NURBS curve on the drawing projection plane.
+/// A bounded 2D NURBS curve on the projection plane.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct DrawingProjectionNurbs2d {
+pub struct ProjectionNurbs2d {
     /// Non-homogeneous control points in projection-local millimeters.
     pub control_points: Vec<Point2d<f64>>,
     /// Positive weights, one per control point. Empty means all weights are 1.
@@ -323,44 +323,44 @@ pub struct DrawingProjectionNurbs2d {
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub enum DrawingProjectionCurveGeometry {
+pub enum ProjectionCurveGeometry {
     /// Bounded line segment.
     Line {
         /// Line segment data.
         #[serde(flatten)]
-        data: DrawingProjectionLine2d,
+        data: ProjectionLine2d,
     },
     /// Bounded circular arc.
     CircularArc {
         /// Circular arc data.
         #[serde(flatten)]
-        data: DrawingProjectionCircularArc2d,
+        data: ProjectionCircularArc2d,
     },
     /// Bounded NURBS curve.
     Nurbs {
         /// NURBS curve data.
         #[serde(flatten)]
-        data: DrawingProjectionNurbs2d,
+        data: ProjectionNurbs2d,
     },
 }
 
-/// A projected curve with drawing geometry, visibility, and source provenance.
+/// A projected curve with geometry, visibility, and source provenance.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub struct DrawingProjectionCurve {
+pub struct ProjectionCurve {
     /// Index of the split segment within its source section or silhouette.
     /// Response-local only; clients can use array positions for picking IDs.
     pub segment_index: u32,
     /// Bounded 2D geometry.
-    pub geometry: DrawingProjectionCurveGeometry,
+    pub geometry: ProjectionCurveGeometry,
     /// Visible or hidden line classification.
-    pub visibility: DrawingProjectionCurveVisibility,
+    pub visibility: ProjectionCurveVisibility,
     /// Source topology/provenance.
-    pub source: DrawingProjectionCurveSource,
+    pub source: ProjectionCurveSource,
 }
 
 /// What kind of cut to do

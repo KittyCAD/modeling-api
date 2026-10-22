@@ -40,7 +40,7 @@ define_modeling_cmd_enum! {
                 EntityReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
-                DrawingProjectionFrame, DrawingProjectionHiddenLineMode,
+                ProjectionFrame, ProjectionHiddenLineMode,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, SurfaceEdgeReference, Opposite,
                 Tolerance,
@@ -1870,14 +1870,14 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct ComputeDrawingProjection {
+        pub struct ComputeOrthographicProjection {
             /// UUID of the BREP body to project. Other scene bodies do not occlude it.
             pub object_id: Uuid,
             /// Model-space projection frame. Sheet placement and drawing scale are client concerns.
-            pub frame: DrawingProjectionFrame,
+            pub frame: ProjectionFrame,
             /// Hidden-line inclusion mode. If omitted, hidden curves are included.
             #[serde(default, skip_serializing_if = "Option::is_none")]
-            pub hidden_lines: Option<DrawingProjectionHiddenLineMode>,
+            pub hidden_lines: Option<ProjectionHiddenLineMode>,
             /// Silhouette sampling resolution. Must be at least 2; defaults to 19.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             #[schemars(range(min = 2))]
