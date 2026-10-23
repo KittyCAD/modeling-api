@@ -8211,15 +8211,16 @@
             ]
           },
           {
-            "description": "Create a planar surface bounded by the connection of various paths and curves. 'CreatePlanarSurface' modeling command.",
+            "description": "Create a planar surface bounded by the connection of various paths and curves. For example, if you delete a face from a body, you could use this command to recreate it. Or you could use this command to make a 3D surface (with 0 thickness) from a 2D region. The surface will have the ID of this command.",
             "type": "object",
             "properties": {
-              "curve_ids": {
+              "target": {
                 "description": "Which curves to create the planar surface(s) from. Curves must be provided in the order they are connected to each other They must form a closed loop, either by themselves or in a group",
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/EdgeSpecifier"
-                }
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PlanarSurfaceTarget"
+                  }
+                ]
               },
               "tolerance": {
                 "description": "Tolerance for the planar surface creation. Must be positive (i.e. greater than zero).",
@@ -8237,7 +8238,7 @@
               }
             },
             "required": [
-              "curve_ids",
+              "target",
               "tolerance",
               "type"
             ]
@@ -9453,6 +9454,59 @@
             "format": "float"
           }
         }
+      },
+      "PlanarSurfaceTarget": {
+        "description": "Something to create a planar surface from.",
+        "oneOf": [
+          {
+            "description": "Create a surface bounded by these 3D edges in a body.",
+            "type": "object",
+            "properties": {
+              "edge": {
+                "type": "object",
+                "properties": {
+                  "specifier": {
+                    "description": "Which edges to create a surface between.",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/EdgeSpecifier"
+                    }
+                  }
+                },
+                "required": [
+                  "specifier"
+                ]
+              }
+            },
+            "required": [
+              "edge"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Create a 2D surface over a region.",
+            "type": "object",
+            "properties": {
+              "region": {
+                "type": "object",
+                "properties": {
+                  "region_id": {
+                    "description": "Create a 2D surface which spans this region.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "region_id"
+                ]
+              }
+            },
+            "required": [
+              "region"
+            ],
+            "additionalProperties": false
+          }
+        ]
       },
       "PlyStorage": {
         "description": "The storage for the output PLY file.",
