@@ -37,6 +37,7 @@ define_modeling_cmd_enum! {
                 DirectionType,
                 EdgeSpecifier,
                 EntityReference,
+                PlanarSurfaceTarget,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
@@ -2744,7 +2745,9 @@ define_modeling_cmd_enum! {
         }
 
         /// Create a planar surface bounded by the connection of various paths and curves.
-        /// 'CreatePlanarSurface' modeling command.
+        /// For example, if you delete a face from a body, you could use this command
+        /// to recreate it. Or you could use this command to make a 3D surface (with 0 thickness) from a 2D region.
+        /// The surface will have the ID of this command.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -2754,10 +2757,10 @@ define_modeling_cmd_enum! {
             /// Which curves to create the planar surface(s) from.
             /// Curves must be provided in the order they are connected to each other
             /// They must form a closed loop, either by themselves or in a group
-            pub curve_ids: Vec<EdgeSpecifier>,
+            pub target: PlanarSurfaceTarget,
             /// Tolerance for the planar surface creation. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
-           }
+        }
 
         /// Finds a suitable set of arguments that can be passed to CreateRegion to resolve this very region.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
