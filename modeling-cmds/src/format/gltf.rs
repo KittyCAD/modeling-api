@@ -62,7 +62,7 @@ pub mod export {
 
         /// Additional data to include in the exported glTF. Defaults to an empty list.
         #[builder(default)]
-        pub include: Vec<Include>,
+        pub extras: Vec<Extra>,
 
         /// Named views in the scene.
         #[builder(default)]
@@ -84,17 +84,17 @@ pub mod export {
     /// Additional data that can be included in a glTF 2.0 export.
     #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr)]
     #[display(style = "snake_case")]
-    #[serde(rename = "GltfExportInclude", rename_all = "snake_case")]
+    #[serde(rename = "GltfExportExtra", rename_all = "snake_case")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
     #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(
         feature = "python",
         pyo3_stub_gen::derive::gen_stub_pyclass_enum,
-        pyo3::pyclass(name = "GltfExportInclude", from_py_object)
+        pyo3::pyclass(name = "GltfExportExtra", from_py_object)
     )]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-    pub enum Include {
+    pub enum Extra {
         /// Sketch geometry and metadata.
         Sketches,
         /// Sketch regions and their resolver metadata.
@@ -166,7 +166,7 @@ pub mod export {
 
 #[cfg(test)]
 mod tests {
-    use super::export::{Include, Options, Presentation, Storage};
+    use super::export::{Extra, Options, Presentation, Storage};
     use crate::format::OutputFormat3d;
 
     #[test]
@@ -179,20 +179,20 @@ mod tests {
                 .presentation(Presentation::Compact)
                 .build()
         );
-        assert!(options.include.is_empty());
-        assert!(Options::default().include.is_empty());
+        assert!(options.extras.is_empty());
+        assert!(Options::default().extras.is_empty());
         assert_eq!(Options::builder().build(), Options::default());
         assert_eq!(serde_json::from_str::<Options>("{}").unwrap(), Options::default());
-        assert_eq!(serde_json::to_value(options).unwrap()["include"], serde_json::json!([]));
+        assert_eq!(serde_json::to_value(options).unwrap()["extras"], serde_json::json!([]));
     }
 
     #[test]
-    fn include_options_round_trip() {
+    fn extras_options_round_trip() {
         let selections = [
-            (Include::Sketches, "sketches"),
-            (Include::Regions, "regions"),
-            (Include::ImportedFiles, "imported_files"),
-            (Include::Mbd, "mbd"),
+            (Extra::Sketches, "sketches"),
+            (Extra::Regions, "regions"),
+            (Extra::ImportedFiles, "imported_files"),
+            (Extra::Mbd, "mbd"),
         ];
 
         // Each category can be selected independently or combined with any others.
@@ -203,12 +203,12 @@ mod tests {
                 .filter(|(index, _)| mask & (1 << index) != 0)
                 .map(|(_, selection)| *selection)
                 .collect();
-            let include: Vec<_> = selected.iter().map(|(include, _)| *include).collect();
+            let extras: Vec<_> = selected.iter().map(|(extra, _)| *extra).collect();
             let names: Vec<_> = selected.iter().map(|(_, name)| *name).collect();
             let json = serde_json::json!({
                 "storage": "binary",
                 "presentation": "compact",
-                "include": names
+                "extras": names
             });
             let options: Options = serde_json::from_value(json.clone()).unwrap();
             assert_eq!(
@@ -216,7 +216,7 @@ mod tests {
                 Options::builder()
                     .storage(Storage::Binary)
                     .presentation(Presentation::Compact)
-                    .include(include)
+                    .extras(extras)
                     .build()
             );
             assert_eq!(serde_json::to_value(options).unwrap(), json);
@@ -224,12 +224,12 @@ mod tests {
     }
 
     #[test]
-    fn include_options_round_trip_in_output_format() {
+    fn extras_options_round_trip_in_output_format() {
         let json = serde_json::json!({
             "type": "gltf",
             "storage": "binary",
             "presentation": "compact",
-            "include": ["sketches", "regions", "imported_files", "mbd"]
+            "extras": ["sketches", "regions", "imported_files", "mbd"]
         });
         let format: OutputFormat3d = serde_json::from_value(json.clone()).unwrap();
         assert_eq!(
@@ -238,12 +238,7 @@ mod tests {
                 Options::builder()
                     .storage(Storage::Binary)
                     .presentation(Presentation::Compact)
-                    .include(vec![
-                        Include::Sketches,
-                        Include::Regions,
-                        Include::ImportedFiles,
-                        Include::Mbd
-                    ])
+                    .extras(vec![Extra::Sketches, Extra::Regions, Extra::ImportedFiles, Extra::Mbd])
                     .build()
             )
         );
@@ -251,8 +246,8 @@ mod tests {
     }
 
     #[test]
-    fn invalid_include_options_are_rejected() {
-        for include in [
+    fn invalid_extras_options_are_rejected() {
+        for extras in [
             serde_json::json!(["unknown"]),
             serde_json::json!(["uuids"]),
             serde_json::json!(["MBD"]),
@@ -260,7 +255,7 @@ mod tests {
             serde_json::json!(true),
             serde_json::json!(null),
         ] {
-            let json = serde_json::json!({"include": include});
+            let json = serde_json::json!({"extras": extras});
             assert!(serde_json::from_value::<Options>(json).is_err());
         }
     }

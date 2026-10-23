@@ -13,7 +13,7 @@ fn pyclass_enum_renames_are_used_in_stub_generation() {
     let _ = std::any::TypeId::of::<format::ply::export::Storage>();
     let _ = std::any::TypeId::of::<format::fbx::export::Storage>();
     let _ = std::any::TypeId::of::<format::gltf::export::Storage>();
-    let _ = std::any::TypeId::of::<format::gltf::export::Include>();
+    let _ = std::any::TypeId::of::<format::gltf::export::Extra>();
 
     // Build stub info from this crate's project root.
     let mixed_layout = true;
@@ -41,7 +41,7 @@ fn pyclass_enum_renames_are_used_in_stub_generation() {
         "PlyStorage",
         "FbxStorage",
         "GltfStorage",
-        "GltfExportInclude",
+        "GltfExportExtra",
     ] {
         assert!(
             enum_names.contains(expected),
