@@ -276,6 +276,21 @@ pub struct LineSegment2d {
     pub end: Point2d<f64>,
 }
 
+/// Direction of traversal around a planar curve, viewed from its positive normal.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum Winding {
+    /// Traverse counterclockwise, from local +X towards +Y.
+    #[default]
+    Counterclockwise,
+    /// Traverse clockwise, from local +X towards -Y.
+    Clockwise,
+}
+
 /// A bounded 2D circular arc.
 ///
 /// The consuming command defines the coordinate frame and length unit.
@@ -294,9 +309,11 @@ pub struct CircularArc2d {
     pub start_angle: f64,
     /// End angle in radians measured from local +X towards +Y.
     pub end_angle: f64,
-    /// Whether the arc advances counter-clockwise from start_angle to end_angle.
+    /// Direction of traversal from start_angle to end_angle. Defaults to counterclockwise.
     /// A full circle has an angular sweep of 2 pi; equal angles mean zero sweep.
-    pub counter_clockwise: bool,
+    #[serde(default)]
+    #[builder(default)]
+    pub winding: Winding,
 }
 
 /// A bounded 2D NURBS curve.
@@ -2072,6 +2089,23 @@ impl ExtrudedFaceInfo {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn circular_arc_winding_defaults_to_counterclockwise() {
+        let wire = json!({"origin": {"x": 0.0, "y": 0.0}, "radius": 5.0,
+            "start_angle": 0.0, "end_angle": std::f64::consts::FRAC_PI_2});
+        let arc: CircularArc2d = serde_json::from_value(wire).unwrap();
+        assert_eq!(arc.winding, Winding::Counterclockwise);
+
+        let built = CircularArc2d::builder()
+            .origin(arc.origin)
+            .radius(arc.radius)
+            .start_angle(arc.start_angle)
+            .end_angle(arc.end_angle)
+            .build();
+        assert_eq!(built.winding, Winding::Counterclockwise);
+        assert_eq!(serde_json::to_value(built).unwrap()["winding"], "counterclockwise");
+    }
 
     #[test]
     fn orthographic_projection_non_rational_nurbs_omits_weights() {

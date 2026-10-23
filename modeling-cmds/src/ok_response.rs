@@ -1478,7 +1478,7 @@ mod tests {
 
     #[test]
     fn orthographic_projection_geometry_and_source_variants_round_trip() {
-        let wire = json!({
+        let mut wire = json!({
             "type": "compute_orthographic_projection",
             "data": {"curves": [
                 {
@@ -1489,7 +1489,7 @@ mod tests {
                 },
                 {
                     "geometry": {"type": "circular_arc", "origin": {"x": 0.0, "y": 0.0}, "radius": 5.0,
-                        "start_angle": 0.0, "end_angle": std::f64::consts::TAU, "counter_clockwise": true},
+                        "start_angle": 0.0, "end_angle": std::f64::consts::TAU, "winding": "counterclockwise"},
                     "visibility": "hidden",
                     "source": {"type": "silhouette", "face_index": 2, "silhouette_index": 1},
                     "segment_index": 0
@@ -1503,11 +1503,14 @@ mod tests {
                 }
             ]}
         });
-        let parsed: OkModelingCmdResponse = serde_json::from_value(wire.clone()).unwrap();
-        assert!(matches!(
-            &parsed,
-            OkModelingCmdResponse::ComputeOrthographicProjection(_)
-        ));
-        assert_eq!(serde_json::to_value(parsed).unwrap(), wire);
+        for winding in ["counterclockwise", "clockwise"] {
+            wire["data"]["curves"][1]["geometry"]["winding"] = json!(winding);
+            let parsed: OkModelingCmdResponse = serde_json::from_value(wire.clone()).unwrap();
+            assert!(matches!(
+                &parsed,
+                OkModelingCmdResponse::ComputeOrthographicProjection(_)
+            ));
+            assert_eq!(serde_json::to_value(parsed).unwrap(), wire);
+        }
     }
 }
