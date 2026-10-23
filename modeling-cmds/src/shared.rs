@@ -174,6 +174,217 @@ pub enum EntityReference {
     },
 }
 
+/// An oriented planar coordinate frame in model space.
+///
+/// The axes must be finite, orthogonal unit vectors. The right-handed normal is
+/// `x_axis × y_axis`. A world point `p` has planar coordinates
+/// `(dot(p - origin, x_axis), dot(p - origin, y_axis))`.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct PlanarFrame {
+    /// Finite origin in the session's current length unit.
+    pub origin: Point3d<LengthUnit>,
+    /// Dimensionless unit vector for the frame's positive X direction.
+    pub x_axis: Point3d<f64>,
+    /// Dimensionless unit vector for the frame's positive Y direction.
+    pub y_axis: Point3d<f64>,
+}
+
+/// Controls whether hidden projected curves are included in a projection response.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum ProjectionHiddenLineMode {
+    /// Return only visible projected curves.
+    VisibleOnly,
+    /// Return visible and hidden projected curves.
+    #[default]
+    IncludeHidden,
+}
+
+/// Visibility classification for a projected drawing curve.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum ProjectionCurveVisibility {
+    /// Visible in the requested projection.
+    Visible,
+    /// Hidden behind other projected model geometry.
+    Hidden,
+}
+
+/// Source topology and projection-local identification of a curve.
+///
+/// Topology indices address the body in the request, using the same BREP indices
+/// as `EntityGetPrimitiveIndex`. UUIDs identify topology in the current execution;
+/// clients use the artifact graph and KCL Face/Edge APIs to author references.
+/// Section, silhouette, and segment indices distinguish derived geometry within
+/// this projection result. They are not guaranteed stable after model/view edits
+/// or across engine versions, and must not be persisted as durable selectors.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "type", rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum ProjectionCurveSource {
+    /// Projection of a BREP edge.
+    Edge {
+        /// Source edge UUID when available in the current execution.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        edge_id: Option<Uuid>,
+        /// Source edge index on the requested body; always available.
+        edge_index: u32,
+        /// Section of this edge split where it crosses the view tangent condition.
+        section_index: u32,
+    },
+    /// View-dependent silhouette generated from a BREP face.
+    Silhouette {
+        /// Source face UUID when available in the current execution.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        face_id: Option<Uuid>,
+        /// Source face index on the requested body; always available.
+        face_index: u32,
+        /// Distinct silhouette component of this face in this projection.
+        silhouette_index: u32,
+    },
+}
+
+/// A bounded 2D line segment.
+///
+/// The consuming command defines the coordinate frame and length unit.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct LineSegment2d {
+    /// Start point in local 2D coordinates.
+    pub start: Point2d<f64>,
+    /// End point in local 2D coordinates.
+    pub end: Point2d<f64>,
+}
+
+/// Direction of traversal around a planar curve, viewed from its positive normal.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum Winding {
+    /// Traverse counterclockwise, from local +X towards +Y.
+    #[default]
+    Counterclockwise,
+    /// Traverse clockwise, from local +X towards -Y.
+    Clockwise,
+}
+
+/// A bounded 2D circular arc.
+///
+/// The consuming command defines the coordinate frame and length unit.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct CircularArc2d {
+    /// Arc center in local 2D coordinates.
+    pub origin: Point2d<f64>,
+    /// Positive arc radius in the same length unit as the center.
+    pub radius: f64,
+    /// Start angle in radians measured from local +X towards +Y.
+    pub start_angle: f64,
+    /// End angle in radians measured from local +X towards +Y.
+    pub end_angle: f64,
+    /// Direction of traversal from start_angle to end_angle. Defaults to counterclockwise.
+    /// A full circle has an angular sweep of 2 pi; equal angles mean zero sweep.
+    #[serde(default)]
+    #[builder(default)]
+    pub winding: Winding,
+}
+
+/// A bounded 2D NURBS curve.
+///
+/// The consuming command defines the coordinate frame and length unit.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct Nurbs2d {
+    /// Non-homogeneous control points in local 2D coordinates.
+    pub control_points: Vec<Point2d<f64>>,
+    /// Positive weights, one per control point. Empty means all weights are 1.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub weights: Vec<f64>,
+    /// Full nondecreasing knot vector, with `control_points.len() + order` entries.
+    /// The active domain is `[knot_vector[order - 1], knot_vector[control_points.len()]]`.
+    pub knot_vector: Vec<f64>,
+    /// NURBS order (degree + 1), at least 2 and at most the control point count.
+    pub order: u32,
+}
+
+/// Bounded 2D geometry of a projected curve.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "type", rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum ProjectionCurveGeometry {
+    /// Bounded line segment.
+    Line {
+        /// Line segment data.
+        #[serde(flatten)]
+        data: LineSegment2d,
+    },
+    /// Bounded circular arc.
+    CircularArc {
+        /// Circular arc data.
+        #[serde(flatten)]
+        data: CircularArc2d,
+    },
+    /// Bounded NURBS curve.
+    Nurbs {
+        /// NURBS curve data.
+        #[serde(flatten)]
+        data: Nurbs2d,
+    },
+}
+
+/// A projected curve with geometry, visibility, and source provenance.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct ProjectionCurve {
+    /// Index of the split segment within its source section or silhouette.
+    /// Response-local only; clients can use array positions for picking IDs.
+    pub segment_index: u32,
+    /// Bounded 2D geometry.
+    pub geometry: ProjectionCurveGeometry,
+    /// Visible or hidden line classification.
+    pub visibility: ProjectionCurveVisibility,
+    /// Source topology/provenance.
+    pub source: ProjectionCurveSource,
+}
+
 /// What kind of cut to do
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, Default)]
 #[serde(rename_all = "snake_case")]
@@ -1877,6 +2088,44 @@ impl ExtrudedFaceInfo {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn circular_arc_winding_defaults_to_counterclockwise() {
+        let wire = json!({"origin": {"x": 0.0, "y": 0.0}, "radius": 5.0,
+            "start_angle": 0.0, "end_angle": std::f64::consts::FRAC_PI_2});
+        let arc: CircularArc2d = serde_json::from_value(wire).unwrap();
+        assert_eq!(arc.winding, Winding::Counterclockwise);
+
+        let built = CircularArc2d::builder()
+            .origin(arc.origin)
+            .radius(arc.radius)
+            .start_angle(arc.start_angle)
+            .end_angle(arc.end_angle)
+            .build();
+        assert_eq!(built.winding, Winding::Counterclockwise);
+        assert_eq!(serde_json::to_value(built).unwrap()["winding"], "counterclockwise");
+    }
+
+    #[test]
+    fn orthographic_projection_non_rational_nurbs_omits_weights() {
+        let wire = json!({"type": "nurbs", "control_points": [{"x": 0.0, "y": 0.0}, {"x": 1.0, "y": 0.0}],
+            "knot_vector": [0.0, 0.0, 1.0, 1.0], "order": 2});
+        let parsed: crate::shared::ProjectionCurveGeometry = serde_json::from_value(wire.clone()).unwrap();
+        assert_eq!(serde_json::to_value(parsed).unwrap(), wire);
+    }
+
+    #[test]
+    fn orthographic_projection_source_requires_topology_and_component_identity() {
+        for source in [
+            json!({"type": "edge", "section_index": 0}),
+            json!({"type": "edge", "edge_index": 2}),
+            json!({"type": "silhouette", "face_index": 2}),
+            json!({"type": "silhouette", "edge_index": 2, "silhouette_index": 0}),
+        ] {
+            assert!(serde_json::from_value::<ProjectionCurveSource>(source).is_err());
+        }
+    }
 
     #[test]
     fn test_angle_comparison() {
