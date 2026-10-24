@@ -1,4 +1,4 @@
-//! Ensures renamed `Storage` enums are reflected in stub generation.
+//! Ensures renamed format enums are reflected in stub generation.
 #![cfg(feature = "python")]
 
 use std::{collections::HashSet, path::PathBuf};
@@ -13,6 +13,7 @@ fn pyclass_enum_renames_are_used_in_stub_generation() {
     let _ = std::any::TypeId::of::<format::ply::export::Storage>();
     let _ = std::any::TypeId::of::<format::fbx::export::Storage>();
     let _ = std::any::TypeId::of::<format::gltf::export::Storage>();
+    let _ = std::any::TypeId::of::<format::gltf::export::Extra>();
 
     // Build stub info from this crate's project root.
     let mixed_layout = true;
@@ -33,8 +34,15 @@ fn pyclass_enum_renames_are_used_in_stub_generation() {
         }
     }
 
-    // These enums used to be exported as `Storage` which collided.
-    for expected in ["DxfStorage", "StlStorage", "PlyStorage", "FbxStorage", "GltfStorage"] {
+    // Format enums need distinct public names to avoid collisions.
+    for expected in [
+        "DxfStorage",
+        "StlStorage",
+        "PlyStorage",
+        "FbxStorage",
+        "GltfStorage",
+        "GltfExportExtra",
+    ] {
         assert!(
             enum_names.contains(expected),
             "expected renamed enum `{}` to appear in stub info; got {:?}",
