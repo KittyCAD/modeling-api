@@ -188,6 +188,25 @@ pub enum CutType {
     Chamfer,
 }
 
+/// Something to create a planar surface from.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub enum PlanarSurfaceTarget {
+    /// Create a surface bounded by these 3D edges in a body.
+    Edge {
+        /// Which edges to create a surface between.
+        specifier: Vec<EdgeSpecifier>,
+    },
+    /// Create a 2D surface over a region.
+    Region {
+        /// Create a 2D surface which spans this region.
+        region_id: Uuid,
+    },
+}
+
 /// What to use as a direction when one is needed (e.g. for an extrusion).
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
