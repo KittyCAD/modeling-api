@@ -6628,6 +6628,58 @@
             ]
           },
           {
+            "description": "Compute an orthographic projection of one body without creating scene entities.\n\nThe engine computes silhouettes and visibility; the client owns drawing layout, styling, picking, and conversion of source topology into KCL references. Returned lengths are in millimeters, independent of the session's length unit. The viewer is on the positive `frame.x_axis × frame.y_axis` side looking along the negative normal.",
+            "type": "object",
+            "properties": {
+              "frame": {
+                "description": "Model-space projection frame. Sheet placement and drawing scale are client concerns.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PlanarFrame"
+                  }
+                ]
+              },
+              "hidden_lines": {
+                "nullable": true,
+                "description": "Hidden-line inclusion mode. If omitted, hidden curves are included.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ProjectionHiddenLineMode"
+                  }
+                ]
+              },
+              "object_id": {
+                "description": "UUID of the BREP body to project. Other scene bodies do not occlude it.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "resolution": {
+                "nullable": true,
+                "description": "Silhouette sampling resolution. Must be at least 2; defaults to 19.",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 2
+              },
+              "tolerance": {
+                "nullable": true,
+                "description": "Positive finite geometric tolerance in millimeters. Defaults to 0.00001.",
+                "type": "number",
+                "format": "double"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "compute_orthographic_projection"
+                ]
+              }
+            },
+            "required": [
+              "frame",
+              "object_id",
+              "type"
+            ]
+          },
+          {
             "description": "Take a snapshot of the current view.",
             "type": "object",
             "properties": {
@@ -9455,6 +9507,41 @@
           }
         }
       },
+      "PlanarFrame": {
+        "description": "An oriented planar coordinate frame in model space.\n\nThe axes must be finite, orthogonal unit vectors. The right-handed normal is `x_axis × y_axis`. A world point `p` has planar coordinates `(dot(p - origin, x_axis), dot(p - origin, y_axis))`.",
+        "type": "object",
+        "properties": {
+          "origin": {
+            "description": "Finite origin in the session's current length unit.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "x_axis": {
+            "description": "Dimensionless unit vector for the frame's positive X direction.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          },
+          "y_axis": {
+            "description": "Dimensionless unit vector for the frame's positive Y direction.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Point3d"
+              }
+            ]
+          }
+        },
+        "required": [
+          "origin",
+          "x_axis",
+          "y_axis"
+        ]
+      },
       "PlyStorage": {
         "description": "The storage for the output PLY file.",
         "oneOf": [
@@ -9597,6 +9684,25 @@
             },
             "required": [
               "type"
+            ]
+          }
+        ]
+      },
+      "ProjectionHiddenLineMode": {
+        "description": "Controls whether hidden projected curves are included in a projection response.",
+        "oneOf": [
+          {
+            "description": "Return only visible projected curves.",
+            "type": "string",
+            "enum": [
+              "visible_only"
+            ]
+          },
+          {
+            "description": "Return visible and hidden projected curves.",
+            "type": "string",
+            "enum": [
+              "include_hidden"
             ]
           }
         ]
