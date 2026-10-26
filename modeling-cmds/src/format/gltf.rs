@@ -1,5 +1,6 @@
 use crate::format::View;
 use bon::Builder;
+use indexmap::IndexSet;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -60,9 +61,10 @@ pub mod export {
         #[builder(default)]
         pub presentation: Presentation,
 
-        /// Additional data to include in the exported glTF. Defaults to an empty list.
+        /// Additional data to include in the exported glTF. Defaults to an empty set.
         #[builder(default)]
-        pub extras: Vec<Extra>,
+        #[serde(default)]
+        pub extras: IndexSet<Extra>,
 
         /// Named views in the scene.
         #[builder(default)]
@@ -203,7 +205,7 @@ mod tests {
                 .filter(|(index, _)| mask & (1 << index) != 0)
                 .map(|(_, selection)| *selection)
                 .collect();
-            let extras: Vec<_> = selected.iter().map(|(extra, _)| *extra).collect();
+            let extras = selected.iter().map(|(extra, _)| *extra).collect();
             let names: Vec<_> = selected.iter().map(|(_, name)| *name).collect();
             let json = serde_json::json!({
                 "storage": "binary",
@@ -238,11 +240,32 @@ mod tests {
                 Options::builder()
                     .storage(Storage::Binary)
                     .presentation(Presentation::Compact)
-                    .extras(vec![Extra::Sketches, Extra::Regions, Extra::ImportedFiles, Extra::Mbd])
+                    .extras([Extra::Sketches, Extra::Regions, Extra::ImportedFiles, Extra::Mbd].into())
                     .build()
             )
         );
         assert_eq!(serde_json::to_value(format).unwrap(), json);
+    }
+
+    #[test]
+    fn extras_are_unique_and_order_independent() {
+        let options: Options =
+            serde_json::from_str(r#"{"extras":["regions","sketches","regions","sketches"]}"#).unwrap();
+        let reordered: Options = serde_json::from_str(r#"{"extras":["sketches","regions"]}"#).unwrap();
+
+        assert_eq!(options, reordered);
+        assert_eq!(options.extras.len(), 2);
+        assert_eq!(
+            serde_json::to_value(options).unwrap()["extras"],
+            serde_json::json!(["regions", "sketches"])
+        );
+    }
+
+    #[test]
+    fn omitted_extras_default_in_output_format() {
+        let format: OutputFormat3d = serde_json::from_str(r#"{"type":"gltf"}"#).unwrap();
+        assert_eq!(format, OutputFormat3d::Gltf(Options::default()));
+        assert_eq!(serde_json::to_value(format).unwrap()["extras"], serde_json::json!([]));
     }
 
     #[test]
