@@ -428,6 +428,10 @@ pub enum AnnotationMbdLeaderPosition {
 
     /// Geometric Center of the entity (such as on the center axis for a cylinder)
     Centroid {},
+
+    /// Used in dimension measurements, the previous "from" position stepped back (projected) onto the
+    /// entity (via planar projection or vector dot product)
+    StepFrom {},
 }
 
 /// Parameters for defining an MBD Geometric control frame
