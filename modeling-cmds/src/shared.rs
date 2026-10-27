@@ -428,6 +428,19 @@ pub enum AnnotationMbdLeaderPosition {
 
     /// Geometric Center of the entity (such as on the center axis for a cylinder)
     Centroid {},
+
+    /// Used in dimension measurements for the to_entity_leader_pos field.
+    /// Determines the position using the previous "from" position stepped back (projected) onto the
+    /// planar entity (via planar projection or vector dot product)
+    StepFrom {},
+
+    /// Used in dimension measurements for the to_entity_leader_pos field.
+    /// Automatically determines which type of leader position to use.
+    /// If the entity is planar and this is a to_entity_leader_pos dimension field, then StepFrom is used.
+    /// If the entity is circular or cylindrical, Centroid is used.
+    /// If the entity is a linear edge NormalizedPos { 0.5, N/A } is used
+    /// If no other cases apply, then NormalizedPos { 0.5, 0.5 } is used
+    Auto {},
 }
 
 /// Parameters for defining an MBD Geometric control frame
