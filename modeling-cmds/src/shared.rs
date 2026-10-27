@@ -436,11 +436,11 @@ pub enum AnnotationMbdLeaderPosition {
 
     /// Used in dimension measurements for the to_entity_leader_pos field.
     /// Automatically determines which type of leader position to use.
-    /// If the entity is planar, then StepFrom is used.
-    /// If the entity is a curved face, then NormalizedPos { 0.5, 0.5 } is used
+    /// If the entity is planar and this is a to_entity_leader_pos dimension field, then StepFrom is used.
     /// If the entity is circular or cylindrical, Centroid is used.
     /// If the entity is a linear edge NormalizedPos { 0.5, N/A } is used
-    AutoMeasureFrom {},
+    /// If no other cases apply, then NormalizedPos { 0.5, 0.5 } is used
+    Auto {},
 }
 
 /// Parameters for defining an MBD Geometric control frame
