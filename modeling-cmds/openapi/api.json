@@ -1446,8 +1446,29 @@
         ]
       },
       "EntityReference": {
-        "description": "An edge/vertex can be defined by the faces that it is connected to.",
+        "description": "A reference identifying a selectable scene entity.",
         "oneOf": [
+          {
+            "description": "A uuid referencing an annotation.",
+            "type": "object",
+            "properties": {
+              "annotation_id": {
+                "description": "Id of the annotation object being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "annotation"
+                ]
+              }
+            },
+            "required": [
+              "annotation_id",
+              "type"
+            ]
+          },
           {
             "description": "A uuid referencing a plane.",
             "type": "object",
@@ -1791,7 +1812,8 @@
           "plane",
           "vertex",
           "region",
-          "patterngroup"
+          "patterngroup",
+          "annotation"
         ]
       },
       "Error": {

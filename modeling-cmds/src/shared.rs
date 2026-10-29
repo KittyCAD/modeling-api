@@ -81,13 +81,18 @@ pub struct PrimitiveTopologyFallback {
     pub primitive_index: u32,
 }
 
-/// An edge/vertex can be defined by the faces that it is connected to.
+/// A reference identifying a selectable scene entity.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum EntityReference {
+    /// A uuid referencing an annotation.
+    Annotation {
+        /// Id of the annotation object being referenced.
+        annotation_id: Uuid,
+    },
     /// A uuid referencing a plane.
     Plane {
         /// Id of the plane being referenced.
@@ -1275,6 +1280,7 @@ pub enum EntityType {
     Vertex,
     Region,
     PatternGroup,
+    Annotation,
 }
 
 /// The type of Curve (embedded within path)
