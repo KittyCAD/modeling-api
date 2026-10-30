@@ -188,7 +188,19 @@ pub enum CutType {
     Chamfer,
 }
 
-/// Something to create a planar surface from.
+/// A region to fill and the ID of its resulting planar surface body.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+pub struct PlanarSurfaceRegion {
+    /// The ID of the region defining the surface boundary.
+    pub region_id: Uuid,
+    /// The ID to assign to the created surface body.
+    pub surface_id: Uuid,
+}
+
+/// Regions or body edges to create planar surfaces from.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -200,10 +212,10 @@ pub enum PlanarSurfaceTarget {
         /// Which edges to create a surface between.
         specifier: Vec<EdgeSpecifier>,
     },
-    /// Create a planar surface body from a region.
+    /// Create one planar surface body per region.
     Region {
-        /// The ID of the region defining the surface boundary.
-        region_id: Uuid,
+        /// Regions to fill, in output order. Must not be empty.
+        regions: Vec<PlanarSurfaceRegion>,
     },
 }
 

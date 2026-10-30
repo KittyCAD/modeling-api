@@ -1355,8 +1355,8 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreatePlanarSurface {
-            /// A single-element list containing the command ID of the created `Solid3D` body.
-            /// The body has type `Surface` and contains one planar face.
+            /// IDs of the created `Solid3D` bodies, each with body type `Surface` and one planar face.
+            /// Regions return their supplied surface IDs in input order; edges return the command ID.
             pub surfaces: Vec<Uuid>,
         }
 

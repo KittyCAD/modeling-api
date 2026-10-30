@@ -2751,19 +2751,15 @@ define_modeling_cmd_enum! {
             pub graphics_enabled: bool,
         }
 
-        /// Create a planar surface bounded by the connection of various paths and curves.
-        /// For example, if you delete a face from a body, you could use this command
-        /// to recreate it. Or you could use this command to make a 3D surface (with 0 thickness) from a 2D region.
-        /// The surface will have the ID of this command.
+        /// Create planar surface bodies from regions or one closed loop of body edges.
+        /// Regions supply their output body IDs; an edge loop creates one body with the command ID.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreatePlanarSurface {
-            /// Which curves to create the planar surface(s) from.
-            /// Curves must be provided in the order they are connected to each other
-            /// They must form a closed loop, either by themselves or in a group
+            /// Regions to fill, or body edges enclosing one closed, connected, coplanar boundary.
             pub target: PlanarSurfaceTarget,
             /// Tolerance for the planar surface creation. Must be positive (i.e. greater than zero).
             pub tolerance: LengthUnit,
