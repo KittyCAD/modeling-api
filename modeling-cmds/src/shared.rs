@@ -200,9 +200,9 @@ pub enum PlanarSurfaceTarget {
         /// Which edges to create a surface between.
         specifier: Vec<EdgeSpecifier>,
     },
-    /// Create a 2D surface over a region.
+    /// Create a surface bounded by a sketch region.
     Region {
-        /// Create a 2D surface which spans this region.
+        /// Create a surface which spans this region.
         region_id: Uuid,
     },
 }
