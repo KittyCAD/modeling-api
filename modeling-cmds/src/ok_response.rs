@@ -1355,9 +1355,9 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CreatePlanarSurface {
-            /// A single-element list containing the command ID of the created `Solid3D` body.
+            /// The command ID of the created `Solid3D` body.
             /// The body has type `Surface` and contains one planar face.
-            pub surfaces: Vec<Uuid>,
+            pub surface: Uuid,
         }
 
         /// The response from the 'RegionGetResolvableIntersectionInfo'.

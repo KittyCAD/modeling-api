@@ -9484,14 +9484,14 @@
             "additionalProperties": false
           },
           {
-            "description": "Create a planar surface body from a region.",
+            "description": "Create a surface bounded by a sketch region.",
             "type": "object",
             "properties": {
               "region": {
                 "type": "object",
                 "properties": {
                   "region_id": {
-                    "description": "The ID of the region defining the surface boundary.",
+                    "description": "Create a surface which spans this region.",
                     "type": "string",
                     "format": "uuid"
                   }
