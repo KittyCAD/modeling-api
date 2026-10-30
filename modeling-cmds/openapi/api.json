@@ -9484,14 +9484,14 @@
             "additionalProperties": false
           },
           {
-            "description": "Create a 2D surface over a region.",
+            "description": "Create a planar surface body from a region.",
             "type": "object",
             "properties": {
               "region": {
                 "type": "object",
                 "properties": {
                   "region_id": {
-                    "description": "Create a 2D surface which spans this region.",
+                    "description": "The ID of the region defining the surface boundary.",
                     "type": "string",
                     "format": "uuid"
                   }

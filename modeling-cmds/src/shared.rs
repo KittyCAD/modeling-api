@@ -200,9 +200,9 @@ pub enum PlanarSurfaceTarget {
         /// Which edges to create a surface between.
         specifier: Vec<EdgeSpecifier>,
     },
-    /// Create a 2D surface over a region.
+    /// Create a planar surface body from a region.
     Region {
-        /// Create a 2D surface which spans this region.
+        /// The ID of the region defining the surface boundary.
         region_id: Uuid,
     },
 }
