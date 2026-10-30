@@ -8211,11 +8211,11 @@
             ]
           },
           {
-            "description": "Create planar surface bodies from regions or one closed loop of body edges. Regions supply their output body IDs; an edge loop creates one body with the command ID.",
+            "description": "Create a planar surface bounded by the connection of various paths and curves. For example, if you delete a face from a body, you could use this command to recreate it. Or you could use this command to make a 3D surface (with 0 thickness) from a 2D region. The surface will have the ID of this command.",
             "type": "object",
             "properties": {
               "target": {
-                "description": "Regions to fill, or body edges enclosing one closed, connected, coplanar boundary.",
+                "description": "Which curves to create the planar surface(s) from. Curves must be provided in the order they are connected to each other They must form a closed loop, either by themselves or in a group",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/PlanarSurfaceTarget"
@@ -9455,28 +9455,8 @@
           }
         }
       },
-      "PlanarSurfaceRegion": {
-        "description": "A region to fill and the ID of its resulting planar surface body.",
-        "type": "object",
-        "properties": {
-          "region_id": {
-            "description": "The ID of the region defining the surface boundary.",
-            "type": "string",
-            "format": "uuid"
-          },
-          "surface_id": {
-            "description": "The ID to assign to the created surface body.",
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "region_id",
-          "surface_id"
-        ]
-      },
       "PlanarSurfaceTarget": {
-        "description": "Regions or body edges to create planar surfaces from.",
+        "description": "Something to create a planar surface from.",
         "oneOf": [
           {
             "description": "Create a surface bounded by these 3D edges in a body.",
@@ -9504,22 +9484,20 @@
             "additionalProperties": false
           },
           {
-            "description": "Create one planar surface body per region.",
+            "description": "Create a planar surface body from a region.",
             "type": "object",
             "properties": {
               "region": {
                 "type": "object",
                 "properties": {
-                  "regions": {
-                    "description": "Regions to fill, in output order. Must not be empty.",
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/PlanarSurfaceRegion"
-                    }
+                  "region_id": {
+                    "description": "The ID of the region defining the surface boundary.",
+                    "type": "string",
+                    "format": "uuid"
                   }
                 },
                 "required": [
-                  "regions"
+                  "region_id"
                 ]
               }
             },
