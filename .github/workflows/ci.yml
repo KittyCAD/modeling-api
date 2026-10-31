@@ -20,7 +20,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
         - uses: taiki-e/install-action@cargo-llvm-cov
         - uses: taiki-e/install-action@nextest
-        - uses: Swatinem/rust-cache@v2.9.2
+        - uses: Swatinem/rust-cache@v2.9.3
         - uses: taiki-e/install-action@just
 
         - name: cargo test
@@ -59,7 +59,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
         - uses: taiki-e/install-action@cargo-llvm-cov
         - uses: taiki-e/install-action@nextest
-        - uses: Swatinem/rust-cache@v2.9.2
+        - uses: Swatinem/rust-cache@v2.9.3
         - uses: taiki-e/install-action@just
         - name: just redo-openapi
           shell: bash
@@ -88,7 +88,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
           with:
             components: clippy
-        - uses: Swatinem/rust-cache@v2.9.2
+        - uses: Swatinem/rust-cache@v2.9.3
 
         - name: Check lints
           run: just lint
@@ -103,7 +103,7 @@ jobs:
           uses: dtolnay/rust-toolchain@stable
           with:
             targets: wasm32-unknown-unknown
-        - uses: Swatinem/rust-cache@v2.9.2
+        - uses: Swatinem/rust-cache@v2.9.3
 
         - name: Check lints
           run: just check-wasm
