@@ -118,10 +118,15 @@ pub enum WebSocketRequest {
         request_id: Uuid,
         /// The KCL project to execute.
         project: crate::exec_kcl::KclProject,
-        /// Should server respond with JSON (default) or binary (opt-in)?
-        #[serde(default)]
-        respond_binary: bool,
     },
+}
+
+impl WebSocketRequest {
+    /// Execute a KCL project.
+    #[cfg(feature = "exec-kcl")]
+    pub fn exec_kcl_project(request_id: Uuid, project: crate::exec_kcl::KclProject) -> Self {
+        Self::ExecKclProject { request_id, project }
+    }
 }
 
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.

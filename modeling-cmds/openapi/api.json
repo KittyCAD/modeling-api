@@ -10687,11 +10687,6 @@
                 "type": "string",
                 "format": "uuid"
               },
-              "respond_binary": {
-                "description": "Should server respond with JSON (default) or binary (opt-in)?",
-                "default": false,
-                "type": "boolean"
-              },
               "type": {
                 "type": "string",
                 "enum": [
