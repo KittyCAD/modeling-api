@@ -2087,6 +2087,71 @@
           }
         ]
       },
+      "GltfTessellationLevelOfDetail": {
+        "description": "Detail level used when generating triangles from CAD surfaces.",
+        "oneOf": [
+          {
+            "description": "Extra-low detail.",
+            "type": "string",
+            "enum": [
+              "extra_low"
+            ]
+          },
+          {
+            "description": "Low detail.",
+            "type": "string",
+            "enum": [
+              "low"
+            ]
+          },
+          {
+            "description": "Medium detail.",
+            "type": "string",
+            "enum": [
+              "medium"
+            ]
+          },
+          {
+            "description": "High detail. This is the default.",
+            "type": "string",
+            "enum": [
+              "high"
+            ]
+          },
+          {
+            "description": "Extra-high detail.",
+            "type": "string",
+            "enum": [
+              "extra_high"
+            ]
+          }
+        ]
+      },
+      "GltfTessellationOptions": {
+        "description": "Controls how CAD surfaces are tessellated for glTF export. Defaults to high detail with accurate tessellation and surface curvatures enabled.",
+        "type": "object",
+        "properties": {
+          "accurate": {
+            "description": "Enable accurate tessellation for analysis. Defaults to true. Disable to use visualization tessellation with a smaller footprint.",
+            "default": true,
+            "type": "boolean"
+          },
+          "accurate_surface_curvatures": {
+            "description": "Account for surface curvature during accurate tessellation. Defaults to true. Only applies when accurate tessellation is enabled.",
+            "default": true,
+            "type": "boolean"
+          },
+          "level_of_detail": {
+            "description": "Detail level of the generated triangles. Defaults to high.",
+            "default": "high",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GltfTessellationLevelOfDetail"
+              }
+            ]
+          }
+        }
+      },
       "ImageFormat": {
         "description": "Enum containing the variety of image formats snapshots may be exported to.",
         "oneOf": [
@@ -8774,6 +8839,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/GltfStorage"
+                  }
+                ]
+              },
+              "tessellation": {
+                "nullable": true,
+                "description": "Tessellation settings for converting CAD surfaces to triangles. Omit to preserve the current tessellation behavior. Existing meshes are unchanged.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/GltfTessellationOptions"
                   }
                 ]
               },
