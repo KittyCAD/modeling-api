@@ -118,6 +118,9 @@ pub enum WebSocketRequest {
         request_id: Uuid,
         /// The KCL project to execute.
         project: crate::exec_kcl::KclProject,
+        /// Should server respond with JSON (default) or binary (opt-in)?
+        #[serde(default)]
+        respond_binary: bool,
     },
 }
 
