@@ -7103,6 +7103,15 @@
                   }
                 ]
               },
+              "method": {
+                "description": "The calculation method. Defaults to B-rep geometry.",
+                "default": "brep",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PhysicalPropertiesMethod"
+                  }
+                ]
+              },
               "output_unit": {
                 "description": "The output unit for the mass.",
                 "allOf": [
@@ -7151,6 +7160,15 @@
                   }
                 ]
               },
+              "method": {
+                "description": "The calculation method. Defaults to B-rep geometry.",
+                "default": "brep",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PhysicalPropertiesMethod"
+                  }
+                ]
+              },
               "output_unit": {
                 "description": "The output unit for the density.",
                 "allOf": [
@@ -7186,6 +7204,15 @@
                   "format": "uuid"
                 }
               },
+              "method": {
+                "description": "The calculation method. Defaults to B-rep geometry.",
+                "default": "brep",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PhysicalPropertiesMethod"
+                  }
+                ]
+              },
               "output_unit": {
                 "description": "The output unit for the volume.",
                 "allOf": [
@@ -7219,6 +7246,15 @@
                   "format": "uuid"
                 }
               },
+              "method": {
+                "description": "The calculation method. Defaults to B-rep geometry.",
+                "default": "brep",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PhysicalPropertiesMethod"
+                  }
+                ]
+              },
               "output_unit": {
                 "description": "The output unit for the center of mass.",
                 "allOf": [
@@ -7251,6 +7287,15 @@
                   "type": "string",
                   "format": "uuid"
                 }
+              },
+              "method": {
+                "description": "The calculation method. Defaults to B-rep geometry.",
+                "default": "brep",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PhysicalPropertiesMethod"
+                  }
+                ]
               },
               "output_unit": {
                 "description": "The output unit for the surface area.",
@@ -7340,6 +7385,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/UnitMass"
+                  }
+                ]
+              },
+              "method": {
+                "description": "The calculation method. Defaults to B-rep geometry.",
+                "default": "brep",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PhysicalPropertiesMethod"
                   }
                 ]
               },
@@ -9480,6 +9534,25 @@
             "format": "float"
           }
         }
+      },
+      "PhysicalPropertiesMethod": {
+        "description": "The method used to calculate physical properties.",
+        "oneOf": [
+          {
+            "description": "Calculate physical properties from B-rep geometry.",
+            "type": "string",
+            "enum": [
+              "brep"
+            ]
+          },
+          {
+            "description": "Calculate physical properties from the tessellated mesh.",
+            "type": "string",
+            "enum": [
+              "mesh"
+            ]
+          }
+        ]
       },
       "PlyStorage": {
         "description": "The storage for the output PLY file.",

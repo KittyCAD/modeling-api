@@ -1492,6 +1492,21 @@ pub enum BodyType {
     Surface,
 }
 
+/// The method used to calculate physical properties.
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum PhysicalPropertiesMethod {
+    /// Calculate physical properties from B-rep geometry.
+    #[default]
+    Brep,
+    /// Calculate physical properties from the tessellated mesh.
+    Mesh,
+}
+
 /// Extrusion method determining if the extrusion will be part of the existing object or an
 /// entirely new object.
 #[derive(Default, Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]

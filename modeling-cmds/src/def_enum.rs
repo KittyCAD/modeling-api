@@ -38,7 +38,7 @@ define_modeling_cmd_enum! {
                 DirectionType,
                 EdgeSpecifier,
                 EntityReference,
-                ExtrudedFaceInfo, ExtrudeMethod,
+                ExtrudedFaceInfo, ExtrudeMethod, PhysicalPropertiesMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, SurfaceEdgeReference, Opposite,
@@ -2094,6 +2094,11 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Mass {
+            /// The calculation method. Defaults to B-rep geometry.
+            #[serde(default)]
+            #[builder(default)]
+            #[cfg_attr(feature = "ts-rs", ts(optional = nullable))]
+            pub method: PhysicalPropertiesMethod,
             /// IDs of the entities to get the mass of. If this is empty, then the default scene is included in
             /// the mass.
             #[builder(default)]
@@ -2113,6 +2118,11 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Density {
+            /// The calculation method. Defaults to B-rep geometry.
+            #[serde(default)]
+            #[builder(default)]
+            #[cfg_attr(feature = "ts-rs", ts(optional = nullable))]
+            pub method: PhysicalPropertiesMethod,
             /// IDs of the entities to get the density of. If this is empty, then the default scene is included in
             /// the density.
             #[builder(default)]
@@ -2132,6 +2142,11 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct Volume {
+            /// The calculation method. Defaults to B-rep geometry.
+            #[serde(default)]
+            #[builder(default)]
+            #[cfg_attr(feature = "ts-rs", ts(optional = nullable))]
+            pub method: PhysicalPropertiesMethod,
             /// IDs of the entities to get the volume of. If this is empty, then the default scene is included in
             /// the volume.
             #[builder(default)]
@@ -2147,6 +2162,11 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct CenterOfMass {
+            /// The calculation method. Defaults to B-rep geometry.
+            #[serde(default)]
+            #[builder(default)]
+            #[cfg_attr(feature = "ts-rs", ts(optional = nullable))]
+            pub method: PhysicalPropertiesMethod,
             /// IDs of the entities to get the center of mass of. If this is empty, then the default scene is included in
             /// the center of mass.
             #[builder(default)]
@@ -2162,6 +2182,11 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SurfaceArea {
+            /// The calculation method. Defaults to B-rep geometry.
+            #[serde(default)]
+            #[builder(default)]
+            #[cfg_attr(feature = "ts-rs", ts(optional = nullable))]
+            pub method: PhysicalPropertiesMethod,
             /// IDs of the entities to get the surface area of. If this is empty, then the default scene is included in
             /// the surface area.
             #[builder(default)]
@@ -2179,6 +2204,11 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct PhysicalProperties {
+            /// The calculation method. Defaults to B-rep geometry.
+            #[serde(default)]
+            #[builder(default)]
+            #[cfg_attr(feature = "ts-rs", ts(optional = nullable))]
+            pub method: PhysicalPropertiesMethod,
             /// IDs of the entities to query. If empty, query the default scene, as with the
             /// individual property commands.
             #[builder(default)]
@@ -2983,5 +3013,115 @@ impl ToggleGraphics {
     /// Enable graphics if true. Disable if false.
     pub fn enabled(graphics_enabled: bool) -> Self {
         Self::builder().graphics_enabled(graphics_enabled).build()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn physical_property_methods_default_and_round_trip() {
+        use serde_json::json;
+
+        for mut request in [
+            json!({"type": "volume", "entity_ids": [], "output_unit": "mm3"}),
+            json!({"type": "surface_area", "entity_ids": [], "output_unit": "mm2"}),
+            json!({"type": "center_of_mass", "entity_ids": [], "output_unit": "mm"}),
+            json!({"type": "mass", "entity_ids": [], "material_density": 1000.0,
+                "material_density_unit": "kg:m3", "output_unit": "g"}),
+            json!({"type": "density", "entity_ids": [], "material_mass": 1.0,
+                "material_mass_unit": "g", "output_unit": "kg:m3"}),
+            json!({"type": "physical_properties", "entity_ids": [],
+                "material_density": 1000.0, "material_density_unit": "kg:m3",
+                "material_mass": 1.0, "material_mass_unit": "g",
+                "mass_output_unit": "g", "density_output_unit": "kg:m3",
+                "volume_output_unit": "mm3", "center_of_mass_output_unit": "mm",
+                "surface_area_output_unit": "mm2", "bounding_box_output_unit": "mm"}),
+        ] {
+            let command: crate::ModelingCmd = serde_json::from_value(request.clone()).unwrap();
+            assert_eq!(serde_json::to_value(command).unwrap()["method"], "brep");
+            for method in ["mesh", "brep"] {
+                request["method"] = json!(method);
+                let command: crate::ModelingCmd = serde_json::from_value(request.clone()).unwrap();
+                assert_eq!(serde_json::to_value(command).unwrap(), request);
+            }
+            for invalid in [json!("auto"), json!("BREP"), json!(null), json!(false)] {
+                request["method"] = invalid;
+                assert!(serde_json::from_value::<crate::ModelingCmd>(request.clone()).is_err());
+            }
+        }
+    }
+
+    #[test]
+    fn physical_property_builders_default_to_brep() {
+        use crate::{each_cmd as cmd, shared::PhysicalPropertiesMethod, units::*};
+
+        let methods = [
+            cmd::Volume::builder()
+                .output_unit(UnitVolume::CubicMeters)
+                .build()
+                .method,
+            cmd::SurfaceArea::builder()
+                .output_unit(UnitArea::SquareMeters)
+                .build()
+                .method,
+            cmd::CenterOfMass::builder()
+                .output_unit(UnitLength::Meters)
+                .build()
+                .method,
+            cmd::Mass::builder()
+                .material_density(1000.0)
+                .material_density_unit(UnitDensity::KilogramsPerCubicMeter)
+                .output_unit(UnitMass::Grams)
+                .build()
+                .method,
+            cmd::Density::builder()
+                .material_mass(1.0)
+                .material_mass_unit(UnitMass::Grams)
+                .output_unit(UnitDensity::KilogramsPerCubicMeter)
+                .build()
+                .method,
+            cmd::PhysicalProperties::builder()
+                .material_density(1000.0)
+                .material_density_unit(UnitDensity::KilogramsPerCubicMeter)
+                .material_mass(1.0)
+                .material_mass_unit(UnitMass::Grams)
+                .mass_output_unit(UnitMass::Grams)
+                .density_output_unit(UnitDensity::KilogramsPerCubicMeter)
+                .volume_output_unit(UnitVolume::CubicMeters)
+                .center_of_mass_output_unit(UnitLength::Meters)
+                .surface_area_output_unit(UnitArea::SquareMeters)
+                .bounding_box_output_unit(UnitLength::Meters)
+                .build()
+                .method,
+        ];
+        assert!(methods
+            .into_iter()
+            .all(|method| method == PhysicalPropertiesMethod::Brep));
+    }
+
+    #[cfg(feature = "ts-rs")]
+    #[test]
+    fn physical_property_typescript_method_is_optional() {
+        use ts_rs::TS;
+
+        use crate::each_cmd as cmd;
+
+        for declaration in [
+            cmd::Volume::decl(&ts_rs::Config::default()),
+            cmd::Mass::decl(&ts_rs::Config::default()),
+            cmd::Density::decl(&ts_rs::Config::default()),
+            cmd::SurfaceArea::decl(&ts_rs::Config::default()),
+            cmd::CenterOfMass::decl(&ts_rs::Config::default()),
+            cmd::PhysicalProperties::decl(&ts_rs::Config::default()),
+        ] {
+            assert!(
+                declaration.contains("method?: PhysicalPropertiesMethod,"),
+                "{declaration}"
+            );
+        }
+        assert_eq!(
+            crate::shared::PhysicalPropertiesMethod::decl(&ts_rs::Config::default()),
+            "type PhysicalPropertiesMethod = \"brep\" | \"mesh\";"
+        );
     }
 }
