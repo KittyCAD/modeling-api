@@ -40,6 +40,7 @@ define_modeling_cmd_enum! {
                 EntityReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
+                LineStyle,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, SurfaceEdgeReference, Opposite,
                 Tolerance,
@@ -2918,6 +2919,73 @@ define_modeling_cmd_enum! {
             /// Which KCL version the following commands should be executed with.
             pub kcl_version: crate::KclVersion,
         }
+
+        /// Add a KV-pair containing the styling for a line group
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AddLineGroupStyle {
+            ///The key of the style group
+            pub key: Uuid,
+            /// The color that all lines of this group will have
+            pub color: Color,
+            /// The line style all lines of this group will have
+            pub style: LineStyle,
+            /// The thickness of the lines of this group
+            pub thickness: f32,
+        }
+
+        /// Remove a line group style from the engine
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RemoveLineGroupStyle {
+            ///The key of the style group to be removed
+            pub key: Uuid,
+        }
+
+        /// Add a list of Paths to a LineGroup
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AddToLineGroup {
+            /// The key to a style group to use for this line group
+            pub style_key: Uuid,
+            /// The ids of the paths to be added to this line group
+            pub path_uuids: Vec<Uuid>,
+        }
+
+        /// Remove a list of Paths to a LineGroup
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RemoveFromLineGroup {
+            /// The key to a style group to use for this line group
+            pub style_key: Uuid,
+            /// The ids of the paths to be removed from this line group
+            pub path_uuids: Vec<Uuid>,
+        }
+
+
+        /// Clear all paths out of a line group
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ClearLineGroup {
+            /// The key of the group to clear
+            pub style_key: Uuid,
+        }
+
     }
 }
 

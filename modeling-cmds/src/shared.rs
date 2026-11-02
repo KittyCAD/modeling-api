@@ -2313,3 +2313,23 @@ pub enum CurveTypeDebug {
     /// Circle with a center and radius.
     Circle,
 }
+
+/// The still used to draw a line
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Copy)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+#[serde(rename_all = "snake_case")]
+pub enum LineStyle {
+    /// A fast, less visually accurate style
+    Fast,
+    /// A visually accurate, less fast style
+    HigherQuality,
+    /// The line does not take part in depth testing, so is always visible
+    XRay,
+    /// A stippled line
+    Dotted,
+    /// A stippled line that does not take part in depth testing
+    DottedXRay,
+}

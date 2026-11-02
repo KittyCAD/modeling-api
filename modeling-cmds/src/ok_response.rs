@@ -1457,5 +1457,37 @@ define_ok_modeling_cmd_response_enum! {
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetKclVersion {
         }
+
+        /// The response from the 'AddLineGroupStyle'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AddLineGroupStyle {
+        }
+
+        /// The response from the 'AddLineGroupStyle'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RemoveLineGroupStyle {
+        }
+
+
+        /// The response from the 'RemoveLineGroupStyle'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AddToLineGroup {
+        }
+
+        /// The response from the 'RemoveLineGroupStyle'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct RemoveFromLineGroup {
+        }
+
+        /// The response from the 'RemoveLineGroupStyle'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ClearLineGroup {
+        }
+
     }
 }
