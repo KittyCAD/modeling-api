@@ -1382,6 +1382,8 @@ pub enum FileExportFormat {
     Step,
     /// The STL file format. <https://en.wikipedia.org/wiki/STL_(file_format)>
     Stl,
+    /// The 3dm file format. <https://deepwiki.com/mcneel/rhino3dm/6.1-3dm-file-format>
+    Rhino,
 }
 
 /// The valid types of 2D output file formats.
@@ -1438,6 +1440,8 @@ pub enum FileImportFormat {
     Step,
     /// The STL file format. <https://en.wikipedia.org/wiki/STL_(file_format)>
     Stl,
+    /// The 3dm file format. <https://deepwiki.com/mcneel/rhino3dm/6.1-3dm-file-format>
+    Rhino,
 }
 
 /// The type of error sent by the KittyCAD graphics engine.
