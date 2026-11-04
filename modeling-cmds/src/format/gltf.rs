@@ -64,6 +64,11 @@ pub mod export {
         #[builder(default)]
         pub include_uuids: bool,
 
+        /// Tessellation settings for converting CAD surfaces to triangles.
+        /// Omit to preserve the current tessellation behavior. Existing meshes are unchanged.
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub tessellation: Option<TessellationOptions>,
+
         /// Named views in the scene.
         #[builder(default)]
         #[serde(skip_serializing_if = "HashMap::is_empty")]
@@ -79,6 +84,96 @@ pub mod export {
         pub fn new() -> Self {
             Default::default()
         }
+    }
+
+    /// Controls how CAD surfaces are tessellated for glTF export.
+    /// Defaults to high detail with accurate tessellation and surface curvatures enabled.
+    #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
+    #[serde(default, rename = "GltfTessellationOptions")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(
+        feature = "python",
+        pyo3_stub_gen::derive::gen_stub_pyclass,
+        pyo3::pyclass(name = "GltfTessellationOptions", from_py_object)
+    )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+    pub struct TessellationOptions {
+        /// Detail level of the generated triangles. Defaults to high.
+        #[builder(default)]
+        pub level_of_detail: TessellationLevelOfDetail,
+
+        /// Enable accurate tessellation for analysis. Defaults to true.
+        /// Disable to use visualization tessellation with a smaller footprint.
+        #[builder(default = true)]
+        pub accurate: bool,
+
+        /// Account for surface curvature during accurate tessellation. Defaults to true.
+        /// Only applies when accurate tessellation is enabled.
+        #[builder(default = true)]
+        pub accurate_surface_curvatures: bool,
+    }
+
+    impl Default for TessellationOptions {
+        fn default() -> Self {
+            Self {
+                level_of_detail: TessellationLevelOfDetail::High,
+                accurate: true,
+                accurate_surface_curvatures: true,
+            }
+        }
+    }
+
+    impl TessellationOptions {
+        /// Use high-detail visualization tessellation with accurate tessellation disabled.
+        pub fn visualization() -> Self {
+            Self {
+                accurate: false,
+                accurate_surface_curvatures: false,
+                ..Self::default()
+            }
+        }
+    }
+
+    #[cfg(feature = "python")]
+    #[pyo3_stub_gen::derive::gen_stub_pymethods]
+    #[pyo3::pymethods]
+    impl TessellationOptions {
+        #[new]
+        /// Set the options to their defaults.
+        pub fn new() -> Self {
+            Default::default()
+        }
+    }
+
+    /// Detail level used when generating triangles from CAD surfaces.
+    #[derive(
+        Default, Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Display, FromStr,
+    )]
+    #[display(style = "snake_case")]
+    #[serde(rename = "GltfTessellationLevelOfDetail", rename_all = "snake_case")]
+    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+    #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+    #[cfg_attr(
+        feature = "python",
+        pyo3_stub_gen::derive::gen_stub_pyclass_enum,
+        pyo3::pyclass(name = "GltfTessellationLevelOfDetail", from_py_object)
+    )]
+    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+    pub enum TessellationLevelOfDetail {
+        /// Extra-low detail.
+        ExtraLow,
+        /// Low detail.
+        Low,
+        /// Medium detail.
+        Medium,
+        /// High detail. This is the default.
+        #[default]
+        High,
+        /// Extra-high detail.
+        ExtraHigh,
     }
 
     /// Describes the storage format of a glTF 2.0 scene.
@@ -142,7 +237,7 @@ pub mod export {
 
 #[cfg(test)]
 mod tests {
-    use super::export::{Options, Presentation, Storage};
+    use super::export::{Options, Presentation, Storage, TessellationLevelOfDetail, TessellationOptions};
 
     #[test]
     fn uuid_metadata_is_opt_in() {
@@ -171,5 +266,90 @@ mod tests {
             assert_eq!(options.include_uuids, include_uuids);
             assert_eq!(serde_json::to_value(options).unwrap(), json);
         }
+    }
+
+    #[test]
+    fn tessellation_is_opt_in() {
+        let options: Options = serde_json::from_str("{}").unwrap();
+        assert_eq!(options, Options::default());
+        assert_eq!(Options::builder().build(), options);
+        assert!(options.tessellation.is_none());
+        assert_eq!(
+            serde_json::to_value(options).unwrap(),
+            serde_json::json!({
+                "storage": "embedded",
+                "presentation": "pretty",
+                "include_uuids": false
+            })
+        );
+    }
+
+    #[test]
+    fn tessellation_partial_objects_use_defaults() {
+        let defaults = TessellationOptions::default();
+        assert_eq!(defaults.level_of_detail, TessellationLevelOfDetail::High);
+        assert!(defaults.accurate);
+        assert!(defaults.accurate_surface_curvatures);
+        assert_eq!(TessellationOptions::builder().build(), defaults);
+
+        for (json, expected) in [
+            (serde_json::json!({}), defaults),
+            (
+                serde_json::json!({"level_of_detail": "medium"}),
+                TessellationOptions::builder()
+                    .level_of_detail(TessellationLevelOfDetail::Medium)
+                    .build(),
+            ),
+            (
+                serde_json::json!({"accurate": false}),
+                TessellationOptions::builder().accurate(false).build(),
+            ),
+            (
+                serde_json::json!({"accurate_surface_curvatures": false}),
+                TessellationOptions::builder()
+                    .accurate_surface_curvatures(false)
+                    .build(),
+            ),
+        ] {
+            let options: Options = serde_json::from_value(serde_json::json!({"tessellation": json})).unwrap();
+            assert_eq!(options.tessellation, Some(expected));
+        }
+    }
+
+    #[test]
+    fn tessellation_options_round_trip() {
+        for level in ["extra_low", "low", "medium", "high", "extra_high"] {
+            let json = serde_json::json!({
+                "storage": "binary",
+                "presentation": "compact",
+                "include_uuids": true,
+                "tessellation": {
+                    "level_of_detail": level,
+                    "accurate": false,
+                    "accurate_surface_curvatures": true
+                }
+            });
+            let options: Options = serde_json::from_value(json.clone()).unwrap();
+            assert_eq!(serde_json::to_value(options).unwrap(), json);
+        }
+    }
+
+    #[test]
+    fn tessellation_rejects_unknown_detail_levels() {
+        assert!(serde_json::from_value::<Options>(serde_json::json!({
+            "tessellation": {"level_of_detail": "ultra"}
+        }))
+        .is_err());
+    }
+
+    #[test]
+    fn visualization_tessellation_disables_accuracy() {
+        assert_eq!(
+            TessellationOptions::visualization(),
+            TessellationOptions::builder()
+                .accurate(false)
+                .accurate_surface_curvatures(false)
+                .build()
+        );
     }
 }

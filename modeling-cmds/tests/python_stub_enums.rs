@@ -13,6 +13,7 @@ fn pyclass_enum_renames_are_used_in_stub_generation() {
     let _ = std::any::TypeId::of::<format::ply::export::Storage>();
     let _ = std::any::TypeId::of::<format::fbx::export::Storage>();
     let _ = std::any::TypeId::of::<format::gltf::export::Storage>();
+    let _ = std::any::TypeId::of::<format::gltf::export::TessellationLevelOfDetail>();
 
     // Build stub info from this crate's project root.
     let mixed_layout = true;
@@ -34,7 +35,14 @@ fn pyclass_enum_renames_are_used_in_stub_generation() {
     }
 
     // These enums used to be exported as `Storage` which collided.
-    for expected in ["DxfStorage", "StlStorage", "PlyStorage", "FbxStorage", "GltfStorage"] {
+    for expected in [
+        "DxfStorage",
+        "StlStorage",
+        "PlyStorage",
+        "FbxStorage",
+        "GltfStorage",
+        "GltfTessellationLevelOfDetail",
+    ] {
         assert!(
             enum_names.contains(expected),
             "expected renamed enum `{}` to appear in stub info; got {:?}",
