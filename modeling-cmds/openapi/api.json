@@ -8822,6 +8822,12 @@
                 },
                 "uniqueItems": true
               },
+              "include_uuids": {
+                "deprecated": true,
+                "description": "Request geometry UUIDs from older glTF exporters. Defaults to false. Deprecated: exporters that support `extras` preserve geometry UUIDs by default.",
+                "default": false,
+                "type": "boolean"
+              },
               "presentation": {
                 "description": "Specifies how the JSON will be presented.",
                 "default": "pretty",

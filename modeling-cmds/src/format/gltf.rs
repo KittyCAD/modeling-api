@@ -61,6 +61,12 @@ pub mod export {
         #[builder(default)]
         pub presentation: Presentation,
 
+        /// Request geometry UUIDs from older glTF exporters. Defaults to false.
+        /// Deprecated: exporters that support `extras` preserve geometry UUIDs by default.
+        #[deprecated(note = "exporters that support `extras` preserve geometry UUIDs by default")]
+        #[builder(default)]
+        pub include_uuids: bool,
+
         /// Additional data to include in the exported glTF. Defaults to an empty set.
         #[builder(default)]
         #[serde(default)]
@@ -189,6 +195,22 @@ mod tests {
     }
 
     #[test]
+    #[allow(deprecated)]
+    fn legacy_uuid_requests_round_trip_without_selecting_extras() {
+        for include_uuids in [false, true] {
+            let request = serde_json::json!({"type": "gltf", "include_uuids": include_uuids});
+            let format: OutputFormat3d = serde_json::from_value(request).unwrap();
+            assert_eq!(
+                format,
+                OutputFormat3d::Gltf(Options::builder().include_uuids(include_uuids).build())
+            );
+            let exported = serde_json::to_value(format).unwrap();
+            assert_eq!(exported["include_uuids"], include_uuids);
+            assert_eq!(exported["extras"], serde_json::json!([]));
+        }
+    }
+
+    #[test]
     fn extras_options_round_trip() {
         let selections = [
             (Extra::Sketches, "sketches"),
@@ -210,6 +232,7 @@ mod tests {
             let json = serde_json::json!({
                 "storage": "binary",
                 "presentation": "compact",
+                "include_uuids": false,
                 "extras": names
             });
             let options: Options = serde_json::from_value(json.clone()).unwrap();
@@ -226,11 +249,13 @@ mod tests {
     }
 
     #[test]
+    #[allow(deprecated)]
     fn extras_options_round_trip_in_output_format() {
         let json = serde_json::json!({
             "type": "gltf",
             "storage": "binary",
             "presentation": "compact",
+            "include_uuids": true,
             "extras": ["sketches", "regions", "imported_files", "mbd"]
         });
         let format: OutputFormat3d = serde_json::from_value(json.clone()).unwrap();
@@ -240,6 +265,7 @@ mod tests {
                 Options::builder()
                     .storage(Storage::Binary)
                     .presentation(Presentation::Compact)
+                    .include_uuids(true)
                     .extras([Extra::Sketches, Extra::Regions, Extra::ImportedFiles, Extra::Mbd].into())
                     .build()
             )
