@@ -61,9 +61,8 @@ pub mod export {
         #[builder(default)]
         pub presentation: Presentation,
 
-        /// Request geometry UUIDs from older glTF exporters. Defaults to false.
-        /// Deprecated: exporters that support `extras` preserve geometry UUIDs by default.
-        #[deprecated(note = "exporters that support `extras` preserve geometry UUIDs by default")]
+        /// Include geometry UUIDs. Setting this to true is equivalent to adding `geometry_uuids` to `extras`.
+        #[deprecated(note = "add `geometry_uuids` to `extras` instead")]
         #[builder(default)]
         pub include_uuids: bool,
 
@@ -76,6 +75,14 @@ pub mod export {
         #[builder(default)]
         #[serde(skip_serializing_if = "HashMap::is_empty")]
         pub views: HashMap<String, View>,
+    }
+
+    impl Options {
+        /// Whether either export option requests geometry UUIDs.
+        #[allow(deprecated)]
+        pub fn includes_geometry_uuids(&self) -> bool {
+            self.include_uuids || self.extras.contains(&Extra::GeometryUuids)
+        }
     }
 
     #[cfg(feature = "python")]
@@ -111,6 +118,8 @@ pub mod export {
         ImportedFiles,
         /// Model-based definition (MBD) annotations.
         Mbd,
+        /// UUIDs and source UUIDs on boundary-representation solids, edges, faces, and surfaces.
+        GeometryUuids,
     }
 
     /// Describes the storage format of a glTF 2.0 scene.
@@ -188,6 +197,7 @@ mod tests {
                 .build()
         );
         assert!(options.extras.is_empty());
+        assert!(!options.includes_geometry_uuids());
         assert!(Options::default().extras.is_empty());
         assert_eq!(Options::builder().build(), Options::default());
         assert_eq!(serde_json::from_str::<Options>("{}").unwrap(), Options::default());
@@ -200,10 +210,9 @@ mod tests {
         for include_uuids in [false, true] {
             let request = serde_json::json!({"type": "gltf", "include_uuids": include_uuids});
             let format: OutputFormat3d = serde_json::from_value(request).unwrap();
-            assert_eq!(
-                format,
-                OutputFormat3d::Gltf(Options::builder().include_uuids(include_uuids).build())
-            );
+            let options = Options::builder().include_uuids(include_uuids).build();
+            assert_eq!(options.includes_geometry_uuids(), include_uuids);
+            assert_eq!(format, OutputFormat3d::Gltf(options));
             let exported = serde_json::to_value(format).unwrap();
             assert_eq!(exported["include_uuids"], include_uuids);
             assert_eq!(exported["extras"], serde_json::json!([]));
@@ -217,6 +226,7 @@ mod tests {
             (Extra::Regions, "regions"),
             (Extra::ImportedFiles, "imported_files"),
             (Extra::Mbd, "mbd"),
+            (Extra::GeometryUuids, "geometry_uuids"),
         ];
 
         // Each category can be selected independently or combined with any others.
@@ -236,6 +246,7 @@ mod tests {
                 "extras": names
             });
             let options: Options = serde_json::from_value(json.clone()).unwrap();
+            assert_eq!(options.includes_geometry_uuids(), names.contains(&"geometry_uuids"));
             assert_eq!(
                 options,
                 Options::builder()

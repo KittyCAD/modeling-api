@@ -2098,6 +2098,13 @@
             "enum": [
               "mbd"
             ]
+          },
+          {
+            "description": "UUIDs and source UUIDs on boundary-representation solids, edges, faces, and surfaces.",
+            "type": "string",
+            "enum": [
+              "geometry_uuids"
+            ]
           }
         ]
       },
@@ -8824,7 +8831,7 @@
               },
               "include_uuids": {
                 "deprecated": true,
-                "description": "Request geometry UUIDs from older glTF exporters. Defaults to false. Deprecated: exporters that support `extras` preserve geometry UUIDs by default.",
+                "description": "Include geometry UUIDs. Setting this to true is equivalent to adding `geometry_uuids` to `extras`.",
                 "default": false,
                 "type": "boolean"
               },
