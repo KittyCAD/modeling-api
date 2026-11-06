@@ -26,7 +26,8 @@ pub enum TargetRepresentation {
     Brep,
 }
 
-const DEFAULT_REPR: TargetRepresentation = TargetRepresentation::Brep;
+// Prefer mesh imports until editing imported B-reps is supported.
+const DEFAULT_REPR: TargetRepresentation = TargetRepresentation::Mesh;
 
 /// Import models in STEP format.
 pub mod import {
@@ -55,11 +56,13 @@ pub mod import {
 
         /// Splits all closed faces into two open faces.
         ///
-        /// Defaults to `false` but is implicitly `true` when importing into the engine.
+        /// Defaults to `false`. The engine enables this for B-rep imports and disables it for mesh imports.
         #[builder(default)]
         pub split_closed_faces: bool,
 
         /// What representation should be used for this file after it's imported?
+        ///
+        /// Defaults to `mesh`. Set this to `brep` to opt into boundary representation.
         #[builder(default = DEFAULT_REPR)]
         pub target_representation: TargetRepresentation,
     }
@@ -82,6 +85,58 @@ pub mod import {
                 coords: *coord::KITTYCAD,
                 split_closed_faces: false,
             }
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use crate::format::InputFormat3d;
+        use serde_json::json;
+
+        #[test]
+        fn defaults_and_builder_use_mesh() {
+            for options in [Options::default(), Options::builder().build()] {
+                assert_eq!(options.target_representation, TargetRepresentation::Mesh);
+                assert_eq!(serde_json::to_value(options).unwrap()["target_representation"], "mesh");
+            }
+        }
+
+        #[test]
+        fn omitted_target_representation_uses_mesh() {
+            let options: Options = serde_json::from_value(json!({})).unwrap();
+            assert_eq!(options.target_representation, TargetRepresentation::Mesh);
+
+            let format: InputFormat3d = serde_json::from_value(json!({ "type": "step" })).unwrap();
+            let InputFormat3d::Step(options) = format else {
+                panic!("expected STEP import options");
+            };
+            assert_eq!(options.target_representation, TargetRepresentation::Mesh);
+        }
+
+        #[test]
+        fn explicit_target_representation_is_preserved() {
+            for (name, representation) in [
+                ("mesh", TargetRepresentation::Mesh),
+                ("brep", TargetRepresentation::Brep),
+            ] {
+                let options = Options::builder().target_representation(representation.clone()).build();
+                assert_eq!(options.target_representation, representation);
+
+                let value = json!({ "type": "step", "target_representation": name });
+                let format: InputFormat3d = serde_json::from_value(value).unwrap();
+                let InputFormat3d::Step(options) = &format else {
+                    panic!("expected STEP import options");
+                };
+                assert_eq!(options.target_representation, representation);
+                assert_eq!(serde_json::to_value(format).unwrap()["target_representation"], name);
+            }
+        }
+
+        #[test]
+        fn schema_advertises_mesh_default() {
+            let schema = serde_json::to_value(schemars::schema_for!(Options)).unwrap();
+            assert_eq!(schema["properties"]["target_representation"]["default"], "mesh");
         }
     }
 }
