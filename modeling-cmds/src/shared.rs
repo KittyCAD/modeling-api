@@ -1388,7 +1388,7 @@ pub enum FileExportFormat {
     Step,
     /// The STL file format. <https://en.wikipedia.org/wiki/STL_(file_format)>
     Stl,
-    /// The 3dm file format. <https://deepwiki.com/mcneel/rhino3dm/6.1-3dm-file-format>
+    /// The 3DM file format. <https://deepwiki.com/mcneel/rhino3dm/6.1-3dm-file-format>
     Rhino,
 }
 
@@ -1446,7 +1446,7 @@ pub enum FileImportFormat {
     Step,
     /// The STL file format. <https://en.wikipedia.org/wiki/STL_(file_format)>
     Stl,
-    /// The 3dm file format. <https://deepwiki.com/mcneel/rhino3dm/6.1-3dm-file-format>
+    /// The 3DM file format. <https://deepwiki.com/mcneel/rhino3dm/6.1-3dm-file-format>
     Rhino,
 }
 

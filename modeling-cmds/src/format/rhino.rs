@@ -4,11 +4,11 @@ use serde::{Deserialize, Serialize};
 
 use crate::{coord, units::UnitLength};
 
-/// Import models in Rhino (3dm) format.
+/// Import models in Rhino (3DM) format.
 pub mod import {
     use super::*;
 
-    /// Options for importing 3dm.
+    /// Options for importing 3DM.
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(rename = "RhinoImportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -60,11 +60,11 @@ pub mod import {
     }
 }
 
-/// Export models in Rhino (3dm) format.
+/// Export models in Rhino (3DM) format.
 pub mod export {
     use super::*;
 
-    /// Options for exporting 3dm.
+    /// Options for exporting 3DM.
     #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
     #[serde(rename = "RhinoExportOptions")]
     #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]

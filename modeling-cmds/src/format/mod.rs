@@ -24,7 +24,7 @@ pub mod ply;
 pub mod step;
 /// **ST**ereo**L**ithography format.
 pub mod stl;
-/// Rhino (3dm) format.
+/// Rhino (3DM) format.
 pub mod rhino;
 
 /// Output 2D format specifier.
