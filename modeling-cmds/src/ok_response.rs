@@ -21,6 +21,7 @@ define_ok_modeling_cmd_response_enum! {
         use uuid::Uuid;
         use crate::shared::{
             CurveDebug,
+            ProjectionCurve,
             CameraSettings,
             CameraViewState,
             BodyType,
@@ -827,6 +828,15 @@ define_ok_modeling_cmd_response_enum! {
             pub projected_points: Vec<Point3d<f64>>,
         }
 
+        /// The response from the `ComputeOrthographicProjection` command.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ComputeOrthographicProjection {
+            /// Bounded curves in projection-local coordinates, with lengths in millimeters.
+            /// Curve ordering is not a persistent identity. An empty list is valid.
+            pub curves: Vec<ProjectionCurve>,
+        }
+
         /// The response from the `CurveGetType` command.
         #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, Eq, PartialEq, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
@@ -1456,6 +1466,51 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetKclVersion {
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use super::OkModelingCmdResponse;
+
+    #[test]
+    fn orthographic_projection_geometry_and_source_variants_round_trip() {
+        let mut wire = json!({
+            "type": "compute_orthographic_projection",
+            "data": {"curves": [
+                {
+                    "geometry": {"type": "line", "start": {"x": 0.0, "y": 0.0}, "end": {"x": 10.0, "y": 0.0}},
+                    "visibility": "visible",
+                    "source": {"type": "edge", "edge_id": "00000000-0000-0000-0000-000000000002", "edge_index": 3, "section_index": 0},
+                    "segment_index": 0
+                },
+                {
+                    "geometry": {"type": "circular_arc", "origin": {"x": 0.0, "y": 0.0}, "radius": 5.0,
+                        "start_angle": 0.0, "end_angle": std::f64::consts::TAU, "winding": "counterclockwise"},
+                    "visibility": "hidden",
+                    "source": {"type": "silhouette", "face_index": 2, "silhouette_index": 1},
+                    "segment_index": 0
+                },
+                {
+                    "geometry": {"type": "nurbs", "control_points": [{"x": 0.0, "y": 0.0}, {"x": 1.0, "y": 1.0}, {"x": 2.0, "y": 0.0}],
+                        "weights": [1.0, 0.5, 1.0], "knot_vector": [0.0, 0.0, 0.0, 1.0, 1.0, 1.0], "order": 3},
+                    "visibility": "visible",
+                    "source": {"type": "silhouette", "face_id": "00000000-0000-0000-0000-000000000003", "face_index": 2, "silhouette_index": 1},
+                    "segment_index": 1
+                }
+            ]}
+        });
+        for winding in ["counterclockwise", "clockwise"] {
+            wire["data"]["curves"][1]["geometry"]["winding"] = json!(winding);
+            let parsed: OkModelingCmdResponse = serde_json::from_value(wire.clone()).unwrap();
+            assert!(matches!(
+                &parsed,
+                OkModelingCmdResponse::ComputeOrthographicProjection(_)
+            ));
+            assert_eq!(serde_json::to_value(parsed).unwrap(), wire);
         }
     }
 }
