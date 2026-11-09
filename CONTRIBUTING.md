@@ -11,7 +11,7 @@ This repo uses a `justfile`. Be sure to [install `just`](https://github.com/case
  - Create a release branch: `just start-release modeling-cmds`.
  - Open a PR (hint: `just start-release` output should include a link to GitHub which will open a release PR).
  - Merge the PR
- - Check out latest main, then run `just finish-release modeling-cmds`.
+ - Check out main, `git pull` to get the release commit, then run `just finish-release modeling-cmds`.
 
 The `just` scripts above accept any workspace member as their first argument. For example, you could replace `modeling-cmds` with `modeling-cmds-macros` there.
 

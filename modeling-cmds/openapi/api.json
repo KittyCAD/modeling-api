@@ -2090,6 +2090,46 @@
           }
         ]
       },
+      "GltfExportExtra": {
+        "description": "Additional data that can be included in a glTF 2.0 export.",
+        "oneOf": [
+          {
+            "description": "Sketch geometry and metadata.",
+            "type": "string",
+            "enum": [
+              "sketches"
+            ]
+          },
+          {
+            "description": "Sketch regions and their resolver metadata.",
+            "type": "string",
+            "enum": [
+              "regions"
+            ]
+          },
+          {
+            "description": "Original imported files.",
+            "type": "string",
+            "enum": [
+              "imported_files"
+            ]
+          },
+          {
+            "description": "Model-based definition (MBD) annotations.",
+            "type": "string",
+            "enum": [
+              "mbd"
+            ]
+          },
+          {
+            "description": "UUIDs and source UUIDs on boundary-representation solids, edges, faces, and surfaces.",
+            "type": "string",
+            "enum": [
+              "geometry_uuids"
+            ]
+          }
+        ]
+      },
       "GltfPresentation": {
         "description": "Describes the presentation style of the glTF JSON.",
         "oneOf": [
@@ -8835,8 +8875,18 @@
             "description": "glTF 2.0. We refer to this as glTF since that is how our customers refer to it, although by default it will be in binary format and thus technically (glb). If you prefer ASCII output, you can set that option for the export.",
             "type": "object",
             "properties": {
+              "extras": {
+                "description": "Additional data to include in the exported glTF. Defaults to an empty set.",
+                "default": [],
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GltfExportExtra"
+                },
+                "uniqueItems": true
+              },
               "include_uuids": {
-                "description": "Include engine UUIDs in glTF extras. Defaults to false.",
+                "deprecated": true,
+                "description": "Include geometry UUIDs. Setting this to true is equivalent to adding `geometry_uuids` to `extras`.",
                 "default": false,
                 "type": "boolean"
               },
