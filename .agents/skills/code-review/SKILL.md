@@ -1,3 +1,8 @@
+---
+name: kcmc-code-review
+description: "Review PRs to kittycad-modeling-cmds like Adam Chalmers would"
+license: MIT
+---
 Things to consider when reviewing these PRs.
 
 ## Backwards compatibility
