@@ -2340,7 +2340,7 @@ pub enum CurveTypeDebug {
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub enum MateFrameOn {
+pub enum AnchorOn {
     /// Mate frame at the centroid of this face.
     Face {
         /// Which face?

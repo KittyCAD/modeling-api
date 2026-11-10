@@ -1471,10 +1471,10 @@ define_ok_modeling_cmd_response_enum! {
         pub struct AssemblyAddChildren {
         }
 
-        /// The response from the 'MateFrameCreate'.
+        /// The response from the 'AnchorCreate'.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct MateFrameCreate {
+        pub struct AnchorCreate {
         }
 
         /// The response from the 'AssemblyAddConstraints'.

@@ -27,7 +27,7 @@ define_modeling_cmd_enum! {
             shared::{
                 Angle,
                 AssemblyConstraint,
-                MateFrameOn,
+                AnchorOn,
                 RegionVersion,
                 BlendType,
                 BodyType,
@@ -2953,9 +2953,9 @@ define_modeling_cmd_enum! {
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct MateFrameCreate {
+        pub struct AnchorCreate {
             /// What to create the mate frame on.
-            pub on: MateFrameOn,
+            pub on: AnchorOn,
         }
 
         /// Add constraints to an assembly and solve it.

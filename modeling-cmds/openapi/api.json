@@ -39,6 +39,78 @@
   },
   "components": {
     "schemas": {
+      "AnchorOn": {
+        "description": "What to create a mate frame on",
+        "oneOf": [
+          {
+            "description": "Mate frame at the centroid of this face.",
+            "type": "object",
+            "properties": {
+              "face": {
+                "type": "object",
+                "properties": {
+                  "where_on_face": {
+                    "description": "Where on the given face?",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/WhereOnFace"
+                      }
+                    ]
+                  },
+                  "which_face": {
+                    "description": "Which face?",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "where_on_face",
+                  "which_face"
+                ]
+              }
+            },
+            "required": [
+              "face"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Mate frame along this edge.",
+            "type": "object",
+            "properties": {
+              "edge": {
+                "type": "object",
+                "properties": {
+                  "where_on_edge": {
+                    "description": "Where on the given edge?",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/WhereOnEdge"
+                      }
+                    ]
+                  },
+                  "which_edge": {
+                    "description": "Which edge?",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EdgeSpecifier"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "where_on_edge",
+                  "which_edge"
+                ]
+              }
+            },
+            "required": [
+              "edge"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "Angle": {
         "description": "An angle, with a specific unit.",
         "type": "object",
@@ -2818,78 +2890,6 @@
       "LengthUnit": {
         "type": "number",
         "format": "double"
-      },
-      "MateFrameOn": {
-        "description": "What to create a mate frame on",
-        "oneOf": [
-          {
-            "description": "Mate frame at the centroid of this face.",
-            "type": "object",
-            "properties": {
-              "face": {
-                "type": "object",
-                "properties": {
-                  "where_on_face": {
-                    "description": "Where on the given face?",
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/WhereOnFace"
-                      }
-                    ]
-                  },
-                  "which_face": {
-                    "description": "Which face?",
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                },
-                "required": [
-                  "where_on_face",
-                  "which_face"
-                ]
-              }
-            },
-            "required": [
-              "face"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "description": "Mate frame along this edge.",
-            "type": "object",
-            "properties": {
-              "edge": {
-                "type": "object",
-                "properties": {
-                  "where_on_edge": {
-                    "description": "Where on the given edge?",
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/WhereOnEdge"
-                      }
-                    ]
-                  },
-                  "which_edge": {
-                    "description": "Which edge?",
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/EdgeSpecifier"
-                      }
-                    ]
-                  }
-                },
-                "required": [
-                  "where_on_edge",
-                  "which_edge"
-                ]
-              }
-            },
-            "required": [
-              "edge"
-            ],
-            "additionalProperties": false
-          }
-        ]
       },
       "MbdSymbol": {
         "description": "MBD symbol type",
@@ -8808,14 +8808,14 @@
                 "description": "What to create the mate frame on.",
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/MateFrameOn"
+                    "$ref": "#/components/schemas/AnchorOn"
                   }
                 ]
               },
               "type": {
                 "type": "string",
                 "enum": [
-                  "mate_frame_create"
+                  "anchor_create"
                 ]
               }
             },
