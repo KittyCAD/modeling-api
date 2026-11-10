@@ -843,58 +843,162 @@
       },
       "AssemblyConstraint": {
         "description": "How to constrain bodies in an assembly.",
+        "type": "object",
+        "properties": {
+          "anchor_ids": {
+            "description": "Which two anchors are being constrained",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "data": {
+            "description": "How to constrain the two anchors.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AssemblyConstraintData"
+              }
+            ]
+          }
+        },
+        "required": [
+          "anchor_ids",
+          "data"
+        ]
+      },
+      "AssemblyConstraintData": {
+        "description": "How to constrain bodies in an assembly.",
         "oneOf": [
           {
-            "description": "Makes two entities occupy the same line/plane or places a point on a surface.",
+            "description": "Ball",
             "type": "object",
             "properties": {
-              "coincident": {
-                "type": "object",
-                "properties": {
-                  "targets": {
-                    "description": "IDs of two mate frames in the assembly.",
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "uuid"
-                    },
-                    "minItems": 2,
-                    "maxItems": 2
-                  }
-                },
-                "required": [
-                  "targets"
-                ]
+              "spherical": {
+                "type": "object"
               }
             },
             "required": [
-              "coincident"
+              "spherical"
             ],
             "additionalProperties": false
           },
           {
-            "description": "Aligns cylindrical, conical, or spherical surfaces to a common center.",
+            "description": "The two anchors must be this Euclidean distance apart.",
             "type": "object",
             "properties": {
-              "concentric": {
+              "distance": {
                 "type": "object",
                 "properties": {
-                  "targets": {
-                    "description": "Which edge? IDs of two mate frames in the assembly. Must be >= 2 items.",
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "uuid"
-                    }
+                  "distance": {
+                    "description": "The desired distance.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/LengthUnit"
+                      }
+                    ]
                   }
                 },
                 "required": [
-                  "targets"
+                  "distance"
                 ]
               }
             },
             "required": [
-              "concentric"
+              "distance"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Hinge",
+            "type": "object",
+            "properties": {
+              "revolute": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "revolute"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Constrain the bodies to a single axis, while allowing them to rotate about and slide along that axis.",
+            "type": "object",
+            "properties": {
+              "cylindrical": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "cylindrical"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Fixed, fastened",
+            "type": "object",
+            "properties": {
+              "weld": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "weld"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Slider",
+            "type": "object",
+            "properties": {
+              "prismatic": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "prismatic"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Hooke",
+            "type": "object",
+            "properties": {
+              "universal": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "universal"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "The normals of these planes must be parallel. The planes can still slide in X and Y directions, or rotate around their normal. 3 degrees of freedom.",
+            "type": "object",
+            "properties": {
+              "planar": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "planar"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "One chosen point on the second body stays in a plane attached to the first. That point can slide within the plane, and the body can rotate freely around that point. 5 degrees of freedom.",
+            "type": "object",
+            "properties": {
+              "point_on_plane": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "point_on_plane"
             ],
             "additionalProperties": false
           }
