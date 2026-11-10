@@ -136,7 +136,7 @@ impl InputFormat3d {
             InputFormat3d::Sldprt(_) => "sldprt",
             InputFormat3d::Step(_) => "step",
             InputFormat3d::Stl(_) => "stl",
-            InputFormat3d::Rhino(_) => "3d,",
+            InputFormat3d::Rhino(_) => "3dm",
         }
     }
 }
