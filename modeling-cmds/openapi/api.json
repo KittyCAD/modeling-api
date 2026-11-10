@@ -2605,13 +2605,13 @@
                 ]
               },
               "split_closed_faces": {
-                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false` but is implicitly `true` when importing into the engine.",
+                "description": "Splits all closed faces into two open faces.\n\nDefaults to `false`. The engine enables this for B-rep imports and disables it for mesh imports.",
                 "default": false,
                 "type": "boolean"
               },
               "target_representation": {
-                "description": "What representation should be used for this file after it's imported?",
-                "default": "brep",
+                "description": "What representation should be used for this file after it's imported?\n\nDefaults to `mesh`. Set this to `brep` to opt into boundary representation.",
+                "default": "mesh",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/StepImportTargetRepresentation"
