@@ -2422,27 +2422,35 @@ pub struct AssemblyConstraint {
 pub enum AssemblyConstraintData {
     /// Ball
     Spherical {},
+
     /// The two anchors must be this Euclidean distance apart.
     Distance {
         /// The desired distance.
         distance: LengthUnit,
     },
+
     /// Hinge
     Revolute {},
+
     /// Constrain the bodies to a single axis,
     /// while allowing them to rotate about and slide along that axis.
     Cylindrical {},
+
     /// Fixed, fastened
     Weld {},
+
     /// Slider
     Prismatic {},
+
     /// Hooke
     Universal {},
+
     /// The normals of these planes must be parallel.
     /// The planes can still slide in X and Y directions,
     /// or rotate around their normal.
     /// 3 degrees of freedom.
     Planar {},
+
     /// One chosen point on the second body stays in a plane attached to the first.
     /// That point can slide within the plane, and the body can rotate freely around that point.
     /// 5 degrees of freedom.
