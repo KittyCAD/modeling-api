@@ -2402,22 +2402,51 @@ pub enum WhereOnEdge {
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "AssemblyConstraint.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub enum AssemblyConstraint {
-    /// Makes two entities occupy the same line/plane or places a point on a surface.
-    Coincident {
-        /// IDs of two mate frames in the assembly.
-        targets: [Uuid; 2],
+pub struct AssemblyConstraint {
+    /// Which two anchors are being constrained
+    pub anchor_ids: [Uuid; 2],
+
+    /// How to constrain the two anchors.
+    pub data: AssemblyConstraintData,
+}
+
+/// How to constrain bodies in an assembly.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "AssemblyConstraint.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum AssemblyConstraintData {
+    /// Ball
+    Spherical {},
+    /// The two anchors must be this Euclidean distance apart.
+    Distance {
+        /// The desired distance.
+        distance: LengthUnit,
     },
-    /// Aligns cylindrical, conical, or spherical surfaces to a common center.
-    Concentric {
-        /// Which edge?
-        /// IDs of two mate frames in the assembly.
-        /// Must be >= 2 items.
-        #[schemars(range(min = 2))]
-        targets: Vec<Uuid>,
-    },
+    /// Hinge
+    Revolute {},
+    /// Constrain the bodies to a single axis,
+    /// while allowing them to rotate about and slide along that axis.
+    Cylindrical {},
+    /// Fixed, fastened
+    Weld {},
+    /// Slider
+    Prismatic {},
+    /// Hooke
+    Universal {},
+    /// The normals of these planes must be parallel.
+    /// The planes can still slide in X and Y directions,
+    /// or rotate around their normal.
+    /// 3 degrees of freedom.
+    Planar {},
+    /// One chosen point on the second body stays in a plane attached to the first.
+    /// That point can slide within the plane, and the body can rotate freely around that point.
+    /// 5 degrees of freedom.
+    PointOnPlane {},
 }
 
 /// Result of constraining an item in an assembly.
