@@ -8804,6 +8804,10 @@
             "description": "Create a mate frame",
             "type": "object",
             "properties": {
+              "flip_z": {
+                "description": "Flip the Z axis, from positive to negative.",
+                "type": "boolean"
+              },
               "on": {
                 "description": "What to create the mate frame on.",
                 "allOf": [

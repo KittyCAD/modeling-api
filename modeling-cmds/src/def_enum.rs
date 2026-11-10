@@ -2956,6 +2956,11 @@ define_modeling_cmd_enum! {
         pub struct AnchorCreate {
             /// What to create the mate frame on.
             pub on: AnchorOn,
+
+            /// Flip the Z axis, from positive to negative.
+            #[builder(default)]
+            #[serde(default, skip_serializing_if = "super::is_false")]
+            pub flip_z: bool,
         }
 
         /// Add constraints to an assembly and solve it.
