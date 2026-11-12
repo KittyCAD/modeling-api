@@ -40,6 +40,7 @@ define_modeling_cmd_enum! {
                 EntityReference,
                 ExtrudedFaceInfo, ExtrudeMethod,
                 AnnotationOptions, AnnotationType, CameraDragInteractionType, Color, DistanceType, EntityType,
+                PlanarFrame, ProjectionHiddenLineMode,
                 PathComponentConstraintBound, PathComponentConstraintType, PathSegment, PerspectiveCameraParameters,
                 Point2d, Point3d, ExtrudeReference, SceneSelectionType, SceneToolType, SurfaceEdgeReference, Opposite,
                 Tolerance,
@@ -1859,6 +1860,35 @@ define_modeling_cmd_enum! {
             pub use_plane_coords: bool,
         }
 
+        /// Compute an orthographic projection of one body without creating scene entities.
+        ///
+        /// The engine computes silhouettes and visibility; the client owns drawing layout,
+        /// styling, picking, and conversion of source topology into KCL references.
+        /// Returned lengths are in millimeters, independent of the session's length unit.
+        /// The viewer is on the positive `frame.x_axis × frame.y_axis` side looking
+        /// along the negative normal.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ComputeOrthographicProjection {
+            /// UUID of the BREP body to project. Other scene bodies do not occlude it.
+            pub object_id: Uuid,
+            /// Model-space projection frame. Sheet placement and drawing scale are client concerns.
+            pub frame: PlanarFrame,
+            /// Hidden-line inclusion mode. If omitted, hidden curves are included.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub hidden_lines: Option<ProjectionHiddenLineMode>,
+            /// Silhouette sampling resolution. Must be at least 2; defaults to 19.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            #[schemars(range(min = 2))]
+            pub resolution: Option<u32>,
+            /// Positive finite geometric tolerance in millimeters. Defaults to 0.00001.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub tolerance: Option<f64>,
+        }
+
         /// Enum containing the variety of image formats snapshots may be exported to.
         #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, JsonSchema, FromStr, Display)]
         #[serde(rename_all = "snake_case")]
@@ -2983,5 +3013,41 @@ impl ToggleGraphics {
     /// Enable graphics if true. Disable if false.
     pub fn enabled(graphics_enabled: bool) -> Self {
         Self::builder().graphics_enabled(graphics_enabled).build()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, Value};
+
+    use crate::ModelingCmd;
+
+    fn command() -> Value {
+        json!({
+            "type": "compute_orthographic_projection",
+            "object_id": "00000000-0000-0000-0000-000000000001",
+            "frame": {
+                "origin": {"x": 25.4, "y": 0.0, "z": 0.0},
+                "x_axis": {"x": 1.0, "y": 0.0, "z": 0.0},
+                "y_axis": {"x": 0.0, "y": 1.0, "z": 0.0}
+            }
+        })
+    }
+
+    #[test]
+    fn orthographic_projection_minimal_command_omits_overrides() {
+        let wire = command();
+        let parsed: ModelingCmd = serde_json::from_value(wire.clone()).unwrap();
+        let ModelingCmd::ComputeOrthographicProjection(ref projection) = parsed else {
+            panic!("wrong command variant");
+        };
+        assert!(projection.hidden_lines.is_none());
+        assert!(projection.resolution.is_none());
+        assert!(projection.tolerance.is_none());
+        assert!(
+            !parsed.is_safe_to_batch(),
+            "a projection query must return its own result"
+        );
+        assert_eq!(serde_json::to_value(parsed).unwrap(), wire);
     }
 }
