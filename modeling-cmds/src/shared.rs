@@ -1848,6 +1848,7 @@ impl_extern_type! {
     BlendType = "Enums::_BlendType"
     BodyType = "Enums::_BodyType"
     EntityType = "Enums::_EntityType"
+    HiddenState = "Enums::_HiddenState"
     AnnotationType = "Enums::_AnnotationType"
     AnnotationTextAlignmentX = "Enums::_AnnotationTextAlignmentX"
     AnnotationTextAlignmentY = "Enums::_AnnotationTextAlignmentY"
