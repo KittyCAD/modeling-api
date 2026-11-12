@@ -39,6 +39,78 @@
   },
   "components": {
     "schemas": {
+      "AnchorOn": {
+        "description": "What to create a mate frame on",
+        "oneOf": [
+          {
+            "description": "Mate frame at the centroid of this face.",
+            "type": "object",
+            "properties": {
+              "face": {
+                "type": "object",
+                "properties": {
+                  "where_on_face": {
+                    "description": "Where on the given face?",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/WhereOnFace"
+                      }
+                    ]
+                  },
+                  "which_face": {
+                    "description": "Which face?",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "where_on_face",
+                  "which_face"
+                ]
+              }
+            },
+            "required": [
+              "face"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Mate frame along this edge.",
+            "type": "object",
+            "properties": {
+              "edge": {
+                "type": "object",
+                "properties": {
+                  "where_on_edge": {
+                    "description": "Where on the given edge?",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/WhereOnEdge"
+                      }
+                    ]
+                  },
+                  "which_edge": {
+                    "description": "Which edge?",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EdgeSpecifier"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "where_on_edge",
+                  "which_edge"
+                ]
+              }
+            },
+            "required": [
+              "edge"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "Angle": {
         "description": "An angle, with a specific unit.",
         "type": "object",
@@ -766,6 +838,169 @@
             "enum": [
               "t3d"
             ]
+          }
+        ]
+      },
+      "AssemblyConstraint": {
+        "description": "How to constrain bodies in an assembly.",
+        "type": "object",
+        "properties": {
+          "anchor_ids": {
+            "description": "Which two anchors are being constrained",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "data": {
+            "description": "How to constrain the two anchors.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AssemblyConstraintData"
+              }
+            ]
+          }
+        },
+        "required": [
+          "anchor_ids",
+          "data"
+        ]
+      },
+      "AssemblyConstraintData": {
+        "description": "How to constrain bodies in an assembly.",
+        "oneOf": [
+          {
+            "description": "Ball",
+            "type": "object",
+            "properties": {
+              "spherical": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "spherical"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "The two anchors must be this Euclidean distance apart.",
+            "type": "object",
+            "properties": {
+              "distance": {
+                "type": "object",
+                "properties": {
+                  "distance": {
+                    "description": "The desired distance.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/LengthUnit"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "distance"
+                ]
+              }
+            },
+            "required": [
+              "distance"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Hinge",
+            "type": "object",
+            "properties": {
+              "revolute": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "revolute"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Constrain the bodies to a single axis, while allowing them to rotate about and slide along that axis.",
+            "type": "object",
+            "properties": {
+              "cylindrical": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "cylindrical"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Fixed, fastened",
+            "type": "object",
+            "properties": {
+              "weld": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "weld"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Slider",
+            "type": "object",
+            "properties": {
+              "prismatic": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "prismatic"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Hooke",
+            "type": "object",
+            "properties": {
+              "universal": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "universal"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "The normals of these planes must be parallel. The planes can still slide in X and Y directions, or rotate around their normal. 3 degrees of freedom.",
+            "type": "object",
+            "properties": {
+              "planar": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "planar"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "One chosen point on the second body stays in a plane attached to the first. That point can slide within the plane, and the body can rotate freely around that point. 5 degrees of freedom.",
+            "type": "object",
+            "properties": {
+              "point_on_plane": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "point_on_plane"
+            ],
+            "additionalProperties": false
           }
         ]
       },
@@ -8616,6 +8851,115 @@
               "kcl_version",
               "type"
             ]
+          },
+          {
+            "description": "Create a new assembly",
+            "type": "object",
+            "properties": {
+              "children": {
+                "description": "Which entities, if any, to move into this assembly.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "assembly_create"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "Add children to the assembly",
+            "type": "object",
+            "properties": {
+              "assembly_id": {
+                "description": "Which assembly to modify.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "children": {
+                "description": "Which entities, to move into this assembly.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "assembly_add_children"
+                ]
+              }
+            },
+            "required": [
+              "assembly_id",
+              "type"
+            ]
+          },
+          {
+            "description": "Create a mate frame",
+            "type": "object",
+            "properties": {
+              "flip_z": {
+                "description": "Flip the Z axis, from positive to negative.",
+                "type": "boolean"
+              },
+              "on": {
+                "description": "What to create the mate frame on.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/AnchorOn"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "anchor_create"
+                ]
+              }
+            },
+            "required": [
+              "on",
+              "type"
+            ]
+          },
+          {
+            "description": "Add constraints to an assembly and solve it.",
+            "type": "object",
+            "properties": {
+              "assembly_id": {
+                "description": "Which assembly to modify.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "constraints": {
+                "description": "Which constraints to apply.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AssemblyConstraint"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "assembly_solve"
+                ]
+              }
+            },
+            "required": [
+              "assembly_id",
+              "constraints",
+              "type"
+            ]
           }
         ]
       },
@@ -10797,6 +11141,100 @@
               "request_id",
               "type"
             ]
+          }
+        ]
+      },
+      "WhereOnEdge": {
+        "description": "Identifies a point on a specific edge.",
+        "oneOf": [
+          {
+            "description": "Midpoint along the edge.",
+            "type": "object",
+            "properties": {
+              "midpoint": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "midpoint"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Somewhere along the edge's length.",
+            "type": "object",
+            "properties": {
+              "at_parameter": {
+                "type": "object",
+                "properties": {
+                  "t": {
+                    "description": "Value which, substituted into the edge's parametric equation, gives a point. Must be between 0 and 1 (inclusive).",
+                    "type": "number",
+                    "format": "double",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  }
+                },
+                "required": [
+                  "t"
+                ]
+              }
+            },
+            "required": [
+              "at_parameter"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "WhereOnFace": {
+        "description": "Identifies a point on a specific face.",
+        "oneOf": [
+          {
+            "description": "Centermost point of the face.",
+            "type": "object",
+            "properties": {
+              "centroid": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "centroid"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Somewhere along the face.",
+            "type": "object",
+            "properties": {
+              "at_parameter": {
+                "type": "object",
+                "properties": {
+                  "u": {
+                    "description": "Value for the face's 2D parametric equation.",
+                    "type": "number",
+                    "format": "double",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  },
+                  "v": {
+                    "description": "Value for the face's 2D parametric equation.",
+                    "type": "number",
+                    "format": "double",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  }
+                },
+                "required": [
+                  "u",
+                  "v"
+                ]
+              }
+            },
+            "required": [
+              "at_parameter"
+            ],
+            "additionalProperties": false
           }
         ]
       },
