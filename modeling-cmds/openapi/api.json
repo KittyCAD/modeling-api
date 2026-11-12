@@ -4273,6 +4273,11 @@
                   }
                 ]
               },
+              "native_brep_preview": {
+                "nullable": true,
+                "description": "Request a read-only native B-rep preview instead of a tessellated export. The response uses the existing binary export envelope and a `preview.brep.json` file. Preview support must be enabled on the Engine.",
+                "type": "boolean"
+              },
               "type": {
                 "type": "string",
                 "enum": [
