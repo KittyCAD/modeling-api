@@ -254,6 +254,14 @@ define_ok_modeling_cmd_response_enum! {
         pub struct ObjectVisible {
         }
 
+        /// The response from the `ObjectIsHidden` endpoint.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ObjectIsHidden {
+            /// Whether the object is hidden.
+            pub hidden: bool,
+        }
+
         /// The response from the `ObjectBringToFront` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]

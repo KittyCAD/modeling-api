@@ -1203,6 +1203,17 @@ define_modeling_cmd_enum! {
             pub hidden: bool,
         }
 
+        /// Query whether an object is hidden.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ObjectIsHidden {
+            /// The ID of the object to query.
+            pub object_id: Uuid,
+        }
+
         /// Bring an object to the front of the scene
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]

@@ -5348,6 +5348,27 @@
             ]
           },
           {
+            "description": "Query whether an object is hidden.",
+            "type": "object",
+            "properties": {
+              "object_id": {
+                "description": "The ID of the object to query.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "object_is_hidden"
+                ]
+              }
+            },
+            "required": [
+              "object_id",
+              "type"
+            ]
+          },
+          {
             "description": "Bring an object to the front of the scene",
             "type": "object",
             "properties": {
