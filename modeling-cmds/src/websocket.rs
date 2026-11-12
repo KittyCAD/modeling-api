@@ -63,7 +63,6 @@ impl From<EngineErrorCode> for ErrorCode {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 pub struct ModelingCmdReq {
     /// Which command to submit to the Kittycad engine.
     pub cmd: ModelingCmd,
@@ -78,7 +77,6 @@ pub struct ModelingCmdReq {
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 pub enum WebSocketRequest {
     /// The trickle ICE candidate request.
     // We box these to avoid a huge size difference between variants.
@@ -140,7 +138,6 @@ impl WebSocketRequest {
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[serde(rename_all = "snake_case")]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 pub struct ModelingBatch {
     /// A sequence of modeling requests. If any request fails, following requests will not be tried.
     pub requests: Vec<ModelingCmdReq>,
@@ -504,8 +501,6 @@ impl<T, E> From<Result<T, E>> for SnakeCaseResult<T, E> {
 /// ClientMetrics contains information regarding the state of the peer.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "ts-rs", ts(optional_fields = nullable))]
 pub struct ClientMetrics {
     /// Counter of the number of WebRTC frames the client has dropped from the
     /// inbound video stream.
@@ -778,8 +773,6 @@ impl From<RtcIceProtocol> for webrtc::ice_transport::ice_protocol::RTCIceProtoco
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[serde(rename_all = "camelCase")]
 // These HAVE to be camel case as per the RFC.
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "ts-rs", ts(optional_fields = nullable))]
 pub struct RtcIceCandidateInit {
     /// The candidate string associated with the object.
     pub candidate: String,
@@ -822,7 +815,6 @@ impl From<RtcIceCandidateInit> for webrtc::ice_transport::ice_candidate::RTCIceC
 /// SessionDescription is used to expose local and remote session descriptions.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 pub struct RtcSessionDescription {
     /// SDP type.
     #[serde(rename = "type")]
@@ -869,7 +861,6 @@ impl TryFrom<RtcSessionDescription> for webrtc::peer_connection::sdp::session_de
 #[derive(Default, Debug, PartialEq, Eq, Copy, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 pub enum RtcSdpType {
     /// Unspecified indicates that the type is unspecified.
     #[default]
