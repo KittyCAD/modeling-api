@@ -1,3 +1,6 @@
+/// Portable mesh-free B-rep export contract.
+pub mod native_brep;
+
 use bon::Builder;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
