@@ -715,11 +715,6 @@ define_modeling_cmd_enum! {
             /// KCL source to embed in formats that support source metadata.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub kcl_source: Option<KclProject>,
-            /// Request a read-only native B-rep preview instead of a tessellated export.
-            /// The response uses the existing binary export envelope and a
-            /// `preview.brep.json` file. Preview support must be enabled on the Engine.
-            #[serde(default, skip_serializing_if = "Option::is_none")]
-            pub native_brep_preview: Option<bool>,
         }
 
         /// What is this entity's parent?

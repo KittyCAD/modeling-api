@@ -1358,6 +1358,10 @@ impl ExportFile {
 )]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum FileExportFormat {
+    /// Mesh-free native B-rep display snapshot from the Engine, in meters, Z up.
+    #[serde(rename = "native_brep")]
+    #[display("native_brep")]
+    NativeBrep,
     /// Autodesk Filmbox (FBX) format. <https://en.wikipedia.org/wiki/FBX>
     Fbx,
     /// Binary glTF 2.0.

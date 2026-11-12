@@ -4273,11 +4273,6 @@
                   }
                 ]
               },
-              "native_brep_preview": {
-                "nullable": true,
-                "description": "Request a read-only native B-rep preview instead of a tessellated export. The response uses the existing binary export envelope and a `preview.brep.json` file. Preview support must be enabled on the Engine.",
-                "type": "boolean"
-              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -8813,6 +8808,21 @@
       "OutputFormat3d": {
         "description": "Output 3D format specifier.",
         "oneOf": [
+          {
+            "description": "Mesh-free native B-rep display snapshot, encoded as versioned JSON. Coordinates are meters, Z up. This is a read-only visualization format, not a manufacturing export; it is captured directly from the Engine scene.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "native_brep"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
           {
             "description": "Autodesk Filmbox (FBX) format.",
             "type": "object",
