@@ -258,8 +258,9 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ObjectIsHidden {
-            /// Whether the object is hidden.
-            pub hidden: bool,
+            /// Whether each requested object is hidden, in the same order as `object_ids`.
+            /// Contains one entry per requested ID, including duplicates.
+            pub hidden: Vec<bool>,
         }
 
         /// The response from the `ObjectBringToFront` endpoint.

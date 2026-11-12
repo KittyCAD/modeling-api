@@ -5348,13 +5348,16 @@
             ]
           },
           {
-            "description": "Query whether an object is hidden.",
+            "description": "Query whether each object is hidden, preserving input order. Returns an error if any object does not exist.",
             "type": "object",
             "properties": {
-              "object_id": {
-                "description": "The ID of the object to query.",
-                "type": "string",
-                "format": "uuid"
+              "object_ids": {
+                "description": "The IDs of the objects to query. Order and duplicates are preserved. An empty list returns an empty result.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
               },
               "type": {
                 "type": "string",
@@ -5364,7 +5367,7 @@
               }
             },
             "required": [
-              "object_id",
+              "object_ids",
               "type"
             ]
           },
