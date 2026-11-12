@@ -8809,21 +8809,6 @@
         "description": "Output 3D format specifier.",
         "oneOf": [
           {
-            "description": "Mesh-free native B-rep display snapshot, encoded as versioned JSON. Coordinates are meters, Z up. This is a read-only visualization format, not a manufacturing export; it is captured directly from the Engine scene.",
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "native_brep"
-                ]
-              }
-            },
-            "required": [
-              "type"
-            ]
-          },
-          {
             "description": "Autodesk Filmbox (FBX) format.",
             "type": "object",
             "properties": {
@@ -9115,6 +9100,21 @@
               "storage",
               "type",
               "units"
+            ]
+          },
+          {
+            "description": "Mesh-free native B-rep display snapshot, encoded as versioned JSON. Coordinates are meters, Z up. This is a read-only visualization format, not a manufacturing export; it is captured directly from the Engine scene.",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "native_brep"
+                ]
+              }
+            },
+            "required": [
+              "type"
             ]
           }
         ]

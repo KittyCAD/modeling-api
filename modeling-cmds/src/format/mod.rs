@@ -49,10 +49,6 @@ pub type OutputFormat = OutputFormat3d;
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum OutputFormat3d {
-    /// Mesh-free native B-rep display snapshot, encoded as versioned JSON.
-    /// Coordinates are meters, Z up. This is a read-only visualization format,
-    /// not a manufacturing export; it is captured directly from the Engine scene.
-    NativeBrep,
     /// Autodesk Filmbox (FBX) format.
     Fbx(fbx::export::Options),
     /// glTF 2.0.
@@ -68,6 +64,10 @@ pub enum OutputFormat3d {
     Step(step::export::Options),
     /// **ST**ereo**L**ithography format.
     Stl(stl::export::Options),
+    /// Mesh-free native B-rep display snapshot, encoded as versioned JSON.
+    /// Coordinates are meters, Z up. This is a read-only visualization format,
+    /// not a manufacturing export; it is captured directly from the Engine scene.
+    NativeBrep,
 }
 
 /// Alias for backward compatibility.
