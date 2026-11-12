@@ -527,7 +527,7 @@ proprietary_brep_formats! {
     (sldprt, "SldprtImportOptions", "SolidWorks part format", coord::OPENGL)
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "websocket"))]
 mod native_brep_tests {
     use super::*;
 
