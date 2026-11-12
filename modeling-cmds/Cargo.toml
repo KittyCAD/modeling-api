@@ -28,7 +28,7 @@ arbitrary = ["dep:arbitrary", "uuid/arbitrary", "chrono/arbitrary", "indexmap/ar
 exec-kcl = ["dep:kcl-error", "dep:kcl-api"]
 
 [dependencies]
-anyhow = "1.0.101"
+anyhow = { version = "1.0.101", optional = true }
 arbitrary = { version = "1", features = ["derive"], optional = true }
 bon = "3.9.1"
 chrono = { version = "0.4.43", features = ["serde"] }
