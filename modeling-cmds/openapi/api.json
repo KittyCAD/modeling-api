@@ -2175,6 +2175,17 @@
           }
         ]
       },
+      "GltfTessellationOptions": {
+        "description": "Controls mesh generation for a single glTF export.",
+        "type": "object",
+        "properties": {
+          "accurate": {
+            "description": "Use accurate tessellation (default). Set to false for standard display tessellation.",
+            "default": true,
+            "type": "boolean"
+          }
+        }
+      },
       "ImageFormat": {
         "description": "Enum containing the variety of image formats snapshots may be exported to.",
         "oneOf": [
@@ -8872,6 +8883,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/GltfStorage"
+                  }
+                ]
+              },
+              "tessellation": {
+                "nullable": true,
+                "description": "Tessellation to use when this export needs to generate a display mesh.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/GltfTessellationOptions"
                   }
                 ]
               },
