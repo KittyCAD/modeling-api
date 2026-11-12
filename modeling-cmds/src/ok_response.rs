@@ -24,6 +24,7 @@ define_ok_modeling_cmd_response_enum! {
             CameraSettings,
             CameraViewState,
             BodyType,
+            HiddenState,
             EntityReference,
         };
         use std::collections::HashMap;
@@ -258,9 +259,9 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct ObjectIsHidden {
-            /// Whether each requested object is hidden, in the same order as `object_ids`.
+            /// The hidden or missing-object state of each UUID, in the same order as `object_ids`.
             /// Contains one entry per requested ID, including duplicates.
-            pub hidden: Vec<bool>,
+            pub hidden: Vec<HiddenState>,
         }
 
         /// The response from the `ObjectBringToFront` endpoint.

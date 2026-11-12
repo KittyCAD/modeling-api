@@ -5348,7 +5348,7 @@
             ]
           },
           {
-            "description": "Query whether each object is hidden, preserving input order. Returns an error if any object does not exist.",
+            "description": "Query whether each object is hidden, preserving input order. Missing objects are reported as `no_such_object` in the response.",
             "type": "object",
             "properties": {
               "object_ids": {

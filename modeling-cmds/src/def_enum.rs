@@ -1204,7 +1204,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Query whether each object is hidden, preserving input order.
-        /// Returns an error if any object does not exist.
+        /// Missing objects are reported as `no_such_object` in the response.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
