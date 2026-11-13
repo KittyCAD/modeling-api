@@ -620,6 +620,26 @@ pub struct AnnotationFeatureControl {
     /// The scale of the leader (dot or arrow). Defaults to 1.
     #[serde(default = "one")]
     pub leader_scale: f32,
+
+    /// Supplemental text above the complete annotation label, outside any control frame.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_above: Option<String>,
+
+    /// Supplemental text below the complete annotation label, outside any control frame.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_below: Option<String>,
+
+    /// Supplemental text left the complete annotation label, outside any control frame.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_left: Option<String>,
+
+    /// Supplemental text right the complete annotation label, outside any control frame.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_right: Option<String>,
 }
 
 /// Parameters for defining an MBD Feature Tag Annotation state
@@ -675,6 +695,26 @@ pub struct AnnotationFeatureTag {
     /// The scale of the leader (dot or arrow). Defaults to 1.
     #[serde(default = "one")]
     pub leader_scale: f32,
+
+    /// Supplemental text above the complete annotation label, outside any control frame.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_above: Option<String>,
+
+    /// Supplemental text below the complete annotation label, outside any control frame.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_below: Option<String>,
+
+    /// Supplemental text left the complete annotation label, outside any control frame.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_left: Option<String>,
+
+    /// Supplemental text right the complete annotation label, outside any control frame.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_right: Option<String>,
 }
 
 /// The type of distance
@@ -2332,3 +2372,4 @@ pub enum CurveTypeDebug {
     /// Circle with a center and radius.
     Circle,
 }
+
