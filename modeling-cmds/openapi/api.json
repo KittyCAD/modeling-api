@@ -301,6 +301,26 @@
             "nullable": true,
             "description": "Suffix text which will appear after the basic dimension",
             "type": "string"
+          },
+          "text_above": {
+            "nullable": true,
+            "description": "Supplemental text above the complete annotation label, outside any control frame. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
+          },
+          "text_below": {
+            "nullable": true,
+            "description": "Supplemental text below the complete annotation label, outside any control frame. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
+          },
+          "text_left": {
+            "nullable": true,
+            "description": "Supplemental text left the complete annotation label, outside any control frame. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
+          },
+          "text_right": {
+            "nullable": true,
+            "description": "Supplemental text right the complete annotation label, outside any control frame. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
           }
         },
         "required": [
@@ -394,6 +414,26 @@
           "show_key": {
             "description": "Whether or not to display the key on the annotation label",
             "type": "boolean"
+          },
+          "text_above": {
+            "nullable": true,
+            "description": "Supplemental text above the complete annotation label, outside any control frame. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
+          },
+          "text_below": {
+            "nullable": true,
+            "description": "Supplemental text below the complete annotation label, outside any control frame. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
+          },
+          "text_left": {
+            "nullable": true,
+            "description": "Supplemental text left the complete annotation label, outside any control frame. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
+          },
+          "text_right": {
+            "nullable": true,
+            "description": "Supplemental text right the complete annotation label, outside any control frame. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
           },
           "value": {
             "description": "Tag value",
