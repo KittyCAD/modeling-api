@@ -1,5 +1,7 @@
+//! Compatibility tests for optional supplemental annotation text.
+
 use kittycad_modeling_cmds::shared::{AnnotationFeatureControl, AnnotationFeatureTag};
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 
 fn legacy_annotation() -> Value {
     json!({
@@ -19,7 +21,10 @@ fn legacy_annotation() -> Value {
 fn supplemental_text_is_optional_for_existing_annotations() {
     let control: AnnotationFeatureControl = serde_json::from_value(legacy_annotation()).unwrap();
     let tag: AnnotationFeatureTag = serde_json::from_value(legacy_annotation()).unwrap();
-    for value in [serde_json::to_value(control).unwrap(), serde_json::to_value(tag).unwrap()] {
+    for value in [
+        serde_json::to_value(control).unwrap(),
+        serde_json::to_value(tag).unwrap(),
+    ] {
         for key in ["text_above", "text_below", "text_left", "text_right"] {
             assert!(value.get(key).is_none(), "omitted field {key} must remain absent");
         }
