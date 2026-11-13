@@ -1,4 +1,5 @@
 //! Compatibility tests for optional supplemental annotation text.
+//! Supplemental strings must round-trip without changing measured dimension data.
 
 use kittycad_modeling_cmds::shared::{AnnotationFeatureControl, AnnotationFeatureTag};
 use serde_json::{json, Value};
