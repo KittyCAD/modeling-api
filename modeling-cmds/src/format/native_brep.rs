@@ -74,6 +74,7 @@ pub struct Snapshot {
 }
 
 /// Unmeshed surfaces and their trimmed face topology.
+/// Indices are local to this body. Coordinates and weights must be finite.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 #[schemars(rename = "NativeBrepBrep")]
@@ -141,7 +142,8 @@ pub struct Nurbs {
     #[serde(default)]
     /// Homogeneous control weights; empty means all weights are one.
     pub weights: Vec<f64>,
-    /// Spline knots, concatenated by direction for surfaces.
+    /// Full U knot vector followed by the full V knot vector, including the
+    /// end knots omitted by OpenNURBS.
     pub knot_vector: Vec<f64>,
     /// Control point counts in each surface parameter direction.
     pub num_control_points: [usize; 2],
@@ -163,6 +165,8 @@ pub struct Face {
     pub loops: Vec<Oriented>,
 }
 /// A face boundary in surface parameter coordinates.
+/// Trims must match the exported surface parameterization, including after
+/// conversion of analytic surfaces to NURBS.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "NativeBrepTrimLoop")]
 pub struct TrimLoop {
@@ -244,7 +248,7 @@ pub struct NurbsCurve {
     #[serde(default)]
     /// Homogeneous control weights; empty means all weights are one.
     pub weights: Vec<f64>,
-    /// Curve knot vector.
+    /// Full curve knot vector, including the end knots omitted by OpenNURBS.
     pub knot_vector: Vec<f64>,
     /// Spline order (degree plus one).
     pub order: usize,
