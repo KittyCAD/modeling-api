@@ -82,7 +82,7 @@ pub struct Brep {
     pub surfaces: Vec<Surface>,
     /// Oriented, trimmed faces.
     pub faces: Vec<Face>,
-    /// Oriented trim loops referenced by this face, or loop definitions in a body.
+    /// Trim loop definitions referenced by faces.
     pub loops: Vec<TrimLoop>,
     #[serde(rename = "curves2D")]
     /// Trim curve definitions.
@@ -158,7 +158,7 @@ pub struct Face {
     /// Surface index and orientation.
     #[schemars(with = "[i64; 2]")]
     pub surface: Oriented,
-    /// Oriented trim loops referenced by this face, or loop definitions in a body.
+    /// Oriented trim loop references bounding this face.
     #[schemars(with = "Vec<[i64; 2]>")]
     pub loops: Vec<Oriented>,
 }
@@ -244,7 +244,7 @@ pub struct NurbsCurve {
     #[serde(default)]
     /// Homogeneous control weights; empty means all weights are one.
     pub weights: Vec<f64>,
-    /// Spline knots, concatenated by direction for surfaces.
+    /// Curve knot vector.
     pub knot_vector: Vec<f64>,
     /// Spline order (degree plus one).
     pub order: usize,

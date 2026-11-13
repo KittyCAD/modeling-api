@@ -1,6 +1,3 @@
-/// Portable mesh-free B-rep export contract.
-pub mod native_brep;
-
 use bon::Builder;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -19,6 +16,8 @@ pub mod fbx;
 /// it may be in binary format and thus technically (glb).
 /// If you prefer ASCII output, you can set that option for the export.
 pub mod gltf;
+/// Portable mesh-free B-rep export contract.
+pub mod native_brep;
 /// Wavefront OBJ format.
 pub mod obj;
 /// The PLY Polygon File Format.
