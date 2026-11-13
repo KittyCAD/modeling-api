@@ -6,8 +6,6 @@ use serde::{Deserialize, Serialize};
 
 /// Current native B-rep wire protocol version.
 pub const VERSION: u32 = 1;
-/// Default native B-rep export filename.
-pub const FILE_NAME: &str = "preview.brep.json";
 
 fn deserialize_version<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result<u32, D::Error> {
     let version = u32::deserialize(deserializer)?;
@@ -252,70 +250,27 @@ pub struct NurbsCurve {
     pub order: usize,
 }
 
-/// Encode already-serialized bodies without parsing or rounding their geometry.
-///
-/// Each body must be valid JSON conforming to [`Brep`], produced by the trusted
-/// native encoder. This function escapes envelope strings but deliberately does
-/// not validate raw geometry; compatibility fixtures check the native producer.
-pub fn encode_scene(bodies: &[(&str, &[u8])], errors: &[String]) -> serde_json::Result<Vec<u8>> {
-    let mut out = Vec::with_capacity(
-        bodies
-            .iter()
-            .map(|(id, body)| id.len() + body.len() + 24)
-            .sum::<usize>()
-            + 128,
-    );
-    out.extend_from_slice(b"{\"version\":");
-    serde_json::to_writer(&mut out, &VERSION)?;
-    out.extend_from_slice(b",\"coordinateSystem\":");
-    serde_json::to_writer(&mut out, &CoordinateSystem::ZUp)?;
-    out.extend_from_slice(b",\"bodies\":[");
-    for (i, (id, body)) in bodies.iter().enumerate() {
-        if i != 0 {
-            out.push(b',');
-        }
-        out.extend_from_slice(b"{\"id\":");
-        serde_json::to_writer(&mut out, id)?;
-        out.extend_from_slice(b",\"brep\":");
-        out.extend_from_slice(body);
-        out.push(b'}');
-    }
-    out.extend_from_slice(b"],\"errors\":");
-    serde_json::to_writer(&mut out, errors)?;
-    out.push(b'}');
-    Ok(out)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn native_capture_is_compatible_and_keeps_exact_geometry_bytes() {
+    fn native_capture_is_compatible() {
         // Captured from the C++ producer, not synthesized from these Rust types.
         let body = include_bytes!("../../tests/fixtures/native-brep/sphere.brep.json");
-        let id = "body\"\\\n";
-        let errors = vec!["skipped body\n\"detail\"".to_owned()];
-        let packet = encode_scene(&[(id, body)], &errors).unwrap();
-        let scene: SceneSnapshot = serde_json::from_slice(&packet).unwrap();
-        assert_eq!(scene.bodies[0].id, id);
-        assert!(!scene.bodies[0].brep.faces.is_empty());
-        assert_eq!(scene.errors, errors);
-        assert!(packet.windows(body.len()).any(|part| part == body));
-        let precise =
-            br#"{"surfaces":[],"faces":[],"loops":[],"curves2D":[],"precise":1.2345678901234567,"tiny":1e-200}"#;
-        let multiple = encode_scene(&[(id, body), ("precise", precise)], &[]).unwrap();
-        let decoded: SceneSnapshot = serde_json::from_slice(&multiple).unwrap();
-        assert_eq!(decoded.bodies.len(), 2);
-        assert!(multiple.windows(precise.len()).any(|part| part == precise));
-        let empty: SceneSnapshot = serde_json::from_slice(&encode_scene(&[], &[]).unwrap()).unwrap();
-        assert!(empty.bodies.is_empty());
+        let brep: Brep = serde_json::from_slice(body).unwrap();
+        assert!(!brep.faces.is_empty());
     }
 
     #[test]
     fn unsupported_protocol_versions_and_coordinate_systems_are_rejected() {
-        let packet = encode_scene(&[], &[]).unwrap();
-        let mut scene: serde_json::Value = serde_json::from_slice(&packet).unwrap();
+        let mut scene = serde_json::json!({
+            "version": VERSION,
+            "coordinateSystem": "z-up",
+            "bodies": [],
+            "errors": []
+        });
+        assert!(serde_json::from_value::<SceneSnapshot>(scene.clone()).is_ok());
         scene["version"] = (VERSION + 1).into();
         assert!(serde_json::from_value::<SceneSnapshot>(scene.clone()).is_err());
         scene["version"] = VERSION.into();
