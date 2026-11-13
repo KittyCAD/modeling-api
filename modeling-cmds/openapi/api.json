@@ -2661,6 +2661,39 @@
               "type",
               "units"
             ]
+          },
+          {
+            "description": "Rhino (3dm) file format",
+            "type": "object",
+            "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "rhino"
+                ]
+              },
+              "units": {
+                "description": "The units of the input data.\n\nThis is very important for correct scaling and when calculating physics properties like mass, etc.\n\nDefaults to millimeters.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitLength"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "coords",
+              "type",
+              "units"
+            ]
           }
         ]
       },
@@ -9098,6 +9131,39 @@
               "coords",
               "selection",
               "storage",
+              "type",
+              "units"
+            ]
+          },
+          {
+            "description": "Rhino (3dm) file format",
+            "type": "object",
+            "properties": {
+              "coords": {
+                "description": "Co-ordinate system of output data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "rhino"
+                ]
+              },
+              "units": {
+                "description": "Export length unit.\n\nDefaults to millimeters.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitLength"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "coords",
               "type",
               "units"
             ]
