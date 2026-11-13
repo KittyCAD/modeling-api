@@ -256,7 +256,10 @@ mod tests {
 
     #[test]
     fn native_capture_is_compatible() {
-        // Captured from the C++ producer, not synthesized from these Rust types.
+        // Engine 55ae41f05: DisplaySnapshot::capture_live_json in
+        // cpp/engine/scene/model/brep/display-snapshot-json.h, from an OpenNURBS
+        // sphere of radius 0.002 meters at scale 1.0. Numeric JSON is unchanged;
+        // it covers NURBS conversion, periodic surfaces and remapped UV trims.
         let body = include_bytes!("../../tests/fixtures/native-brep/sphere.brep.json");
         let brep: Brep = serde_json::from_slice(body).unwrap();
         assert!(!brep.faces.is_empty());
