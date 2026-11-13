@@ -16,6 +16,8 @@ pub mod fbx;
 /// it may be in binary format and thus technically (glb).
 /// If you prefer ASCII output, you can set that option for the export.
 pub mod gltf;
+/// Portable mesh-free B-rep export contract.
+pub mod native_brep;
 /// Wavefront OBJ format.
 pub mod obj;
 /// The PLY Polygon File Format.
@@ -64,6 +66,10 @@ pub enum OutputFormat3d {
     Step(step::export::Options),
     /// **ST**ereo**L**ithography format.
     Stl(stl::export::Options),
+    /// Mesh-free native B-rep display snapshot, encoded as versioned JSON.
+    /// Coordinates are meters, Z up. This is a read-only visualization format,
+    /// not a manufacturing export; it is captured directly from the Engine scene.
+    NativeBrep,
 }
 
 /// Alias for backward compatibility.
@@ -277,6 +283,7 @@ impl VirtualFile {
 impl From<OutputFormat3d> for FileExportFormat {
     fn from(output_format: OutputFormat3d) -> Self {
         match output_format {
+            OutputFormat3d::NativeBrep => Self::NativeBrep,
             OutputFormat3d::Fbx(_) => Self::Fbx,
             OutputFormat3d::Gltf(_) => Self::Gltf,
             OutputFormat3d::Obj(_) => Self::Obj,
@@ -306,6 +313,7 @@ impl From<FileExportFormat2d> for OutputFormat2d {
 impl From<FileExportFormat> for OutputFormat3d {
     fn from(export_format: FileExportFormat) -> Self {
         match export_format {
+            FileExportFormat::NativeBrep => OutputFormat3d::NativeBrep,
             FileExportFormat::Fbx => OutputFormat3d::Fbx(Default::default()),
             FileExportFormat::Glb => OutputFormat3d::Gltf(gltf::export::Options {
                 storage: gltf::export::Storage::Binary,
@@ -400,6 +408,7 @@ impl OutputFormat3d {
         };
 
         match format {
+            FileExportFormat::NativeBrep => Self::NativeBrep,
             FileExportFormat::Fbx => Self::Fbx(fbx::export::Options {
                 storage: fbx::export::Storage::Binary,
                 created: None,
@@ -518,4 +527,26 @@ proprietary_brep_formats! {
     (nx, "NxImportOptions", "Siemens NX part format", coord::KITTYCAD)
     (parasolid, "ParasolidImportOptions", "Parasolid part format", coord::KITTYCAD)
     (sldprt, "SldprtImportOptions", "SolidWorks part format", coord::OPENGL)
+}
+
+#[cfg(all(test, feature = "websocket"))]
+mod native_brep_tests {
+    use super::*;
+
+    #[test]
+    fn native_brep_uses_the_normal_export_format_contract() {
+        let request: crate::websocket::WebSocketRequest = serde_json::from_str(
+            r#"{"type":"modeling_cmd_req","cmd_id":"00000000-0000-0000-0000-000000000001","cmd":{"type":"export","entity_ids":[],"format":{"type":"native_brep"}}}"#,
+        ).unwrap();
+        let crate::websocket::WebSocketRequest::ModelingCmdReq(request) = request else {
+            panic!("Expected modeling command")
+        };
+        let crate::ModelingCmd::Export(export) = request.cmd else {
+            panic!("Expected export")
+        };
+        assert_eq!(export.format, OutputFormat3d::NativeBrep);
+        let file_format = FileExportFormat::from(export.format);
+        assert_eq!(file_format.to_string(), "native_brep");
+        assert_eq!(OutputFormat3d::from(file_format), OutputFormat3d::NativeBrep);
+    }
 }
