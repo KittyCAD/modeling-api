@@ -5348,6 +5348,30 @@
             ]
           },
           {
+            "description": "Query whether each object is hidden, preserving input order. Missing objects are reported as `no_such_object` in the response.",
+            "type": "object",
+            "properties": {
+              "object_ids": {
+                "description": "The IDs of the objects to query. Order and duplicates are preserved. An empty list returns an empty result.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "object_is_hidden"
+                ]
+              }
+            },
+            "required": [
+              "object_ids",
+              "type"
+            ]
+          },
+          {
             "description": "Bring an object to the front of the scene",
             "type": "object",
             "properties": {
