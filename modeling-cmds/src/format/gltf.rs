@@ -66,7 +66,7 @@ pub mod export {
 
         /// Tessellation settings for converting CAD surfaces to triangles.
         /// Omit to preserve the current tessellation behavior. Existing meshes are unchanged.
-        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(default, skip_serializing_if = "Option::is_none")]
         pub tessellation: Option<TessellationOptions>,
 
         /// Named views in the scene.
