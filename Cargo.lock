@@ -2695,9 +2695,9 @@ dependencies = [
 
 [[package]]
 name = "kcl-api"
-version = "0.2.195"
+version = "0.2.196"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1f04e24ac7116ba28e929e518bdd2129dd7d991b950e0d4f0677cbc0670a48f"
+checksum = "76c802f6b0f9dec2fead9bd4b7dda930b9938a366d857ebd6b0ed0ad084086e2"
 dependencies = [
  "arbitrary",
  "euler",
@@ -2718,9 +2718,9 @@ dependencies = [
 
 [[package]]
 name = "kcl-error"
-version = "0.2.195"
+version = "0.2.196"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "938fe7f4f7fd9ac49ec7e07ea86340eb87136eed76575b3b626812e2b4a1d705"
+checksum = "17b548a0c736ecb95075aa6e1e1b63acfbfd3cf31488402e09ea0558e636d9de"
 dependencies = [
  "miette",
  "schemars 0.8.22",
