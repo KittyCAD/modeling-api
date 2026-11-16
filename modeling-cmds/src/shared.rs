@@ -1296,6 +1296,23 @@ pub enum EntityType {
     Annotation,
 }
 
+/// Visibility of an object, or whether the requested object does not exist.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[repr(u8)]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum HiddenState {
+    /// The object exists and is hidden.
+    Hidden = 0,
+    /// The object exists and is visible.
+    Visible = 1,
+    /// No object exists for the requested UUID.
+    NoSuchObject = 2,
+}
+
 /// The type of Curve (embedded within path)
 #[allow(missing_docs)]
 #[derive(
@@ -1831,6 +1848,7 @@ impl_extern_type! {
     BlendType = "Enums::_BlendType"
     BodyType = "Enums::_BodyType"
     EntityType = "Enums::_EntityType"
+    HiddenState = "Enums::_HiddenState"
     AnnotationType = "Enums::_AnnotationType"
     AnnotationTextAlignmentX = "Enums::_AnnotationTextAlignmentX"
     AnnotationTextAlignmentY = "Enums::_AnnotationTextAlignmentY"
