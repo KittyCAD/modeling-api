@@ -2175,17 +2175,6 @@
           }
         ]
       },
-      "GltfTessellationOptions": {
-        "description": "Controls mesh generation for a single glTF export.",
-        "type": "object",
-        "properties": {
-          "accurate": {
-            "description": "Use accurate tessellation (default). Set to false for standard display tessellation.",
-            "default": true,
-            "type": "boolean"
-          }
-        }
-      },
       "ImageFormat": {
         "description": "Enum containing the variety of image formats snapshots may be exported to.",
         "oneOf": [
@@ -8837,6 +8826,15 @@
                   }
                 ]
               },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -8891,7 +8889,7 @@
                 "description": "Tessellation to use when this export needs to generate a display mesh.",
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/GltfTessellationOptions"
+                    "$ref": "#/components/schemas/TessellationOptions"
                   }
                 ]
               },
@@ -8922,6 +8920,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
                   }
                 ]
               },
@@ -8971,6 +8978,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/PlyStorage"
+                  }
+                ]
+              },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
                   }
                 ]
               },
@@ -9096,6 +9112,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/StlStorage"
+                  }
+                ]
+              },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
                   }
                 ]
               },
@@ -10181,6 +10206,40 @@
           "forward",
           "up"
         ]
+      },
+      "TessellationMode": {
+        "description": "Selects the purpose of the generated mesh.",
+        "oneOf": [
+          {
+            "description": "Generate a mesh for visualization.",
+            "type": "string",
+            "enum": [
+              "visual"
+            ]
+          },
+          {
+            "description": "Generate a mesh with the accurate tessellation settings.",
+            "type": "string",
+            "enum": [
+              "accurate"
+            ]
+          }
+        ]
+      },
+      "TessellationOptions": {
+        "description": "Controls mesh generation for mesh exports.",
+        "type": "object",
+        "properties": {
+          "mode": {
+            "description": "Tessellation mode. Defaults to accurate.",
+            "default": "accurate",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TessellationMode"
+              }
+            ]
+          }
+        }
       },
       "Tolerance": {
         "description": "Default tolerance values for modeling operations.",

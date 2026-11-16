@@ -76,7 +76,7 @@ pub mod export {
         /// Tessellation to use when this export needs to generate a display mesh.
         #[serde(default, skip_serializing_if = "Option::is_none")]
         #[cfg_attr(feature = "ts-rs", ts(optional))]
-        pub tessellation: Option<TessellationOptions>,
+        pub tessellation: Option<crate::format::tessellation::Options>,
 
         /// Named views in the scene.
         #[builder(default)]
@@ -89,29 +89,6 @@ pub mod export {
         #[allow(deprecated)]
         pub fn includes_geometry_uuids(&self) -> bool {
             self.include_uuids || self.extras.contains(&Extra::GeometryUuids)
-        }
-    }
-
-    /// Controls mesh generation for a single glTF export.
-    #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
-    #[serde(default, rename = "GltfTessellationOptions")]
-    #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS), ts(export_to = "ModelingCmd.ts"))]
-    #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-    #[cfg_attr(
-        feature = "python",
-        pyo3_stub_gen::derive::gen_stub_pyclass,
-        pyo3::pyclass(name = "GltfTessellationOptions", from_py_object)
-    )]
-    #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-    pub struct TessellationOptions {
-        /// Use accurate tessellation (default). Set to false for standard display tessellation.
-        #[builder(default = true)]
-        pub accurate: bool,
-    }
-
-    impl Default for TessellationOptions {
-        fn default() -> Self {
-            Self { accurate: true }
         }
     }
 
@@ -214,22 +191,22 @@ pub mod export {
 #[cfg(test)]
 mod tests {
     use super::export::{Extra, Options, Presentation, Storage};
-    use crate::format::OutputFormat3d;
+    use crate::format::{tessellation::Mode, OutputFormat3d};
 
     #[test]
     fn tessellation_is_optional_and_defaults_to_accurate() {
         let ordinary: Options = serde_json::from_str("{}").unwrap();
         assert!(serde_json::to_value(ordinary).unwrap().get("tessellation").is_none());
-        for (settings, accurate) in [
-            (serde_json::json!({}), true),
-            (serde_json::json!({"accurate": true}), true),
-            (serde_json::json!({"accurate": false}), false),
+        for (settings, mode) in [
+            (serde_json::json!({}), Mode::Accurate),
+            (serde_json::json!({"mode": "accurate"}), Mode::Accurate),
+            (serde_json::json!({"mode": "visual"}), Mode::Visual),
         ] {
             let options: Options = serde_json::from_value(serde_json::json!({"tessellation": settings})).unwrap();
-            assert_eq!(options.tessellation.unwrap().accurate, accurate);
+            assert_eq!(options.tessellation.unwrap().mode, mode);
             assert_eq!(
-                serde_json::to_value(options).unwrap()["tessellation"]["accurate"],
-                accurate
+                serde_json::to_value(options).unwrap()["tessellation"]["mode"],
+                mode.to_string()
             );
         }
     }
