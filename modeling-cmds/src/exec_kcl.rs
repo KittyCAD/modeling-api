@@ -61,6 +61,21 @@ pub struct ExecKclProjectErr {
     pub filenames: IndexMap<kcl_error::ModuleId, kcl_api::modules::ModulePath>,
 }
 
+/// A KCL project.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Default, Builder)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct ExecKclParams {}
+
+impl ExecKclParams {
+    /// Set the parameters to their defaults.
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
 impl ExecKclProjectErr {
     /// Be careful using this. If you have executed a KCL program,
     /// you should be building the full ExecKclProjectErr via its `build()`

@@ -81,13 +81,18 @@ pub struct PrimitiveTopologyFallback {
     pub primitive_index: u32,
 }
 
-/// An edge/vertex can be defined by the faces that it is connected to.
+/// A reference identifying a selectable scene entity.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
 pub enum EntityReference {
+    /// A uuid referencing an annotation.
+    Annotation {
+        /// Id of the annotation object being referenced.
+        annotation_id: Uuid,
+    },
     /// A uuid referencing a plane.
     Plane {
         /// Id of the plane being referenced.
@@ -428,6 +433,19 @@ pub enum AnnotationMbdLeaderPosition {
 
     /// Geometric Center of the entity (such as on the center axis for a cylinder)
     Centroid {},
+
+    /// Used in dimension measurements for the to_entity_leader_pos field.
+    /// Determines the position using the previous "from" position stepped back (projected) onto the
+    /// planar entity (via planar projection or vector dot product)
+    StepFrom {},
+
+    /// Used in dimension measurements for the to_entity_leader_pos field.
+    /// Automatically determines which type of leader position to use.
+    /// If the entity is planar and this is a to_entity_leader_pos dimension field, then StepFrom is used.
+    /// If the entity is circular or cylindrical, Centroid is used.
+    /// If the entity is a linear edge NormalizedPos { 0.5, N/A } is used
+    /// If no other cases apply, then NormalizedPos { 0.5, 0.5 } is used
+    Auto {},
 }
 
 /// Parameters for defining an MBD Geometric control frame
@@ -1275,6 +1293,24 @@ pub enum EntityType {
     Vertex,
     Region,
     PatternGroup,
+    Annotation,
+}
+
+/// Visibility of an object, or whether the requested object does not exist.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[repr(u8)]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum HiddenState {
+    /// The object exists and is hidden.
+    Hidden = 0,
+    /// The object exists and is visible.
+    Visible = 1,
+    /// No object exists for the requested UUID.
+    NoSuchObject = 2,
 }
 
 /// The type of Curve (embedded within path)
@@ -1812,6 +1848,7 @@ impl_extern_type! {
     BlendType = "Enums::_BlendType"
     BodyType = "Enums::_BodyType"
     EntityType = "Enums::_EntityType"
+    HiddenState = "Enums::_HiddenState"
     AnnotationType = "Enums::_AnnotationType"
     AnnotationTextAlignmentX = "Enums::_AnnotationTextAlignmentX"
     AnnotationTextAlignmentY = "Enums::_AnnotationTextAlignmentY"

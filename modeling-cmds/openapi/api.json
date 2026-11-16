@@ -576,6 +576,32 @@
               "centroid"
             ],
             "additionalProperties": false
+          },
+          {
+            "description": "Used in dimension measurements for the to_entity_leader_pos field. Determines the position using the previous \"from\" position stepped back (projected) onto the planar entity (via planar projection or vector dot product)",
+            "type": "object",
+            "properties": {
+              "step_from": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "step_from"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Used in dimension measurements for the to_entity_leader_pos field. Automatically determines which type of leader position to use. If the entity is planar and this is a to_entity_leader_pos dimension field, then StepFrom is used. If the entity is circular or cylindrical, Centroid is used. If the entity is a linear edge NormalizedPos { 0.5, N/A } is used If no other cases apply, then NormalizedPos { 0.5, 0.5 } is used",
+            "type": "object",
+            "properties": {
+              "auto": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "auto"
+            ],
+            "additionalProperties": false
           }
         ]
       },
@@ -1446,8 +1472,29 @@
         ]
       },
       "EntityReference": {
-        "description": "An edge/vertex can be defined by the faces that it is connected to.",
+        "description": "A reference identifying a selectable scene entity.",
         "oneOf": [
+          {
+            "description": "A uuid referencing an annotation.",
+            "type": "object",
+            "properties": {
+              "annotation_id": {
+                "description": "Id of the annotation object being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "annotation"
+                ]
+              }
+            },
+            "required": [
+              "annotation_id",
+              "type"
+            ]
+          },
           {
             "description": "A uuid referencing a plane.",
             "type": "object",
@@ -1791,7 +1838,8 @@
           "plane",
           "vertex",
           "region",
-          "patterngroup"
+          "patterngroup",
+          "annotation"
         ]
       },
       "Error": {
@@ -2038,6 +2086,46 @@
             "type": "string",
             "enum": [
               "z"
+            ]
+          }
+        ]
+      },
+      "GltfExportExtra": {
+        "description": "Additional data that can be included in a glTF 2.0 export.",
+        "oneOf": [
+          {
+            "description": "Sketch geometry and metadata.",
+            "type": "string",
+            "enum": [
+              "sketches"
+            ]
+          },
+          {
+            "description": "Sketch regions and their resolver metadata.",
+            "type": "string",
+            "enum": [
+              "regions"
+            ]
+          },
+          {
+            "description": "Original imported files.",
+            "type": "string",
+            "enum": [
+              "imported_files"
+            ]
+          },
+          {
+            "description": "Model-based definition (MBD) annotations.",
+            "type": "string",
+            "enum": [
+              "mbd"
+            ]
+          },
+          {
+            "description": "UUIDs and source UUIDs on boundary-representation solids, edges, faces, and surfaces.",
+            "type": "string",
+            "enum": [
+              "geometry_uuids"
             ]
           }
         ]
@@ -5256,6 +5344,30 @@
             "required": [
               "hidden",
               "object_id",
+              "type"
+            ]
+          },
+          {
+            "description": "Query whether each object is hidden, preserving input order. Missing objects are reported as `no_such_object` in the response.",
+            "type": "object",
+            "properties": {
+              "object_ids": {
+                "description": "The IDs of the objects to query. Order and duplicates are preserved. An empty list returns an empty result.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "object_is_hidden"
+                ]
+              }
+            },
+            "required": [
+              "object_ids",
               "type"
             ]
           },
@@ -8763,8 +8875,18 @@
             "description": "glTF 2.0. We refer to this as glTF since that is how our customers refer to it, although by default it will be in binary format and thus technically (glb). If you prefer ASCII output, you can set that option for the export.",
             "type": "object",
             "properties": {
+              "extras": {
+                "description": "Additional data to include in the exported glTF. Defaults to an empty set.",
+                "default": [],
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GltfExportExtra"
+                },
+                "uniqueItems": true
+              },
               "include_uuids": {
-                "description": "Include engine UUIDs in glTF extras. Defaults to false.",
+                "deprecated": true,
+                "description": "Include geometry UUIDs. Setting this to true is equivalent to adding `geometry_uuids` to `extras`.",
                 "default": false,
                 "type": "boolean"
               },

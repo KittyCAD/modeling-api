@@ -19,3 +19,6 @@ syn = { workspace = true, features = ["derive"] }
 
 [dev-dependencies]
 pretty_assertions = "1"
+
+[lints]
+workspace = true

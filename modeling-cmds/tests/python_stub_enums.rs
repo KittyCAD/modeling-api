@@ -1,4 +1,4 @@
-//! Ensures renamed `Storage` enums are reflected in stub generation.
+//! Ensures renamed format enums are reflected in stub generation.
 #![cfg(feature = "python")]
 
 use std::{collections::HashSet, path::PathBuf};
@@ -13,6 +13,7 @@ fn pyclass_enum_renames_are_used_in_stub_generation() {
     let _ = std::any::TypeId::of::<format::ply::export::Storage>();
     let _ = std::any::TypeId::of::<format::fbx::export::Storage>();
     let _ = std::any::TypeId::of::<format::gltf::export::Storage>();
+    let _ = std::any::TypeId::of::<format::gltf::export::Extra>();
     let _ = std::any::TypeId::of::<format::tessellation::LevelOfDetail>();
 
     let _ = std::any::TypeId::of::<format::tessellation::Mode>();
@@ -43,6 +44,7 @@ fn pyclass_enum_renames_are_used_in_stub_generation() {
         "PlyStorage",
         "FbxStorage",
         "GltfStorage",
+        "GltfExportExtra",
         "TessellationLevelOfDetail",
     ] {
         assert!(

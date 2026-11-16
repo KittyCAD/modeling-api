@@ -121,6 +121,18 @@ pub enum WebSocketRequest {
     },
 }
 
+impl WebSocketRequest {
+    /// Execute a KCL project.
+    #[cfg(feature = "exec-kcl")]
+    pub fn exec_kcl_project(
+        request_id: Uuid,
+        project: crate::exec_kcl::KclProject,
+        _params: crate::exec_kcl::ExecKclParams,
+    ) -> Self {
+        Self::ExecKclProject { request_id, project }
+    }
+}
+
 /// A sequence of modeling requests. If any request fails, following requests will not be tried.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[cfg_attr(feature = "derive-jsonschema-on-enums", derive(schemars::JsonSchema))]
