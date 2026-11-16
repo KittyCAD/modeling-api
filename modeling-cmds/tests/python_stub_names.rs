@@ -16,7 +16,7 @@ fn pyclass_renames_are_used_in_stub_generation() {
     let _ = std::any::TypeId::of::<format::obj::export::Options>();
     let _ = std::any::TypeId::of::<format::stl::import::Options>();
     let _ = std::any::TypeId::of::<format::stl::export::Options>();
-    let _ = std::any::TypeId::of::<format::gltf::export::TessellationOptions>();
+    let _ = std::any::TypeId::of::<format::tessellation::Options>();
     // Collect stub info registered by `gen_stub_*` derives in this crate.
     // We don't require a real pyproject.toml for this check.
     let mixed_layout = true;
@@ -48,7 +48,7 @@ fn pyclass_renames_are_used_in_stub_generation() {
         "ObjExportOptions",
         "StlImportOptions",
         "StlExportOptions",
-        "GltfTessellationOptions",
+        "TessellationOptions",
     ] {
         assert!(
             names.contains(expected),

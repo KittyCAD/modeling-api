@@ -78,6 +78,11 @@ pub mod export {
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
+        /// Settings used when generating a mesh from CAD surfaces.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[cfg_attr(feature = "ts-rs", ts(optional))]
+        pub tessellation: Option<crate::format::tessellation::Options>,
+
         /// Co-ordinate system of output data.
         ///
         /// Defaults to the [KittyCAD co-ordinate system].
@@ -115,6 +120,7 @@ pub mod export {
     impl Default for Options {
         fn default() -> Self {
             Self {
+                tessellation: None,
                 coords: *coord::KITTYCAD,
                 selection: Default::default(),
                 storage: Default::default(),
