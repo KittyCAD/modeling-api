@@ -74,7 +74,7 @@ pub mod export {
         pub extras: IndexSet<Extra>,
 
         /// Tessellation to use when this export needs to generate a display mesh.
-        #[serde(skip_serializing_if = "Option::is_none")]
+        #[serde(default, skip_serializing_if = "Option::is_none")]
         #[cfg_attr(feature = "ts-rs", ts(optional))]
         pub tessellation: Option<TessellationOptions>,
 
