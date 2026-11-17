@@ -2935,6 +2935,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Create a new assembly
+        /// Its ID is the ID of this command.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -2944,6 +2945,7 @@ define_modeling_cmd_enum! {
         }
 
         /// Create an anchor.
+        /// Its ID is the ID of this command.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]

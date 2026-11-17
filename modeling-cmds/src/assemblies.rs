@@ -79,10 +79,25 @@ pub enum AnchorTransform {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub struct Mate {
     /// Which two anchors are being constrained
-    pub anchor_ids: [Uuid; 2],
+    pub targets: [MateTarget; 2],
 
     /// How to constrain the two anchors.
     pub data: MateData,
+}
+
+/// How to two bodies in an assembly.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "Assemblies.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct MateTarget {
+    /// Which part is being mated?
+    pub part_instance_id: Uuid,
+
+    /// Which anchor on that part is being mated?
+    pub anchor_id: Uuid,
 }
 
 /// How to constrain bodies in an assembly.
