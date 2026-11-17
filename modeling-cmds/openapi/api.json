@@ -43,10 +43,6 @@
         "description": "How to two bodies in an assembly.",
         "type": "object",
         "properties": {
-          "flip_z": {
-            "description": "Flip the Z axis, from positive to negative.",
-            "type": "boolean"
-          },
           "location": {
             "description": "Where to place the anchor",
             "allOf": [
@@ -62,6 +58,14 @@
                 "$ref": "#/components/schemas/AnchorOrientation"
               }
             ]
+          },
+          "transforms": {
+            "description": "These will get applied in order.",
+            "default": [],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnchorTransform"
+            }
           }
         },
         "required": [
@@ -72,6 +76,7 @@
       "AnchorOrientation": {
         "oneOf": [
           {
+            "description": "The face might not be planar. If not planar, samples face normal at the closest point on face to AnchorLocation.",
             "type": "object",
             "properties": {
               "face_normal": {
@@ -93,6 +98,7 @@
             "additionalProperties": false
           },
           {
+            "description": "The edge might not be straight. If not straight, samples edge normal at the closest point on edge to AnchorLocation.",
             "type": "object",
             "properties": {
               "edge_direction": {
@@ -109,6 +115,110 @@
             },
             "required": [
               "edge_direction"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "AnchorTransform": {
+        "oneOf": [
+          {
+            "description": "Flip the Z axis, from positive to negative.",
+            "type": "object",
+            "properties": {
+              "flip_z": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "flip_z"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Rotate the other two axes about X.",
+            "type": "object",
+            "properties": {
+              "rotate_about_x": {
+                "type": "object",
+                "properties": {
+                  "degrees": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                },
+                "required": [
+                  "degrees"
+                ]
+              }
+            },
+            "required": [
+              "rotate_about_x"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Rotate the other two axes about Y.",
+            "type": "object",
+            "properties": {
+              "rotate_about_y": {
+                "type": "object",
+                "properties": {
+                  "degrees": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                },
+                "required": [
+                  "degrees"
+                ]
+              }
+            },
+            "required": [
+              "rotate_about_y"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Rotate the other two axes about Z.",
+            "type": "object",
+            "properties": {
+              "rotate_about_z": {
+                "type": "object",
+                "properties": {
+                  "degrees": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                },
+                "required": [
+                  "degrees"
+                ]
+              }
+            },
+            "required": [
+              "rotate_about_z"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Translate the anchor in its local coordinate system.",
+            "type": "object",
+            "properties": {
+              "translate": {
+                "type": "object",
+                "properties": {
+                  "vector": {
+                    "$ref": "#/components/schemas/Point3d"
+                  }
+                },
+                "required": [
+                  "vector"
+                ]
+              }
+            },
+            "required": [
+              "translate"
             ],
             "additionalProperties": false
           }
@@ -937,7 +1047,7 @@
             "additionalProperties": false
           },
           {
-            "description": "A specific location on a specific edge.",
+            "description": "A specific location on a specific edge. Useful for getting at a vertex.",
             "type": "object",
             "properties": {
               "edge": {
@@ -968,35 +1078,6 @@
             },
             "required": [
               "edge"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "description": "A specific vertex of a specific face.",
-            "type": "object",
-            "properties": {
-              "face_vertex": {
-                "type": "object",
-                "properties": {
-                  "face_id": {
-                    "description": "A specific face.",
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "vertex_id": {
-                    "description": "A specific vertex on that face.",
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                },
-                "required": [
-                  "face_id",
-                  "vertex_id"
-                ]
-              }
-            },
-            "required": [
-              "face_vertex"
             ],
             "additionalProperties": false
           }
@@ -1307,7 +1388,7 @@
                 "type": "object",
                 "properties": {
                   "t": {
-                    "description": "The parametric value.",
+                    "description": "The parametric value. 0 is the start, 1 is the end, 0.5 is the midpoint.",
                     "type": "number",
                     "format": "double"
                   }
