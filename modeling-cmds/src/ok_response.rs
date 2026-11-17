@@ -14,6 +14,7 @@ fn bool_true() -> bool {
 define_ok_modeling_cmd_response_enum! {
     /// Output from Modeling API commands.
     pub mod output {
+        use crate::assemblies::SolvedAssemblyComponent;
         use kittycad_modeling_cmds_macros::ModelingCmdOutput;
         use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
@@ -1466,6 +1467,33 @@ define_ok_modeling_cmd_response_enum! {
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput, Builder)]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct SetKclVersion {
+        }
+
+        /// The response from the 'AssemblyCreate'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyCreate {
+        }
+
+        /// The response from the 'AssemblyAddChildren'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyAddChildren {
+        }
+
+        /// The response from the 'AnchorCreate'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AnchorCreate {
+        }
+
+        /// The response from the 'AssemblyAddConstraints'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblySolve {
+            /// For each component in the assembly, map its ID to its solution.
+            /// A component is either a body or a subassembly.
+            pub solution: HashMap<Uuid, SolvedAssemblyComponent>,
         }
     }
 }

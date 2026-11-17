@@ -20,6 +20,8 @@ define_modeling_cmd_enum! {
         use crate::shared::MirrorAcross;
 
         use crate::{
+            assemblies::Mate,
+            assemblies::AnchorCreateParams,
             format::{OutputFormat2d, OutputFormat3d},
             id::ModelingCmdId,
             length_unit::LengthUnit,
@@ -2931,6 +2933,42 @@ define_modeling_cmd_enum! {
             /// Which KCL version the following commands should be executed with.
             pub kcl_version: crate::KclVersion,
         }
+
+        /// Create a new assembly
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyCreate {
+        }
+
+        /// Create an anchor.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AnchorCreate {
+            /// How to create the anchor.
+            pub params: AnchorCreateParams,
+
+        }
+
+        /// Add constraints to an assembly and solve it.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblySolve {
+            /// Which assembly to modify.
+            pub assembly_id: Uuid,
+
+            /// Which constraints to apply.
+            pub constraints: Vec<Mate>,
+        }
+
     }
 }
 

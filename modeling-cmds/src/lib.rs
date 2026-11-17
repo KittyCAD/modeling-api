@@ -48,6 +48,10 @@ mod tests;
 /// The modeling command trait that each modeling command implements.
 mod traits;
 
+mod assemblies;
+
+mod location;
+
 /// Units of measurement.
 pub mod units;
 

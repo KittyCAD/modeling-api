@@ -39,6 +39,191 @@
   },
   "components": {
     "schemas": {
+      "AnchorCreateParams": {
+        "description": "How to two bodies in an assembly.",
+        "type": "object",
+        "properties": {
+          "location": {
+            "description": "Where to place the anchor",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BodyLocation"
+              }
+            ]
+          },
+          "orientation": {
+            "description": "How to orient the anchor",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AnchorOrientation"
+              }
+            ]
+          },
+          "transforms": {
+            "description": "These will get applied in order.",
+            "default": [],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnchorTransform"
+            }
+          }
+        },
+        "required": [
+          "location",
+          "orientation"
+        ]
+      },
+      "AnchorOrientation": {
+        "oneOf": [
+          {
+            "description": "The face might not be planar. If not planar, samples face normal at the closest point on face to AnchorLocation.",
+            "type": "object",
+            "properties": {
+              "face_normal": {
+                "type": "object",
+                "properties": {
+                  "entity_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "entity_id"
+                ]
+              }
+            },
+            "required": [
+              "face_normal"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "The edge might not be straight. If not straight, samples edge normal at the closest point on edge to AnchorLocation.",
+            "type": "object",
+            "properties": {
+              "edge_direction": {
+                "type": "object",
+                "properties": {
+                  "which_edge": {
+                    "$ref": "#/components/schemas/WhichEdge"
+                  }
+                },
+                "required": [
+                  "which_edge"
+                ]
+              }
+            },
+            "required": [
+              "edge_direction"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "AnchorTransform": {
+        "oneOf": [
+          {
+            "description": "Flip the Z axis, from positive to negative.",
+            "type": "object",
+            "properties": {
+              "flip_z": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "flip_z"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Rotate the other two axes about X.",
+            "type": "object",
+            "properties": {
+              "rotate_about_x": {
+                "type": "object",
+                "properties": {
+                  "degrees": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                },
+                "required": [
+                  "degrees"
+                ]
+              }
+            },
+            "required": [
+              "rotate_about_x"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Rotate the other two axes about Y.",
+            "type": "object",
+            "properties": {
+              "rotate_about_y": {
+                "type": "object",
+                "properties": {
+                  "degrees": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                },
+                "required": [
+                  "degrees"
+                ]
+              }
+            },
+            "required": [
+              "rotate_about_y"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Rotate the other two axes about Z.",
+            "type": "object",
+            "properties": {
+              "rotate_about_z": {
+                "type": "object",
+                "properties": {
+                  "degrees": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                },
+                "required": [
+                  "degrees"
+                ]
+              }
+            },
+            "required": [
+              "rotate_about_z"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Translate the anchor in its local coordinate system.",
+            "type": "object",
+            "properties": {
+              "translate": {
+                "type": "object",
+                "properties": {
+                  "vector": {
+                    "$ref": "#/components/schemas/Point3d"
+                  }
+                },
+                "required": [
+                  "vector"
+                ]
+              }
+            },
+            "required": [
+              "translate"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "Angle": {
         "description": "An angle, with a specific unit.",
         "type": "object",
@@ -826,6 +1011,78 @@
           }
         ]
       },
+      "BodyLocation": {
+        "description": "Somewhere specific on a 3D body. Could be used to create an anchor, and potentially other purposes in the future.",
+        "oneOf": [
+          {
+            "description": "A specific location on a specific face.",
+            "type": "object",
+            "properties": {
+              "face": {
+                "type": "object",
+                "properties": {
+                  "face_id": {
+                    "description": "A specific face.",
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "location": {
+                    "description": "A specific location on the face.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/SurfaceLocation"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "face_id",
+                  "location"
+                ]
+              }
+            },
+            "required": [
+              "face"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "A specific location on a specific edge. Useful for getting at a vertex.",
+            "type": "object",
+            "properties": {
+              "edge": {
+                "type": "object",
+                "properties": {
+                  "location": {
+                    "description": "A specific location on the edge.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/CurveLocation"
+                      }
+                    ]
+                  },
+                  "which_edge": {
+                    "description": "A specific edge.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/WhichEdge"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "location",
+                  "which_edge"
+                ]
+              }
+            },
+            "required": [
+              "edge"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "BodyType": {
         "description": "Body type determining if the operation will create a manifold (solid) body or a non-manifold collection of surfaces.",
         "oneOf": [
@@ -1119,6 +1376,47 @@
             ]
           }
         }
+      },
+      "CurveLocation": {
+        "description": "Defines a unique location on curve geometry.",
+        "oneOf": [
+          {
+            "description": "Location on the parametric representation of the curve.",
+            "type": "object",
+            "properties": {
+              "param": {
+                "type": "object",
+                "properties": {
+                  "t": {
+                    "description": "The parametric value. 0 is the start, 1 is the end, 0.5 is the midpoint.",
+                    "type": "number",
+                    "format": "double"
+                  }
+                },
+                "required": [
+                  "t"
+                ]
+              }
+            },
+            "required": [
+              "param"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "The center of a circular edge. Works with circles or circular arcs.",
+            "type": "object",
+            "properties": {
+              "circular_center": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "circular_center"
+            ],
+            "additionalProperties": false
+          }
+        ]
       },
       "CutStrategy": {
         "description": "What strategy (algorithm) should be used for cutting? Defaults to Automatic.",
@@ -2792,6 +3090,169 @@
       "LengthUnit": {
         "type": "number",
         "format": "double"
+      },
+      "Mate": {
+        "description": "How to two bodies in an assembly.",
+        "type": "object",
+        "properties": {
+          "anchor_ids": {
+            "description": "Which two anchors are being constrained",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "data": {
+            "description": "How to constrain the two anchors.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MateData"
+              }
+            ]
+          }
+        },
+        "required": [
+          "anchor_ids",
+          "data"
+        ]
+      },
+      "MateData": {
+        "description": "How to constrain bodies in an assembly.",
+        "oneOf": [
+          {
+            "description": "Ball",
+            "type": "object",
+            "properties": {
+              "spherical": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "spherical"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "The two anchors must be this Euclidean distance apart.",
+            "type": "object",
+            "properties": {
+              "distance": {
+                "type": "object",
+                "properties": {
+                  "distance": {
+                    "description": "The desired distance.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/LengthUnit"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "distance"
+                ]
+              }
+            },
+            "required": [
+              "distance"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Hinge",
+            "type": "object",
+            "properties": {
+              "revolute": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "revolute"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Constrain the bodies to a single axis, while allowing them to rotate about and slide along that axis.",
+            "type": "object",
+            "properties": {
+              "cylindrical": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "cylindrical"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Fixed, fastened",
+            "type": "object",
+            "properties": {
+              "weld": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "weld"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Slider",
+            "type": "object",
+            "properties": {
+              "prismatic": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "prismatic"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Hooke",
+            "type": "object",
+            "properties": {
+              "universal": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "universal"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "The normals of these planes must be parallel. The planes can still slide in X and Y directions, or rotate around their normal. 3 degrees of freedom.",
+            "type": "object",
+            "properties": {
+              "planar": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "planar"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "One chosen point on the second body stays in a plane attached to the first. That point can slide within the plane, and the body can rotate freely around that point. 5 degrees of freedom.",
+            "type": "object",
+            "properties": {
+              "point_on_plane": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "point_on_plane"
+            ],
+            "additionalProperties": false
+          }
+        ]
       },
       "MbdSymbol": {
         "description": "MBD symbol type",
@@ -8673,6 +9134,74 @@
               "kcl_version",
               "type"
             ]
+          },
+          {
+            "description": "Create a new assembly",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "assembly_create"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "description": "Create an anchor.",
+            "type": "object",
+            "properties": {
+              "params": {
+                "description": "How to create the anchor.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/AnchorCreateParams"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "anchor_create"
+                ]
+              }
+            },
+            "required": [
+              "params",
+              "type"
+            ]
+          },
+          {
+            "description": "Add constraints to an assembly and solve it.",
+            "type": "object",
+            "properties": {
+              "assembly_id": {
+                "description": "Which assembly to modify.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "constraints": {
+                "description": "Which constraints to apply.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Mate"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "assembly_solve"
+                ]
+              }
+            },
+            "required": [
+              "assembly_id",
+              "constraints",
+              "type"
+            ]
           }
         ]
       },
@@ -10226,6 +10755,40 @@
           "object_id"
         ]
       },
+      "SurfaceLocation": {
+        "description": "Defines a unique location on surface geometry.",
+        "oneOf": [
+          {
+            "description": "Location on the parametric representation of the surface.",
+            "type": "object",
+            "properties": {
+              "param": {
+                "type": "object",
+                "properties": {
+                  "u": {
+                    "description": "First parametric value",
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "v": {
+                    "description": "Second parametric value",
+                    "type": "number",
+                    "format": "double"
+                  }
+                },
+                "required": [
+                  "u",
+                  "v"
+                ]
+              }
+            },
+            "required": [
+              "param"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "System": {
         "description": "Co-ordinate system definition.\n\nThe `up` axis must be orthogonal to the `forward` axis.\n\nSee [cglearn.eu] for background reading.\n\n[cglearn.eu](https://cglearn.eu/pub/computer-graphics/introduction-to-geometry#material-coordinate-systems-1)",
         "type": "object",
@@ -10887,6 +11450,60 @@
               "request_id",
               "type"
             ]
+          }
+        ]
+      },
+      "WhichEdge": {
+        "description": "Somewhere specific on a 3D body to create an anchor on.",
+        "oneOf": [
+          {
+            "description": "Find the edge topologically, by reference to the body's faces. Recommended to use this over other variants.",
+            "type": "object",
+            "properties": {
+              "specifier": {
+                "type": "object",
+                "properties": {
+                  "specifier": {
+                    "description": "The edge specifier that uniquely identifies this edge.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EdgeSpecifier"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "specifier"
+                ]
+              }
+            },
+            "required": [
+              "specifier"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Find the edge by its ID. If possible, prefer Specifier.",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "object",
+                "properties": {
+                  "edge_id": {
+                    "description": "The unique ID of this edge.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "edge_id"
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
           }
         ]
       },
