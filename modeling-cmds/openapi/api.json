@@ -143,6 +143,26 @@
             "format": "uint32",
             "minimum": 0
           },
+          "text_above": {
+            "nullable": true,
+            "description": "Supplemental text above the complete dimension label. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
+          },
+          "text_below": {
+            "nullable": true,
+            "description": "Supplemental text below the complete dimension label. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
+          },
+          "text_left": {
+            "nullable": true,
+            "description": "Supplemental text to the left of the complete dimension label. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
+          },
+          "text_right": {
+            "nullable": true,
+            "description": "Supplemental text to the right of the complete dimension label. Uses the annotation font and scale. Empty or omitted text adds no spacing.",
+            "type": "string"
+          },
           "to_edge_reference": {
             "nullable": true,
             "description": "Edge reference to use to measure the dimension from If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence.",
