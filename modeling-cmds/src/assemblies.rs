@@ -14,8 +14,17 @@ use crate::{length_unit::LengthUnit, location::BodyLocation, shared::Rotation};
 #[cfg_attr(feature = "ts-rs", ts(export_to = "Assemblies.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum AnchorOrientation {
+    /// The face might not be planar.
+    /// If not planar, samples face normal at the closest point on face to AnchorLocation.
     FaceNormal { entity_id: Uuid },
+
+    /// The edge might not be straight.
+    /// If not straight, samples edge normal at the closest point on edge to AnchorLocation.
     EdgeDirection { which_edge: crate::shared::WhichEdge },
+    // After MVP add variants like:
+    // Sketch normal
+    // CopyFromAnchor
+    // Between {a: Anchor, b: Anchor, weight: f64 = 0.5}
 }
 
 /// How to two bodies in an assembly.

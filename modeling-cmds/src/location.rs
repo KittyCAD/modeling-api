@@ -17,11 +17,16 @@ pub enum CurveLocation {
     /// Location on the parametric representation of the curve.
     Param {
         /// The parametric value.
+        /// 0 is the start, 1 is the end, 0.5 is the midpoint.
         t: f64,
     },
     /// The center of a circular edge.
     /// Works with circles or circular arcs.
     CircularCenter {},
+    // Quick followup after MVP:
+    // Centroid,
+    // Later followup:
+    // Mirrored from center of circle across circular arc
 }
 
 /// Defines a unique location on surface geometry.
@@ -39,6 +44,8 @@ pub enum SurfaceLocation {
         /// Second parametric value
         v: f64,
     },
+    // Quick followup after MVP:
+    // Centroid,
 }
 
 /// Somewhere specific on a 3D body.
@@ -59,18 +66,15 @@ pub enum BodyLocation {
     },
 
     /// A specific location on a specific edge.
+    /// Useful for getting at a vertex.
     Edge {
         /// A specific edge.
         which_edge: WhichEdge,
         /// A specific location on the edge.
         location: CurveLocation,
     },
-
-    /// A specific vertex of a specific face.
-    FaceVertex {
-        /// A specific face.
-        face_id: Uuid,
-        /// A specific vertex on that face.
-        vertex_id: Uuid,
-    },
+    // Quick followup after MVP:
+    // CopyAnchor
+    // Later followup:
+    // SketchPoint, (hard currently because sketch points aren't sent to the engine, and would need to be mapped from 2D to 3D space)
 }
