@@ -1,7 +1,7 @@
 //! Compatibility tests for optional supplemental annotation text.
 //! Supplemental strings must round-trip without changing measured dimension data.
 
-use kittycad_modeling_cmds::shared::{AnnotationFeatureControl, AnnotationFeatureTag};
+use kittycad_modeling_cmds::shared::{AnnotationBasicDimension, AnnotationFeatureControl, AnnotationFeatureTag};
 use serde_json::{json, Value};
 
 fn legacy_annotation() -> Value {
@@ -49,4 +49,28 @@ fn supplemental_text_round_trips_without_replacing_the_dimension() {
             assert_eq!(encoded[key], value[key]);
         }
     }
+}
+
+#[test]
+fn distance_text_is_optional_and_preserves_measurement_references() {
+    let mut value = legacy_annotation();
+    value["dimension"] = json!({ "tolerance": 0.05 });
+    value["from_edge_reference"] = json!({
+        "side_faces": ["00000000-0000-0000-0000-000000000001", "00000000-0000-0000-0000-000000000002"]
+    });
+    let plain: AnnotationBasicDimension = serde_json::from_value(value.clone()).unwrap();
+    let plain = serde_json::to_value(plain).unwrap();
+    for key in ["text_above", "text_below", "text_left", "text_right"] {
+        assert!(plain.get(key).is_none());
+    }
+    value["text_above"] = json!("Upper\nsecond line");
+    value["text_below"] = json!("");
+    value["text_left"] = json!("MIN");
+    value["text_right"] = json!("THRU \u{2300}");
+    let decorated: AnnotationBasicDimension = serde_json::from_value(value.clone()).unwrap();
+    let mut decorated = serde_json::to_value(decorated).unwrap();
+    for key in ["text_above", "text_below", "text_left", "text_right"] {
+        assert_eq!(decorated.as_object_mut().unwrap().remove(key), Some(value[key].clone()));
+    }
+    assert_eq!(decorated, plain);
 }

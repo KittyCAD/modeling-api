@@ -556,6 +556,26 @@ pub struct AnnotationBasicDimension {
     /// The scale of the dimension arrows. Defaults to 1.
     #[serde(default = "one")]
     pub arrow_scale: f32,
+
+    /// Supplemental text above the complete dimension label.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_above: Option<String>,
+
+    /// Supplemental text below the complete dimension label.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_below: Option<String>,
+
+    /// Supplemental text to the left of the complete dimension label.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_left: Option<String>,
+
+    /// Supplemental text to the right of the complete dimension label.
+    /// Uses the annotation font and scale. Empty or omitted text adds no spacing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_right: Option<String>,
 }
 
 /// Parameters for defining an MBD Feature Control Annotation state
