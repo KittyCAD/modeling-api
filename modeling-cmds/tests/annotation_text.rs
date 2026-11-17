@@ -58,6 +58,7 @@ fn distance_text_is_optional_and_preserves_measurement_references() {
     value["from_edge_reference"] = json!({
         "side_faces": ["00000000-0000-0000-0000-000000000001", "00000000-0000-0000-0000-000000000002"]
     });
+    value["to_entity_id"] = json!("00000000-0000-0000-0000-000000000003");
     let plain: AnnotationBasicDimension = serde_json::from_value(value.clone()).unwrap();
     let plain = serde_json::to_value(plain).unwrap();
     for key in ["text_above", "text_below", "text_left", "text_right"] {
