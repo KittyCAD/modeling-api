@@ -14,6 +14,7 @@ fn bool_true() -> bool {
 define_ok_modeling_cmd_response_enum! {
     /// Output from Modeling API commands.
     pub mod output {
+        use crate::assemblies::SolvedAssemblyComponent;
         use kittycad_modeling_cmds_macros::ModelingCmdOutput;
         use schemars::JsonSchema;
         use serde::{Deserialize, Serialize};
@@ -26,7 +27,6 @@ define_ok_modeling_cmd_response_enum! {
             BodyType,
             HiddenState,
             EntityReference,
-            SolvedAssemblyComponent,
         };
         use std::collections::HashMap;
 

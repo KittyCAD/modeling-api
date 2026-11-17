@@ -20,14 +20,14 @@ define_modeling_cmd_enum! {
         use crate::shared::MirrorAcross;
 
         use crate::{
+            assemblies::Mate,
+            assemblies::AnchorOn,
             format::{OutputFormat2d, OutputFormat3d},
             id::ModelingCmdId,
             length_unit::LengthUnit,
             kcl_project::KclProject,
             shared::{
                 Angle,
-                AssemblyConstraint,
-                AnchorOn,
                 RegionVersion,
                 BlendType,
                 BodyType,
@@ -2987,7 +2987,7 @@ define_modeling_cmd_enum! {
             pub assembly_id: Uuid,
 
             /// Which constraints to apply.
-            pub constraints: Vec<AssemblyConstraint>,
+            pub constraints: Vec<Mate>,
         }
 
     }
