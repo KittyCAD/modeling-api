@@ -1307,6 +1307,7 @@
                 "type": "object",
                 "properties": {
                   "t": {
+                    "description": "The parametric value.",
                     "type": "number",
                     "format": "double"
                   }
@@ -1318,6 +1319,19 @@
             },
             "required": [
               "param"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "The center of a circular edge. Works with circles or circular arcs.",
+            "type": "object",
+            "properties": {
+              "circular_center": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "circular_center"
             ],
             "additionalProperties": false
           }
@@ -10671,10 +10685,12 @@
                 "type": "object",
                 "properties": {
                   "u": {
+                    "description": "First parametric value",
                     "type": "number",
                     "format": "double"
                   },
                   "v": {
+                    "description": "Second parametric value",
                     "type": "number",
                     "format": "double"
                   }

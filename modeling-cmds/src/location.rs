@@ -15,7 +15,13 @@ use crate::shared::WhichEdge;
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum CurveLocation {
     /// Location on the parametric representation of the curve.
-    Param { t: f64 },
+    Param {
+        /// The parametric value.
+        t: f64,
+    },
+    /// The center of a circular edge.
+    /// Works with circles or circular arcs.
+    CircularCenter {},
 }
 
 /// Defines a unique location on surface geometry.
@@ -27,7 +33,12 @@ pub enum CurveLocation {
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum SurfaceLocation {
     /// Location on the parametric representation of the surface.
-    Param { u: f64, v: f64 },
+    Param {
+        /// First parametric value
+        u: f64,
+        /// Second parametric value
+        v: f64,
+    },
 }
 
 /// Somewhere specific on a 3D body.
