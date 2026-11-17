@@ -2354,3 +2354,25 @@ pub enum CurveTypeDebug {
     /// Circle with a center and radius.
     Circle,
 }
+
+/// Somewhere specific on a 3D body to create an anchor on.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmdsShared.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum WhichEdge {
+    /// Find the edge topologically, by reference to the body's faces.
+    /// Recommended to use this over other variants.
+    Specifier {
+        /// The edge specifier that uniquely identifies this edge.
+        specifier: EdgeSpecifier,
+    },
+    /// Find the edge by its ID.
+    /// If possible, prefer Specifier.
+    Id {
+        /// The unique ID of this edge.
+        edge_id: Uuid,
+    },
+}

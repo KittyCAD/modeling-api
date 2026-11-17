@@ -21,7 +21,7 @@ define_modeling_cmd_enum! {
 
         use crate::{
             assemblies::Mate,
-            location::BodyLocation,
+            assemblies::AnchorCreateParams,
             format::{OutputFormat2d, OutputFormat3d},
             id::ModelingCmdId,
             length_unit::LengthUnit,
@@ -2943,20 +2943,16 @@ define_modeling_cmd_enum! {
         pub struct AssemblyCreate {
         }
 
-        /// Create an anchor frame
+        /// Create an anchor.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
         #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
         #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
         #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
         #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
         pub struct AnchorCreate {
-            /// What to create the mate frame on.
-            pub on: BodyLocation,
+            /// How to create the anchor.
+            pub params: AnchorCreateParams,
 
-            /// Flip the Z axis, from positive to negative.
-            #[builder(default)]
-            #[serde(default, skip_serializing_if = "super::is_false")]
-            pub flip_z: bool,
         }
 
         /// Add constraints to an assembly and solve it.

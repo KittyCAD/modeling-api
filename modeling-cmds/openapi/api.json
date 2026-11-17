@@ -39,6 +39,81 @@
   },
   "components": {
     "schemas": {
+      "AnchorCreateParams": {
+        "description": "How to two bodies in an assembly.",
+        "type": "object",
+        "properties": {
+          "flip_z": {
+            "description": "Flip the Z axis, from positive to negative.",
+            "type": "boolean"
+          },
+          "location": {
+            "description": "Where to place the anchor",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BodyLocation"
+              }
+            ]
+          },
+          "orientation": {
+            "description": "How to orient the anchor",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AnchorOrientation"
+              }
+            ]
+          }
+        },
+        "required": [
+          "location",
+          "orientation"
+        ]
+      },
+      "AnchorOrientation": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "face_normal": {
+                "type": "object",
+                "properties": {
+                  "entity_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "entity_id"
+                ]
+              }
+            },
+            "required": [
+              "face_normal"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "edge_direction": {
+                "type": "object",
+                "properties": {
+                  "which_edge": {
+                    "$ref": "#/components/schemas/WhichEdge"
+                  }
+                },
+                "required": [
+                  "which_edge"
+                ]
+              }
+            },
+            "required": [
+              "edge_direction"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "Angle": {
         "description": "An angle, with a specific unit.",
         "type": "object",
@@ -893,47 +968,6 @@
             },
             "required": [
               "edge"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "description": "A specific location on a specific edge, and use the face's normal to establish the Y axis that the anchor should use for its coordinate system.",
-            "type": "object",
-            "properties": {
-              "face_edge": {
-                "type": "object",
-                "properties": {
-                  "face_id": {
-                    "description": "A specific face.",
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "location": {
-                    "description": "A specific location on the edge.",
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/CurveLocation"
-                      }
-                    ]
-                  },
-                  "which_edge": {
-                    "description": "A specific edge, on that face.",
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/WhichEdge"
-                      }
-                    ]
-                  }
-                },
-                "required": [
-                  "face_id",
-                  "location",
-                  "which_edge"
-                ]
-              }
-            },
-            "required": [
-              "face_edge"
             ],
             "additionalProperties": false
           },
@@ -9022,18 +9056,14 @@
             ]
           },
           {
-            "description": "Create an anchor frame",
+            "description": "Create an anchor.",
             "type": "object",
             "properties": {
-              "flip_z": {
-                "description": "Flip the Z axis, from positive to negative.",
-                "type": "boolean"
-              },
-              "on": {
-                "description": "What to create the mate frame on.",
+              "params": {
+                "description": "How to create the anchor.",
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/BodyLocation"
+                    "$ref": "#/components/schemas/AnchorCreateParams"
                   }
                 ]
               },
@@ -9045,7 +9075,7 @@
               }
             },
             "required": [
-              "on",
+              "params",
               "type"
             ]
           },
@@ -11330,34 +11360,19 @@
         "description": "Somewhere specific on a 3D body to create an anchor on.",
         "oneOf": [
           {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                },
-                "required": [
-                  "id"
-                ]
-              }
-            },
-            "required": [
-              "id"
-            ],
-            "additionalProperties": false
-          },
-          {
+            "description": "Find the edge topologically, by reference to the body's faces. Recommended to use this over other variants.",
             "type": "object",
             "properties": {
               "specifier": {
                 "type": "object",
                 "properties": {
                   "specifier": {
-                    "$ref": "#/components/schemas/EdgeSpecifier"
+                    "description": "The edge specifier that uniquely identifies this edge.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EdgeSpecifier"
+                      }
+                    ]
                   }
                 },
                 "required": [
@@ -11367,6 +11382,29 @@
             },
             "required": [
               "specifier"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Find the edge by its ID. If possible, prefer Specifier.",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "object",
+                "properties": {
+                  "edge_id": {
+                    "description": "The unique ID of this edge.",
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "edge_id"
+                ]
+              }
+            },
+            "required": [
+              "id"
             ],
             "additionalProperties": false
           }

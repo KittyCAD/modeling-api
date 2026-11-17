@@ -1,13 +1,45 @@
 //! Data types for assemblies and mates.
+use bon::Builder;
 use kittycad_point::Point3d;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::{length_unit::LengthUnit, shared::Rotation};
+use crate::{length_unit::LengthUnit, location::BodyLocation, shared::Rotation};
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "Assemblies.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum AnchorOrientation {
+    FaceNormal { entity_id: Uuid },
+    EdgeDirection { which_edge: crate::shared::WhichEdge },
+}
 
 /// How to two bodies in an assembly.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "Assemblies.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct AnchorCreateParams {
+    /// Where to place the anchor
+    pub location: BodyLocation,
+
+    /// How to orient the anchor
+    pub orientation: AnchorOrientation,
+
+    /// Flip the Z axis, from positive to negative.
+    #[builder(default)]
+    #[serde(default, skip_serializing_if = "super::is_false")]
+    pub flip_z: bool,
+}
+
+/// How to two bodies in an assembly.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
@@ -69,7 +101,7 @@ pub enum MateData {
 /// Result of constraining an item in an assembly.
 /// This is in the coordinate system of the assembly's parent.
 /// Translation should be applied before rotation.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]

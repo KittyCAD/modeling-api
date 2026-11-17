@@ -4,18 +4,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::shared::EdgeSpecifier;
-
-pub struct AnchorPlacement {
-    location: AnchorLocation,
-    orientation: AnchorOrientation,
-    flip_z: bool,
-}
-
-pub enum AnchorOrientation {
-    FaceNormal(EntityId),
-    EdgeDirection(EdgeSpecifier),
-}
+use crate::shared::WhichEdge;
 
 /// Defines a unique location on curve geometry.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
@@ -73,16 +62,4 @@ pub enum BodyLocation {
         /// A specific vertex on that face.
         vertex_id: Uuid,
     },
-}
-
-/// Somewhere specific on a 3D body to create an anchor on.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "Location.ts"))]
-#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-pub enum WhichEdge {
-    Id { id: Uuid },
-    Specifier { specifier: EdgeSpecifier },
 }
