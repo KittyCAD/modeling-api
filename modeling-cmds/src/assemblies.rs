@@ -32,10 +32,33 @@ pub struct AnchorCreateParams {
     /// How to orient the anchor
     pub orientation: AnchorOrientation,
 
-    /// Flip the Z axis, from positive to negative.
+    /// These will get applied in order.
+    #[serde(default)]
     #[builder(default)]
-    #[serde(default, skip_serializing_if = "super::is_false")]
-    pub flip_z: bool,
+    pub transforms: Vec<AnchorTransform>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "Assemblies.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum AnchorTransform {
+    /// Flip the Z axis, from positive to negative.
+    FlipZ {},
+
+    /// Rotate the other two axes about X.
+    RotateAboutX { degrees: f64 },
+
+    /// Rotate the other two axes about Y.
+    RotateAboutY { degrees: f64 },
+
+    /// Rotate the other two axes about Z.
+    RotateAboutZ { degrees: f64 },
+
+    /// Translate the anchor in its local coordinate system.
+    Translate { vector: Point3d<LengthUnit> },
 }
 
 /// How to two bodies in an assembly.
