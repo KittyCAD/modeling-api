@@ -50,6 +50,8 @@ mod traits;
 
 mod assemblies;
 
+mod location;
+
 /// Units of measurement.
 pub mod units;
 
