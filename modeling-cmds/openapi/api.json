@@ -1120,6 +1120,18 @@
           }
         }
       },
+      "CompressionType": {
+        "description": "Compression requested for a binary command response. Small or incompressible responses may remain uncompressed.",
+        "oneOf": [
+          {
+            "description": "Zstandard framing, detected by magic bytes `28 b5 2f fd`, around the complete MessagePack response.",
+            "type": "string",
+            "enum": [
+              "zstd"
+            ]
+          }
+        ]
+      },
       "CutStrategy": {
         "description": "What strategy (algorithm) should be used for cutting? Defaults to Automatic.",
         "oneOf": [
@@ -4239,6 +4251,15 @@
             "description": "Export the scene to a file.\n\nThe response is a MsgPack-encoded message in a WebSocket binary frame.",
             "type": "object",
             "properties": {
+              "compression": {
+                "nullable": true,
+                "description": "Optional compression for the binary response. Defaults to uncompressed.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CompressionType"
+                  }
+                ]
+              },
               "entity_ids": {
                 "description": "IDs of the entities to be exported. If this is empty, then all entities are exported.",
                 "type": "array",
@@ -4281,6 +4302,15 @@
             "description": "Export the scene to a file.\n\nThe response is a MsgPack-encoded message in a WebSocket binary frame.",
             "type": "object",
             "properties": {
+              "compression": {
+                "nullable": true,
+                "description": "Optional compression for the binary response. Defaults to uncompressed.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CompressionType"
+                  }
+                ]
+              },
               "entity_ids": {
                 "description": "IDs of the entities to be exported. If this is empty, then all entities are exported.",
                 "type": "array",
