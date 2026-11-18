@@ -930,20 +930,18 @@ mod tests {
 
     #[test]
     fn export_response_compression_is_optional_and_round_trips() {
-        for kind in ["export", "export3d"] {
-            let mut request = serde_json::json!({
-                "type": kind,
-                "entity_ids": [],
-                "format": { "type": "gltf", "storage": "binary", "presentation": "compact" }
-            });
-            let command: crate::ModelingCmd = serde_json::from_value(request.clone()).unwrap();
-            assert!(serde_json::to_value(command).unwrap().get("compression").is_none());
-            request["compression"] = serde_json::json!("zstd");
-            let command: crate::ModelingCmd = serde_json::from_value(request.clone()).unwrap();
-            assert_eq!(serde_json::to_value(command).unwrap()["compression"], "zstd");
-            request["compression"] = serde_json::json!("unsupported");
-            assert!(serde_json::from_value::<crate::ModelingCmd>(request).is_err());
-        }
+        let mut request = serde_json::json!({
+            "type": "export3d",
+            "entity_ids": [],
+            "format": { "type": "gltf", "storage": "binary", "presentation": "compact" }
+        });
+        let command: crate::ModelingCmd = serde_json::from_value(request.clone()).unwrap();
+        assert!(serde_json::to_value(command).unwrap().get("compression").is_none());
+        request["compression"] = serde_json::json!("zstd");
+        let command: crate::ModelingCmd = serde_json::from_value(request.clone()).unwrap();
+        assert_eq!(serde_json::to_value(command).unwrap()["compression"], "zstd");
+        request["compression"] = serde_json::json!("unsupported");
+        assert!(serde_json::from_value::<crate::ModelingCmd>(request).is_err());
     }
 
     const REQ_ID: Uuid = uuid::uuid!("cc30d5e2-482b-4498-b5d2-6131c30a50a4");

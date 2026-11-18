@@ -4302,15 +4302,6 @@
             "description": "Export the scene to a file.\n\nThe response is a MsgPack-encoded message in a WebSocket binary frame.",
             "type": "object",
             "properties": {
-              "compression": {
-                "nullable": true,
-                "description": "Optional compression for the binary response. Defaults to uncompressed.",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/CompressionType"
-                  }
-                ]
-              },
               "entity_ids": {
                 "description": "IDs of the entities to be exported. If this is empty, then all entities are exported.",
                 "type": "array",
