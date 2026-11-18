@@ -25,7 +25,7 @@ pub use crate::kcl_project::{KclFile, KclFileBuilder, KclProject, KclProjectBuil
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "Compression.ts"))]
 #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
 pub enum CompressionType {
     /// Zstandard framing, detected by magic bytes `28 b5 2f fd`, around the complete MessagePack response.
