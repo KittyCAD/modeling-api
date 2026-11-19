@@ -49,6 +49,11 @@ pub mod export {
     #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
     #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
     pub struct Options {
+        /// Settings used when generating a mesh from CAD surfaces.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[cfg_attr(feature = "ts-rs", ts(optional))]
+        pub tessellation: Option<crate::format::tessellation::Options>,
+
         /// Specifies which kind of FBX will be exported.
         pub storage: Storage,
 
