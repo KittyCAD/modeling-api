@@ -533,12 +533,13 @@ pub struct AnnotationBasicDimension {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub to_entity_id: Option<Uuid>,
 
-    /// Edge reference to use to measure the dimension from
+    /// Edge reference to use to measure the dimension to
     /// If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence.
+    /// Note - If no "to" entity is provided, then a single leader is used to annotate the dimension.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub to_edge_reference: Option<EdgeSpecifier>,
 
-    /// Position within the entity to position the dimension leader from
+    /// Position within the entity to position the dimension leader to
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub to_entity_leader_pos: Option<AnnotationMbdLeaderPosition>,
 
