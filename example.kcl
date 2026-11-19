@@ -1,0 +1,84 @@
+// Example assembly 1, simple, one bolt and one plate.
+
+bolt0 = instancePart(boltDefinition)
+plate0 = instancePart(plateDefinition)
+
+mate(
+  anchor0 = anchor(edge = edgeId(bolt0, index = 2), edgeLocation = EdgeLocation::Midpoint),
+  anchor1 = anchor(edge = edgeId(plate0, index = 0), edgeLocation = EdgeLocation::Start),
+  mateType = Planar
+)
+
+// Example assembly 2, this is more complex,
+// we have ten bolts.
+
+bolt0 = instancePart(boltDefinition)
+bolt1 = instancePart(boltDefinition)
+bolt2 = instancePart(boltDefinition)
+...
+bolt9 = instancePart(boltDefinition)
+
+plate0 = instancePart(plateDefinition)
+
+// We have to repeat a lot of data for each anchor, that is very redundant.
+// Bad.
+// But we can't do better because we only allow anchors on PartInstance.
+plateAnchor = anchor(edge = edgeId(plate0, index = 0), edgeLocation = EdgeLocation::Start)
+mate(
+  anchor0 = anchor(edge = edgeId(bolt0, index = 2), edgeLocation = EdgeLocation::Midpoint),
+  anchor1 = plateAnchor,
+  mateType = Planar
+)
+mate(
+  anchor0 = anchor(edge = edgeId(bolt1, index = 2), edgeLocation = EdgeLocation::Midpoint),
+  anchor1 = plateAnchor,
+  mateType = Planar
+)
+mate(
+  anchor0 = anchor(edge = edgeId(bolt2, index = 2), edgeLocation = EdgeLocation::Midpoint),
+  anchor1 = plateAnchor,
+  mateType = Planar
+)
+// ...
+mate(
+  anchor0 = anchor(edge = edgeId(bolt2, index = 9), edgeLocation = EdgeLocation::Midpoint),
+  anchor1 = plateAnchor,
+  mateType = Planar
+)
+
+// Example assembly 3,
+// like example 2, but we allow users to define anchors on PartDefinition, not just PartInstance.
+bolt0 = instancePart(boltDefinition)
+bolt1 = instancePart(boltDefinition)
+bolt2 = instancePart(boltDefinition)
+...
+bolt9 = instancePart(boltDefinition)
+
+plate0 = instancePart(plateDefinition)
+
+// We have to repeat a lot of data for each anchor, that is very redundant.
+// Bad.
+// But we can't do better because we only allow anchors on PartInstance.
+mate(
+  anchor0 = anchorFrom(bolt0, name = "end")
+  // Alternatively:
+  // anchor0 = anchorFrom(boltDefinition, instance = bolt0, name = "end")
+  anchor1 = anchor(edge = edgeId(plate0, index = 0), edgeLocation = EdgeLocation::Start),
+  mateType = Planar
+)
+mate(
+  anchor0 = anchorFrom(bolt1, name = "end")
+  anchor1 = anchor(edge = edgeId(plate0, index = 0), edgeLocation = EdgeLocation::Start),
+  mateType = Planar
+)
+mate(
+  anchor0 = anchorFrom(bolt2, name = "end")
+  anchor1 = anchor(edge = edgeId(plate0, index = 0), edgeLocation = EdgeLocation::Start),
+  mateType = Planar
+)
+// ...
+mate(
+  anchor0 = anchorFrom(bolt9, name = "end")
+  anchor1 = anchor(edge = edgeId(plate0, index = 0), edgeLocation = EdgeLocation::Start),
+  mateType = Planar
+)

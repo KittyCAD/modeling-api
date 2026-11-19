@@ -1469,11 +1469,6 @@ define_ok_modeling_cmd_response_enum! {
         pub struct SetKclVersion {
         }
 
-        /// The response from the 'AssemblyCreate'.
-        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
-        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct AssemblyCreate {
-        }
 
         /// The response from the 'AssemblyAddChildren'.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
@@ -1494,6 +1489,26 @@ define_ok_modeling_cmd_response_enum! {
             /// For each component in the assembly, map its ID to its solution.
             /// A component is either a body or a subassembly.
             pub solution: HashMap<Uuid, SolvedAssemblyComponent>,
+        }
+
+        /// The response from the 'PartDefinitionCreate'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct PartDefinitionCreate {
+        }
+
+        /// The response from the 'InstantiatePart'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct InstantiatePart {
+            // In the future, might return a list of anchors on this instance,
+            // taken from the anchors on the part definition.
+        }
+
+        /// The response from the 'AssemblyDefinitionCreate'.
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyDefinitionCreate {
         }
     }
 }

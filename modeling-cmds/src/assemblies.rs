@@ -27,7 +27,8 @@ pub enum AnchorOrientation {
     // Between {a: Anchor, b: Anchor, weight: f64 = 0.5}
 }
 
-/// How to two bodies in an assembly.
+/// Create an anchor (position + orientation) on a specific PartInstance.
+/// In the future, we may extend this to target PartDefinitions too, or other scene geometry (planes).
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
 #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
@@ -161,4 +162,36 @@ pub struct SolvedAssemblyComponent {
     /// How to rotate the item.
     /// Applied after rotation.
     pub rotate_by: Rotation,
+}
+
+/// References a specific anchor on a specific part instance.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "Assemblies.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct QualifiedAnchorId {
+    pub anchor_id: Uuid,
+    pub part_instance_id: Uuid,
+    pub assembly_instance_id: Option<Uuid>,
+}
+
+/// A solved assembly which has been instanced and included in a parent assembly.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, Builder)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "Assemblies.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub struct SolvedAssemblyInstance {
+    /// The ID of this specific solved assembly instance
+    pub assembly_instance_id: Uuid,
+
+    /// Which assembly definition is this instanced from?
+    pub assembly_definition_id: Uuid,
+    // In the future we'll probably have something like
+    // /// Which solved pose should this instance be in?
+    // pub pose: String,
+    // and make it optional and default to a special default pose.
 }

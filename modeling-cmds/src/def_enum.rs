@@ -2934,16 +2934,6 @@ define_modeling_cmd_enum! {
             pub kcl_version: crate::KclVersion,
         }
 
-        /// Create a new assembly
-        /// Its ID is the ID of this command.
-        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
-        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
-        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
-        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
-        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
-        pub struct AssemblyCreate {
-        }
-
         /// Create an anchor.
         /// Its ID is the ID of this command.
         #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
@@ -2970,6 +2960,61 @@ define_modeling_cmd_enum! {
             /// Which constraints to apply.
             pub constraints: Vec<Mate>,
         }
+
+        /// Define a part.
+        /// Its ID is the ID of this command.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct PartDefinitionCreate {
+            /// Geometric body that will be used for the part.
+            /// Currently this removes the body from the 3D scene and moves it into the part definition.
+            pub body_id: Uuid,
+            // In the future, add options to
+            // - copy (rather than move) the geometry into the part definition
+            // - set material properties, BoM properties (like part/skew ID)
+        }
+
+
+        /// Instantiate a part.
+        /// Its ID is the ID of this command.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct InstantiatePart {
+            /// Which part definition to instance.
+            pub part_definition_id: Uuid,
+        }
+
+        /// Create a new assembly
+        /// Its ID is the ID of this command.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct AssemblyDefinitionCreate {
+            /// Parts that were instanced and included in this assembly.
+            pub part_instance_ids: Vec<Uuid>,
+
+            /// Solved assembly instances that are included as subassemblies.
+            pub solved_subassembly: Vec<crate::assemblies::SolvedAssemblyInstance>,
+
+            /// Assemblies require at least one fixed part. Its ID is here.
+            pub fixed_part_instance_id: Uuid,
+
+            /// All anchors that were defined in the assembly.
+            pub anchor: Vec<crate::assemblies::QualifiedAnchorId>,
+
+            /// All mates defined on pairs of anchors.
+            pub mates: Vec<Mate>,
+            // In the future, add Vec<Pose>
+        }
+
 
     }
 }
