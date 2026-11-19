@@ -697,6 +697,9 @@ define_modeling_cmd_enum! {
             /// KCL source to embed in formats that support source metadata.
             #[serde(default, skip_serializing_if = "Option::is_none")]
             pub kcl_source: Option<KclProject>,
+            /// Optional compression for the binary response. Defaults to uncompressed.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub compression: Option<crate::shared::CompressionType>,
         }
 
         /// Export the scene to a file.
@@ -1202,6 +1205,19 @@ define_modeling_cmd_enum! {
             pub object_id: Uuid,
             /// Whether or not the object should be hidden.
             pub hidden: bool,
+        }
+
+        /// Query whether each object is hidden, preserving input order.
+        /// Missing objects are reported as `no_such_object` in the response.
+        #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, ModelingCmdVariant, Builder)]
+        #[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+        #[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+        #[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+        pub struct ObjectIsHidden {
+            /// The IDs of the objects to query. Order and duplicates are preserved.
+            /// An empty list returns an empty result.
+            pub object_ids: Vec<Uuid>,
         }
 
         /// Bring an object to the front of the scene
