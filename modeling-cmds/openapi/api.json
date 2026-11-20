@@ -8920,6 +8920,10 @@
             "description": "glTF 2.0. We refer to this as glTF since that is how our customers refer to it, although by default it will be in binary format and thus technically (glb). If you prefer ASCII output, you can set that option for the export.",
             "type": "object",
             "properties": {
+              "brep_only": {
+                "description": "Export boundary representation without tessellated meshes.",
+                "type": "boolean"
+              },
               "extras": {
                 "description": "Additional data to include in the exported glTF. Defaults to an empty set.",
                 "default": [],
@@ -9178,21 +9182,6 @@
               "storage",
               "type",
               "units"
-            ]
-          },
-          {
-            "description": "Mesh-free native B-rep display snapshot, encoded as versioned JSON. Coordinates are meters, Z up. This is a read-only visualization format, not a manufacturing export; it is captured directly from the Engine scene.",
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "native_brep"
-                ]
-              }
-            },
-            "required": [
-              "type"
             ]
           },
           {
