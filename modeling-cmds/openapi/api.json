@@ -8921,7 +8921,7 @@
             "type": "object",
             "properties": {
               "brep_only": {
-                "description": "Export boundary representation without tessellated meshes.",
+                "description": "Export boundary representation without tessellated meshes. Supports geometry UUIDs only, with no named views.",
                 "type": "boolean"
               },
               "extras": {
