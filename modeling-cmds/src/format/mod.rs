@@ -20,6 +20,8 @@ pub mod gltf;
 pub mod obj;
 /// The PLY Polygon File Format.
 pub mod ply;
+/// Rhino (3DM) format.
+pub mod rhino;
 /// ISO 10303-21 (STEP) format.
 pub mod step;
 /// **ST**ereo**L**ithography format.
@@ -66,6 +68,8 @@ pub enum OutputFormat3d {
     Step(step::export::Options),
     /// **ST**ereo**L**ithography format.
     Stl(stl::export::Options),
+    /// Rhino (3dm) file format
+    Rhino(rhino::export::Options),
 }
 
 /// Alias for backward compatibility.
@@ -113,6 +117,8 @@ pub enum InputFormat3d {
     Step(step::import::Options),
     /// **ST**ereo**L**ithography format.
     Stl(stl::import::Options),
+    /// Rhino (3dm) file format
+    Rhino(rhino::import::Options),
 }
 
 impl InputFormat3d {
@@ -132,6 +138,7 @@ impl InputFormat3d {
             InputFormat3d::Sldprt(_) => "sldprt",
             InputFormat3d::Step(_) => "step",
             InputFormat3d::Stl(_) => "stl",
+            InputFormat3d::Rhino(_) => "3dm",
         }
     }
 }
@@ -285,6 +292,7 @@ impl From<OutputFormat3d> for FileExportFormat {
             OutputFormat3d::Ply(_) => Self::Ply,
             OutputFormat3d::Step(_) => Self::Step,
             OutputFormat3d::Stl(_) => Self::Stl,
+            OutputFormat3d::Rhino(_) => Self::Rhino,
         }
     }
 }
@@ -325,6 +333,7 @@ impl From<FileExportFormat> for OutputFormat3d {
                 storage: stl::export::Storage::Ascii,
                 ..Default::default()
             }),
+            FileExportFormat::Rhino => OutputFormat3d::Rhino(Default::default()),
         }
     }
 }
@@ -345,6 +354,7 @@ impl From<InputFormat3d> for FileImportFormat {
             InputFormat3d::Sldprt(_) => Self::Sldprt,
             InputFormat3d::Step(_) => Self::Step,
             InputFormat3d::Stl(_) => Self::Stl,
+            InputFormat3d::Rhino(_) => Self::Rhino,
         }
     }
 }
@@ -365,6 +375,7 @@ impl From<FileImportFormat> for InputFormat3d {
             FileImportFormat::Sldprt => InputFormat3d::Sldprt(Default::default()),
             FileImportFormat::Step => InputFormat3d::Step(Default::default()),
             FileImportFormat::Stl => InputFormat3d::Stl(Default::default()),
+            FileImportFormat::Rhino => InputFormat3d::Rhino(Default::default()),
         }
     }
 }
@@ -390,7 +401,7 @@ impl OutputFormat3d {
             Self::Obj(options) => options.tessellation,
             Self::Ply(options) => options.tessellation,
             Self::Stl(options) => options.tessellation,
-            Self::Step(_) => None,
+            Self::Step(_) | Self::Rhino(_) => None,
         }
     }
 
@@ -454,6 +465,10 @@ impl OutputFormat3d {
                 coords,
                 units: src_unit,
                 selection: Selection::DefaultScene,
+            }),
+            FileExportFormat::Rhino => Self::Rhino(rhino::export::Options {
+                coords,
+                units: src_unit,
             }),
         }
     }

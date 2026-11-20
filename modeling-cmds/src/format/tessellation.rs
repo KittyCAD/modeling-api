@@ -58,6 +58,7 @@ mod tests {
 
     #[test]
     fn mesh_formats_share_optional_tessellation_modes() {
+        assert_eq!(OutputFormat3d::Rhino(Default::default()).tessellation(), None);
         for format in [
             OutputFormat3d::Fbx(Default::default()),
             OutputFormat3d::Gltf(Default::default()),
