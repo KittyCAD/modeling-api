@@ -20,6 +20,18 @@ pub mod safe_filepath;
 
 pub use crate::kcl_project::{KclFile, KclFileBuilder, KclProject, KclProjectBuilder};
 
+/// Compression requested for a binary command response. Small or incompressible responses may remain uncompressed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "Compression.ts"))]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum CompressionType {
+    /// Zstandard framing, detected by magic bytes `28 b5 2f fd`, around the complete MessagePack response.
+    Zstd,
+}
+
 /// Default tolerance values for modeling operations.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema, Builder)]
 #[serde(rename_all = "snake_case")]
@@ -1296,6 +1308,23 @@ pub enum EntityType {
     Annotation,
 }
 
+/// Visibility of an object, or whether the requested object does not exist.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
+#[cfg_attr(feature = "ts-rs", ts(export_to = "ModelingCmd.ts"))]
+#[repr(u8)]
+#[cfg_attr(not(feature = "unstable_exhaustive"), non_exhaustive)]
+pub enum HiddenState {
+    /// The object exists and is hidden.
+    Hidden = 0,
+    /// The object exists and is visible.
+    Visible = 1,
+    /// No object exists for the requested UUID.
+    NoSuchObject = 2,
+}
+
 /// The type of Curve (embedded within path)
 #[allow(missing_docs)]
 #[derive(
@@ -1392,6 +1421,8 @@ pub enum FileExportFormat {
     #[serde(rename = "native_brep")]
     #[display("native_brep")]
     NativeBrep,
+    /// The 3DM file format. <https://deepwiki.com/mcneel/rhino3dm/6.1-3dm-file-format>
+    Rhino,
 }
 
 /// The valid types of 2D output file formats.
@@ -1448,6 +1479,8 @@ pub enum FileImportFormat {
     Step,
     /// The STL file format. <https://en.wikipedia.org/wiki/STL_(file_format)>
     Stl,
+    /// The 3DM file format. <https://deepwiki.com/mcneel/rhino3dm/6.1-3dm-file-format>
+    Rhino,
 }
 
 /// The type of error sent by the KittyCAD graphics engine.
@@ -1835,6 +1868,7 @@ impl_extern_type! {
     BlendType = "Enums::_BlendType"
     BodyType = "Enums::_BodyType"
     EntityType = "Enums::_EntityType"
+    HiddenState = "Enums::_HiddenState"
     AnnotationType = "Enums::_AnnotationType"
     AnnotationTextAlignmentX = "Enums::_AnnotationTextAlignmentX"
     AnnotationTextAlignmentY = "Enums::_AnnotationTextAlignmentY"

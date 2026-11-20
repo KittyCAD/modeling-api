@@ -607,7 +607,7 @@ dependencies = [
  "clap",
  "semver",
  "serde",
- "toml_edit 0.25.17+spec-1.1.0",
+ "toml_edit 0.25.19+spec-1.1.0",
 ]
 
 [[package]]
@@ -2695,9 +2695,9 @@ dependencies = [
 
 [[package]]
 name = "kcl-api"
-version = "0.2.195"
+version = "0.2.196"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1f04e24ac7116ba28e929e518bdd2129dd7d991b950e0d4f0677cbc0670a48f"
+checksum = "76c802f6b0f9dec2fead9bd4b7dda930b9938a366d857ebd6b0ed0ad084086e2"
 dependencies = [
  "arbitrary",
  "euler",
@@ -2718,9 +2718,9 @@ dependencies = [
 
 [[package]]
 name = "kcl-error"
-version = "0.2.195"
+version = "0.2.196"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "938fe7f4f7fd9ac49ec7e07ea86340eb87136eed76575b3b626812e2b4a1d705"
+checksum = "17b548a0c736ecb95075aa6e1e1b63acfbfd3cf31488402e09ea0558e636d9de"
 dependencies = [
  "miette",
  "schemars 0.8.22",
@@ -2781,7 +2781,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds"
-version = "0.2.259"
+version = "0.2.263"
 dependencies = [
  "anyhow",
  "arbitrary",
@@ -5721,9 +5721,9 @@ dependencies = [
 
 [[package]]
 name = "toml_edit"
-version = "0.25.17+spec-1.1.0"
+version = "0.25.19+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3641d5bbb5349a79e1020a242d251efbc546ad8048d133958323ce9c40a9c9c"
+checksum = "dd43688c4858d7264ae1cf9a9f874a67c3feb74a883b1cd7bebd6a4ea8307218"
 dependencies = [
  "indexmap 2.14.2",
  "toml_datetime 1.1.3+spec-1.1.0",
@@ -6098,9 +6098,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
 
 [[package]]
 name = "uuid"
-version = "1.29.0"
+version = "1.29.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4a0e2d11620c50695fe12bbbfde96b3477fe606e7284c22d505c12ce51214514"
+checksum = "4a06f08a856b009bc7bbaf7d3e79808595d032dd19074c0c2ef26e49e03e6bdc"
 dependencies = [
  "arbitrary",
  "getrandom 0.4.2",
