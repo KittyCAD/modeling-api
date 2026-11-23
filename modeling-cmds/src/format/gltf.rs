@@ -72,6 +72,7 @@ pub mod export {
         pub extras: IndexSet<Extra>,
 
         /// Set to true to export boundary representation without tessellated meshes. Defaults to false.
+        /// Only live modeling sessions support this option. File conversion rejects it.
         /// Engine captures the geometry when it processes the command. Later modeling commands can run while Engine encodes the export.
         /// Supports geometry UUIDs only, with no named views.
         #[builder(default)]
