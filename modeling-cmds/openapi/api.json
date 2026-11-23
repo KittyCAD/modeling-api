@@ -145,7 +145,7 @@
           },
           "to_edge_reference": {
             "nullable": true,
-            "description": "Edge reference to use to measure the dimension from If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence.",
+            "description": "Edge reference to use to measure the dimension to If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence. Note - If no \"to\" entity is provided, then a single leader is used to annotate the dimension.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/EdgeSpecifier"
@@ -160,7 +160,7 @@
           },
           "to_entity_leader_pos": {
             "nullable": true,
-            "description": "Position within the entity to position the dimension leader from",
+            "description": "Position within the entity to position the dimension leader to",
             "allOf": [
               {
                 "$ref": "#/components/schemas/AnnotationMbdLeaderPosition"
