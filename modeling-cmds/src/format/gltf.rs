@@ -71,7 +71,9 @@ pub mod export {
         #[serde(default)]
         pub extras: IndexSet<Extra>,
 
-        /// Export boundary representation without tessellated meshes. Supports geometry UUIDs only, with no named views.
+        /// Set to true to export boundary representation without tessellated meshes. Defaults to false.
+        /// Engine captures the geometry when it processes the command. Later modeling commands can run while Engine encodes the export.
+        /// Supports geometry UUIDs only, with no named views.
         #[builder(default)]
         #[serde(default, skip_serializing_if = "std::ops::Not::not")]
         pub brep_only: bool,
