@@ -8921,7 +8921,7 @@
             "type": "object",
             "properties": {
               "brep_only": {
-                "description": "Set to true to export boundary representation without tessellated meshes. Defaults to false. Only live modeling sessions support this option. File conversion rejects it. Engine captures the geometry when it processes the command. Later modeling commands can run while Engine encodes the export. Supports geometry UUIDs only, with no named views.",
+                "description": "Experimental. Set to true to export boundary representation without tessellated meshes for visualization. Remapped trim curves may be approximated. Defaults to false. Only live modeling sessions support this option. File conversion rejects it. Engine captures the geometry when it processes the command. Later modeling commands can run while Engine encodes the export. Supports geometry UUIDs only, with no named views.",
                 "type": "boolean"
               },
               "extras": {
