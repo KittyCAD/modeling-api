@@ -17,6 +17,7 @@ use serde::{Deserialize, Serialize};
 pub struct Options {
     /// Tessellation mode. Defaults to accurate.
     #[builder(default)]
+    #[cfg_attr(feature = "ts-rs", ts(as = "Option<Mode>", optional))]
     pub mode: Mode,
 }
 
