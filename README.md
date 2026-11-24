@@ -2,6 +2,13 @@
 
 This defines the API KittyCAD types and contracts. Use this to know the body and return value of APIs in Rust.
 
+# Modeling API
+
+Check out the documentation below. The contracts define these websocket endpoints.
+
+- [API documentation](https://zoo.dev/docs/developer-tools/api/modeling)
+- [Opens a WebSocket to a Zoo KittyCAD engine instance](https://zoo.dev/docs/developer-tools/api/modeling/opens-a-websocket-to-a-zoo-kittycad-engine-instance)
+
 # If you are looking for the API clients
 
 - [kittycad.rs (Rust client)](https://github.com/KittyCAD/kittycad.rs)
