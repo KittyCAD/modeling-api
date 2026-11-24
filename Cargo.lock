@@ -2781,7 +2781,7 @@ dependencies = [
 
 [[package]]
 name = "kittycad-modeling-cmds"
-version = "0.2.264"
+version = "0.2.265"
 dependencies = [
  "anyhow",
  "arbitrary",
