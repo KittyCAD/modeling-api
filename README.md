@@ -1,6 +1,11 @@
 # KittyCAD's Modeling API
 
-This defines the API KittyCAD provides for you to model 3D objects.
+This defines the API KittyCAD types and contracts. Use this to know the body and return value of APIs in Rust.
+
+# If you are looking for the API clients
+
+- [kittycad.rs (Rust client)](https://github.com/KittyCAD/kittycad.rs)
+- [kittycad.ts (Typescript client)](https://github.com/KittyCAD/kittycad.ts)
 
 # Beware
 
