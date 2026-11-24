@@ -14,7 +14,9 @@ fn pyclass_enum_renames_are_used_in_stub_generation() {
     let _ = std::any::TypeId::of::<format::fbx::export::Storage>();
     let _ = std::any::TypeId::of::<format::gltf::export::Storage>();
     let _ = std::any::TypeId::of::<format::gltf::export::Extra>();
+    let _ = std::any::TypeId::of::<format::tessellation::LevelOfDetail>();
 
+    let _ = std::any::TypeId::of::<format::tessellation::Mode>();
     // Build stub info from this crate's project root.
     let mixed_layout = true;
     let config = pyo3_stub_gen::StubGenConfig::default();
@@ -34,14 +36,16 @@ fn pyclass_enum_renames_are_used_in_stub_generation() {
         }
     }
 
-    // Format enums need distinct public names to avoid collisions.
+    // These enums used to be exported as `Storage` which collided.
     for expected in [
         "DxfStorage",
         "StlStorage",
+        "TessellationMode",
         "PlyStorage",
         "FbxStorage",
         "GltfStorage",
         "GltfExportExtra",
+        "TessellationLevelOfDetail",
     ] {
         assert!(
             enum_names.contains(expected),

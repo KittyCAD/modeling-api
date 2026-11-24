@@ -71,6 +71,11 @@ pub mod export {
         #[serde(default)]
         pub extras: IndexSet<Extra>,
 
+        /// Tessellation settings for converting CAD surfaces to triangles.
+        /// Omit to preserve the current tessellation behavior. Existing meshes are unchanged.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub tessellation: Option<crate::format::tessellation::Options>,
+
         /// Named views in the scene.
         #[builder(default)]
         #[serde(skip_serializing_if = "HashMap::is_empty")]
@@ -184,6 +189,9 @@ pub mod export {
 #[cfg(test)]
 mod tests {
     use super::export::{Extra, Options, Presentation, Storage};
+    use crate::format::tessellation::{
+        LevelOfDetail as TessellationLevelOfDetail, Mode, Options as TessellationOptions,
+    };
     use crate::format::OutputFormat3d;
 
     #[test]
@@ -318,5 +326,81 @@ mod tests {
             let json = serde_json::json!({"extras": extras});
             assert!(serde_json::from_value::<Options>(json).is_err());
         }
+    }
+
+    #[test]
+    fn tessellation_is_opt_in() {
+        let options: Options = serde_json::from_str("{}").unwrap();
+        assert_eq!(options, Options::default());
+        assert_eq!(Options::builder().build(), options);
+        assert!(options.tessellation.is_none());
+        assert_eq!(
+            serde_json::to_value(options).unwrap(),
+            serde_json::json!({
+                "storage": "embedded",
+                "presentation": "pretty",
+                "include_uuids": false,
+                "extras": []
+            })
+        );
+    }
+
+    #[test]
+    fn tessellation_partial_objects_use_defaults() {
+        let defaults = TessellationOptions::default();
+        assert_eq!(defaults.level_of_detail, TessellationLevelOfDetail::High);
+        assert_eq!(defaults.mode, Mode::Accurate);
+        assert_eq!(TessellationOptions::builder().build(), defaults);
+
+        for (json, expected) in [
+            (serde_json::json!({}), defaults),
+            (
+                serde_json::json!({"level_of_detail": "medium"}),
+                TessellationOptions::builder()
+                    .level_of_detail(TessellationLevelOfDetail::Medium)
+                    .build(),
+            ),
+            (
+                serde_json::json!({"mode": "visual"}),
+                TessellationOptions::builder().mode(Mode::Visual).build(),
+            ),
+        ] {
+            let options: Options = serde_json::from_value(serde_json::json!({"tessellation": json})).unwrap();
+            assert_eq!(options.tessellation, Some(expected));
+        }
+    }
+
+    #[test]
+    fn tessellation_options_round_trip() {
+        for level in ["extra_low", "low", "medium", "high", "extra_high"] {
+            let json = serde_json::json!({
+                "storage": "binary",
+                "presentation": "compact",
+                "include_uuids": true,
+                "extras": [],
+                "tessellation": {
+                    "level_of_detail": level,
+                    "mode": "visual"
+                }
+            });
+            let options: Options = serde_json::from_value(json.clone()).unwrap();
+            assert_eq!(serde_json::to_value(options).unwrap(), json);
+        }
+    }
+
+    #[test]
+    fn tessellation_rejects_unknown_detail_levels() {
+        assert!(serde_json::from_value::<Options>(serde_json::json!({
+            "tessellation": {"level_of_detail": "ultra"}
+        }))
+        .is_err());
+    }
+
+    #[test]
+    fn visualization_tessellation_selects_visual_mode() {
+        assert_eq!(
+            TessellationOptions::visualization(),
+            TessellationOptions::builder().mode(Mode::Visual).build()
+        );
     }
 }
