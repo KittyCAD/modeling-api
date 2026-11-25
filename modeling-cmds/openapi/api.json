@@ -8585,6 +8585,10 @@
             "description": "Tell the engine you're beginning execution, and will be sending many API calls shortly. The engine will render your geometry in reduced detail, to make execution faster. Call EndExecution to restore high quality once you're done sending commands.",
             "type": "object",
             "properties": {
+              "enable_parallel_export": {
+                "description": "Allow 3DM exports during this execution to capture the current geometry and finish encoding while subsequent commands run. EndExecution clears this option.",
+                "type": "boolean"
+              },
               "enable_render": {
                 "description": "Should rendering occur, or not? If enabled, rendering will be low resolution until you call EndExecution.",
                 "type": "boolean"
@@ -8920,10 +8924,6 @@
             "description": "glTF 2.0. We refer to this as glTF since that is how our customers refer to it, although by default it will be in binary format and thus technically (glb). If you prefer ASCII output, you can set that option for the export.",
             "type": "object",
             "properties": {
-              "brep_only": {
-                "description": "Experimental. Set to true to export boundary representation without tessellated meshes for visualization. Remapped trim curves may be approximated. Defaults to false. Only live modeling sessions support this option. File conversion rejects it. Engine captures the geometry when it processes the command. Later modeling commands can run while Engine encodes the export. Supports geometry UUIDs only, with no named views.",
-                "type": "boolean"
-              },
               "extras": {
                 "description": "Additional data to include in the exported glTF. Defaults to an empty set.",
                 "default": [],

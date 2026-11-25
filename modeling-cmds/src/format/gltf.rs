@@ -71,14 +71,6 @@ pub mod export {
         #[serde(default)]
         pub extras: IndexSet<Extra>,
 
-        /// Experimental. Set to true to export boundary representation without tessellated meshes for visualization. Remapped trim curves may be approximated. Defaults to false.
-        /// Only live modeling sessions support this option. File conversion rejects it.
-        /// Engine captures the geometry when it processes the command. Later modeling commands can run while Engine encodes the export.
-        /// Supports geometry UUIDs only, with no named views.
-        #[builder(default)]
-        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-        pub brep_only: bool,
-
         /// Named views in the scene.
         #[builder(default)]
         #[serde(skip_serializing_if = "HashMap::is_empty")]
