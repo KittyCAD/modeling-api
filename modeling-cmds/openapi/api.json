@@ -145,7 +145,7 @@
           },
           "to_edge_reference": {
             "nullable": true,
-            "description": "Edge reference to use to measure the dimension from If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence.",
+            "description": "Edge reference to use to measure the dimension to If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence. Note - If no \"to\" entity is provided, then a single leader is used to annotate the dimension.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/EdgeSpecifier"
@@ -160,7 +160,7 @@
           },
           "to_entity_leader_pos": {
             "nullable": true,
-            "description": "Position within the entity to position the dimension leader from",
+            "description": "Position within the entity to position the dimension leader to",
             "allOf": [
               {
                 "$ref": "#/components/schemas/AnnotationMbdLeaderPosition"
@@ -574,6 +574,32 @@
             },
             "required": [
               "centroid"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Used in dimension measurements for the to_entity_leader_pos field. Determines the position using the previous \"from\" position stepped back (projected) onto the planar entity (via planar projection or vector dot product)",
+            "type": "object",
+            "properties": {
+              "step_from": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "step_from"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "description": "Used in dimension measurements for the to_entity_leader_pos field. Automatically determines which type of leader position to use. If the entity is planar and this is a to_entity_leader_pos dimension field, then StepFrom is used. If the entity is circular or cylindrical, Centroid is used. If the entity is a linear edge NormalizedPos { 0.5, N/A } is used If no other cases apply, then NormalizedPos { 0.5, 0.5 } is used",
+            "type": "object",
+            "properties": {
+              "auto": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "auto"
             ],
             "additionalProperties": false
           }
@@ -1094,6 +1120,18 @@
           }
         }
       },
+      "CompressionType": {
+        "description": "Compression requested for a binary command response. Small or incompressible responses may remain uncompressed.",
+        "oneOf": [
+          {
+            "description": "Zstandard framing, detected by magic bytes `28 b5 2f fd`, around the complete MessagePack response.",
+            "type": "string",
+            "enum": [
+              "zstd"
+            ]
+          }
+        ]
+      },
       "CutStrategy": {
         "description": "What strategy (algorithm) should be used for cutting? Defaults to Automatic.",
         "oneOf": [
@@ -1446,8 +1484,29 @@
         ]
       },
       "EntityReference": {
-        "description": "An edge/vertex can be defined by the faces that it is connected to.",
+        "description": "A reference identifying a selectable scene entity.",
         "oneOf": [
+          {
+            "description": "A uuid referencing an annotation.",
+            "type": "object",
+            "properties": {
+              "annotation_id": {
+                "description": "Id of the annotation object being referenced.",
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "annotation"
+                ]
+              }
+            },
+            "required": [
+              "annotation_id",
+              "type"
+            ]
+          },
           {
             "description": "A uuid referencing a plane.",
             "type": "object",
@@ -1791,7 +1850,8 @@
           "plane",
           "vertex",
           "region",
-          "patterngroup"
+          "patterngroup",
+          "annotation"
         ]
       },
       "Error": {
@@ -2038,6 +2098,46 @@
             "type": "string",
             "enum": [
               "z"
+            ]
+          }
+        ]
+      },
+      "GltfExportExtra": {
+        "description": "Additional data that can be included in a glTF 2.0 export.",
+        "oneOf": [
+          {
+            "description": "Sketch geometry and metadata.",
+            "type": "string",
+            "enum": [
+              "sketches"
+            ]
+          },
+          {
+            "description": "Sketch regions and their resolver metadata.",
+            "type": "string",
+            "enum": [
+              "regions"
+            ]
+          },
+          {
+            "description": "Original imported files.",
+            "type": "string",
+            "enum": [
+              "imported_files"
+            ]
+          },
+          {
+            "description": "Model-based definition (MBD) annotations.",
+            "type": "string",
+            "enum": [
+              "mbd"
+            ]
+          },
+          {
+            "description": "UUIDs and source UUIDs on boundary-representation solids, edges, faces, and surfaces.",
+            "type": "string",
+            "enum": [
+              "geometry_uuids"
             ]
           }
         ]
@@ -2557,6 +2657,39 @@
                 "type": "string",
                 "enum": [
                   "stl"
+                ]
+              },
+              "units": {
+                "description": "The units of the input data.\n\nThis is very important for correct scaling and when calculating physics properties like mass, etc.\n\nDefaults to millimeters.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitLength"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "coords",
+              "type",
+              "units"
+            ]
+          },
+          {
+            "description": "Rhino (3dm) file format",
+            "type": "object",
+            "properties": {
+              "coords": {
+                "description": "Co-ordinate system of input data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "rhino"
                 ]
               },
               "units": {
@@ -4118,6 +4251,15 @@
             "description": "Export the scene to a file.\n\nThe response is a MsgPack-encoded message in a WebSocket binary frame.",
             "type": "object",
             "properties": {
+              "compression": {
+                "nullable": true,
+                "description": "Optional compression for the binary response. Defaults to uncompressed.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CompressionType"
+                  }
+                ]
+              },
               "entity_ids": {
                 "description": "IDs of the entities to be exported. If this is empty, then all entities are exported.",
                 "type": "array",
@@ -5256,6 +5398,30 @@
             "required": [
               "hidden",
               "object_id",
+              "type"
+            ]
+          },
+          {
+            "description": "Query whether each object is hidden, preserving input order. Missing objects are reported as `no_such_object` in the response.",
+            "type": "object",
+            "properties": {
+              "object_ids": {
+                "description": "The IDs of the objects to query. Order and duplicates are preserved. An empty list returns an empty result.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "object_is_hidden"
+                ]
+              }
+            },
+            "required": [
+              "object_ids",
               "type"
             ]
           },
@@ -8790,6 +8956,15 @@
                   }
                 ]
               },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -8806,8 +8981,18 @@
             "description": "glTF 2.0. We refer to this as glTF since that is how our customers refer to it, although by default it will be in binary format and thus technically (glb). If you prefer ASCII output, you can set that option for the export.",
             "type": "object",
             "properties": {
+              "extras": {
+                "description": "Additional data to include in the exported glTF. Defaults to an empty set.",
+                "default": [],
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GltfExportExtra"
+                },
+                "uniqueItems": true
+              },
               "include_uuids": {
-                "description": "Include engine UUIDs in glTF extras. Defaults to false.",
+                "deprecated": true,
+                "description": "Include geometry UUIDs. Setting this to true is equivalent to adding `geometry_uuids` to `extras`.",
                 "default": false,
                 "type": "boolean"
               },
@@ -8826,6 +9011,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/GltfStorage"
+                  }
+                ]
+              },
+              "tessellation": {
+                "nullable": true,
+                "description": "Tessellation to use when this export needs to generate a display mesh.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
                   }
                 ]
               },
@@ -8856,6 +9050,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
                   }
                 ]
               },
@@ -8905,6 +9108,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/PlyStorage"
+                  }
+                ]
+              },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
                   }
                 ]
               },
@@ -9033,6 +9245,15 @@
                   }
                 ]
               },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -9052,6 +9273,39 @@
               "coords",
               "selection",
               "storage",
+              "type",
+              "units"
+            ]
+          },
+          {
+            "description": "Rhino (3dm) file format",
+            "type": "object",
+            "properties": {
+              "coords": {
+                "description": "Co-ordinate system of output data.\n\nDefaults to the [KittyCAD co-ordinate system].\n\n[KittyCAD co-ordinate system]: ../coord/constant.KITTYCAD.html",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "rhino"
+                ]
+              },
+              "units": {
+                "description": "Export length unit.\n\nDefaults to millimeters.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UnitLength"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "coords",
               "type",
               "units"
             ]
@@ -10169,6 +10423,40 @@
           "forward",
           "up"
         ]
+      },
+      "TessellationMode": {
+        "description": "Selects the purpose of the generated mesh.",
+        "oneOf": [
+          {
+            "description": "Generate a mesh for visualization.",
+            "type": "string",
+            "enum": [
+              "visual"
+            ]
+          },
+          {
+            "description": "Generate a mesh with the accurate tessellation settings.",
+            "type": "string",
+            "enum": [
+              "accurate"
+            ]
+          }
+        ]
+      },
+      "TessellationOptions": {
+        "description": "Controls mesh generation for mesh exports.",
+        "type": "object",
+        "properties": {
+          "mode": {
+            "description": "Tessellation mode. Defaults to accurate.",
+            "default": "accurate",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TessellationMode"
+              }
+            ]
+          }
+        }
       },
       "Tolerance": {
         "description": "Default tolerance values for modeling operations.",

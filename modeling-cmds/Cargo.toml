@@ -1,6 +1,6 @@
 [package]
 name = "kittycad-modeling-cmds"
-version = "0.2.254"
+version = "0.2.265"
 edition = "2021"
 authors = ["KittyCAD, Inc."]
 description = "Commands in the KittyCAD Modeling API"
@@ -21,14 +21,14 @@ ts-rs = ["dep:ts-rs", "kcl-api?/ts-rs", "kittycad-point/ts-rs"]
 slog = ["dep:slog"]
 cxx = ["dep:cxx"]
 websocket = ["dep:serde_json"]
-webrtc = ["dep:webrtc"]
+webrtc = ["dep:webrtc", "dep:anyhow"]
 unstable_exhaustive = []
 python = ["dep:pyo3", "dep:pyo3-stub-gen"]
-arbitrary = ["dep:arbitrary", "uuid/arbitrary", "chrono/arbitrary", "kcl-api?/arbitrary", "kittycad-point/arbitrary"]
+arbitrary = ["dep:arbitrary", "uuid/arbitrary", "chrono/arbitrary", "indexmap/arbitrary", "kcl-api?/arbitrary", "kittycad-point/arbitrary"]
 exec-kcl = ["dep:kcl-error", "dep:kcl-api"]
 
 [dependencies]
-anyhow = "1.0.101"
+anyhow = { version = "1.0.101", optional = true }
 arbitrary = { version = "1", features = ["derive"], optional = true }
 bon = "3.9.1"
 chrono = { version = "0.4.43", features = ["serde"] }
@@ -39,9 +39,9 @@ enum-iterator = "2.3.0"
 enum-iterator-derive = "1.2.1"
 euler = "0.5.0"
 http = "1.4.0"
-indexmap = "2.14.0"
-kcl-api = { version = "0.2.193", optional = true }
-kcl-error = { version = "0.2.193", optional = true }
+indexmap = { version = "2.14.0", features = ["serde"] }
+kcl-api = { version = "0.2.196", optional = true }
+kcl-error = { version = "0.2.196", optional = true }
 kittycad-modeling-cmds-macros = { workspace = true }
 kittycad-point = { version = "0.1.0" }
 kittycad-unit-conversion-derive = "0.1.0"
@@ -51,21 +51,21 @@ parse-display = "0.11.0"
 parse-display-derive = "0.11.0"
 pyo3 = { version = "0.29.2", optional = true }
 pyo3-stub-gen = { version = "0.23.0", optional = true, default-features = false, features = ["either", "numpy", "ordered-float"] }
-schemars = { version = "0.8.22", features = ["bigdecimal04", "chrono", "url", "uuid1"] }
+schemars = { version = "0.8.22", features = ["bigdecimal04", "chrono", "indexmap2", "url", "uuid1"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_bytes = "0.11.19"
 serde_json = { version = "1.0.150", optional = true }
 serde_with = "3.21.0"
 slog = { version = "2.8.2", optional = true }
 tabled = { version = "0.22", optional = true }
-ts-rs = { version = "12.0.1", optional = true, features = ["chrono-impl", "uuid-impl", "no-serde-warnings", "serde-json-impl"] }
-typed-path = "0.12.3"
+ts-rs = { version = "12.0.1", optional = true, features = ["chrono-impl", "uuid-impl", "indexmap-impl", "no-serde-warnings", "serde-json-impl"] }
+typed-path = "0.13.0"
 uuid = { version = "1.23.1", features = ["serde", "v4", "js"] }
 webrtc = { version = "0.12", optional = true }
 
 [dev-dependencies]
 bson = "2.14.0"
-dropshot = { version = "0.17.0", default-features = false }
+dropshot = { version = "0.18.0", default-features = false }
 expectorate = "1.1.0"
 openapi-lint = { git = "https://github.com/KittyCAD/openapi-lint", branch = "kittycad" }
 openapiv3 = "2.2.0"
