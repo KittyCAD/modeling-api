@@ -143,6 +143,16 @@
             "format": "uint32",
             "minimum": 0
           },
+          "prefix": {
+            "nullable": true,
+            "description": "Prefix text which will appear before the basic dimension (a newline can be used to position text above)",
+            "type": "string"
+          },
+          "suffix": {
+            "nullable": true,
+            "description": "Suffix text which will appear after the basic dimension (a newline can be used to position text below)",
+            "type": "string"
+          },
           "to_edge_reference": {
             "nullable": true,
             "description": "Edge reference to use to measure the dimension to If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence. Note - If no \"to\" entity is provided, then a single leader is used to annotate the dimension.",
@@ -294,12 +304,12 @@
           },
           "prefix": {
             "nullable": true,
-            "description": "Prefix text which will appear before the basic dimension",
+            "description": "Prefix text which will appear before the basic dimension (a newline can be used to position text above)",
             "type": "string"
           },
           "suffix": {
             "nullable": true,
-            "description": "Suffix text which will appear after the basic dimension",
+            "description": "Suffix text which will appear after the basic dimension (a newline can be used to position text below)",
             "type": "string"
           }
         },
@@ -455,6 +465,11 @@
             "description": "The explicitly defined dimension. Only required if the measurement is not automatically calculated.",
             "type": "number",
             "format": "double"
+          },
+          "override_text": {
+            "nullable": true,
+            "description": "If provided, all content within the basic dimension is overriden by the given text.",
+            "type": "string"
           },
           "symbol": {
             "nullable": true,
