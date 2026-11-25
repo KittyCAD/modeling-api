@@ -1,10 +1,12 @@
-use crate::format::View;
+use std::collections::HashMap;
+
 use bon::Builder;
 use indexmap::IndexSet;
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+
+use crate::format::View;
 
 /// Import models in KittyCAD's GLTF format.
 pub mod import {
@@ -70,6 +72,11 @@ pub mod export {
         #[builder(default)]
         #[serde(default)]
         pub extras: IndexSet<Extra>,
+
+        /// Tessellation to use when this export needs to generate a display mesh.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[cfg_attr(feature = "ts-rs", ts(optional))]
+        pub tessellation: Option<crate::format::tessellation::Options>,
 
         /// Named views in the scene.
         #[builder(default)]
@@ -184,7 +191,25 @@ pub mod export {
 #[cfg(test)]
 mod tests {
     use super::export::{Extra, Options, Presentation, Storage};
-    use crate::format::OutputFormat3d;
+    use crate::format::{tessellation::Mode, OutputFormat3d};
+
+    #[test]
+    fn tessellation_is_optional_and_defaults_to_accurate() {
+        let ordinary: Options = serde_json::from_str("{}").unwrap();
+        assert!(serde_json::to_value(ordinary).unwrap().get("tessellation").is_none());
+        for (settings, mode) in [
+            (serde_json::json!({}), Mode::Accurate),
+            (serde_json::json!({"mode": "accurate"}), Mode::Accurate),
+            (serde_json::json!({"mode": "visual"}), Mode::Visual),
+        ] {
+            let options: Options = serde_json::from_value(serde_json::json!({"tessellation": settings})).unwrap();
+            assert_eq!(options.tessellation.unwrap().mode, mode);
+            assert_eq!(
+                serde_json::to_value(options).unwrap()["tessellation"]["mode"],
+                mode.to_string()
+            );
+        }
+    }
 
     #[test]
     fn additional_data_is_opt_in() {

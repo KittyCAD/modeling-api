@@ -145,7 +145,7 @@
           },
           "to_edge_reference": {
             "nullable": true,
-            "description": "Edge reference to use to measure the dimension from If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence.",
+            "description": "Edge reference to use to measure the dimension to If both `to_entity_id` and `to_edge_reference` are provided, `to_edge_reference` takes precedence. Note - If no \"to\" entity is provided, then a single leader is used to annotate the dimension.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/EdgeSpecifier"
@@ -160,7 +160,7 @@
           },
           "to_entity_leader_pos": {
             "nullable": true,
-            "description": "Position within the entity to position the dimension leader from",
+            "description": "Position within the entity to position the dimension leader to",
             "allOf": [
               {
                 "$ref": "#/components/schemas/AnnotationMbdLeaderPosition"
@@ -8904,6 +8904,15 @@
                   }
                 ]
               },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -8953,6 +8962,15 @@
                   }
                 ]
               },
+              "tessellation": {
+                "nullable": true,
+                "description": "Tessellation to use when this export needs to generate a display mesh.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
+                  }
+                ]
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -8980,6 +8998,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/System"
+                  }
+                ]
+              },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
                   }
                 ]
               },
@@ -9029,6 +9056,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/PlyStorage"
+                  }
+                ]
+              },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
                   }
                 ]
               },
@@ -9154,6 +9190,15 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/StlStorage"
+                  }
+                ]
+              },
+              "tessellation": {
+                "nullable": true,
+                "description": "Settings used when generating a mesh from CAD surfaces.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TessellationOptions"
                   }
                 ]
               },
@@ -10325,6 +10370,40 @@
           "forward",
           "up"
         ]
+      },
+      "TessellationMode": {
+        "description": "Selects the purpose of the generated mesh.",
+        "oneOf": [
+          {
+            "description": "Generate a mesh for visualization.",
+            "type": "string",
+            "enum": [
+              "visual"
+            ]
+          },
+          {
+            "description": "Generate a mesh with the accurate tessellation settings.",
+            "type": "string",
+            "enum": [
+              "accurate"
+            ]
+          }
+        ]
+      },
+      "TessellationOptions": {
+        "description": "Controls mesh generation for mesh exports.",
+        "type": "object",
+        "properties": {
+          "mode": {
+            "description": "Tessellation mode. Defaults to accurate.",
+            "default": "accurate",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TessellationMode"
+              }
+            ]
+          }
+        }
       },
       "Tolerance": {
         "description": "Default tolerance values for modeling operations.",
