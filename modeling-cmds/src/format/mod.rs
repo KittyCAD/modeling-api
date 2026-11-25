@@ -20,12 +20,14 @@ pub mod gltf;
 pub mod obj;
 /// The PLY Polygon File Format.
 pub mod ply;
+/// Rhino (3DM) format.
+pub mod rhino;
 /// ISO 10303-21 (STEP) format.
 pub mod step;
 /// **ST**ereo**L**ithography format.
 pub mod stl;
-/// Rhino (3DM) format.
-pub mod rhino;
+/// Shared mesh tessellation settings.
+pub mod tessellation;
 
 /// Output 2D format specifier.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -391,6 +393,18 @@ impl OutputFormat3dOptions {
 }
 
 impl OutputFormat3d {
+    /// Settings requested for mesh generation, when this is a mesh export.
+    pub fn tessellation(&self) -> Option<tessellation::Options> {
+        match self {
+            Self::Fbx(options) => options.tessellation,
+            Self::Gltf(options) => options.tessellation,
+            Self::Obj(options) => options.tessellation,
+            Self::Ply(options) => options.tessellation,
+            Self::Stl(options) => options.tessellation,
+            Self::Step(_) | Self::Rhino(_) => None,
+        }
+    }
+
     /// Create the output format, setting the options as given.
     pub fn new(format: &FileExportFormat, options: OutputFormat3dOptions) -> Self {
         let OutputFormat3dOptions { src_unit } = options;
@@ -412,6 +426,7 @@ impl OutputFormat3d {
 
         match format {
             FileExportFormat::Fbx => Self::Fbx(fbx::export::Options {
+                tessellation: None,
                 storage: fbx::export::Storage::Binary,
                 created: None,
             }),
@@ -426,10 +441,12 @@ impl OutputFormat3d {
                 ..Default::default()
             }),
             FileExportFormat::Obj => Self::Obj(obj::export::Options {
+                tessellation: None,
                 coords,
                 units: src_unit,
             }),
             FileExportFormat::Ply => Self::Ply(ply::export::Options {
+                tessellation: None,
                 storage: ply::export::Storage::Ascii,
                 coords,
                 selection: Selection::DefaultScene,
@@ -443,6 +460,7 @@ impl OutputFormat3d {
                 ..Default::default()
             }),
             FileExportFormat::Stl => Self::Stl(stl::export::Options {
+                tessellation: None,
                 storage: stl::export::Storage::Ascii,
                 coords,
                 units: src_unit,
