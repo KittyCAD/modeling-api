@@ -1399,7 +1399,11 @@ define_modeling_cmd_enum! {
             /// Which object is being queried.
             pub object_id: Uuid,
             /// The faces being queried
-            pub face_ids: [Uuid; 2]
+            pub face_ids: [Uuid; 2],
+            /// Return every shared edge, including an empty result.
+            #[serde(default, skip_serializing_if = "super::is_false")]
+            #[builder(default)]
+            pub all: bool,
         }
 
         /// Fillets the given edge with the specified radius.
@@ -1467,6 +1471,10 @@ define_modeling_cmd_enum! {
             #[serde(default)]
             #[builder(default)]
             pub edges_references: Vec<EdgeSpecifier>,
+            /// Require the references together to identify exactly one edge.
+            #[serde(default, skip_serializing_if = "super::is_false")]
+            #[builder(default)]
+            pub require_unique_edge: bool,
             /// The cut type and information required to perform the cut.
             pub cut_type: CutTypeV2,
             /// The maximum acceptable surface gap computed between the cut surfaces. Must be

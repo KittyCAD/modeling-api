@@ -6,6 +6,18 @@ use schemars::{schema::SchemaObject, JsonSchema};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+/// A generated cut face and its uniquely identifiable input edge.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+pub struct EdgeCutFaceSource {
+    /// Live result face.
+    pub face_id: Uuid,
+    /// Edge before the cut, including edges reached by tangent chaining.
+    pub edge_id: Uuid,
+    /// Unordered pair identifying this edge uniquely on the pre-cut body.
+    pub side_faces: [Uuid; 2],
+}
+
+
 #[cfg(feature = "cxx")]
 use crate::impl_extern_type;
 use crate::{
@@ -2615,4 +2627,16 @@ pub enum CurveTypeDebug {
     ThreePointArc,
     /// Circle with a center and radius.
     Circle,
+}
+
+/// A surviving topology ID reassigned by subtraction.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[cfg_attr(feature = "ts-rs", derive(ts_rs::TS))]
+pub struct BooleanTopologyReassignment {
+    /// The face or edge ID before subtraction.
+    pub source_id: Uuid,
+    /// The surviving face or edge ID after subtraction.
+    pub replacement_id: Uuid,
+    /// The final output body that owns the surviving entity.
+    pub owner_id: Uuid,
 }
