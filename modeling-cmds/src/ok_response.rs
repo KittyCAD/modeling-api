@@ -297,6 +297,15 @@ define_ok_modeling_cmd_response_enum! {
         /// The response from the `Solid3dCutEdgeReferences` endpoint.
         #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema, ModelingCmdOutput)]
         pub struct Solid3dCutEdgeReferences {
+            /// Faces created by the cut and present on the result body. Older engines omit this field.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub created_face_ids: Option<Vec<Uuid>>,
+            /// Whether each input selector independently resolved to a distinct single edge before cutting.
+            #[serde(default)]
+            pub single_edge_per_selector: bool,
+            /// Confirmed source edges of live generated faces.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub face_sources: Vec<crate::shared::EdgeCutFaceSource>,
         }
 
 
@@ -795,6 +804,9 @@ define_ok_modeling_cmd_response_enum! {
         pub struct Solid3dGetCommonEdge {
             /// The UUID of the common edge, if any.
             pub edge: Option<Uuid>,
+            /// All shared edges when requested.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub edges: Option<Vec<Uuid>>,
         }
 
         /// The response from the `GetEntityType` command.
@@ -1115,6 +1127,9 @@ define_ok_modeling_cmd_response_enum! {
             pub faces: Vec<Uuid>,
             /// The edges of each object.
             pub edges: Vec<Uuid>,
+            /// Pairs of source and copied face IDs from a topology-preserving copy.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub face_copies: Vec<[Uuid; 2]>,
         }
 
         /// A list of faces for a specific edge.
@@ -1310,6 +1325,18 @@ define_ok_modeling_cmd_response_enum! {
             /// If the operation involved any intersecting solids.
             #[serde(default = "bool_true", skip_serializing_if = "super::is_true")]
             pub any_intersections: bool,
+            /// Surviving descendants of faces whose IDs were reassigned.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub face_reassignments: Vec<crate::shared::BooleanTopologyReassignment>,
+            /// Surviving descendants of edges whose IDs were reassigned.
+            #[serde(default, skip_serializing_if = "Vec::is_empty")]
+            pub edge_reassignments: Vec<crate::shared::BooleanTopologyReassignment>,
+            /// Live descendants of input face identities, including unchanged IDs.
+            /// Present for experimental single-target, single-tool separated subtraction.
+            /// An empty list means no input identities survived. Missing means
+            /// the operation did not report the correspondence.
+            #[serde(default, skip_serializing_if = "Option::is_none")]
+            pub face_identity_lineage: Option<Vec<crate::shared::BooleanTopologyReassignment>>,
         }
 
         /// The response from the 'BooleanImprint'.
