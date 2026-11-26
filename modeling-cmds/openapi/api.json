@@ -5790,6 +5790,10 @@
             "description": "Gets the shared edge between these two faces if it exists",
             "type": "object",
             "properties": {
+              "all": {
+                "description": "Return every shared edge, including an empty result.",
+                "type": "boolean"
+              },
               "face_ids": {
                 "description": "The faces being queried",
                 "type": "array",
@@ -5952,6 +5956,10 @@
                 "description": "Which object is being cut.",
                 "type": "string",
                 "format": "uuid"
+              },
+              "require_unique_edge": {
+                "description": "Require the references together to identify exactly one edge.",
+                "type": "boolean"
               },
               "strategy": {
                 "description": "Which cutting algorithm to use.",
