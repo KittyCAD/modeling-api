@@ -712,6 +712,9 @@ pub struct AnnotationMbdBasicDimension {
     /// The tolerance of the dimension
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tolerance: Option<f64>,
+    ///If provided, all content within the basic dimension is overriden by the given text.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub override_text: Option<String>,
 }
 
 /// Parameters for defining an MBD Basic Dimension Annotation state which is measured between two positions in 3D
@@ -761,6 +764,14 @@ pub struct AnnotationBasicDimension {
 
     /// Basic dimension parameters (symbol and tolerance)
     pub dimension: AnnotationMbdBasicDimension,
+
+    /// Prefix text which will appear before the basic dimension (a newline can be used to position text above)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub prefix: Option<String>,
+
+    /// Suffix text which will appear after the basic dimension (a newline can be used to position text below)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub suffix: Option<String>,
 
     /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
     pub plane_id: Uuid,
@@ -820,10 +831,10 @@ pub struct AnnotationFeatureControl {
     /// Set if this annotation is defining a datum
     pub defined_datum: Option<char>,
 
-    /// Prefix text which will appear before the basic dimension
+    /// Prefix text which will appear before the basic dimension (a newline can be used to position text above)
     pub prefix: Option<String>,
 
-    /// Suffix text which will appear after the basic dimension
+    /// Suffix text which will appear after the basic dimension (a newline can be used to position text below)
     pub suffix: Option<String>,
 
     /// Orientation plane.  The annotation will lie in this plane which is positioned about the leader position as its origin.
