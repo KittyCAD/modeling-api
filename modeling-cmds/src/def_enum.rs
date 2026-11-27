@@ -2915,6 +2915,10 @@ define_modeling_cmd_enum! {
             /// If enabled, rendering will be low resolution until you call
             /// EndExecution.
             pub enable_render: bool,
+            /// Allow 3DM exports during this execution to capture the current geometry and finish encoding while subsequent commands run. EndExecution clears this option.
+            #[serde(default, skip_serializing_if = "super::is_false")]
+            #[builder(default)]
+            pub enable_parallel_export: bool,
         }
 
         /// Tell the engine you're finished execution,
